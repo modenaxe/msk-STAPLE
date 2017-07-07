@@ -1,4 +1,3 @@
-```matlab
 function [ RepereFinal ] = RPatellaFun( name , oprtr )
 % Fit an ACS to the Patella
 
@@ -260,8 +259,4 @@ RepereFinal.V3 = [X3 Y3 Z3];
 RepereFinal.Center3 = Center3;
 RepereFinal.Center2 = Center2;
 
-
 end
-
-
-```
