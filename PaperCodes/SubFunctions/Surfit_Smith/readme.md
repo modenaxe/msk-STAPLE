@@ -1,19 +1,22 @@
-# MATLAB LEAST SQUARES GEOMETRIC ELEMENT SOFTWARE 
+# MATLAB LEAST SQUARES GEOMETRIC ELEMENT SOFTWARE  
 
-This toolbox was developped by :  
-===
-Ian Smith  
+This toolbox was developed by :  
+
+---
+
+*Ian Smith  
 Centre for Mathematics and Scientific Computing   
 National Physical Laboratory   
 Queens Road   
 Teddington     
 Middlesex   
 England   
-TW11 0LW   
-===
+TW11 0LW*  
+
+---
 
 
-We did not find the orignal submission, see license and readme.txt for more information, but the source code is available at :   
+We did not find the orignal submission, see [license](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_Smith/licence.pdf) and [readme.txt](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_Smith/readme.txt) for more information, but the source code is available at :   
 http://www.eurometros.org/gen_report.php?category=distributions&pkey=14&subform=yes
 
 Note of the toolbox :   
