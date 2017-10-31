@@ -1,6 +1,6 @@
 # GIBOC-Knee-Coordinate-System
 
-The main goal of this Matlab MATHWORKS® based project is to provide Matlab and Python™ scripts and associated function to :
+The main goal of this Matlab MATHWORKS® based project is to provide Matlab and Python™ scripts and associated functions to :
 1. Read piecewise triangular representation of bones ([.STL Files](https://en.wikipedia.org/wiki/STL_(file_format)))
 2. Automatically identify and model important features of the bones to create an anatomical coordinate system
 3. Generate an output file containing the coordinate system origin position and the basis vectors orientation in the world coordinate system
