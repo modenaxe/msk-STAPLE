@@ -1,1 +1,4 @@
 # How to generate the ***.msh*** files
+
+To generate the remeshed you need to put all your *.stl* in the same folder as *[remesh_STL_GMSH.py](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/remesh_STL_GMSH.py)*, you also have to have [GMSH](http://gmsh.info/#Download). GMSH can be either installed and ***gmsh.exe*** added to your path or the program has to be put in the same directory as the *.stl* files and *remesh_STL_GMSH.py*.  
+Then all you have to do (provided you have Python 2.7 installed) is to launch *[remesh_STL_GMSH.py](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/remesh_STL_GMSH.py)*. You can either remesh all the *.stl* present in the folder or select the one you want to remesh with a small *GUI*.
