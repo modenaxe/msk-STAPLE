@@ -22,4 +22,6 @@ Maybe other software can perform this operation but I've not tested them myself:
 * HyperMesh Altair
 * [MeshLab](http://www.meshlab.net/)  
 
-This first step allow to get a "nicer" mesh.
+This first step allows to get a "nicer" mesh.
+
+![Nicer Mesh](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/Other/Images/niceMesh.jpg "Nicer mesh with GMSH")
