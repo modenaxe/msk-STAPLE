@@ -13,6 +13,6 @@ Our methods rely on [GMSH](http://gmsh.info/), **which must be installed in your
 
 Because, it has the capacity to remesh stl, we developped a **Python** script to remesh all the *.stl* in the current folders.  
 
-## Remesh with our small python script
+#### Remeshing with our small python script
 To generate the remeshed bone model you need to put all your *.stl* files in the same folder as *[remesh_STL_GMSH.py](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/remesh_STL_GMSH.py)* (and ***GMSH*** if not added to your os path).  
 Then all you have to do (provided you have Python 2.7 installed) is to launch *[remesh_STL_GMSH.py](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/remesh_STL_GMSH.py)*. You can either remesh all the *.stl* present in the folder or select the one you want to remesh with a small *GUI*.
