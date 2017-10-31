@@ -16,7 +16,7 @@ TW11 0LW*
 ---
 
 
-We did not find the orignal submission, see [license](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_Smith/licence.pdf) and [readme.txt](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_Smith/readme.txt) for more information, but the source code is available at :   
+We did not find the orignal submission, see [license](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_LSGE/licence.pdf) and [readme.txt](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/SubFunctions/Surfit_LSGE/readme.txt) for more information, but the source code is available at :   
 http://www.eurometros.org/gen_report.php?category=distributions&pkey=14&subform=yes
 
 Note of the toolbox :   
