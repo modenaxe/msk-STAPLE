@@ -20,11 +20,11 @@ It can be achieved thanks to [GMSH](http://gmsh.info/), associated papers :
 * *E. Marchandise, C. Carton de Wiart, W. G. Vos, C. Geuzaine and J.-F. Remacle. High quality surface remeshing using harmonic maps. Part II: surfaces with high genus and of large aspect ratio. International Journal for Numerical Methods in Engineering 86(11), pp. 1303-1321, 2011.*
 * *E. Marchandise, J.-F. Remacle and C. Geuzaine. Optimal parametrizations for surface remeshing. Engineering with Computers, December 2012, pp. 1-20.* 
 ---  
-Or in [3-matic®](http://www.materialise.com/en/software/3-matic) from Materialise®
-Maybe other software can perform this operation but I've not tested them myself:
+Or in [3-matic®](http://www.materialise.com/en/software/3-matic) from Materialise®.   
+It seems like other softwares could perform this operation but we've not tested them:  
 * HyperMesh Altair
 * [MeshLab](http://www.meshlab.net/)  
 
-This first step allows to get a "nicer" mesh of the bone models.  
+This first step allows to get a "nicer" mesh of the bone models (For more information see : **[How to generate nice mesh from STL](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/GenerateMeshFiles.md)**).  
 
 ![Nicer Mesh](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/Other/Images/niceMesh.jpg "Nicer mesh with GMSH")
