@@ -7,6 +7,7 @@ The main goal of this Matlab MATHWORKS® based project is to provide Matlab and 
 2. Automatically identify and model important features of the bones to create an anatomical coordinate system
 3. Generate an output file containing the coordinate system origin position and the basis vectors orientation in the world coordinate system
 
+## Remeshing of the 3D bone models
 For now the bone numerical representation require to be remeshed to 0.5 mm isotropic elements.
 
 It can be achieved thanks to [GMSH](http://gmsh.info/), associated papers :  
