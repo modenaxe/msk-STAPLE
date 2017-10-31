@@ -1,4 +1,6 @@
-# GIBOC-Knee-Coordinate-System
+# GIBOC-Knee-Coordinate-System  
+
+![Baniere](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/Other/Images/baniere_Fem_Pat_Tib.png "Result examples")
 
 The main goal of this Matlab MATHWORKS® based project is to provide Matlab and Python™ scripts and associated functions to :
 1. Read piecewise triangular representation of bones ([.STL Files](https://en.wikipedia.org/wiki/STL_(file_format)))
