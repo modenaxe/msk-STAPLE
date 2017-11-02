@@ -78,7 +78,11 @@ def callback_Auto():
         ID = fileID[:-4]
         
         f = open('remeshSTL.geo','w')
-        f.write("Geometry.HideCompounds = 0;\nMesh.RemeshAlgorithm=1;\nMesh.CharacteristicLengthMin={0};\nMesh.CharacteristicLengthMax={0};\nMerge \"{1}.stl\";\nCompound Surface(200)={{1}};\nSurface Loop(300)={{200}};\nVolume(301)={{300}};\nPhysical Surface (501)={{200}};\nPhysical Volume(502)={{301}};\nMesh 2;\nSave \"{1}_remeshed.msh\";\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper()))
+        f.write("Geometry.HideCompounds = 0;\nMesh.RemeshAlgorithm=1;\nMesh.CharacteristicLengthMin={0};"
+                "\nMesh.CharacteristicLengthMax={0};\nMerge \"{1}.stl\";\nCompound Surface(200)={{1}};"
+                "\nSurface Loop(300)={{200}};\nVolume(301)={{300}};\nPhysical Surface (501)={{200}};"
+                "\nPhysical Volume(502)={{301}};\nMesh 2;\nSave \"{1}_remeshed.msh\";"
+                "\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper()))
         f.close()
         
         start = time.time()
@@ -137,7 +141,11 @@ def callback_Select():
     filename = tkfd.askopenfilename(title='Select the file (.stl) you want to remesh: ') # show an "Open" dialog box and return the path to the selected file
     ID = filename[:-4]
     f = open('remeshSTL.geo','w')
-    f.write("Geometry.HideCompounds = 0;\nMesh.RemeshAlgorithm=1;\nMesh.CharacteristicLengthMin={0};\nMesh.CharacteristicLengthMax={0};\nMerge \"{1}.stl\";\nCompound Surface(200)={{1}};\nSurface Loop(300)={{200}};\nVolume(301)={{300}};\nPhysical Surface (501)={{200}};\nPhysical Volume(502)={{301}};\nMesh 2;\nSave \"{1}_remeshed.msh\";\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper()))
+    f.write("Geometry.HideCompounds = 0;\nMesh.RemeshAlgorithm=1;\nMesh.CharacteristicLengthMin={0};"
+            "\nMesh.CharacteristicLengthMax={0};\nMerge \"{1}.stl\";\nCompound Surface(200)={{1}};"
+            "\nSurface Loop(300)={{200}};\nVolume(301)={{300}};\nPhysical Surface (501)={{200}};"
+            "\nPhysical Volume(502)={{301}};\nMesh 2;\nSave \"{1}_remeshed.msh\";"
+            "\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper()))
     f.close()
     subprocess.call([gmsh, 'remeshSTL.geo'], shell=True)
     os.remove('remeshSTL.geo')
