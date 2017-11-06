@@ -82,7 +82,8 @@ def callback_Auto():
                 "\nMesh.CharacteristicLengthMax={0};\nMerge \"{1}.stl\";\nCompound Surface(200)={{1}};"
                 "\nSurface Loop(300)={{200}};\nVolume(301)={{300}};\nPhysical Surface (501)={{200}};"
                 "\nPhysical Volume(502)={{301}};\nMesh 2;\nSave \"{1}_remeshed.msh\";"
-                "\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper()))
+                "\nSave \"{1}_remeshed.stl\";\nExit;\n".format(size,ID.upper())"
+               )
         f.close()
         
         start = time.time()
