@@ -1,27 +1,47 @@
-   
-   
-   figure()
+close all
+clearvars
 
-    trisurf(ProxTib,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none'); % 0.8,0.8,0.85
+%% Load Example file
+load('Tibia0.mat')
 
-    hold on
+%% Plot Figure(1)
+figure()
+% Plot the whole tibia, here ProxTib is a Matlab triangulation object
+trisurf(ProxTib,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',0.7,'edgecolor','none');
+hold on
+axis equal
 
-    axis equal
+% Plot the identified articular surfaces
+trisurf(CS.Morph.EpiTibArtLat,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+trisurf(CS.Morph.EpiTibArtMed,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
 
-    light('Position',CS.Origin' + 300*CS.Y + 200*CS.X,'Style','local')
 
-    light('Position',CS.Origin' + 200*CS.Y - 200*CS.X,'Style','local')
+%Plot a dot on the Tibial Tubercule
+plotDot( PtMedialThirdOfTT, 'g', 2.5 )
 
-    light('Position',CS.Origin' + 50*CS.Y + 50*CS.X - 500*CS.Z,'Style','local')
+% handle lighting of objects
+light('Position',CS.Origin' + 500*CS.Y + 500*CS.X,'Style','local')
+light('Position',CS.Origin' + 500*CS.Y - 500*CS.X,'Style','local')
+light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
+light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
+lighting gouraud
 
-    plotDot( PtsMedThird, 'r', 1.25 )
+% Remove grid
+grid off
 
-    plotDot( PtMedialThirdOfTT, 'g', 2.5 )
+%% Plot Figure(2) plot the tibia only without transparency : 'FaceAlpha',1
+figure()
+trisurf(ProxTib,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
+hold on
+axis equal
 
-    plotDot( PtsTT, 'b', 1.25 )
+% handle lighting of objects
+light('Position',CS.Origin' + 500*CS.Y + 500*CS.X,'Style','local')
+light('Position',CS.Origin' + 500*CS.Y - 500*CS.X,'Style','local')
+light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
+light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
+lighting gouraud
 
-    hold on
-
-    grid off
-
-    lighting gouraud
+% Remove grid and axis
+grid off
+axis off
