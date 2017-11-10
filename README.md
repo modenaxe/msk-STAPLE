@@ -1,5 +1,11 @@
 # GIBOC-Knee-Coordinate-System  
-
+  
+### THIS REPOSITORY IS STILL UNDER CONSTRUCTION
+    
+**Automatic anatomical coordinate system constructions for the knee bones (Femur, Patella and Tibia)**  
+  
+  
+  
 ![Baniere](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/Other/Images/baniere_Fem_Pat_Tib.jpg "Result examples")
 
 The main goal of this Matlab MATHWORKS® based project is to provide Matlab and Python™ scripts and associated functions to :
@@ -8,7 +14,7 @@ The main goal of this Matlab MATHWORKS® based project is to provide Matlab and 
 3. Generate an output file containing the coordinate system origin position and the basis vectors orientation in the world coordinate system
 
 ## Remeshing of the 3D bone models
-For now the bone numerical representation require to be remeshed to 0.5 mm isotropic elements. It can be achieved thanks to [GMSH](http://gmsh.info/), or [3-matic®](http://www.materialise.com/en/software/3-matic) from Materialise®. However, other softwares could perform this operation but we've not tested them:
+For now the bone numerical representation require to be remeshed to 0.5 mm isotropic elements. It can be achieved thanks to [GMSH](http://gmsh.info/), or [3-matic®](http://www.materialise.com/en/software/3-matic) from Materialise®. However, other softwares could perform this operation but we've not tested them, for example:
 * HyperMesh Altair
 * [MeshLab](http://www.meshlab.net/)  
 
