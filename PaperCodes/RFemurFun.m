@@ -3,7 +3,7 @@ function [ Results ] = RFemurFun( name , oprtr , RATM_on)
 
 Results = struct();
 addpath(strcat(pwd,'\SubFonctions'));
-addpath(strcat(pwd,'\SubFonctions\SurFit'));
+addpath(strcat(pwd,'\SubFonctions\SurFit_LSGE'));
 
 Vatm(9) = 0;
 if RATM_on
