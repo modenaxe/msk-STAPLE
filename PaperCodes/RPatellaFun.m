@@ -5,11 +5,7 @@ Results = struct();
 
 % Piece of code to generate a random affine transformation matrix
 if RATM_on
-    [ Matm , Vatm , Tatm, angles ] = randomATM;
-    Results.RATM.ATM = Matm;
-    Results.RATM.R = Vatm;
-    Results.RATM.T = Tatm;
-    Results.RATM.Angles = angles;
+
 end
 
 addpath(strcat(pwd,'\SubFonctions'));
@@ -21,6 +17,13 @@ XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_PAT',oprtr,'
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = [cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))'];
 if RATM_on
+    % Get a random roto-translation matrix
+    [ Matm , Vatm , Tatm, angles ] = randomATM;
+    Results.RATM.ATM = Matm;
+    Results.RATM.R = Vatm;
+    Results.RATM.T = Tatm;
+	
+	% Update Patella vertices location with the random roto-translation matrix
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 

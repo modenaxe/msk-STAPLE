@@ -7,6 +7,11 @@ XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_TIB',oprtr,'
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    %Load rATM applied to this Tibia for other algorithms
+    Vatm = Results.RATM.R;
+    Tatm = Results.RATM.T;
+	
+	% Update Proximal Tibia vertices location with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 

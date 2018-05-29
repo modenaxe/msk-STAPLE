@@ -8,13 +8,6 @@ addpath(strcat(pwd,'\SubFonctions\SurFit'));
 Results = struct();
 
 % Piece of code to generate a random affine transformation matrix
-if RATM_on
-    [ Matm , Vatm , Tatm, angles ] = randomATM;
-    Results.RATM.ATM = Matm;
-    Results.RATM.R = Vatm;
-    Results.RATM.T = Tatm;
-    Results.RATM.Angles = angles;
-end
 
 %% Read the 3D bone model mesh
 % Read the Proximal Tibia (TIB) 3d bone model
@@ -22,6 +15,14 @@ XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_TIB',oprtr,'
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    % Get a random affine transformation matrix (Roto-Translation)
+    [ Matm , Vatm , Tatm, angles ] = randomATM;
+    Results.RATM.ATM = Matm;
+    Results.RATM.R = Vatm;
+    Results.RATM.T = Tatm;
+    Results.RATM.Angles = angles;
+	
+	% Update Proximal Tibia vertices loacation with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 
@@ -33,6 +34,7 @@ ProxTib = triangulation(Elmts2D,Pts2D);
 XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_ANK',oprtr,'05.msh'));Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    % Update Distal Tibia vertices loacation with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 

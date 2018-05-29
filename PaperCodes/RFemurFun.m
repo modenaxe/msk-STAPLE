@@ -5,21 +5,18 @@ Results = struct();
 addpath(strcat(pwd,'\SubFonctions'));
 addpath(strcat(pwd,'\SubFonctions\SurFit_LSGE'));
 
-Vatm(9) = 0;
-if RATM_on
-    while Vatm(9) > -0.1
-        [ Matm , Vatm , Tatm, angles ] = randomATM;
-        Results.RATM.ATM = Matm;
-        Results.RATM.R = Vatm;
-        Results.RATM.T = Tatm;
-        Results.RATM.Angles = angles;
-    end
-end
+
 
 XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_FEM',oprtr,'05.msh'));
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    [ Matm , Vatm , Tatm ] = randomATM;
+    Results.RATM.ATM = Matm;
+    Results.RATM.R = Vatm;
+    Results.RATM.T = Tatm;
+	
+	% Update Distal Femur vertices loacation with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 
@@ -32,6 +29,7 @@ XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_HAN',oprtr,'
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    % Update Proximal Femur vertices loacation with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 

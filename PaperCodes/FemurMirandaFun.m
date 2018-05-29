@@ -1,10 +1,6 @@
 function [ Results ] = FemurMirandaFun( name , oprtr , RATM_on, Results  )
 %FEMURMIRANDAFUN Function that build an ACS on the femur using the Miranda et Al. 2010 methods
 
-if RATM_on
-    [ Matm , Vatm , Tatm ] = randomATM;
-end
-
 
 addpath(strcat(pwd,'\SubFonctions'));
 addpath(strcat(pwd,'\SubFonctions\SurFit'));
@@ -13,6 +9,11 @@ XYZELMTS = py.txt2mtlb.read_meshGMSH(strcat('\Repere3DData\',name,'_FEM',oprtr,'
 Pts2D = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
 Elmts2D = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
 if RATM_on
+    %Load rATM applied to this femur for other algorithms
+    Vatm = Results.RATM.R;
+    Tatm = Results.RATM.T;
+	
+	% Update Distal Femur vertices location with rATM
     Pts2D = bsxfun(@plus,Pts2D*Vatm , Tatm');
 end
 
