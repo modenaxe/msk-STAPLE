@@ -1,6 +1,24 @@
 # GIBOC-Knee-Coordinate-System  
-  
-### THIS REPOSITORY IS STILL UNDER CONSTRUCTION
+
+The full text article associated is available at :
+[10.1016/j.jbiomech.2018.08.028](10.1016/j.jbiomech.2018.08.028)
+
+**Articular-surface-based automatic anatomical coordinate systems for the knee bones.**
+
+Jean-Baptiste RENAULT<sup>a,b,*</sup>
+Gaëtan AÜLLO-RASSER<sup>a,b,d</sup>
+Mathias DONNEZ<sup>a,b,c</sup>
+Sébastien PARRATTE<sup>a,b</sup>
+Patrick CHABRAND<sup>a,b</sup>
+
+<sub>
+a. Aix-Marseille University, CNRS, ISM UMR 7287, 13009 Marseille, France;
+b. APHM, Institute for Locomotion, Department of orthopaedics and Traumatology, Sainte-Marguerite Hospital, 13009, Marseille, France
+c. Newclip Technics, 44115 Haute-Goulaine, France
+d. RLC Systèmes, Marseille, France
+</sub>
+
+### After the recent publication of the associated article the code is being cleaned up before uploading
     
 **Automatic anatomical coordinate system constructions for the knee bones (Femur, Patella and Tibia)**  
   
