@@ -3,7 +3,7 @@
 The full text article associated is available at :
 [10.1016/j.jbiomech.2018.08.028](https://doi.org/10.1016/j.jbiomech.2018.08.028)
 
-**Articular-surface-based automatic anatomical coordinate systems for the knee bones.**
+### **Articular-surface-based automatic anatomical coordinate systems for the knee bones.**
 
 Jean-Baptiste RENAULT<sup>a,b,*</sup>
 Gaëtan AÜLLO-RASSER<sup>a,b,d</sup>
