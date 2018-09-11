@@ -4,7 +4,8 @@ function [ varargout ] = ReadMesh( varargin )
 %  - varargin : the address(es) of the file(s) to read
 %  - varargout : the triangulation(s) generated for each read file 
 
-addpath(strcat(pwd,'\stlTools'));
+addpath(strcat(pwd,'\MeshReadFun\stlTools'));
+addpath(strcat(pwd,'\MeshReadFun\'));
 
 if nargin ~= nargout
     error('The number of input files read should match the number of output')
