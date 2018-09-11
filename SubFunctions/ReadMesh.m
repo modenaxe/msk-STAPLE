@@ -3,10 +3,14 @@ function [ varargout ] = ReadMesh( varargin )
 %Each input file will be converted to one triangulation object
 %  - varargin : the address(es) of the file(s) to read
 %  - varargout : the triangulation(s) generated for each read file 
-
-addpath(strcat(pwd,'\MeshReadFun\stlTools'));
-addpath(strcat(pwd,'\MeshReadFun\'));
-addpath(strcat(pwd,'\TriangulationFun\'));
+% 
+% originalDirectory = pwd;
+% newDirectory = strcat(pwd,'\SubFunctions');
+% cd(newDirectory);
+cd .\SubFunctions
+% addpath(strcat(pwd,'\MeshReadFun\stlTools'));
+% addpath(strcat(pwd,'\MeshReadFun\'));
+% addpath(strcat(pwd,'\TriangulationFun\'));
 
 if nargin ~= nargout
     error('The number of input files read should match the number of output')
@@ -41,6 +45,8 @@ for i = 1 : nargin
     varargout{i} = Tr;
     
 end
+
+cd ..\
 
 end
 

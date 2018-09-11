@@ -20,7 +20,7 @@ def read_meshGMSH(file_name):
     import os
     import decimal
     cwd = os.getcwd()
-    fname = cwd + "\\" +file_name
+    fname = file_name
     f = open(fname,'r')
     N_nodes=int(f.readlines()[4])
     f.close()
