@@ -1,4 +1,4 @@
-function [ TR3 ] = triangulationUnite( TR1, TR2 )
+function [ TR3 ] = TriUnite( TR1, TR2 )
 %UNITE two unconnected triangulation objects , TR1, TR2
 
 ConnectivityList = vertcat( TR1.ConnectivityList ,...
