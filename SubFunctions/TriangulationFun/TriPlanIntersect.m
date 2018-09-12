@@ -12,13 +12,12 @@ Elmts = Tr.ConnectivityList;
 
 
 n=n/norm(n);
-d=double(d);
 % If d is a point on the plan and not the altitude at (0,0,z)
 if length(d)>2
     if size(d,2)==1
-        d = d'*n;
+        d = -d'*n;
     elseif size(d,1)==1
-        d = d*n;
+        d = -d*n;
     else
         sprintf('ERROR')
     end
@@ -35,7 +34,7 @@ end
 d = d + 10*antiRoundOff ;
 Nodes = bsxfun(@plus, Nodes , 10*antiRoundOff*n') ;
 
-NodesDist = Nodes*n-d;
+NodesDist = Nodes*n+d;
 Elmts_Status = sum(sign(NodesDist(Elmts)),2);
 
 IndexInterfaceTri = abs(Elmts_Status) < 3;

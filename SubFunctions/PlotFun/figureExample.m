@@ -18,9 +18,6 @@ trisurf(CS.Morph.EpiTibArtLat,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
 trisurf(CS.Morph.EpiTibArtMed,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
 
 
-%Plot a dot on the Tibial Tubercule
-plotDot( PtMedialThirdOfTT, 'g', 2.5 )
-
 % handle lighting of objects
 light('Position',CS.Origin' + 500*CS.Y + 500*CS.X,'Style','local')
 light('Position',CS.Origin' + 500*CS.Y - 500*CS.X,'Style','local')

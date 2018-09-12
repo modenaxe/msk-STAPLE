@@ -4,7 +4,7 @@ function [ Results ] = RFemurFun( DistFem , ProxFem)
 addpath(genpath(strcat(pwd,'\SubFunctions')));
 Results = struct();
 
-%% Get initial Coordinate system and columetric center
+%% Get initial Coordinate system and volumetric center
 
 Femur = TriUnite(DistFem,ProxFem);
 
@@ -195,7 +195,7 @@ PtLatTopCondyle = EpiFem.Points(IOK(Imax),:);
 Pt_AxisOnSurf_proj = PtMiddleCondyle*VC ;
 
 Epiphysis_Pts_DF_2D_RC = EpiFem.Points*VC ;
-%     Pts_Proj_C = Epiphysis_Pts_DF_2D_RC(IdxPtsCondylesLat,:);
+%   Pts_Proj_C = Epiphysis_Pts_DF_2D_RC(IdxPtsCondylesLat,:);
 
 % Lateral Condyles
 Pts_Proj_CLat = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
