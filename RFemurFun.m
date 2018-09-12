@@ -125,7 +125,7 @@ Axes = Orientation*Axes;
 IdCdlPts(abs(U_Axes*V_all(:,2))<0.75,:) = [];
 U_Axes(abs(U_Axes*V_all(:,2))<0.75,:) = [];
 
-[ U_Axes_Good] = PCRegionGrowing(U_Axes, normalizeV( mean(U_Axes) ), 0.1);
+[ U_Axes_Good] = PCRegionGrowing(U_Axes, normalizeV( mean(U_Axes) )', 0.1);
 LIA = ismember(U_Axes,U_Axes_Good,'rows');
 U_Axes(~LIA,:) = [];
 Axes(~LIA,:) = [];
