@@ -1,8 +1,8 @@
-function [ Results ] = RFemurFun( DistFem , ProxFem)
+function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 %Fit an ACS on a femur composed of the distal femur and the femoral head
 
 addpath(genpath(strcat(pwd,'\SubFunctions')));
-Results = struct();
+CSs = struct();
 
 %% Get initial Coordinate system and volumetric center
 
@@ -18,8 +18,8 @@ Femur = TriUnite(DistFem,ProxFem);
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 
-Results.Z0 = Z0;
-Results.CenterVol = CenterVol;
+CSs.Z0 = Z0;
+CSs.CenterVol = CenterVol;
 
 %% Find Femur Head Center
 
@@ -31,8 +31,7 @@ Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH);
 
 % Get an initial ML Axis Y0
 OT = mean(Patch_Top_FH.Points)' - CenterVol;
-Y0 = cross(cross(Z0,OT),Z0);
-Y0 = Y0/norm(Y0);
+Y0 = normalizeV(  cross(cross(Z0,OT),Z0)  );
 
 % Find a the most medial (MM) point on the femoral head (FH)
 [~ , I_MM_FH] = max( ProxFem.incenter*Y0 );
@@ -47,7 +46,7 @@ FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
 [ FemHead1] = TriDilateMesh( ProxFem ,FemHead0 , round(1.5*Radius) );
 [CenterFH,Radius] = sphereFit(FemHead1.Points);
 
-Results.CenterFH0 = CenterFH;
+CSs.CenterFH0 = CenterFH;
 
 % Theorial Normal of the face
 CPts_PF_2D  = bsxfun(@minus,FemHead1.incenter,CenterFH);
@@ -68,8 +67,8 @@ FemHead = TriOpenMesh(ProxFem ,FemHead,3);
 [CenterFH,Radius] = sphereFit(FemHead.Points);
 
 % Write to the results struct
-Results.CenterFH = CenterFH;
-Results.RadiusFH = Radius; 
+CSs.CenterFH = CenterFH;
+CSs.RadiusFH = Radius; 
 
 %% Distal Femur Analysis ? Separate diaphysis and epiphysis
 
@@ -126,7 +125,7 @@ Axes = Orientation*Axes;
 IdCdlPts(abs(U_Axes*V_all(:,2))<0.75,:) = [];
 U_Axes(abs(U_Axes*V_all(:,2))<0.75,:) = [];
 
-[ U_Axes_Good] = PCRegionGrowing(U_Axes,mean(U_Axes)/norm(mean(U_Axes)),0.1);
+[ U_Axes_Good] = PCRegionGrowing(U_Axes, normalizeV( mean(U_Axes) ), 0.1);
 LIA = ismember(U_Axes,U_Axes_Good,'rows');
 U_Axes(~LIA,:) = [];
 Axes(~LIA,:) = [];
@@ -156,8 +155,8 @@ PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
     1/2 * EpiFem.Points(IdCdlPts(:,2),:));
 
 % 2nd ACS guess
-Y1 = transpose(sum(U_Axes,1))/norm(sum(U_Axes,1));
-X1 = cross(Y1,Z0)/norm(cross(Y1,Z0));
+Y1 = normalizeV( (sum(U_Axes,1))' );
+X1 = normalizeV( cross(Y1,Z0) );
 Z1 = cross(X1,Y1);
 
 VC = [X1 Y1 Z1];
@@ -165,7 +164,7 @@ VC = [X1 Y1 Z1];
 % Select Post Condyle points :
 % Med & Lat Points is the most distal-Posterior on the condyles
 X1 = sign((mean(EpiFem.Points)-PtPosterCondyle)*X1)*X1;
-U = (3*Z0 - X1); U = U/norm(U);
+U =  normalizeV( 3*Z0 - X1 );
 
 % Add points on the poximal edges of each condyle that might have been
 % excluded from the initial selection:
@@ -219,10 +218,10 @@ Pts_0_C2 = transpose(VC*Pts_Proj_CMed');
 % posterior-distally
 PtsCondyle = [PtsCondyle_Lat;PtsCondyle_Med];
 X1 = sign((mean(EpiFem.Points)-mean(PtsCondyle))*X1)*X1;
-U = (-Z0 - 3*X1); U = U/norm(U);
+U =  normalizeV( -Z0 - 3*X1 );
 NodesOk = EpiFem.Points(EpiFem.vertexNormal*U>0.98,:);
 
-U = (Z0 - 3*X1); U = U/norm(U);
+U =  normalizeV( Z0 - 3*X1 );
 [~,IMax] = min(NodesOk*U);
 PtNotch = NodesOk(IMax,:);
 
@@ -333,26 +332,26 @@ Axe0 = transpose(Center1 - Center2);
 Center0 = transpose(0.5*Center1 + 0.5*Center2);
 Radius0 = 0.5*Radius1 + 0.5*Radius2;
 
-Ysph = Axe0/norm(Axe0);
+Ysph =  normalizeV( Axe0 );
 Ysph = sign(Ysph'*Y0)*Ysph;
 
 KneeCenterSph = Center0;
 
-Zend_sph = CenterFH - KneeCenterSph'; Zend_sph = Zend_sph'/norm(Zend_sph);
-Xend_sph = cross(Ysph,Zend_sph)/norm( cross(Ysph,Zend_sph));
+Zend_sph =  normalizeV( CenterFH' - KneeCenterSph );
+Xend_sph =  normalizeV( cross(Ysph,Zend_sph) );
 Yend_sph = cross(Zend_sph,Xend_sph);
 
 % Write Found ACS
-Results.Ysph = Ysph;
-Results.CenterKneeSph = KneeCenterSph;
-Results.Xend_sph = Xend_sph;
-Results.Yend_sph = Yend_sph;
-Results.Zend_sph = Zend_sph;
+CSs.Ysph = Ysph;
+CSs.CenterKneeSph = KneeCenterSph;
+CSs.Xend_sph = Xend_sph;
+CSs.Yend_sph = Yend_sph;
+CSs.Zend_sph = Zend_sph;
 
 %% Fit Cylinder on articular surface and get center 
 % Fit the condyles with a cylinder
 [x0n, an, rn] = lscylinder(PtsCondyle, Center0, Axe0, Radius0, 0.001, 0.001);
-Y2 = an/norm(an);
+Y2 =  normalizeV( an );
 
 % Get the center as the middle point between the center of each condyle AS
 % projected onto the cylinder axis.
@@ -373,30 +372,31 @@ Pt_Knee = 0.5*OnAxisPtLat + 0.5*OnAxisPtMed;
 PtsCondyldeOnCylAxis = bsxfun(@plus,(bsxfun(@minus,PtsCondyle,x0n')*Y2)*Y2',x0n');
 [~,Itmp] = min(PtsCondyldeOnCylAxis*Y2) ; Pt_tmp = PtsCondyldeOnCylAxis(Itmp,:);
 Pt_Knee0 = Pt_tmp + range(PtsCondyldeOnCylAxis*Y2)/2*Y2';%(mean(PtsCondyldeOnCylAxis*Y2) - minTmp)
-Z2 = Z0 - Z0'*Y2*Y2; Z2 = Z2 / norm(Z2);
+Z2 =  normalizeV( Z0 - Z0'*Y2*Y2 );
 Pt_Knee0 = Pt_Knee0 - rn*Z2';
 
 % Final steps to construct direct ACS
-Zmech = CenterFH - Pt_Knee; Zmech = Zmech'/norm(Zmech);
+Zmech =  normalizeV( CenterFH - Pt_Knee );
 
-Xend = cross(Y2,Zmech)/norm( cross(Y2,Zmech));
-Yend = cross(Zmech,Xend); Yend = sign(Yend'*Yend_sph)*Yend;
+Xend =  normalizeV( cross(Y2,Zmech) );
+Yend = cross(Zmech,Xend); 
+Yend = sign(Yend'*Yend_sph)*Yend;
 Zend = Zmech;
 Xend = cross(Yend,Zend);
 VFem = [Xend Yend Zend];
 
 % Write Found ACS
-Results.YCvxHull = Y1;
-Results.Ycyl = Y2;
-Results.Ptcyl = x0n;
-Results.Rcyl = rn;
-Results.Rangecyl = range(PtsCondyldeOnCylAxis*Y2);
-Results.CenterKnee = Pt_Knee;
-Results.CenterKneeRange = Pt_Knee0;
-Results.Xend = Xend;
-Results.Yend = Yend;
-Results.Zend = Zend;
-Results.V = VFem;
+CSs.YCvxHull = Y1;
+CSs.Ycyl = Y2;
+CSs.Ptcyl = x0n;
+CSs.Rcyl = rn;
+CSs.Rangecyl = range(PtsCondyldeOnCylAxis*Y2);
+CSs.CenterKnee = Pt_Knee;
+CSs.CenterKneeRange = Pt_Knee0;
+CSs.Xend = Xend;
+CSs.Yend = Yend;
+CSs.Zend = Zend;
+CSs.V = VFem;
 
 %% Ellipsoid Technic
 
@@ -433,31 +433,47 @@ Condyle_2 = TriOpenMesh(EpiFem,Condyle_2,15);
 
 [ center2, radii2, evecs2, v2, chi2_2 ] = ellipsoid_fit( Condyle_2.Points , '' );
 
-Yelpsd = (center2-center1)/norm(center2-center1);
+Yelpsd =  normalizeV( center2-center1 );
 Yelpsd = sign(Yelpsd'*Y0)*Yelpsd;
 
 KneeCenterElpsd = 0.5*center2 + 0.5*center1;
 
-Zend_elpsd = CenterFH - KneeCenterElpsd'; Zend_elpsd = Zend_elpsd'/norm(Zend_elpsd);
-Xend_elpsd = cross(Yelpsd,Zend_elpsd)/norm( cross(Yelpsd,Zend_elpsd));
+Zend_elpsd =  normalizeV( CenterFH - KneeCenterElpsd');
+Xend_elpsd =  normalizeV( cross(Yelpsd,Zend_elpsd) );
 Yend_elpsd = cross(Zend_elpsd,Xend_elpsd);
 Yend_elpsd = sign(Yend_elpsd'*Yend_sph)*Yend_elpsd;
 Xend_elpsd = cross(Yend_elpsd,Zend_elpsd);
 
 
 % Result write
-Results.Yelpsd = Yelpsd;
-Results.CenterKneeElpsd = KneeCenterElpsd;
-Results.Xend_elpsd = Xend_elpsd;
-Results.Yend_elpsd = Yend_elpsd;
-Results.Zend_elpsd = Zend_elpsd;
+CSs.Yelpsd = Yelpsd;
+CSs.CenterKneeElpsd = KneeCenterElpsd;
+CSs.Xend_elpsd = Xend_elpsd;
+CSs.Yend_elpsd = Yend_elpsd;
+CSs.Zend_elpsd = Zend_elpsd;
 
 %% Results General
-Results.PtNotch = PtNotch;
-Results.Xinertia = sign(V_all(:,3)'*Xend)*V_all(:,3);
-Results.Yinertia = sign(V_all(:,2)'*Yend)*V_all(:,2);
-Results.Zinertia = Z0;
-Results.Minertia = [Results.Xinertia,Results.Yinertia,Z0];
+CSs.PtNotch = PtNotch;
+CSs.Xinertia = sign(V_all(:,3)'*Xend)*V_all(:,3);
+CSs.Yinertia = sign(V_all(:,2)'*Yend)*V_all(:,2);
+CSs.Zinertia = Z0;
+CSs.Minertia = [CSs.Xinertia,CSs.Yinertia,Z0];
+
+%% Output triangulation objects
+if nargout>1
+    TrObjects = struct();
+    TrObjects.Tibia = Tibia;
+    
+    TrObjects.ProxTib = ProxTib;
+    TrObjects.DistTib = DistTib;
+    
+    TrObjects.AnkleArtSurf = AnkleArtSurf;
+    
+    TrObjects.EpiTib = EpiTib;
+    
+    TrObjects.EpiTibASMed = EpiTibASMed;
+    TrObjects.EpiTibASLat = EpiTibASLat;
+end
 
 end
 

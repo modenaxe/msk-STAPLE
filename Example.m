@@ -3,11 +3,8 @@
 % EXAMPLE DATA CAN BE FOUND AT
 % https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=0
 %--------------------------------------------------------------------------
-
-
 clearvars 
 close all
-
 
 addpath(genpath(strcat(pwd,'\SubFunctions')));
 

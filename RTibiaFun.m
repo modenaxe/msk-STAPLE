@@ -1,9 +1,9 @@
-function [ ACSsResults, TrObjects ] = RTibiaFun( ProxTib , DistTib)
+function [ CSs, TrObjects ] = RTibiaFun( ProxTib , DistTib)
 % Fit an ACS on a Tibia composed of the proximal tibia and the tibial part of
 % the ankle
 
 addpath(genpath(strcat(pwd,'\SubFunctions')));
-ACSsResults = struct();
+CSs = struct();
 
 
 %% Get initial Coordinate system and volumetric center
@@ -18,9 +18,9 @@ Tibia = TriUnite(ProxTib,DistTib);
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
-ACSsResults.Z0 = Z0;
-ACSsResults.CenterVol = CenterVol;
-ACSsResults.InertiaMatrix = InertiaMatrix;
+CSs.Z0 = Z0;
+CSs.CenterVol = CenterVol;
+CSs.InertiaMatrix = InertiaMatrix;
 
 %% Distal Tibia -> Identified ankle center 
 % 1st : Find triangles with less than 30° relative to the tibia principal
@@ -303,20 +303,20 @@ Xend = cross(Yend,Zend);
 Vend = [Xend Yend Zend];
 
 % Result write
-ACSsResults.tech1.CenterVol = CenterVol;
-ACSsResults.tech1.CenterAnkle = ankleCenter;
-ACSsResults.tech1.CenterKnee = Pt_Knee;
-ACSsResults.tech1.Z0 = Z0;
-ACSsResults.tech1.Ztp = Ztp;
-ACSsResults.tech1.Zmech = Zmech;
+CSs.tech1.CenterVol = CenterVol;
+CSs.tech1.CenterAnkle = ankleCenter;
+CSs.tech1.CenterKnee = Pt_Knee;
+CSs.tech1.Z0 = Z0;
+CSs.tech1.Ztp = Ztp;
+CSs.tech1.Zmech = Zmech;
 
-ACSsResults.tech1.Origin = Pt_Knee;
-ACSsResults.tech1.X = Xend;
-ACSsResults.tech1.Y = Yend;
-ACSsResults.tech1.Z = Zend;
+CSs.tech1.Origin = Pt_Knee;
+CSs.tech1.X = Xend;
+CSs.tech1.Y = Yend;
+CSs.tech1.Z = Zend;
 
-ACSsResults.tech1.Origin = Pt_Knee;
-ACSsResults.tech1.V = Vend;
+CSs.tech1.Origin = Pt_Knee;
+CSs.tech1.V = Vend;
 
 
 %% Technic 2 : Center of medial & lateral condyles
@@ -342,18 +342,18 @@ Xend = cross(Yend,Zend);
 Vend = [Xend Yend Zend];
 
 % Result write
-ACSsResults.tech2.CenterVol = CenterVol;
-ACSsResults.tech2.CenterAnkle = ankleCenter;
-ACSsResults.tech2.CenterKnee = Pt_Knee;
-ACSsResults.tech2.Z0 = Z0;
-ACSsResults.tech2.Ztp = Ztp;
+CSs.tech2.CenterVol = CenterVol;
+CSs.tech2.CenterAnkle = ankleCenter;
+CSs.tech2.CenterKnee = Pt_Knee;
+CSs.tech2.Z0 = Z0;
+CSs.tech2.Ztp = Ztp;
 
-ACSsResults.tech2.Origin = Pt_Knee;
-ACSsResults.tech2.X = Xend;
-ACSsResults.tech2.Y = Yend;
-ACSsResults.tech2.Z = Zend;
+CSs.tech2.Origin = Pt_Knee;
+CSs.tech2.X = Xend;
+CSs.tech2.Y = Yend;
+CSs.tech2.Z = Zend;
 
-ACSsResults.tech2.V  = Vend ;
+CSs.tech2.V  = Vend ;
 
 
 %% Technic 3 : Compute the inertial axis of a slice of the tp plateau
@@ -419,21 +419,21 @@ Xend = cross(Yend,Zend);
 Vend = [Xend Yend Zend];
 
 % Result write
-ACSsResults.tech3.CenterVol = CenterVol;
-ACSsResults.tech3.CenterAnkle = ankleCenter;
-ACSsResults.tech3.CenterKnee = CenterKnee;
-ACSsResults.tech3.Z0 = Z0;
-ACSsResults.tech3.Ztp = Ztp;
-ACSsResults.tech3.Ytp = Ytp;
-ACSsResults.tech3.Xtp = Xtp;
+CSs.tech3.CenterVol = CenterVol;
+CSs.tech3.CenterAnkle = ankleCenter;
+CSs.tech3.CenterKnee = CenterKnee;
+CSs.tech3.Z0 = Z0;
+CSs.tech3.Ztp = Ztp;
+CSs.tech3.Ytp = Ytp;
+CSs.tech3.Xtp = Xtp;
 
-ACSsResults.tech3.Origin = CenterKnee;
-ACSsResults.tech3.X = Xend;
-ACSsResults.tech3.Y = Yend;
-ACSsResults.tech3.Z = Zend;
+CSs.tech3.Origin = CenterKnee;
+CSs.tech3.X = Xend;
+CSs.tech3.Y = Yend;
+CSs.tech3.Z = Zend;
 
-ACSsResults.tech3.V = Vend;
-ACSsResults.tech3.Name='ArtSurfPIA';
+CSs.tech3.V = Vend;
+CSs.tech3.Name='ArtSurfPIA';
 
 %% Technic 4 fitted, Ellipse at the the largest cross section area
 %--------------------- Kai et Al. 2014 technic ----------------------------
@@ -464,31 +464,31 @@ Yend = sign(Yend'*Y0)*Yend; Yend = Yend / norm(Yend);
 Xend = cross(Yend,Zend);
 
 % Result write
-ACSsResults.tech4.CenterVol = CenterVol;
-ACSsResults.tech4.CenterAnkle = CenterAnkleInside;
-ACSsResults.tech4.CenterKnee = CenterEllipse;
-ACSsResults.tech4.YElpsMax = YElpsMax;
+CSs.tech4.CenterVol = CenterVol;
+CSs.tech4.CenterAnkle = CenterAnkleInside;
+CSs.tech4.CenterKnee = CenterEllipse;
+CSs.tech4.YElpsMax = YElpsMax;
 
-ACSsResults.tech4.Origin = CenterEllipse;
-ACSsResults.tech4.X = Xend;
-ACSsResults.tech4.Y = Yend;
-ACSsResults.tech4.Z = Zend;
+CSs.tech4.Origin = CenterEllipse;
+CSs.tech4.X = Xend;
+CSs.tech4.Y = Yend;
+CSs.tech4.Z = Zend;
 
-ACSsResults.tech4.V = [Xend Yend Zend];
-ACSsResults.tech4.ElpsPts = EllipsePts;
+CSs.tech4.V = [Xend Yend Zend];
+CSs.tech4.ElpsPts = EllipsePts;
 
 
 %% Inertia Results
 Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
 Xi = cross(Yi,Z0);
 
-ACSsResults.CenterAnkle1 = ankleCenter;
-ACSsResults.CenterAnkle2 = CenterAnkleInside;
-ACSsResults.CenterAnkle3 = ankleCenter;
-ACSsResults.Zinertia = Z0;
-ACSsResults.Yinertia = Yi;
-ACSsResults.Xinertia = Xi;
-ACSsResults.Minertia = [Xi Yi Z0];
+CSs.CenterAnkle1 = ankleCenter;
+CSs.CenterAnkle2 = CenterAnkleInside;
+CSs.CenterAnkle3 = ankleCenter;
+CSs.Zinertia = Z0;
+CSs.Yinertia = Yi;
+CSs.Xinertia = Xi;
+CSs.Minertia = [Xi Yi Z0];
 
 if nargout>1
     TrObjects = struct();
