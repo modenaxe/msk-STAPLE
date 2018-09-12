@@ -19,7 +19,17 @@ d. RLC Systèmes, Marseille, France
 </sub>
 
 ### After the recent publication of the associated article the code is being cleaned up before uploading
-    
+
+- Femur works see example.m to try it
+- Tibia works see example.m to try it
+- Patella yet to be cleaned
+- For now coordinate systems from all variants are systematically computed, at some it will be changed so that the user can select the method of his choice from those in the paper
+
+Example data can be found [here](https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=0) or directly [there](
+https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=1)
+
+
+
 **Automatic anatomical coordinate system constructions for the knee bones (Femur, Patella and Tibia)**  
   
   
