@@ -12,8 +12,8 @@ Femur = TriUnite(DistFem,ProxFem);
 [ V_all, CenterVol ] = TriInertiaPpties( Femur );
 
 
-% Initial estimate of the Distal-to-Proximal (DP) axis Z0 
-% Check that the distal tibia is 'below' the proximal tibia, 
+% Initial estimate of the Distal-to-Proximal (DP) axis Z0
+% Check that the distal tibia is 'below' the proximal tibia,
 % invert Z0 direction otherwise
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
@@ -68,7 +68,7 @@ FemHead = TriOpenMesh(ProxFem ,FemHead,3);
 
 % Write to the results struct
 CSs.CenterFH = CenterFH;
-CSs.RadiusFH = Radius; 
+CSs.RadiusFH = Radius;
 
 %% Distal Femur Analysis ? Separate diaphysis and epiphysis
 
@@ -76,7 +76,7 @@ CSs.RadiusFH = Radius;
 Alt = linspace( min(DistFem.Points*Z0)+0.5 ,max(DistFem.Points*Z0)-0.5, 100);
 Area= zeros(size(Alt));
 i=0;
-for d = Alt
+for d = -Alt
     i = i + 1;
     [ ~ , Area(i), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
 end
@@ -85,7 +85,7 @@ end
 ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 
-%% Analyze epiphysis to extract nodes lying on the condyles 
+%% Analyze epiphysis to extract nodes lying on the condyles
 [ IdxPointsPair , Edges ] = LargestEdgeConvHull(  EpiFem.Points );
 Idx_Epiphysis_Pts_DF_Slice = unique(EpiFem.freeBoundary);
 
@@ -94,7 +94,7 @@ Ikept = [];
 
 % Keep elements that are not connected to the proximal cut and that are
 % longer than half of the longest Edge
-while length(Ikept)~=sum(Edges>0.5*Edges(1))
+while length(Ikept) ~= sum(Edges>0.5*Edges(1))
     i=i+1;
     if ~any(IdxPointsPair(i,1)==Idx_Epiphysis_Pts_DF_Slice) &&...
             ~any(IdxPointsPair(i,2)==Idx_Epiphysis_Pts_DF_Slice)
@@ -169,8 +169,8 @@ U =  normalizeV( 3*Z0 - X1 );
 % Add points on the poximal edges of each condyle that might have been
 % excluded from the initial selection:
 %Med
-[nMed,~] = lsplane(PtsCondylesMed);
-dMed = -mean(PtsCondylesMed(1:5,:)*nMed);
+[oLSP, nMed] = lsplane(PtsCondylesMed);
+dMed = -oLSP*nMed;
 IonPlan = find(abs(EpiFem.Points*nMed+dMed)<2.5 & ...
     EpiFem.Points*Z0>max(PtsCondylesMed*Z0-2.5));
 IonC = rangesearch(EpiFem.Points,PtsCondylesMed,7.5);
@@ -179,8 +179,8 @@ IOK = intersect(IonPlan,unique([IonC{:}]'));
 PtMedTopCondyle = EpiFem.Points(IOK(Imax),:);
 
 %Lat
-[nLat,~] = lsplane(PtsCondylesLat);
-dLat = -mean(PtsCondylesLat(1:5,:)*nLat);
+[oLSP, nLat] = lsplane(PtsCondylesLat);
+dLat = -oLSP*nLat;
 IonPlan = find(abs(EpiFem.Points*nLat+dLat)<2.5 & ...
     EpiFem.Points*Z0>max(PtsCondylesLat*Z0-2.5));
 IonC = rangesearch(EpiFem.Points,PtsCondylesLat,7.5);
@@ -262,19 +262,19 @@ AlphaAngle = abs(90-rad2deg(acos(sum(Condyle_1.vertexNormal.*Ui,2))));
 GammaAngle = rad2deg(acos(Condyle_1.vertexNormal*Z0));
 
 % Sigmoids functions to compute probability of vertex to be on an edge
-Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10)); 
+Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10));
 Prob_Edge_Angle = Prob_Edge_Angle / max(Prob_Edge_Angle);
 
-Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05)); 
+Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05));
 Prob_Edge_Curv = Prob_Edge_Curv / max(Prob_Edge_Curv);
 
-Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15)); 
+Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15));
 Prob_FaceUp = Prob_FaceUp / max(Prob_FaceUp);
 
 Prob_Edge = 0.6*sqrt(Prob_Edge_Angle.*Prob_Edge_Curv) +...
-            0.05*Prob_Edge_Curv +...
-            0.15*Prob_Edge_Angle +...
-            0.2*Prob_FaceUp;
+    0.05*Prob_Edge_Curv +...
+    0.15*Prob_Edge_Angle +...
+    0.2*Prob_FaceUp;
 
 Condyle_1_edges = TriReduceMesh(Condyle_1,[],find(Prob_Edge_Curv.*Prob_Edge_Angle>0.5));
 
@@ -304,13 +304,13 @@ AlphaAngle = abs(90-rad2deg(acos(sum(Condyle_2.vertexNormal.*Ui,2))));
 GammaAngle = rad2deg(acos(Condyle_2.vertexNormal*Z0));
 
 % Sigmoids functions to compute probability of vertex to be on an edge
-Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10)); 
+Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10));
 Prob_Edge_Angle = Prob_Edge_Angle / max(Prob_Edge_Angle);
 
-Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05)); 
+Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05));
 Prob_Edge_Curv = Prob_Edge_Curv / max(Prob_Edge_Curv);
 
-Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15)); 
+Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15));
 Prob_FaceUp = Prob_FaceUp / max(Prob_FaceUp);
 
 Prob_Edge = 0.6*sqrt(Prob_Edge_Angle.*Prob_Edge_Curv) +  0.05*Prob_Edge_Curv + 0.15*Prob_Edge_Angle +  0.2*Prob_FaceUp; % + 0.25*Prob_Edge_Curv; % + 0.05*Prob_Edge_Curv + 0.05*Prob_Edge_Angle;
@@ -342,13 +342,13 @@ Xend_sph =  normalizeV( cross(Ysph,Zend_sph) );
 Yend_sph = cross(Zend_sph,Xend_sph);
 
 % Write Found ACS
-CSs.Ysph = Ysph;
-CSs.CenterKneeSph = KneeCenterSph;
-CSs.Xend_sph = Xend_sph;
-CSs.Yend_sph = Yend_sph;
-CSs.Zend_sph = Zend_sph;
+CSs.PCS.Ysph = Ysph;
+CSs.PCS.Origin = KneeCenterSph;
+CSs.PCS.X = Xend_sph;
+CSs.PCS.Y = Yend_sph;
+CSs.PCS.Z = Zend_sph;
 
-%% Fit Cylinder on articular surface and get center 
+%% Fit Cylinder on articular surface and get center
 % Fit the condyles with a cylinder
 [x0n, an, rn] = lscylinder(PtsCondyle, Center0, Axe0, Radius0, 0.001, 0.001);
 Y2 =  normalizeV( an );
@@ -379,24 +379,24 @@ Pt_Knee0 = Pt_Knee0 - rn*Z2';
 Zmech =  normalizeV( CenterFH - Pt_Knee );
 
 Xend =  normalizeV( cross(Y2,Zmech) );
-Yend = cross(Zmech,Xend); 
+Yend = cross(Zmech,Xend);
 Yend = sign(Yend'*Yend_sph)*Yend;
 Zend = Zmech;
 Xend = cross(Yend,Zend);
 VFem = [Xend Yend Zend];
 
 % Write Found ACS
-CSs.YCvxHull = Y1;
-CSs.Ycyl = Y2;
-CSs.Ptcyl = x0n;
-CSs.Rcyl = rn;
-CSs.Rangecyl = range(PtsCondyldeOnCylAxis*Y2);
-CSs.CenterKnee = Pt_Knee;
-CSs.CenterKneeRange = Pt_Knee0;
-CSs.Xend = Xend;
-CSs.Yend = Yend;
-CSs.Zend = Zend;
-CSs.V = VFem;
+CSs.PCC.YCvxHull = Y1;
+CSs.PCC.Ycyl = Y2;
+CSs.PCC.Ptcyl = x0n;
+CSs.PCC.Rcyl = rn;
+CSs.PCC.Rangecyl = range(PtsCondyldeOnCylAxis*Y2);
+CSs.PCC.Origin = Pt_Knee;
+CSs.PCC.CenterKneeRange = Pt_Knee0;
+CSs.PCC.X = Xend;
+CSs.PCC.Y = Yend;
+CSs.PCC.Z = Zend;
+CSs.PCC.V = VFem;
 
 %% Ellipsoid Technic
 
@@ -429,9 +429,9 @@ Condyle_1 = TriOpenMesh(EpiFem,Condyle_1,15);
 Condyle_2 = TriCloseMesh(EpiFem,Condyle_2,5);
 Condyle_2 = TriOpenMesh(EpiFem,Condyle_2,15);
 
-[ center1, radii1, evecs1, v1, chi2_1 ] = ellipsoid_fit( Condyle_1.Points , '' );
+center1 = ellipsoid_fit( Condyle_1.Points , '' );
 
-[ center2, radii2, evecs2, v2, chi2_2 ] = ellipsoid_fit( Condyle_2.Points , '' );
+center2 = ellipsoid_fit( Condyle_2.Points , '' );
 
 Yelpsd =  normalizeV( center2-center1 );
 Yelpsd = sign(Yelpsd'*Y0)*Yelpsd;
@@ -446,11 +446,11 @@ Xend_elpsd = cross(Yend_elpsd,Zend_elpsd);
 
 
 % Result write
-CSs.Yelpsd = Yelpsd;
-CSs.CenterKneeElpsd = KneeCenterElpsd;
-CSs.Xend_elpsd = Xend_elpsd;
-CSs.Yend_elpsd = Yend_elpsd;
-CSs.Zend_elpsd = Zend_elpsd;
+CSs.CE.Yelpsd = Yelpsd;
+CSs.CE.Origin = KneeCenterElpsd;
+CSs.CE.X = Xend_elpsd;
+CSs.CE.Y = Yend_elpsd;
+CSs.CE.Z = Zend_elpsd;
 
 %% Results General
 CSs.PtNotch = PtNotch;
@@ -462,17 +462,17 @@ CSs.Minertia = [CSs.Xinertia,CSs.Yinertia,Z0];
 %% Output triangulation objects
 if nargout>1
     TrObjects = struct();
-    TrObjects.Tibia = Tibia;
+    TrObjects.Femur = Femur;
     
-    TrObjects.ProxTib = ProxTib;
-    TrObjects.DistTib = DistTib;
+    TrObjects.ProxFem = ProxFem;
+    TrObjects.DistFem = DistFem;
     
-    TrObjects.AnkleArtSurf = AnkleArtSurf;
+    TrObjects.FemHead = FemHead;
     
-    TrObjects.EpiTib = EpiTib;
+    TrObjects.EpiFem = EpiFem;
     
-    TrObjects.EpiTibASMed = EpiTibASMed;
-    TrObjects.EpiTibASLat = EpiTibASLat;
+    TrObjects.EpiFemASLat = Condyle_1_end;
+    TrObjects.EpiFemASMed = Condyle_2_end;
 end
 
 end
