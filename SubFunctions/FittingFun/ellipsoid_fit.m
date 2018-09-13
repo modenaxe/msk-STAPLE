@@ -69,6 +69,8 @@ end
 % fit ellipsoid in the form Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx +
 % 2Hy + 2Iz + J = 0 and A + B + C = 3 constraint removing one extra
 % parameter
+
+% D vector of 
 if strcmp( equals, '' )
     D = [ x .* x + y .* y - 2 * z .* z, ...
         x .* x + z .* z - 2 * y .* y, ...
