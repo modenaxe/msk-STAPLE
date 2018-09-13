@@ -46,6 +46,6 @@ For now the bone numerical representation require to be remeshed to 0.5 mm isotr
 * HyperMesh Altair
 * [MeshLab](http://www.meshlab.net/)  
 
-This first step allows to get a "nicer" mesh of the bone models (For more information see : **[How to generate nice mesh from STL](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/PaperCodes/ExampleData/readme.md)**).  
+This first step allows to get a "nicer" mesh of the bone models (For more information see : **[How to generate nice mesh from STL](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/wiki/How-to-generate-nice-mesh-files)**).  
 
 ![Nicer Mesh](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System/blob/master/Other/Images/niceMesh.jpg "Nicer mesh with GMSH")
