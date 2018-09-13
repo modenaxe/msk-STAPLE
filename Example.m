@@ -8,19 +8,25 @@ close all
 
 addpath(genpath(strcat(pwd,'\SubFunctions')));
 
-% Example for a Tibia composed of two parts (distal and proximal)
-
+% % Example for a Tibia composed of two parts (distal and proximal)
 % [ProxTib,DistTib] = ReadMesh(strcat(pwd,'\ProxTib_S1_05.msh'),...
 %     strcat(pwd,'\DistTib_S1_05.msh'));
 % 
 % [ ACSsResults, TrObjects ] = RTibiaFun( ProxTib , DistTib);
 % PlotTibia( ACSsResults.tech3, TrObjects )
 
-% Example for a Femur composed of two parts (distal and proximal)
+% % Example for a Femur composed of two parts (distal and proximal)
+% [ProxTib,DistTib] = ReadMesh(strcat(pwd,'\DistFem_S2_05.msh'),...
+%     strcat(pwd,'\ProxFem_S2_05.msh'));
+% 
+% [ ACSsResults, TrObjects ] = RFemurFun( ProxTib , DistTib);
+% close all
+% PlotFemur( ACSsResults.PCC, TrObjects )
 
-[ProxTib,DistTib] = ReadMesh(strcat(pwd,'\DistFem_S2_05.msh'),...
-    strcat(pwd,'\ProxFem_S2_05.msh'));
+% Example for a Patella
+[Patella] = ReadMesh(strcat(pwd,'\Patella_S4_05.msh'));
+%Patella_S3_05.msh
 
-[ ACSsResults, TrObjects ] = RFemurFun( ProxTib , DistTib);
+[ ACSsResults, TrObjects ] = RPatellaFun( Patella );
 close all
-PlotFemur( ACSsResults.PCC, TrObjects )
+PlotPatella( ACSsResults.VR, TrObjects )

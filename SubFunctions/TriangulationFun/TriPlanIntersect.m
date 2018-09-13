@@ -31,7 +31,7 @@ if abs(d)<1
     antiRoundOff = 1 ;
 end
 
-d = d + 10*antiRoundOff ;
+d = d - 10*antiRoundOff ;
 Nodes = bsxfun(@plus, Nodes , 10*antiRoundOff*n') ;
 
 NodesDist = Nodes*n+d;
