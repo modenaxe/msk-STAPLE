@@ -3,14 +3,10 @@ function [ varargout ] = ReadMesh( varargin )
 %Each input file will be converted to one triangulation object
 %  - varargin : the address(es) of the file(s) to read
 %  - varargout : the triangulation(s) generated for each read file 
-% 
-% originalDirectory = pwd;
-% newDirectory = strcat(pwd,'\SubFunctions');
-% cd(newDirectory);
+% ------------------------------------------------------------------
+
 cd .\SubFunctions
-% addpath(strcat(pwd,'\MeshReadFun\stlTools'));
-% addpath(strcat(pwd,'\MeshReadFun\'));
-% addpath(strcat(pwd,'\TriangulationFun\'));
+
 
 if nargin ~= nargout
     error('The number of input files read should match the number of output')
@@ -33,7 +29,7 @@ for i = 1 : nargin
         
     else 
        error('Only GMSH .msh and .stl files can be read, please ensure your file ends with either') 
-       
+
     end
     
     %Create assocaited triangulation object
