@@ -25,7 +25,7 @@ d. RLC Systèmes, Marseille, France
 - Patella works see example.m to try it
 - For now coordinate systems from all variants are systematically computed, at some it will be changed so that the user can select the method of his choice from those in the paper
 
-Example data can be found [here](https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=0) or directly [there](
+Example data can be found [here](https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=0) or directly downloaded [there](
 https://www.dropbox.com/sh/ciy1fu2k63nqnd4/AACWkJvSHsiA_-9slJBiEEiua?dl=1)
 
 
