@@ -2,7 +2,7 @@ function PlotTibia( CS, TrObjects )
 %PLOTTIBIA Display figures of the tibia
 %   Detailed explanation goes here
 
-figure(1)
+figure()
 % Plot the whole tibia, here ProxTib is a Matlab triangulation object
 trisurf(TrObjects.Tibia,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
 hold on
@@ -19,7 +19,7 @@ lighting gouraud
 grid off
 
 %% Figure 2
-figure(2)
+figure()
 
 % Plot the whole tibia, here ProxTib is a Matlab triangulation object
 ProxTib = TriDifferenceMesh( TrObjects.ProxTib, TrObjects.EpiTibASLat);

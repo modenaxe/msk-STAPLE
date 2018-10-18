@@ -21,10 +21,14 @@ for i = 1 : nargin
     fileName = varargin{i};
 
     if strcmp(fileName(end-3:end),'.msh') || strcmp(fileName(end-3:end),'.MSH')
-        % GMSH .msh file reading use a python function for speed. 
-        XYZELMTS = py.txt2mtlb.read_meshGMSH(fileName);
-        Nodes = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
-        Elmts = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
+        % Read GMSH msh file with mshReadGMSH function
+        [Nodes, Elmts] = mshReadGMSH(fileName);
+        
+        % GMSH .msh file reading use a python function for speed. Old
+        % Deprecated
+%         XYZELMTS = py.txt2mtlb.read_meshGMSH(fileName);
+%         Nodes = [cell2mat(cell(XYZELMTS{'X'}))' cell2mat(cell(XYZELMTS{'Y'}))' cell2mat(cell(XYZELMTS{'Z'}))'];
+%         Elmts = double([cell2mat(cell(XYZELMTS{'N1'}))' cell2mat(cell(XYZELMTS{'N2'}))' cell2mat(cell(XYZELMTS{'N3'}))']);
     
     elseif strcmp(fileName(end-3:end),'.stl') || strcmp(fileName(end-3:end),'.STL')
        % STL reading is provided in stlTools package 
