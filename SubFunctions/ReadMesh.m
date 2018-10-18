@@ -33,10 +33,10 @@ for i = 1 : nargin
         
     else 
        error('Only GMSH .msh and .stl files can be read, please ensure your file ends with either') 
-       
+
     end
     
-    %Create assocaited triangulation object
+    %Create associated triangulation object
     Tr = triangulation(Elmts,Nodes);
     
     % Verify that mesh normals are outward-pointing and fix them if not
