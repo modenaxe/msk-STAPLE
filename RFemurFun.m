@@ -1,7 +1,7 @@
 function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 %Fit an ACS on a femur composed of the distal femur and the femoral head
 
-addpath(genpath(strcat(pwd,'\SubFunctions')));
+addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
 %% Get initial Coordinate system and volumetric center

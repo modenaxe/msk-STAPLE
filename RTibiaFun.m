@@ -2,7 +2,7 @@ function [ CSs, TrObjects ] = RTibiaFun( ProxTib , DistTib)
 % Fit an ACS on a Tibia composed of the proximal tibia and the tibial part of
 % the ankle
 
-addpath(genpath(strcat(pwd,'\SubFunctions')));
+addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
 

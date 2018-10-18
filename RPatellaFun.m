@@ -1,7 +1,7 @@
 function [ CSs, TrObjects ] = RPatellaFun( Patella )
 % Fit an ACS to the Patella
 
-addpath(genpath(strcat(pwd,'\SubFunctions')));
+addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
@@ -199,7 +199,7 @@ Condition3 = ArtSurfDilated.incenter*Z3>PtRidgeDist*Z3+0.15*LengthRidge & ...
 IgoodElmts = unique([find(Condition1&Condition2);find(Condition3)]);
 ArtSurf = TriReduceMesh(ArtSurfDilated,IgoodElmts);
 
-% Smooth found region
+% Smooth found region with morphologic operations
 ArtSurf = TriOpenMesh(Patella,ArtSurf,3);
 ArtSurf = TriUnite(ArtSurf0,ArtSurf);
 ArtSurf = TriCloseMesh(Patella,ArtSurf,2);

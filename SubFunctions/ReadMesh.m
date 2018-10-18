@@ -5,12 +5,12 @@ function [ varargout ] = ReadMesh( varargin )
 %  - varargout : the triangulation(s) generated for each read file 
 % 
 % originalDirectory = pwd;
-% newDirectory = strcat(pwd,'\SubFunctions');
+% newDirectory = strcat(pwd,'/SubFunctions');
 % cd(newDirectory);
-cd .\SubFunctions
-% addpath(strcat(pwd,'\MeshReadFun\stlTools'));
-% addpath(strcat(pwd,'\MeshReadFun\'));
-% addpath(strcat(pwd,'\TriangulationFun\'));
+cd ./SubFunctions
+% addpath(strcat(pwd,'/MeshReadFun/stlTools'));
+% addpath(strcat(pwd,'/MeshReadFun/'));
+% addpath(strcat(pwd,'/TriangulationFun/'));
 
 if nargin ~= nargout
     error('The number of input files read should match the number of output')
@@ -46,7 +46,7 @@ for i = 1 : nargin
     
 end
 
-cd ..\.
+cd ../.
 
 end
 
