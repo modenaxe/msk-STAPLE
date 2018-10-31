@@ -18,7 +18,7 @@ c. Newclip Technics, 44115 Haute-Goulaine, France
 d. RLC Systèmes, Marseille, France
 </sub>
 
-### After the recent publication of the associated article the code is being cleaned up before uploading
+### The code usage has been simplified and you should be able to use it, link to example data are provided in _example.m_ script
 
 - Femur works see example.m to try it
 - Tibia works see example.m to try it
