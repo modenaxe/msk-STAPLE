@@ -21,10 +21,10 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 PlotTibia( ACSsResults.PIAASL, TrObjects )
 
 %% Example for a Femur composed of two parts (distal and proximal)
-[ProxTib,DistTib] = ReadMesh(strcat(pwd,'/DistFem_S2_05.msh'),...
+[DistFem,ProxFem] = ReadMesh(strcat(pwd,'/DistFem_S2_05.msh'),...
     strcat(pwd,'/ProxFem_S2_05.msh'));
 
-[ ACSsResults, TrObjects ] = RFemurFun( ProxTib , DistTib);
+[ ACSsResults, TrObjects ] = RFemurFun( DistFem, ProxFem);
 close all
 PlotFemur( ACSsResults.PCC, TrObjects )
 
