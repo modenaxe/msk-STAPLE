@@ -16,21 +16,18 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 [ProxTib,DistTib] = ReadMesh(strcat(pwd,'/ProxTib_S1_05.msh'),...
     strcat(pwd,'/DistTib_S1_05.msh'));
 
-
-[ ACSsResults, TrObjects ] = RTibiaFun( ProxTib , DistTib);
-PlotTibia( ACSsResults.PIAASL, TrObjects )
+[ TibACSsResults, TibiaTriangulations ] = RTibiaFun( ProxTib , DistTib);
+PlotTibia( TibACSsResults.PIAASL, TibiaTriangulations )
 
 %% Example for a Femur composed of two parts (distal and proximal)
 [DistFem,ProxFem] = ReadMesh(strcat(pwd,'/DistFem_S2_05.msh'),...
     strcat(pwd,'/ProxFem_S2_05.msh'));
 
-[ ACSsResults, TrObjects ] = RFemurFun( DistFem, ProxFem);
-close all
-PlotFemur( ACSsResults.PCC, TrObjects )
+[ FemACSsResults, FemurTriangulations ] = RFemurFun( DistFem, ProxFem);
+PlotFemur( FemACSsResults.PCC, FemurTriangulations )
 
 %% Example for a Patella
 [Patella] = ReadMesh(strcat(pwd,'/Patella_S4_05.msh'));
 
-[ ACSsResults, TrObjects ] = RPatellaFun( Patella );
-close all
-PlotPatella( ACSsResults.VR, TrObjects )
+[ PatACSsResults, PatellaTriangulations ] = RPatellaFun( Patella );
+PlotPatella( PatACSsResults.VR, PatellaTriangulations )
