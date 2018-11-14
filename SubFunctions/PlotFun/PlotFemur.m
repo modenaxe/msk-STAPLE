@@ -3,7 +3,7 @@ function PlotFemur( CS, TrObjects )
 %   Detailed explanation goes here
 
 figure()
-% Plot the whole tibia, here ProxTib is a Matlab triangulation object
+% Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
 trisurf(TrObjects.Femur,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
 hold on
 axis equal
@@ -21,7 +21,8 @@ grid off
 %% Figure 2
 figure()
 
-% Plot the whole tibia, here ProxTib is a Matlab triangulation object
+% Here TrObjects.DistFem, TrObjects.EpiFemASMed and TrObjects.EpiFemASLat are Matlab triangulation objects
+% The found Articular Surfaces are separated from the rest of the bone triangulation object
 DistFem = TriDifferenceMesh( TrObjects.DistFem, TrObjects.EpiFemASLat);
 DistFem = TriDifferenceMesh( DistFem, TrObjects.EpiFemASMed);
 DistFem = TriDilateMesh(TrObjects.DistFem,DistFem,1);
