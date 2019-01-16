@@ -23,7 +23,7 @@ CSs.CenterVol = CenterVol;
 CSs.InertiaMatrix = InertiaMatrix;
 
 %% Distal Tibia -> Identified ankle center 
-% 1st : Find triangles with less than 30° relative to the tibia principal
+% 1st : Find triangles with less than 30Â° relative to the tibia principal
 % inertia axis (longitudinal) and low curvature then smooth the result with close
 % morphology operation
 
@@ -80,7 +80,7 @@ AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,10);
 
 [oLSP_AAS,nAAS] = lsplane(AnkleArtSurf.Points, Z0);
 
-Curves = TriPlanIntersect( DistTib, nAAS , oLSP_AAS - 5*nAAS' );
+Curves = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + 5*nAAS') );
 Centr = PlanPolygonCentroid3D( Curves.Pts );
 
 ankleCenter = Centr -5*nAAS';
@@ -121,7 +121,7 @@ EpiTib = TriReduceMesh( ProxTib, ElmtsEpi );
 Curvtr = sqrt(4*Cmean.^2-2*Cgaussian);
 
 % Keep only the elements that respect both criteria :
-%   1) Make an angle inferior to 35° with Z0
+%   1) Make an angle inferior to 35Â° with Z0
 %   2) Within the 1st quartile of curvature "intensity"
 NodesEpiAS_OK = find(   rad2deg(acos(EpiTib.vertexNormal*Z0))<35 &...
                             Curvtr<quantile(Curvtr,0.25)) ;
