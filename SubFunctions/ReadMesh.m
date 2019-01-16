@@ -24,6 +24,10 @@ for i = 1 : nargin
         % Read GMSH msh file with mshReadGMSH function
         [Nodes, Elmts] = mshReadGMSH(fileName);
         
+        % remove non 2D elements
+        t = ~any(isnan(Elmts),2);
+        Elmts = Elmts(t,:); 
+        
         % GMSH .msh file reading use a python function for speed. Old
         % Deprecated
 %         XYZELMTS = py.txt2mtlb.read_meshGMSH(fileName);
