@@ -1,6 +1,10 @@
 function [ Curves , Area , InterfaceTri ] = TriPlanIntersect( Tr, n , d )
-%TriPlanIntersect Intersection Triangle Plane in 3D
-%   Detailed explanation goes here
+%TriPlanIntersect:  Intersection between a 3D Triangulation object (Tr) 
+%                   and a 3D plan defined by normal vector n , d
+% Output :
+%       - Curves:   a structure containing the diffirent intersection profile
+%                   if there is only one Curves(1).Pts gives the intersection
+%                   curve ordered points vectors (forming a polygon)
 
 
 Nodes = Tr.Points;
