@@ -46,22 +46,27 @@ EdgePts = Tr.Points(EdgePtsID,:);
 
 EdgePtsTop = EdgePts(EdgePts*n + d > - 10, : );
 
+% Transform the top Edge Points to a 2D space
+% 1. project all points on the place
 EdgePtsTopProj = ProjectOnPlan(EdgePtsTop,n,d);
 
+% 2. find the principal vectors of the projected point cloud
 [V,~] = eig(cov(EdgePtsTopProj));
 
+% 3. Perform a Change of basis to "drop" a dimension
 EdgePtsTop2D = EdgePtsTopProj*V;
 
+% Calculate the conhull of the 2D points
 K = convhull(EdgePtsTop2D(:,2:3));
-
 EdgePtsTopProjOut = EdgePtsTopProj(K,:);
 
+% Fit an ellipse to the convhull points
 ellipse_t = fit_ellipse( EdgePtsTop2D(K,2), EdgePtsTop2D(K,3) );
 
+% Add the deleted dimension to the ellipse points and axis
 ellipsePts2D = [EdgePtsTop2D(1)*ones(1,length(ellipse_t.data)) ; ellipse_t.data];
 Yel2D = [0 ; sin( ellipse_t.phi ) ; cos( ellipse_t.phi )];
 Xel2D = [0 ; cos( ellipse_t.phi ) ; -sin( ellipse_t.phi )];
-
 
 % Send results back to 3D space
 Xel = V*Xel2D;
