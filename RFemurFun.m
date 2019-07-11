@@ -4,6 +4,11 @@ function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
+if ~exist('ProxFem','var')
+     % Only one mesh, this is a long bone that should be cutted in two
+     % parts
+      [ProxFem, DistFem] = cutLongBoneMesh(DistFem);
+end
 %% Get initial Coordinate system and volumetric center
 
 Femur = TriUnite(DistFem,ProxFem);

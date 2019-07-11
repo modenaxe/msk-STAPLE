@@ -5,6 +5,11 @@ function [ CSs, TrObjects ] = RTibiaFun( ProxTib , DistTib)
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
+if ~exist('DistTib','var')
+     % Only one mesh, this is a long bone that should be cutted in two
+     % parts
+      [ProxTib, DistTib] = cutLongBoneMesh(ProxTib);
+end
 
 %% Get initial Coordinate system and volumetric center
 Tibia = TriUnite(ProxTib,DistTib);
