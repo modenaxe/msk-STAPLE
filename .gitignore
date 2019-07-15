@@ -10,4 +10,4 @@
 *.db
 *.zip
 *.7z
-/_test_geom/*
+/_test_geom_*/
