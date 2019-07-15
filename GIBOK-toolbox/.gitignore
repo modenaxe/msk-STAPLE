@@ -1,0 +1,13 @@
+*.msh
+*.stp
+*.step
+*.asv
+*.pyc
+*.stl
+*.mat
+*.avi
+*.mp4
+*.db
+*.zip
+*.7z
+/_test_geom_*/
