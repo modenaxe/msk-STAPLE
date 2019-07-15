@@ -1,0 +1,8 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Transform: Align to Principal Axis">
+  <Param name="pointsFlag" description="Use vertex" tooltip="If selected, only the vertices of the mesh are used to compute the Principal Axis. Mandatory for point clouds or for non water tight meshes" type="RichBool" value="false"/>
+  <Param name="Freeze" description="Freeze Matrix" tooltip="The transformation is explicitly applied and the vertex coords are actually changed" type="RichBool" value="true"/>
+  <Param name="ToAll" description="Apply to all layers" tooltip="The transformation is explicitly applied to all the mesh and raster layers in the project" type="RichBool" value="false"/>
+ </filter>
+</FilterScript>

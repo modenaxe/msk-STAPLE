@@ -1,0 +1,9 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Automatic pair Alignement">
+  <Param type="RichMesh" description="First Mesh" value="1" name="FirstMesh" tooltip="The mesh were the coplanar bases are sampled (it will contain the trasformation)"/>
+  <Param type="RichMesh" description="Second Mesh" value="0" name="SecondMesh" tooltip="The mesh were similar coplanar based are searched."/>
+  <Param type="RichFloat" description="Estimated fraction of the&#xa; first mesh overlapped by the second" value="0.5" name="overlapping" tooltip=""/>
+  <Param type="RichFloat" description="Error tolerance" value="0.3" name="tolerance [0.0,1.0]" tooltip=""/>
+ </filter>
+</FilterScript>

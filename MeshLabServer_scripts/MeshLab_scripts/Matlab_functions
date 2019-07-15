@@ -1,0 +1,12 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Merge Close Vertices">
+  <Param tooltip="All the vertices that closer than this threshold are merged together. Use very small values, default values is 1/10000 of bounding box diagonal. " name="Threshold" value="0.001" min="0" max="3.79794" description="Merging distance" type="RichAbsPerc"/>
+ </filter>
+ <filter name="Surface Reconstruction: Poisson">
+  <Param tooltip="Set the depth of the Octree used for extracting the final surface. Suggested range 5..10. Higher numbers mean higher precision in the reconstruction but also higher processing times. Be patient.&#xa;" name="OctDepth" value="11" description="Octree Depth" type="RichInt"/>
+  <Param tooltip="This integer argument specifies the depth at which a block Gauss-Seidel solver is used to solve the Laplacian equation.&#xa;Using this parameter helps reduce the memory overhead at the cost of a small increase in reconstruction time. &#xa;In practice, the authors have found that for reconstructions of depth 9 or higher a subdivide depth of 7 or 8 can reduce the memory usage.&#xa;The default value is 8.&#xa;" name="SolverDivide" value="10" description="Solver Divide" type="RichInt"/>
+  <Param tooltip="This floating point value specifies the minimum number of sample points that should fall within an octree node as the octree&#xa;construction is adapted to sampling density. For noise-free samples, small values in the range [1.0 - 5.0] can be used.&#xa;For more noisy samples, larger values in the range [15.0 - 20.0] may be needed to provide a smoother, noise-reduced, reconstruction.&#xa;The default value is 1.0." name="SamplesPerNode" value="1" description="Samples per Node" type="RichFloat"/>
+  <Param tooltip="This floating point value specifies a correction value for the isosurface threshold that is chosen.&#xa;Values &lt; 1 means internal offsetting, >1 external offsetting.Good values are in the range 0.5 .. 2.&#xa;The default value is 1.0 (no offsetting)." name="Offset" value="1" description="Surface offsetting" type="RichFloat"/>
+ </filter>
+</FilterScript>
