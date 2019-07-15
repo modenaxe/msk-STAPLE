@@ -1,0 +1,19 @@
+Applied filter Compute Geometric Measures in 127 msec 
+Opened mesh C:/Users/Luca M/Documents/MATLAB/INSIGNEO-git/AutoDetectBonyLandmarks/5_test_Mirtich_triangular/R_Femur_6m.stl in 170 msec
+All files opened in 1393 msec
+Mesh Bounding Box Size 241.386642 136.565460 188.835693
+Mesh Bounding Box Diag 335.524323 
+Mesh Volume is 432153.187500
+Mesh Surface is 89967.570313
+Thin shell barycenter 2.448874 26.178923 41.434021
+Center of Mass is 2.846688 27.785114 41.925079
+Inertia Tensor is :
+| 1288369280.000000 -60312592.000000 -8449591.000000 |
+| -60312592.000000 3180557312.000000 -76235840.000000 |
+| -8449591.000000 -76235840.000000 2577048320.000000 |
+Principal axes are :
+| -0.999447 -0.032163 -0.008443 |
+| -0.012317 0.122252 0.992423 |
+| -0.030887 0.991978 -0.122580 |
+axis momenta are :
+| 1286356992.000000 2567762176.000000 3191855872.000000 |
