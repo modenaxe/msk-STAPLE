@@ -1,0 +1,5 @@
+*.stl
+./AutoDetectBonyLandmarks/_docs_v*
+./_test_Geom*
+./_figures/*
+*.asv
