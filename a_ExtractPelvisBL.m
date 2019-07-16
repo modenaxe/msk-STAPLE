@@ -9,7 +9,7 @@ clear;clc; close all
 addpath(genpath('./SupportFunctions'))
 % ======================= SETTINGS ===========================
 % GEOMETRIES WITHOUT SACRUM
-bone_geom_file = '_test_geom/pelvis.stl';
+bone_geom_file = '_test_geom/pelvis_LHDL_remeshed_10.stl';
 density = 1;
 %=============================================================
 
@@ -27,7 +27,7 @@ InertiaInfo  = calcPrincInertiaAxes(MassInfo.Imat);
 % InertiaInfo  = calcInertiaMatrix(PointCloud);
 coeff = 1;
 v = transfMeshPointsRefSyst(v_MRI, MassInfo.COM, coeff*InertiaInfo.PrincAxes);
-v = v_MRI;
+% v = v_MRI;
 % BL description
 Markers.LASIS = getBonyLandmark(pickPointsInOctant(v, 1),'max','z');
 Markers.LICT  = getBonyLandmark(pickPointsInOctant(v, 1),'max','x');
