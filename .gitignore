@@ -2,3 +2,5 @@
 __*
 *.asv
 /_old_scripts
+*.log
+*.osim

@@ -11,7 +11,7 @@ clearvars
 close all
 
 addpath(genpath(strcat(pwd,'/SubFunctions')));
-bone_geom_folder = '../test_geom_JB';
+bone_geom_folder = '../test_geom_JB_A1';
 
 %% Example for a Tibia composed of two parts (distal and proximal)
 [ProxTib,DistTib] = ReadMesh(strcat(bone_geom_folder,'/ProxTib_S1_05.msh'),...

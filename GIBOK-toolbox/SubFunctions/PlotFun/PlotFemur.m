@@ -1,5 +1,5 @@
 function PlotFemur( CS, TrObjects )
-%PLOTTIBIA Display figures of the femur
+%PLOTFEMUR Display figures of the femur
 %   Detailed explanation goes here
 
 figure()

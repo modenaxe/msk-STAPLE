@@ -222,7 +222,7 @@ LatPtsInit = [LatPtsInit; LatPtsInit - 1/3*a*Xel'; LatPtsInit + 1/3*a*Xel'];
 % Remove between ridge points from identified AS points
 EpiTibAS = TriDifferenceMesh(EpiTibAS , EpiTibCenterRidge);
 EpiTibAS = TriConnectedPatch( EpiTibAS , [MedPtsInit ; LatPtsInit] );
-% % Smooth found AS
+% Smooth found AS
 EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15);
 EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30);
 

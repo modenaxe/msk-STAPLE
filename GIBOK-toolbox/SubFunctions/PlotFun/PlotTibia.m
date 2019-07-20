@@ -42,11 +42,14 @@ light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
 light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
 lighting gouraud
 
-% 
+
 plotArrow( CS.X, 1, CS.Origin, 30, 1, 'b')
 plotArrow( CS.Y, 1, CS.Origin, 30, 1, 'r')
 plotArrow( CS.Z, 1, CS.Origin, 30, 1, 'k')
-
+%TO DELETE
+% plotArrow( CS.X, 1, CS.Origin, 30, 1, 'r')
+% plotArrow( -CS.Y, 1, CS.Origin, 30, 1, 'b')
+% plotArrow( CS.Z, 1, CS.Origin, 30, 1, 'g')
 
 % Remove grid
 grid off
