@@ -18,10 +18,19 @@ Vertices_Down_C = [Xc(1,:);Yc(1,:);Zc(1,:)];
 Vertices_Up_C = [Xc(2,:);Yc(2,:);Zc(2,:)];
 
 Uz = u/norm(u);
-Uy = cross(Uz,[1;0;0]); Uy = Uy/norm(Uy);
-Ux = cross(Uy,Uz);
+if ~isequal(u, [1; 0; 0])
+    Uy = cross(Uz,[1;0;0]); Uy = Uy/norm(Uy);
+    Ux = cross(Uy,Uz);
+    
+else
+    warning('PlotArrow has a bug here')
+    Uy = [0; 1; 0] ;
+    Ux = [0; 0; 1] ;
+end
 
 U = [Ux, Uy, Uz];
+
+
 
 Vertices_Down_rot = U*Vertices_Down;
 Vertices_Up_rot = U*Vertices_Up;
