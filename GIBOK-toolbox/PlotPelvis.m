@@ -20,7 +20,8 @@ lighting gouraud
 grid off
 LASIS = [0.0062   71.9720  134.8688];
 RASIS = [-38.5144   63.6268  141.5540];
-CS.Origin = (LASIS+RASIS)/2.0;
+
+% CS.Origin = (LASIS+RASIS)/2.0;
 % only for presentation 7/2019 (DELETE AFTER)
 plotArrow( CS.X', 1, CS.Origin, 60, 1, 'r')
 plotArrow( CS.Y', 1, CS.Origin, 60, 1, 'b')

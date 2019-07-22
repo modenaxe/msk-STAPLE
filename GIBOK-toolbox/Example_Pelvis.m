@@ -12,18 +12,24 @@ clc
 close all
 
 addpath(genpath(strcat(pwd,'/SubFunctions')));
-bone_geom_folder = '../test_geom_full';
+bone_geom_folder = './test_geom_full';
 
 %% Example for a Femur composed of two parts (distal and proximal)
-[Pelvis] = ReadMesh(strcat(bone_geom_folder,'/pelvis_sacrum.stl'));
+% [Pelvis] = ReadMesh(strcat(bone_geom_folder,'/pelvis_sacrum_10.stl'));
+% save('pelvis_sacrum_10', 'Pelvis')
+load(fullfile(bone_geom_folder,'pelvis_sacrum_10'));
+
+[ TrNewCS, V ,T ] = TriChangeCS( Pelvis)
 
 % Get eigen vectors V_all and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties( Pelvis );
+[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties( Pelvis );
+
 PelvisRS.Origin = CenterVol;
-PelvisRS.X = V_all(:,1)';
-PelvisRS.Y = V_all(:,2)';
-PelvisRS.Z = V_all(:,3)';
-% [ FemACSsResults, FemurTriangulations ] = RFemurFun(Fem);
-% PlotFemur( FemACSsResults.PCC, FemurTriangulations )
+PelvisRS.X = eigVctrs(:,1)';
+PelvisRS.Y = eigVctrs(:,2)';
+PelvisRS.Z = eigVctrs(:,3)';
+
+
+
 PlotPelvis( PelvisRS, Pelvis )
 
