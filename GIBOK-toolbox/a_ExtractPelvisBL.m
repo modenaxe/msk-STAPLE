@@ -15,7 +15,8 @@ density = 1;
 
 % import mesh
 stl_file_path = fullfile(bone_geom_file);
-[v_MRI, f, n, c, stltitle] = stlread(stl_file_path, 1);
+% [v_MRI, f, n, c, stltitle] = stlread(stl_file_path, 1);
+load('test_geom_full/pelvis_sacrum_10.mat')
 
 % ====== calculating inertia tensor as point cloud =======
 MassInfo = calcMassInfo_Mirtich1996(v_MRI, f, density);
