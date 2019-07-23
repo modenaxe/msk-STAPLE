@@ -40,10 +40,10 @@ light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
 light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
 lighting gouraud
 
-% 
-plotArrow( CS.X, 1, CS.Origin, 20, 1, 'b')
-plotArrow( CS.Y, 1, CS.Origin, 25, 1, 'r')
-plotArrow( CS.Z, 1, CS.Origin, 25, 1, 'k')
+% changed colors to standard representations
+plotArrow( CS.X, 1, CS.Origin, 20, 1, 'r')
+plotArrow( CS.Y, 1, CS.Origin, 25, 1, 'g')
+plotArrow( CS.Z, 1, CS.Origin, 25, 1, 'b')
 
 
 % Remove grid

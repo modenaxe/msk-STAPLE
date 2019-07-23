@@ -43,10 +43,19 @@ light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
 light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
 lighting gouraud
 
-% 
-plotArrow( CS.X, 1, CS.Origin, 30, 1, 'b')
-plotArrow( CS.Y, 1, CS.Origin, 30, 1, 'r')
-plotArrow( CS.Z, 1, CS.Origin, 30, 1, 'k')
+% transforming to ISB ref system
+ISB2GB = [1  0  0
+          0  0 -1
+          0  1 0];
+GB2Glob = CS.V;
+CS.X = GB2Glob*ISB2GB*[1 0 0]';
+CS.Y = GB2Glob*ISB2GB*[0 1 0]';
+CS.Z = GB2Glob*ISB2GB*[0 0 1]';
+
+% using standard colors
+plotArrow( CS.X, 1, CS.Origin, 30, 1, 'r')
+plotArrow( CS.Y, 1, CS.Origin, 30, 1, 'g')
+plotArrow( CS.Z, 1, CS.Origin, 30, 1, 'b')
 
 
 % Remove grid
