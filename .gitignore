@@ -1,6 +1,7 @@
 *.stl
 __*
 *.asv
-/_old_scripts
+/_old
 *.log
 *.osim
+*.*~
