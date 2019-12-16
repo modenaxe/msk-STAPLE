@@ -8,7 +8,7 @@
 % For instance, the function call getBonyLandmark(v_oct,'max','x') reads as
 % 'pick the point of v_oct with maximum x coordinate'.
 
-function BL = getBonyLandmark(v_oct,descrip,direction)
+function [BL, BL_ind] = getBonyLandmark(v_oct,descrip,direction)
 
 % TO DO ADD CHECK FOR DESCRIPT AND DIRECTION AS STRINGS
 % interpreting direction of search
