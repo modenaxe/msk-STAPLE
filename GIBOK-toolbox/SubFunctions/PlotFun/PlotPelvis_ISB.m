@@ -2,7 +2,7 @@
 % Copyright (c) 2019 Modenese L.                                          %
 %                                                                         %
 %    Author:   Luca Modenese, April 2018                                  % 
-%    email:    l.modenese@sheffield.ac.uk                                 %
+%    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 function PlotPelvis_ISB( CS, TrObjects )
 %PLOTPELVIS Display figures of the femur
