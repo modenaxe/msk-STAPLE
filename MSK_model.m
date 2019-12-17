@@ -10,7 +10,7 @@
 clearvars; close all
 
 addpath(genpath(strcat(pwd,'/SubFunctions')));
-addpath('autobuildfunc');
+addpath('autoMSK_functions');
 bone_geom_folder = '../test_geom_full';
 
 % OpenSim libraries
