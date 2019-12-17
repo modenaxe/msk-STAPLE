@@ -11,8 +11,8 @@ clearvars
 clc
 close all
 
-addpath(genpath(strcat(pwd,'/SubFunctions')));
-bone_geom_folder = '../test_geometries/LHDL';
+addpath(genpath('GIBOK-toolbox'));
+bone_geom_folder = './test_geometries/LHDL';
 
 %% Example for a Femur composed of two parts (distal and proximal)
 [Fem] = ReadMesh(fullfile(bone_geom_folder,'femur_r_LHDL_remeshed15.stl'));
