@@ -9,7 +9,7 @@ z_pelvis_in_global = [-1 0 0];
 
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 addpath(genpath('./SupportFunctions'))
-bone_geom_folder = './test_geom_full';
+bone_geom_folder = '../test_geometries/LHDL';
 
 %% Example for a Femur composed of two parts (distal and proximal)
 % [Pelvis] = ReadMesh(strcat(bone_geom_folder,'/pelvis_remeshed_10.stl'));
@@ -77,11 +77,11 @@ PelvisRS.X = X;
 PelvisRS.Y = Y;
 PelvisRS.Z = Z;
 PelvisRS.V = [X', Y', Z'];
-PlotPelvis( PelvisRS, Pelvis )
+PlotPelvis_ISB( PelvisRS, Pelvis )
 
 save('PelvisRS', 'PelvisRS')
 
-% % intermediate plot with inertial axis and center of volume
+% Plot inertial axis and center of volume of the pelvis
 % PelvisRS.Origin = CenterVol;
 % PelvisRS.X = RotISB2Glob(:,1)';
 % PelvisRS.Y = RotISB2Glob(:,2)';
