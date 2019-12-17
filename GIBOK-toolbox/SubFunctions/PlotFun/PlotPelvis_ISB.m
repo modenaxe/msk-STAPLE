@@ -29,7 +29,4 @@ plotArrow( CS.X', 1, CS.Origin, 60, 1, 'r')
 plotArrow( CS.Y', 1, CS.Origin, 60, 1, 'g')
 plotArrow( CS.Z', 1, CS.Origin, 60, 1, 'b')
 
-% plotArrow( [1 0 0]', 1, [0 0 0], 60, 1, 'r')
-% plotArrow( [0 1 0]', 1, [0 0 0], 60, 1, 'g')
-% plotArrow( [0 0 1]', 1, [0 0 0], 60, 1, 'b')
 end
