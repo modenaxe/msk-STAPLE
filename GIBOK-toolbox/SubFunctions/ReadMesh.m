@@ -7,7 +7,9 @@ function [ varargout ] = ReadMesh( varargin )
 % originalDirectory = pwd;
 % newDirectory = strcat(pwd,'/SubFunctions');
 % cd(newDirectory);
-cd ./SubFunctions
+
+% cd ./SubFunctions
+
 % addpath(strcat(pwd,'/MeshReadFun/stlTools'));
 % addpath(strcat(pwd,'/MeshReadFun/'));
 % addpath(strcat(pwd,'/TriangulationFun/'));
