@@ -18,6 +18,8 @@ test_geometries/
 # openSim files
 *.log
 *.osim
+# used for checking intermediate steps of modelling
+*.xml
 
 #vim files
 *.*~
