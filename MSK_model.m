@@ -1,3 +1,9 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2019 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese, April 2018                                  % 
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 % trying to create a knee joint
 % TODO: scale geometries
 % TODO: transform them to ascii
