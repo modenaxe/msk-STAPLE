@@ -8,28 +8,37 @@
 % Reading .msh file might be a bit faster than stl
 %--------------------------------------------------------------------------
 clearvars 
-clc
-close all
+clc; close all
 
+%--------------------------------
+% SETTINGS
+%--------------------------------
 addpath(genpath('GIBOK-toolbox'));
-bone_geom_folder = './test_geometries/LHDL';
+bone_geom_folder = './test_geometries';
+ACs_folder = './ACs';
+test_case = 'LHDL';
+%--------------------------------
+
+%% Pelvis will be integrated here
+
 
 %% Example for a Femur composed of two parts (distal and proximal)
-[Fem] = ReadMesh(fullfile(bone_geom_folder,'femur_r_LHDL_remeshed15.stl'));
+[Fem] = ReadMesh(fullfile(bone_geom_folder, test_case,'femur_r_LHDL_remeshed15.stl'));
 
 [ FemACSsResults, FemurTriangulations ] = RFemurFun(Fem);
-PlotFemur_ISB( FemACSsResults.PCC, FemurTriangulations )
+PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations )
 
 %% Example for a Tibia composed of two parts (distal and proximal)
-[Tib] = ReadMesh(strcat(bone_geom_folder,'/tibia_r_LHDL_remeshed15.stl'));
+[Tib] = ReadMesh(fullfile(bone_geom_folder,test_case,'/tibia_r_LHDL_remeshed15.stl'));
 
 [ TibACSsResults, TibiaTriangulations ] = RTibiaFun( Tib);
-PlotTibia( TibACSsResults.PIAASL, TibiaTriangulations )
+PlotTibiaDist_ISB( TibACSsResults.PIAASL, TibiaTriangulations )
 
 %% Example for a Patella
-[Patella] = ReadMesh(strcat(bone_geom_folder,'/patella_r_LHDL_remeshed10.stl'));
+[Patella] = ReadMesh(strcat(bone_geom_folder,test_case,'/patella_r_LHDL_remeshed10.stl'));
 
 [ PatACSsResults, PatellaTriangulations ] = RPatellaFun( Patella );
 PlotPatella( PatACSsResults.VR, PatellaTriangulations )
 
-save('LHDL_ACSsResults', 'FemACSsResults', 'TibACSsResults', 'PatACSsResults')
+%% saving reference systems
+save(fullfile(ACs_folder, [test_case,'_ACSsResults']), 'FemACSsResults', 'TibACSsResults', 'PatACSsResults')
