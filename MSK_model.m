@@ -186,3 +186,7 @@ JointSet_to_upd.assign(updJointSet);
 osimModel.disownAllComponents();
 if ~isdir(osim_folder); mkdir(osim_folder); end
 osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
+
+% remove paths
+rmpath(genpath('GIBOK-toolbox'));
+rmpath('autoMSK_functions');
