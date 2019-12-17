@@ -6,12 +6,22 @@
 % ----------------------------------------------------------------------- %
 % trying to create a knee joint
 % TODO: scale geometries
-% TODO: transform them to ascii
-clearvars; close all
+% TODO: transform them to ascii for OpenSim visualization
 
-addpath(genpath(strcat(pwd,'/SubFunctions')));
+clearvars; close all
+% add useful scripts
+addpath(genpath('GIBOK-toolbox'));
 addpath('autoMSK_functions');
-bone_geom_folder = '../test_geom_full';
+
+%--------------------------------
+% SETTINGS
+%--------------------------------
+addpath(genpath('GIBOK-toolbox'));
+bone_geom_folder = './test_geometries';
+ACs_folder = './ACs';
+test_case = 'LHDL';
+osim_folder = './opensim_models';
+%--------------------------------
 
 % OpenSim libraries
 import org.opensim.modeling.*
@@ -20,17 +30,27 @@ import org.opensim.modeling.*
 osimModel = Model();
 
 % setting the model
-osimModel.setName('LHDL_auto');
+osimModel.setName([test_case,'_auto']);
+
+% set gravity
 osimModel.setGravity(Vec3(0, -9.8081, 0));
 
+% vector of zeros for convenience
 zeroVec3 = ArrayDouble.createVec3(0);
 
 % bodies
 ground = osimModel.getGroundBody();
+
+% TODO need to personalize masses from volumes or regress eq 
+% TODO model needs to link to geometries for display
+% TODO model needs to have appropriate rotation sequence
+% TODO add ankle complex
+% TODO add patello-femoral
 pelvis = Body(); pelvis.setName('pelvis'); pelvis.setMass(10); pelvis.setMassCenter(zeroVec3); pelvis.addDisplayGeometry(fullfile(bone_geom_folder, 'pelvis_remeshed_10_m.stl' ))
 femur_r = Body(); femur_r.setName('femur_r'); femur_r.setMass(10);femur_r.setMassCenter(zeroVec3);femur_r.addDisplayGeometry(fullfile(bone_geom_folder, 'femur_r_LHDL_remeshed8_m.stl' ))
 tibia_r = Body(); tibia_r.setName('tibia_r'); tibia_r.setMass(10); tibia_r.setMassCenter(zeroVec3); tibia_r.addDisplayGeometry(fullfile(bone_geom_folder, 'tibia_r_LHDL_remeshed8_m.stl' ))
 
+% building bodyset
 MSK_BodySet = BodySet();
 MSK_BodySet.cloneAndAppend(ground);
 MSK_BodySet.cloneAndAppend(pelvis);
@@ -39,10 +59,10 @@ MSK_BodySet.cloneAndAppend(tibia_r);
 
 % joint parameters
 % load('LHDL_ACSsResults.mat'); 
-load('MRI_P0_ACSsResults.mat'); 
+load(fullfile(ACs_folder, [test_case,'_ACSsResults.mat'])); 
 
 % ground_pelvis
-load('PelvisRS')
+load(fullfile(ACs_folder,'PelvisRS'));
 % [XPelvAngle, YPelvAngle, ZPelvAngle] = FIXED_ROT_XYZ(PelvisRS.V , 'Glob2Loc');
 % pelvis_orientation = [ZPelvAngle, YPelvAngle, XPelvAngle];
 pelvis_location = PelvisRS.Origin/1000;
@@ -76,10 +96,6 @@ JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational',
 JointParams(nj).rotationAxes        = 'zxy'; 
 
 % hip parameters
-% transforming to ISB ref system
-ISB2GB = [1  0  0
-          0  0 -1
-          0  1 0];
 % transforming to ISB ref system
 ISB2GB = [1  0  0
           0  0 -1
@@ -168,4 +184,5 @@ JointSet_to_upd = osimModel.updJointSet;
 JointSet_to_upd.assign(updJointSet);
 
 osimModel.disownAllComponents();
-osimModel.print('MRI_P0_test.osim');
+if ~isdir(osim_folder); mkdir(osim_folder); end
+osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
