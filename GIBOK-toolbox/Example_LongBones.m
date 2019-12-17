@@ -12,14 +12,13 @@ clc
 close all
 
 addpath(genpath(strcat(pwd,'/SubFunctions')));
-bone_geom_folder = '../test_geom_full';
+bone_geom_folder = '../test_geometries/LHDL';
 
 %% Example for a Femur composed of two parts (distal and proximal)
-[Fem] = ReadMesh(strcat(bone_geom_folder,'/femur_r_LHDL_remeshed15.stl'));
+[Fem] = ReadMesh(fullfile(bone_geom_folder,'femur_r_LHDL_remeshed15.stl'));
 
 [ FemACSsResults, FemurTriangulations ] = RFemurFun(Fem);
-PlotFemur( FemACSsResults.PCC, FemurTriangulations )
-% PlotFemur_LM( FemACSsResults, FemurTriangulations )
+PlotFemur_ISB( FemACSsResults.PCC, FemurTriangulations )
 
 %% Example for a Tibia composed of two parts (distal and proximal)
 [Tib] = ReadMesh(strcat(bone_geom_folder,'/tibia_r_LHDL_remeshed15.stl'));
