@@ -1,4 +1,4 @@
-function [or, alt_TlNvc_start] = FitCSATalus(Alt, Area)
+function [or, alt_TlNvc_start, alt_TlNeck_start] = FitCSATalus(Alt, Area)
 %CREATEFIT(ALT,AREA)
 %  Create a fit.
 %
@@ -45,7 +45,7 @@ if or_test_a
         alt_TlNvc_start = fitresult.b1;
     else
         or = 1;
-        alt_TlNvc_start = fitresult.b2;
+        alt_TlNvc_start = fitresult.b1;
     end
 else
     if or_test_b
@@ -53,8 +53,12 @@ else
         alt_TlNvc_start = fitresult.b2;
     else
         or = -1;
-        alt_TlNvc_start = fitresult.b1;
+        alt_TlNvc_start = fitresult.b2;
     end
 end
+
+% Values along the length of the Talus
+alt_TlNvc_start = or*alt_TlNvc_start;
+alt_TlNeck_start = 0.5*or*(fitresult.b1 + fitresult.b2);
 
 

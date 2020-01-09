@@ -4,8 +4,12 @@ close all
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 
 %% Read the mesh of the Talus file
-
+%'../test_geometries/MRI_P0/talus_r.stl'
+%'../test_geometries/MRI_P0_smooth/talus_r.stl'
+%'../test_geometries/JIA_CSm6/talus_r.stl'
+%'../test_geometries/TLEM2/talus_r.stl'
 [Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
+
 
 % function [ CSs, TrObjects ] = RTalusFun( Talus)
 % Fit an ACS on a Talus
@@ -67,13 +71,13 @@ plot(Alt,Area,'-*')
 %   alt_TlNvc_start, gives the altitude along X0 at wich the CSA is maximal
 %   and where the TaloNavicular (TlNvc) articular surface could start
 
-[or, alt_TlNvc_start] = FitCSATalus(Alt, Area);
+[or, alt_TlNvc_start, alt_TlNeck_start] = FitCSATalus(Alt, Area);
 
 % Change X0 orientation if necessary :
 X0 = or*X0;
-alt_TlNvc_start = or*alt_TlNvc_start;
 alt_TlNvc_end = max(Talus.incenter*X0);
 TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
+
 
 % 2.2 First guess at the TlNvc articular surface (AS)
 ElmtsTlNvc = find(Talus.incenter*X0> (alt_TlNvc_start+0.25*TlNvc_length));
@@ -85,7 +89,7 @@ a1 = gca ;
 f2 = figure ;
 a2 = copyobj(a1,f2) ;
 hold on
-trisurf(TlNvc_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
 
 % 2.3 Fit a initial sphere on the TlNvc AS
 [Center_TlNvc,Radius_TlNvc,ErrorDist] = sphereFit(TlNvc_AS.Points) ;
@@ -128,9 +132,10 @@ Cmean = TriCurvature(Talus,false);
 
 % Identify nodes that should be on the surface based on surface and mean
 % curvature
-TlCcnASNodesOK0 =  find(Cmean>quantile(Cmean,0.60) & ...
-    Cmean<quantile(Cmean,0.98) & ...
-    rad2deg(acos(-Talus.vertexNormal*Z0))<40);
+TlCcnASNodesOK0 =  find(Cmean>quantile(Cmean,0.25) & ...
+    Cmean<quantile(Cmean,0.90) & ...
+    rad2deg(acos(-Talus.vertexNormal*Z0))<40 &...
+    Talus.Points*X0<alt_TlNeck_start);
 
 TlCcnAS0 = TriReduceMesh(Talus,[],double(TlCcnASNodesOK0));
 
@@ -147,7 +152,7 @@ TlCcnAS1 = TriKeepLargestPatch( TlCcnAS1 ) ;
 TlCcnAS1 = TriCloseMesh(TlCcnAS0,TlCcnAS1,1);
 
 % Add surface to previous plot
-trisurf(TlCcnAS1,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
+trisurf(TlCcnAS1,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
 
 % 3.3 Fit a sphere to approximate AS
 [Center_TlCcn,Radius_TlCcn,ErrorDist] = sphereFit(TlCcnAS0.incenter) ;
@@ -160,9 +165,8 @@ hold on
 plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.4)
 plotDot( Center_TlCcn, 'c', 2 )
 
-
 %% 4. Compute the "sub-axis"
-u_SubAxis = normalizeV(Center_TlCcn-Center_TlNvc);
+u_SubAxis = normalizeV(Center_TlNvc-Center_TlCcn);
 length_SubAxis =  norm(Center_TlCcn-Center_TlNvc);
 center_SubAxis = (Center_TlCcn+Center_TlNvc)/2; 
 
@@ -190,13 +194,13 @@ plotArrow( X0, 1, CenterVol, 40, 1, 'r')
 plotArrow( Y0, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
 plotArrow( Z0, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
 
-%Plot the TlCcn part
-trisurf(TlNvc_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+%Plot the Tl Nvc part
+trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
 plotSphere( Center_TlNvc, Radius_TlNvc , 'm' , 0.3)
 plotDot( Center_TlNvc, 'm', 2 )
 
-%Plot the TlCcn part
-trisurf(TlCcnAS1,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
+%Plot the Tl Ccn part
+trisurf(TlCcnAS1,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
 plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.3)
 plotDot( Center_TlCcn, 'c', 2 )
 
@@ -204,4 +208,127 @@ plotDot( Center_TlCcn, 'c', 2 )
 plotCylinder( u_SubAxis, 0.75, center_SubAxis, length_SubAxis, 1, 'k')
 
 axis off
+
+%% 5. Identification of the ankle joint cylinder
+% 5.1 Get a new CS from the subaxis 
+X1 = u_SubAxis;
+Z1 = normalizeV(cross(X1,Y0));
+Y1 = cross(Z1,X1);
+
+% 5.2 Identify the 'articular surfaces' of the ankle joint
+TlTrcASNodesOK0 =  find(Cmean>quantile(Cmean,0.10) & ...
+    Cmean<quantile(Cmean,0.80) & ...
+    rad2deg(acos(Talus.vertexNormal*Z0))<45 & ...
+    abs(Talus.vertexNormal*Y0)<0.4);
+
+TlTrcASNodesOK1 =  find(Cmean>quantile(Cmean,0.10) & ...
+    Cmean<quantile(Cmean,0.80) & ...
+    rad2deg(acos(Talus.vertexNormal*Z1))<45 & ...
+    abs(Talus.vertexNormal*Y1)<0.4);
+
+TlTrcASNodesOK = unique([TlTrcASNodesOK0;TlTrcASNodesOK1],'rows');
+TlTrcAS0 = TriReduceMesh(Talus,[],double(TlTrcASNodesOK));
+
+% Keep largest connected region and smooth results
+TlTrcAS0 = TriKeepLargestPatch( TlTrcAS0 ) ;
+TlTrcAS0 = TriErodeMesh(TlTrcAS0,3);
+TlTrcAS0 = TriKeepLargestPatch( TlTrcAS0 ) ;
+TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,3);
+
+% 5.3 Get the cylinder 
+% Fit a sphere to a get an initial guess at the radius and a point on the
+% axis
+
+[Center_TlTrc_0,Radius_TlTrc_0] = sphereFit(TlTrcAS0.incenter) ;
+[x0n, an, rn] = lscylinder( TlTrcAS0.incenter, Center_TlTrc_0', Y1,...
+                            Radius_TlTrc_0, 0.001, 0.001);
+Y2 =  normalizeV( an );
+
+% 5.4 Plot the results
+figure()
+trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.6,'edgecolor','none');
+hold on
+axis equal
+
+% handle lighting of objects
+light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
+light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
+light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
+light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
+lighting gouraud
+
+% Remove grid
+grid off
+
+%Plot the inertia Axis & Volumic center
+plotDot( CenterVol', 'k', 2 )
+plotArrow( X1, 1, CenterVol, 40, 1, 'r')
+plotArrow( Y1, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
+plotArrow( Z1, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
+
+%Plot the  talar trochlea articular surface
+trisurf(TlTrcAS0,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+
+%Plot the Cylinder and its axis
+plotCylinder( Y2, rn, x0n, 40, 0.4, 'r')
+plotArrow( Y2, 1, x0n, 40, 1, 'r')
+plotDot( x0n', 'r', 2 )
+
+%% 6 Final results and plots
+% 6.1 Plot the "articular surface" and the associated geomletries
+figure()
+% Plot the whole talus, here Talus is a Matlab triangulation object
+Talus_NoAS = TriDifferenceMesh( Talus , TlNvc_AS );
+Talus_NoAS = TriDifferenceMesh( Talus_NoAS , TlCcnAS1 );
+Talus_NoAS = TriDifferenceMesh( Talus_NoAS , TlTrcAS0 );
+Talus_NoAS = TriDilateMesh(Talus, Talus_NoAS, 1);
+trisurf(Talus_NoAS,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.8,'edgecolor','none');
+hold on
+axis equal
+
+% handle lighting of objects
+light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
+light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
+light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
+light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
+lighting gouraud
+
+% Remove grid
+grid off
+
+%Plot the inertia Axis & Volumic center
+plotDot( CenterVol', 'k', 2 )
+
+%Plot the Tl Nvc part
+trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
+% plotSphere( Center_TlNvc, Radius_TlNvc , 'm' , 0.3)
+plotDot( Center_TlNvc, 'm', 2 )
+
+%Plot the TlCcn part
+trisurf(TlCcnAS1,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
+% plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.3)
+plotDot( Center_TlCcn, 'c', 2 )
+
+%Plot the sub-axis
+plotCylinder( u_SubAxis, 0.75, center_SubAxis, length_SubAxis, 1, 'k')
+
+%Plot the ankle joint cylinder and AS
+trisurf(TlTrcAS0,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+% plotCylinder( Y2, rn, x0n, 40, 0.4, 'r')
+plotArrow( Y2, 1, x0n, 40, 1, 'r')
+plotDot( x0n', 'r', 2 )
+
+axis off
+% copy previous figure and add spheres and cylinders
+a1 = gca ;
+f2 = figure ;
+a2 = copyobj(a1,f2) ;
+
+plotCylinder( Y2, rn, x0n, 40, 0.4, 'r')
+plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.3)
+plotDot( Center_TlCcn, 'c', 2 )
+plotSphere( Center_TlNvc, Radius_TlNvc , 'm' , 0.3)
+plotDot( Center_TlNvc, 'm', 2 )
+
+
 
