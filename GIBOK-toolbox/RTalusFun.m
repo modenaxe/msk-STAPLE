@@ -5,7 +5,7 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 
 %% Read the mesh of the Talus file
 
-[Talus] = ReadMesh('../../test_geometries/MRI_P0_smooth/talus_r.stl');
+[Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
 
 % function [ CSs, TrObjects ] = RTalusFun( Talus)
 % Fit an ACS on a Talus
