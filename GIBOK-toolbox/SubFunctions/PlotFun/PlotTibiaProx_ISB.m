@@ -1,4 +1,4 @@
-function PlotTibiaDist_ISB( CS, TrObjects )
+function PlotTibiaProx_ISB( CS, TrObjects )
 %PLOTTIBIA Display figures of the tibia
 %   Detailed explanation goes here
 
