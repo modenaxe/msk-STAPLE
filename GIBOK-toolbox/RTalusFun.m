@@ -10,6 +10,9 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 %'../test_geometries/TLEM2/talus_r.stl'
 [Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
 
+% testing mat import
+% [Imported] = load('../test_geometries/P0_MRI_tri/talus_r.mat');
+% Talus = Imported.curr_triang;
 
 % function [ CSs, TrObjects ] = RTalusFun( Talus)
 % Fit an ACS on a Talus
