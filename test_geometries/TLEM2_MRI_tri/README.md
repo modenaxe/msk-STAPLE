@@ -14,3 +14,4 @@ The dataset is associated with this publication:
 }
 ```
 
+![TLEM2-MRI](https://github.com/modenaxe/auto-msk-model/blob/master/images/TLEM2_MRI_bones.PNG)

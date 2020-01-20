@@ -1,8 +1,7 @@
 # Data from LHDL dataset
-These bone geometries were segmented from CT scans from a female specimen.
-![LHDL-CT](https://github.com/modenaxe/auto-msk-model/blob/master/images/LHDL_CT_bones.PNG)
-Reference publication is:
 
+These bone geometries were segmented from CT scans from a female specimen.
+Reference publication is:
 ```
 @article{viceconti2008virtual,
   title={The Virtual Physiological Human—A European Initiative for In Silico Human Modelling—},
@@ -13,4 +12,10 @@ Reference publication is:
   publisher={Physiological Society of Japan}
 }
 ```
+
+![LHDL-CT](https://github.com/modenaxe/auto-msk-model/blob/master/images/LHDL_CT_bones.PNG)
+
+
+
+
 

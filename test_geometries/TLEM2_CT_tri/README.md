@@ -1,4 +1,5 @@
 # Data from TLEM2.0 dataset
+
 These bone geometries were segmented from CT scans available in the TLEM2.0 musculoskeletal dataset.
 The dataset is associated with this publication:
 ```
@@ -14,3 +15,4 @@ The dataset is associated with this publication:
 }
 ```
 
+![TLEM2-CT](https://github.com/modenaxe/auto-msk-model/blob/master/images/TLEM2_CT_bones.PNG)
