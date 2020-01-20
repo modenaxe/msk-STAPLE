@@ -1,4 +1,4 @@
-# data from TLEM2.0 dataset
+# Data from TLEM2.0 dataset
 These are the bone geometries for the TLEM2 lower limb model distributed with the paper:
 ```
 @article{carbone2015tlem,
