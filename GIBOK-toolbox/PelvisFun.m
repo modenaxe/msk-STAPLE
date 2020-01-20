@@ -90,6 +90,15 @@ CSs.ISB.V = [X', Y', Z'];
 % plot3(LASIS(1), LASIS(2), LASIS(3),'o')
 % plot3(LPSIS(1), LPSIS(2), LPSIS(3),'o')
 
+% defining the ref system (ISB) - TO VERIFY THAT THE TRANSFORMATION WORKED
+% EXPECTED: PelvisISB will be aligned with PelvisISBRS (global ISB axes)
+% figure
+% PelvisISBRS.Origin = [0 0 0]';
+% PelvisISBRS.X = [1 0 0];
+% PelvisISBRS.Y = [0 1 0];
+% PelvisISBRS.Z = [0 0 1];
+% PlotPelvis_ISB( PelvisISBRS, PelvisISB )
+
 %% Export identified objects of interest
 if nargout > 1
     TrObjects.Pelvis    = Pelvis;
