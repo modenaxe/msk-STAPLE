@@ -14,6 +14,7 @@
 __*
 /_old
 test_geometries/
+docs/
 
 # openSim files
 *.log
