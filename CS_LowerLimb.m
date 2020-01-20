@@ -15,12 +15,17 @@ clc; close all
 %--------------------------------
 addpath(genpath('GIBOK-toolbox'));
 bone_geom_folder = './test_geometries';
+mat_geom_folder
 ACs_folder = './ACs';
 test_case = 'LHDL';
 %--------------------------------
 
 %% Pelvis will be integrated here
-
+% [Pelvis] = ReadMesh(fullfile(bone_geom_folder, 'pelvis_no_sacrum.stl'));
+Pelvis = load(fullfile(bone_dir,'pelvis_no_sacrum.mat'));
+Pelvis = Pelvis.curr_triang;
+[ PelvisRS, PelvisTriangulations ] = PelvisFun( Pelvis);
+PlotPelvis_ISB( PelvisRS.ISB, PelvisTriangulations.Pelvis )
 
 %% Example for a Femur composed of two parts (distal and proximal)
 [Fem] = ReadMesh(fullfile(bone_geom_folder, test_case,'femur_r_LHDL_remeshed15.stl'));
