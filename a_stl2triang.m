@@ -13,10 +13,18 @@ clear; clc
 addpath('./GIBOK-toolbox/SubFunctions')
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
-stl_folder = './test_geometries/MRI_P0';
-% folder where to store the resulting traingulations
-triang_folder = './test_geometries/MRI_P0_triang';
+% stl_folder = './test_geometries/LHDL_CT';
+% stl_folder = './test_geometries/TLEM2_CT';
+% stl_folder = './test_geometries/P0_MRI';
+stl_folder = './test_geometries/TLEM2_MRI';
+% folder where to store the resulting triangulations
+triang_folder = '';
 %---------------------------------------------------
+
+% if triang_folder unspecified, then it is set to stl_folder plus '_tri'
+if isempty(triang_folder) || strcmp(triang_folder,'')
+    triang_folder = [stl_folder, '_tri'];
+end
 
 % check if triang folder exists, if it doesn't create it
 if ~isdir(triang_folder);    mkdir(triang_folder);  end
@@ -39,9 +47,9 @@ for n = 1:N_stl
     curr_stl_name = list_of_stl(n).name;
     [~, name, ext] = fileparts(curr_stl_name);
     disp('-------------------')
-    disp(['GEOMETRY ',num2str(n),'/',num2str(N_stl)])
+    disp(['GEOMETRY ', curr_stl_name, ' (', num2str(n),'/',num2str(N_stl),')'])
     disp('-------------------')
-    disp(['Processing file: ', curr_stl_name, ' in folder ', stl_folder]);
+    disp(['Processing file     : ', fullfile(stl_folder, curr_stl_name)]);
     
     % transform it in triangulation
     curr_triang = ReadMesh(fullfile(stl_folder, curr_stl_name));
@@ -49,9 +57,11 @@ for n = 1:N_stl
     % save it as triangulation matlab file in specified folder
     curr_triang_name = [name, '.mat'];
     curr_triang_file = fullfile(triang_folder, curr_triang_name);
-    disp(['Saving triangulation ', curr_triang_name, ' in folder ', triang_folder]);
+    disp(['Saving triangulation: ', fullfile(triang_folder, curr_triang_name)]);
     save(curr_triang_file,  'curr_triang')
 end
+% nice final print
+disp('-------------------')
 disp('DONE')
 % remove paths
 rmpath('./GIBOK-toolbox/SubFunctions')
