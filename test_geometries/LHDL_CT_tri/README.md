@@ -1,5 +1,6 @@
 # Data from LHDL dataset
 These bone geometries were segmented from CT scans from a female specimen.
+![LHDL-CT](https://github.com/modenaxe/auto-msk-model/blob/master/images/LHDL_CT_bones.PNG)
 Reference publication is:
 
 ```
