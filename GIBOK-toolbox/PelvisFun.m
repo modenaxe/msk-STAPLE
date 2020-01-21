@@ -9,7 +9,7 @@ function [ CSs, TrObjects ] = PelvisFun( Pelvis)
 % adds required functions
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 
-% assuming axes on medical images
+% guess of direction of axes on medical images (not always correct)
 % Z : pointing cranially
 % Y : pointing posteriorly
 % X : pointing medio-laterally
@@ -51,22 +51,40 @@ RotISB2Glob = [sign_x_pelvis*eigVctrs(:, ind_x_pelvis),...
 % RInert2ISB = RInert2Glob*RotISB2Glob';
 
 % generating a triangulated pelvis with coordinate system ISB (see comment
-% in function
-[ PelvisISB, ~ , ~ ] = TriChangeCS( Pelvis, RotISB2Glob, CenterVol);
+% in function). Pseudo because there are still possible errors (see check
+% below).
+[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotISB2Glob, CenterVol);
 
 % In ISB reference system, points at the right have positive z coordinates
 % max z should be ASIS
-R_side_ind = PelvisISB.Points(:,3)>0;
-[~, RASIS_ind] = max(PelvisISB.Points(:,1).*R_side_ind);
-[~, LASIS_ind] = max(PelvisISB.Points(:,1).*~R_side_ind);
-[~, RPSIS_ind] = min(PelvisISB.Points(:,1).*R_side_ind);
-[~, LPSIS_ind] = min(PelvisISB.Points(:,1).*~R_side_ind);
+R_side_ind = PelvisPseudoISB.Points(:,3)>0;
+[~, RASIS_ind] = max(PelvisPseudoISB.Points(:,1).*R_side_ind);
+[~, LASIS_ind] = max(PelvisPseudoISB.Points(:,1).*~R_side_ind);
+[~, RPSIS_ind] = min(PelvisPseudoISB.Points(:,1).*R_side_ind);
+[~, LPSIS_ind] = min(PelvisPseudoISB.Points(:,1).*~R_side_ind);
 
 % extract points on bone
 RASIS = [Pelvis.Points(RASIS_ind,1),Pelvis.Points(RASIS_ind,2), Pelvis.Points(RASIS_ind,3)];
 LASIS = [Pelvis.Points(LASIS_ind,1),Pelvis.Points(LASIS_ind,2), Pelvis.Points(LASIS_ind,3)];
 RPSIS = [Pelvis.Points(RPSIS_ind,1),Pelvis.Points(RPSIS_ind,2), Pelvis.Points(RPSIS_ind,3)];
 LPSIS = [Pelvis.Points(LPSIS_ind,1),Pelvis.Points(LPSIS_ind,2), Pelvis.Points(LPSIS_ind,3)];
+
+% check if bone landmarks are correctly identified or axes were incorrect
+if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
+    % inform user
+    disp('Inter-ASIS distance is shorter than inter-PSIS distance.')
+    disp('Likely error in guessing medical image axes. Flipping X-axis.')
+    % switch ASIS and PSIS
+    % temp variables
+    LPSIS_temp = RASIS;
+    RPSIS_temp = LASIS;
+    % assign asis
+    LASIS = RPSIS;
+    RASIS = LPSIS;
+    % update psis
+    LPSIS = LPSIS_temp;
+    RPSIS = RPSIS_temp;
+end
 
 % defining the ref system (global)
 PelvisOr = (RASIS+LASIS)'/2.0;
@@ -102,7 +120,7 @@ CSs.ISB.V = [X', Y', Z'];
 %% Export identified objects of interest
 if nargout > 1
     TrObjects.Pelvis    = Pelvis;
-    TrObjects.PelvisISB = PelvisISB;
+%     TrObjects.PelvisISB = PelvisPseudoISB;
     TrObjects.RASIS     = RASIS; % in Pelvis ref 
     TrObjects.LASIS     = LASIS; % in Pelvis ref 
     TrObjects.RPSIS     = RPSIS; % in Pelvis ref 
