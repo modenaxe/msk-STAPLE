@@ -15,7 +15,10 @@ addpath(genpath('GIBOK-toolbox'));
 %--------------------------------
 % specify where data are
 bone_geom_folder = './test_geometries';
-dataset_folder_set = {'LHDL_CT_iso_tri','P0_MRI_tri', 'TLEM2_MRI_tri', 'TLEM2_CT_tri', 'LHDL_CT_tri'};
+dataset_folder_set = {  'P0_MRI_tri',...% working
+                        'TLEM2_MRI_tri',...
+                        'TLEM2_CT_tri',...
+                        'LHDL_CT_tri'};
 % select dataset (just for testing, will be loop)
 nd_given = 1;
 % specify the bones you want to calculate the ACSs for
@@ -36,6 +39,7 @@ for nd = nd_given %1:numel(dataset_folder_set)
         
         % read mat triangulation
         geom_file = fullfile(bone_geom_folder, dataset_folder, [cur_bone_name,'.mat']);
+        %TODO: add existence check
         geom = load(geom_file);
         % reads field name (might be different due to changes in
         % a_stl2triang.m
@@ -43,19 +47,26 @@ for nd = nd_given %1:numel(dataset_folder_set)
         geom = geom.(str_name{1});
         
         switch cur_bone_name
+            
             case 'pelvis_no_sacrum'
-                try
+                try 
                     [ PelvisACSsResults, PelvisTriangulations ] = PelvisFun( geom);
                     PlotPelvis_ISB( PelvisACSsResults.ISB, PelvisTriangulations.Pelvis )
-                catch
+                catch EM
+                    disp('=================================');disp(EM.identifier); 
+                    disp(EM.message);disp('=================================');
                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
                     continue
                 end
+            
             case 'femur_r'
-                try
+                try 
                     [ FemACSsResults, FemurTriangulations ] = RFemurFun(geom);
-                    PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations )
-                catch
+                    PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations );
+                    PlotFemurProx_ISB( FemACSsResults.PCC, FemurTriangulations );
+                catch EM
+                    disp('=================================');disp(EM.identifier); 
+                    disp(EM.message);disp('=================================');
                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
                     continue
                 end
@@ -63,7 +74,9 @@ for nd = nd_given %1:numel(dataset_folder_set)
                 try
                     [ TibACSsResults, TibiaTriangulations ] = RTibiaFun(geom);
                     PlotTibiaProx_ISB( TibACSsResults.PIAASL, TibiaTriangulations )
-                catch
+                catch EM
+                    disp('=================================');disp(EM.identifier); 
+                    disp(EM.message);disp('=================================');
                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
                     continue
                 end
@@ -71,7 +84,9 @@ for nd = nd_given %1:numel(dataset_folder_set)
                 try
                     [ PatACSsResults, PatellaTriangulations ] = RPatellaFun( geom );
                     PlotPatella( PatACSsResults.VR, PatellaTriangulations )
-                catch
+                catch EM
+                    disp('=================================');disp(EM.identifier); 
+                    disp(EM.message);disp('=================================');
                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
                     continue
                 end
