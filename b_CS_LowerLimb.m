@@ -7,7 +7,7 @@
 %
 % Reading .msh file might be a bit faster than stl
 %--------------------------------------------------------------------------
-clearvars; clc; close all
+clear; clc; close all
 addpath(genpath('GIBOK-toolbox'));
 
 %--------------------------------
@@ -63,7 +63,7 @@ for nd = nd_given %1:numel(dataset_folder_set)
                 try 
                     [ FemACSsResults, FemurTriangulations ] = RFemurFun(geom);
                     PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations );
-                    PlotFemurProx_ISB( FemACSsResults.PCC, FemurTriangulations );
+                    PlotFemurProx_ISB( FemACSsResults.PCC, FemurTriangulations, FemACSsResults );
                 catch EM
                     disp('=================================');disp(EM.identifier); 
                     disp(EM.message);disp('=================================');
