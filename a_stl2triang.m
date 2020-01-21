@@ -10,13 +10,15 @@
 % ----------------------------------------------------------------------- %
 
 clear; clc
-addpath('./GIBOK-toolbox/SubFunctions')
+addpath(genpath('./GIBOK-toolbox'))
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
 % stl_folder = './test_geometries/LHDL_CT';
 % stl_folder = './test_geometries/TLEM2_CT';
 % stl_folder = './test_geometries/P0_MRI';
-stl_folder = './test_geometries/TLEM2_MRI';
+% stl_folder = './test_geometries/TLEM2_MRI';
+% stl_folder = './test_geometries/LHDL_CT_iso';
+stl_folder = './test_geometries/P0_MRI_smooth';
 % folder where to store the resulting triangulations
 triang_folder = '';
 %---------------------------------------------------
@@ -58,10 +60,11 @@ for n = 1:N_stl
     curr_triang_name = [name, '.mat'];
     curr_triang_file = fullfile(triang_folder, curr_triang_name);
     disp(['Saving triangulation: ', fullfile(triang_folder, curr_triang_name)]);
-    save(curr_triang_file,  'curr_triang')
+    triang_geom = curr_triang;
+    save(curr_triang_file,  'triang_geom')
 end
 % nice final print
 disp('-------------------')
 disp('DONE')
 % remove paths
-rmpath('./GIBOK-toolbox/SubFunctions')
+rmpath(genpath('./GIBOK-toolbox'));
