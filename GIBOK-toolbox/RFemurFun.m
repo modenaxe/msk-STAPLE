@@ -29,55 +29,10 @@ CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
 %% Find Femur Head Center
+CSs = findFemoralHead(ProxFem, CSs);
 
-% Find the most proximal on femur top head
-[~ , I_Top_FH] = max( ProxFem.incenter*Z0 ); % most prox point
-I_Top_FH = [I_Top_FH ProxFem.neighbors(I_Top_FH)]; % triang around it
-Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH); % create a triang with them
-[ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40 );
-
-% Get an initial ML Axis Y0
-OT = mean(Patch_Top_FH.Points)' - CenterVol;
-Y0 = normalizeV(  cross(cross(Z0,OT),Z0)  );
-
-% Find a the most medial (MM) point on the femoral head (FH)
-[~ , I_MM_FH] = max( ProxFem.incenter*Y0 );
-I_MM_FH = [I_MM_FH ProxFem.neighbors(I_MM_FH)];
-Face_MM_FH = TriReduceMesh(ProxFem,I_MM_FH);
-[ Patch_MM_FH ] = TriDilateMesh( ProxFem ,Face_MM_FH , 40 );
-
-FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
-
-% Initial sphere fit
-[~,Radius] = sphereFit(FemHead0.Points);
-[ FemHead1] = TriDilateMesh( ProxFem ,FemHead0 , round(1.5*Radius) );
-[CenterFH,Radius] = sphereFit(FemHead1.Points);
-
-CSs.CenterFH0 = CenterFH;
-
-% Theorial Normal of the face
-CPts_PF_2D  = bsxfun(@minus,FemHead1.incenter,CenterFH);
-normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
-
-% Keep points that display a less than 10° difference between the actual
-% normals and the sphere simulated normals &
-Cond1 = sum((normal_CPts_PF_2D.*FemHead1.faceNormal),2)>0.975 ;
-% Delete points far from sphere surface outside [90%*Radius 110%*Radius]
-Cond2 = abs(sqrt(sum(bsxfun(@minus,FemHead1.incenter,CenterFH).^2,2))...
-    -1*Radius)<0.1*Radius ;
-
-Face_ID_PF_2D_onSphere = find(Cond1 & Cond2);
-FemHead = TriReduceMesh(FemHead1,Face_ID_PF_2D_onSphere);
-FemHead = TriOpenMesh(ProxFem ,FemHead,3);
-
-% Fit the last Sphere
-[CenterFH,Radius] = sphereFit(FemHead.Points);
-
-% Write to the results struct
-CSs.CenterFH = CenterFH;
-CSs.RadiusFH = Radius;
-
-%% Distal Femur Analysis ? Separate diaphysis and epiphysis
+%% Distal Femur Analysis
+% this cell shortens the shaft, so separating diaphysis and epiphysis.
 
 % First 0.5 mm in Start and End are not accounted for, for stability.
 Alt = linspace( min(DistFem.Points*Z0)+0.5 ,max(DistFem.Points*Z0)-0.5, 100);
@@ -91,6 +46,10 @@ end
 [~ , Zepi, ~] = FitCSA(Alt, Area);
 ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
+
+% % quick check to see what's going on
+% subplot(1,2,1); quickPlotTriang(DistFem);title('distal femur')
+% subplot(1,2,2); quickPlotTriang(EpiFem);title('epiFem')
 
 %% Analyze epiphysis to extract nodes lying on the condyles
 [ IdxPointsPair , Edges ] = LargestEdgeConvHull(  EpiFem.Points );
@@ -123,7 +82,7 @@ Axes(I_Axes_duplicate,:)=[];
 U_Axes = Axes./repmat(sqrt(sum(Axes.^2,2)),1,3);
 
 % Make all the axes point in the Laterat -> Medial direction
-Orientation = round(mean(sign(U_Axes*Y0)));
+Orientation = round(mean(sign(U_Axes*CSs.Y0)));
 U_Axes = Orientation*U_Axes;
 Axes = Orientation*Axes;
 
@@ -150,6 +109,14 @@ end
 PtsCondylesMed = EpiFem.Points(IdxPtsCondylesMed,:);
 PtsCondylesLat = EpiFem.Points(IdxPtsCondylesLat,:);
 
+% debugging plots
+quickPlotTriang(EpiFem);title('epiFem'); hold on
+plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');
+plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'k-', 'Linewidth', 3);
+axis equal; hold on
+plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
+plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
+axis equal
 %% Construct a new temporary Coordinate system with a new ML axis guess
 % The intercondyle distance being larger posteriorly the mean center of
 % 50% longest edges connecting the condyles is located posteriorly :
