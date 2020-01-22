@@ -1,8 +1,6 @@
 function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 %Fit an ACS on a femur composed of the distal femur and the femoral head
 
-% addpath(genpath(strcat(pwd,'/SubFunctions'))); % 
-
 % coordinate system structure to store results
 CSs = struct();
 
@@ -10,13 +8,13 @@ CSs = struct();
 if ~exist('ProxFem','var')
       [ProxFem, DistFem] = cutLongBoneMesh(DistFem);
 end
-%% Get initial Coordinate system and volumetric center
 
+%% Get initial Coordinate system and volumetric center
+% join two parts in one triangulation
 Femur = TriUnite(DistFem,ProxFem);
 
 % Get eigen vectors V_all of the Femur 3D geometry and volumetric center
 [ V_all, CenterVol ] = TriInertiaPpties( Femur );
-
 
 % Initial estimate of the Distal-to-Proximal (DP) axis Z0
 % Check that the distal femur is 'below' the proximal femur,
@@ -28,11 +26,11 @@ Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
-%% Find Femur Head Center
+%% Find Femoral Head Center
 CSs = findFemoralHead(ProxFem, CSs);
 
 %% Distal Femur Analysis
-% this cell shortens the shaft, so separating diaphysis and epiphysis.
+% this cell shortens the shaft, separating diaphysis and epiphysis.
 
 % First 0.5 mm in Start and End are not accounted for, for stability.
 Alt = linspace( min(DistFem.Points*Z0)+0.5 ,max(DistFem.Points*Z0)-0.5, 100);
@@ -42,7 +40,6 @@ for d = -Alt
     i = i + 1;
     [ ~ , Area(i), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
 end
-
 [~ , Zepi, ~] = FitCSA(Alt, Area);
 ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
@@ -51,7 +48,7 @@ EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 % subplot(1,2,1); quickPlotTriang(DistFem);title('distal femur')
 % subplot(1,2,2); quickPlotTriang(EpiFem);title('epiFem')
 
-%% Analyze epiphysis to extract nodes lying on the condyles
+%% Analyze epiphysis to traces of condyles (lines running on them - plots)
 % extracts:
 % * ind of points on condyles
 % * well oriented M-L axes joining these points
@@ -71,14 +68,14 @@ end
 PtsCondylesMed = EpiFem.Points(IdxPtsCondylesMed,:);
 PtsCondylesLat = EpiFem.Points(IdxPtsCondylesLat,:);
 
-% debugging plots
-quickPlotTriang(EpiFem);title('epiFem'); hold on
-plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');
-plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'k-', 'Linewidth', 3);
-axis equal; hold on
-plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
-plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
-axis equal
+% % debugging plots
+% quickPlotTriang(EpiFem);title('epiFem'); hold on
+% plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');
+% plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'k-', 'Linewidth', 3);
+% axis equal; hold on
+% plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
+% plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
+% axis equal
 
 %% Construct a new temporary Coordinate system with a new ML axis guess
 % The intercondyle distance being larger posteriorly the mean center of
@@ -86,16 +83,14 @@ axis equal
 PtPosterCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(1:ceil(end/2),1),:)+...
     1/2 * EpiFem.Points(IdCdlPts(1:ceil(end/2),2),:));
 
-% While the middle point of all edges connecting the condyles is
-% located distally :
-PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
-    1/2 * EpiFem.Points(IdCdlPts(:,2),:));
-
 % 2nd ACS guess
 Y1 = normalizeV( (sum(U_Axes,1))' );
 X1 = normalizeV( cross(Y1,Z0) );
 Z1 = cross(X1,Y1);
 VC = [X1 Y1 Z1];
+
+% stored for use in functions
+CSs.Y1 = Y1;
 
 % Select Post Condyle points :
 % Med & Lat Points is the most distal-Posterior on the condyles
@@ -104,10 +99,7 @@ U =  normalizeV( 3*Z0 - X1 );
 
 % Add ONE point (top one) on each proximal edges of each condyle that might
 % have been excluded from the initial selection
-
-%Med
 PtMedTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesMed, U);
-%Lat
 PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U);
 
 % % [LM] plotting for debugging
@@ -115,6 +107,11 @@ PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U)
 % plot3(PtLatTopCondyle(:,1), PtLatTopCondyle(:,2), PtLatTopCondyle(:,3),'go');
 
 %% Separate medial and lateral condyles points
+% The middle point of all edges connecting the condyles is
+% located distally :
+PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
+    1/2 * EpiFem.Points(IdCdlPts(:,2),:));
+
 % Identify condyles points by fitting an ellipse on Long Convexhull
 % edges extremities
 Pt_AxisOnSurf_proj = PtMiddleCondyle*VC ;
@@ -130,14 +127,13 @@ C1_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(...
 PtsCondyle_Lat = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,10, 0.6)');
 Pts_0_C1 = transpose(VC*Pts_Proj_CLat');
 
-
 % Medial Condyles
 Pts_Proj_CMed = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
 C2_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(...
     Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)>0,:);
+
 PtsCondyle_Med = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,25, 0.6)');
 Pts_0_C2 = transpose(VC*Pts_Proj_CMed');
-
 
 % Select notch point :
 % Notch Points is the most distal-anterior point wich normal points
@@ -151,7 +147,6 @@ U =  normalizeV( Z0 - 3*X1 );
 [~,IMax] = min(NodesOk*U);
 PtNotch = NodesOk(IMax,:);
 
-
 % Delete Points that are anterior to Notch
 PtsCondyle_Lat(PtsCondyle_Lat*X1>PtNotch*X1,:)=[];
 Pts_0_C1(Pts_0_C1*X1>PtNotch*X1,:)=[];
@@ -161,93 +156,12 @@ Pts_0_C2(Pts_0_C2*X1>PtNotch*X1,:)=[];
 
 %% Fit the Cylinder on the Femur Condyles
 
-%% Filter Lat condyles art surface with curvature and normal orientation
-%-----------------
-% Lateral Condyles
-%-----------------
-[Center1, Radius1] = sphereFit(PtsCondyle_Lat);
+% Filter Lat condyles art surface with curvature and normal orientation
+Condyle_1_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Lat, Pts_0_C1);
 
-[ Condyle_1 ] = TriReduceMesh( EpiFem, [], PtsCondyle_Lat );
-Condyle_1 = TriCloseMesh(EpiFem,Condyle_1,4);
+% Filter Med condyles art surface
+Condyle_2_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_0_C2);
 
-% Get Curvature
-[Cmean,Cgaussian,~,~,~,~]=TriCurvature(Condyle_1,false);
-% Compute a Curvtr norm
-Curvtr = sqrt(4*Cmean.^2-2*Cgaussian);
-
-% Calculate the "probability" of a vertex to be on an edge, depends on :
-% - Difference in normal orientation from fitted cylinder
-% - Curvature Intensity
-% - Orientation relative to Distal Proximal axis
-
-CylPts = bsxfun(@minus,Condyle_1.Points,Center1);
-Ui = (CylPts - (CylPts*Y1)*Y1');
-Ui = Ui ./ repmat(sqrt(sum(Ui.^2,2)),1,3);
-
-AlphaAngle = abs(90-rad2deg(acos(sum(Condyle_1.vertexNormal.*Ui,2))));
-GammaAngle = rad2deg(acos(Condyle_1.vertexNormal*Z0));
-
-% Sigmoids functions to compute probability of vertex to be on an edge
-Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10));
-Prob_Edge_Angle = Prob_Edge_Angle / max(Prob_Edge_Angle);
-
-Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05));
-Prob_Edge_Curv = Prob_Edge_Curv / max(Prob_Edge_Curv);
-
-Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15));
-Prob_FaceUp = Prob_FaceUp / max(Prob_FaceUp);
-
-Prob_Edge = 0.6*sqrt(Prob_Edge_Angle.*Prob_Edge_Curv) +...
-    0.05*Prob_Edge_Curv +...
-    0.15*Prob_Edge_Angle +...
-    0.2*Prob_FaceUp;
-
-Condyle_1_edges = TriReduceMesh(Condyle_1,[],find(Prob_Edge_Curv.*Prob_Edge_Angle>0.5));
-
-Condyle_1_end = TriReduceMesh(Condyle_1,[],find(Prob_Edge<0.20));
-[ Condyle_1_end ] = TriConnectedPatch( Condyle_1_end, Pts_0_C1  );
-Condyle_1_end = TriCloseMesh(EpiFem,Condyle_1_end,10);
-[ Condyle_1_end ] = TriKeepLargestPatch( Condyle_1_end );
-[ Condyle_1_end ] = TriDifferenceMesh( Condyle_1_end , Condyle_1_edges );
-
-%% Filter Med condyles art surface
-%-------------------------
-% Idem as Lateral for Medial Condyles
-%-------------------------
-[Center2, Radius2] = sphereFit(PtsCondyle_Med);
-
-[ Condyle_2 ] = TriReduceMesh( EpiFem, [], PtsCondyle_Med );
-Condyle_2 = TriCloseMesh(EpiFem,Condyle_2,4);
-
-[Cmean,Cgaussian,~,~,~,~]=TriCurvature(Condyle_2,false);
-Curvtr = sqrt(4*Cmean.^2-2*Cgaussian);
-
-CylPts = bsxfun(@minus,Condyle_2.Points,Center2);
-Ui = (CylPts - (CylPts*Y1)*Y1');
-Ui = Ui ./ repmat(sqrt(sum(Ui.^2,2)),1,3);
-
-AlphaAngle = abs(90-rad2deg(acos(sum(Condyle_2.vertexNormal.*Ui,2))));
-GammaAngle = rad2deg(acos(Condyle_2.vertexNormal*Z0));
-
-% Sigmoids functions to compute probability of vertex to be on an edge
-Prob_Edge_Angle = 1 ./ (1 + exp((AlphaAngle-50)/10));
-Prob_Edge_Angle = Prob_Edge_Angle / max(Prob_Edge_Angle);
-
-Prob_Edge_Curv =  1 ./ ( 1 + exp( - ( Curvtr - 0.25)/0.05));
-Prob_Edge_Curv = Prob_Edge_Curv / max(Prob_Edge_Curv);
-
-Prob_FaceUp = 1 ./ (1 + exp((GammaAngle-45)/15));
-Prob_FaceUp = Prob_FaceUp / max(Prob_FaceUp);
-
-Prob_Edge = 0.6*sqrt(Prob_Edge_Angle.*Prob_Edge_Curv) +  0.05*Prob_Edge_Curv + 0.15*Prob_Edge_Angle +  0.2*Prob_FaceUp; % + 0.25*Prob_Edge_Curv; % + 0.05*Prob_Edge_Curv + 0.05*Prob_Edge_Angle;
-
-Condyle_2_edges = TriReduceMesh(Condyle_2,[],find(Prob_Edge_Curv.*Prob_Edge_Angle>0.5));
-
-Condyle_2_end = TriReduceMesh(Condyle_2,[],find(Prob_Edge<0.20));
-[ Condyle_2_end ] = TriConnectedPatch( Condyle_2_end, Pts_0_C2  );
-Condyle_2_end = TriCloseMesh(EpiFem,Condyle_2_end,10);
-[ Condyle_2_end ] = TriDifferenceMesh( Condyle_2_end , Condyle_2_edges );
-[ Condyle_2_end ] = TriKeepLargestPatch( Condyle_2_end );
 
 %% Fit 2 Spheres on AS Technic
 [Center1,Radius1] = sphereFit(Condyle_1_end.Points);

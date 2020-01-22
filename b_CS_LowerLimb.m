@@ -22,7 +22,7 @@ dataset_folder_set = {  'P0_MRI_tri',...% working
 % select dataset (just for testing, will be loop)
 nd_given = 1;
 % specify the bones you want to calculate the ACSs for
-bone_name_set = {'pelvis_no_sacrum', 'femur_r',  'tibia_r', 'patella_r','talus_r', 'toes_r'};
+bone_name_set = { 'femur_r'};%, 'pelvis_no_sacrum', 'tibia_r', 'patella_r','talus_r', 'toes_r'};
 
 % specify where to store the results
 ACs_store_folder = './ACs';
@@ -60,16 +60,16 @@ for nd = nd_given %1:numel(dataset_folder_set)
                 end
             
             case 'femur_r'
-                try 
+%                 try 
                     [ FemACSsResults, FemurTriangulations ] = RFemurFun(geom);
                     PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations );
                     PlotFemurProx_ISB( FemACSsResults.PCC, FemurTriangulations, FemACSsResults );
-                catch EM
-                    disp('=================================');disp(EM.identifier); 
-                    disp(EM.message);disp('=================================');
-                    warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
-                    continue
-                end
+%                 catch EM
+%                     disp('=================================');disp(EM.identifier); 
+%                     disp(EM.message);disp('=================================');
+%                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
+%                     continue
+%                 end
             case 'tibia_r'
                 try
                     [ TibACSsResults, TibiaTriangulations ] = RTibiaFun(geom);
