@@ -60,7 +60,7 @@ Ikept = [];
 
 % Keep elements that are not connected to the proximal cut and that are
 % longer than half of the longest Edge
-while length(Ikept) ~= sum(Edges>0.5*Edges(1))
+while length(Ikept) ~= sum(Edges>0.5*max(Edges))
     i=i+1;
     if ~any(IdxPointsPair(i,1)==Idx_Epiphysis_Pts_DF_Slice) &&...
             ~any(IdxPointsPair(i,2)==Idx_Epiphysis_Pts_DF_Slice)
@@ -70,6 +70,9 @@ end
 
 %Index of nodes identified on condyles:
 IdCdlPts = IdxPointsPair(Ikept,:);
+figure
+plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*'); hold on
+plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*')
 
 % Axes vector of points pairs
 Axes = EpiFem.Points(IdCdlPts(:,1),:)-EpiFem.Points(IdCdlPts(:,2),:);
@@ -117,6 +120,7 @@ axis equal; hold on
 plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
 plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
 axis equal
+
 %% Construct a new temporary Coordinate system with a new ML axis guess
 % The intercondyle distance being larger posteriorly the mean center of
 % 50% longest edges connecting the condyles is located posteriorly :
