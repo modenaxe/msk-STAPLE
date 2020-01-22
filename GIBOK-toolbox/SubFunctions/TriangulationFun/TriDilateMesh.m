@@ -2,7 +2,9 @@ function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
-[~, ia ,ic] = intersect(TRsup.Points,TRin.Points,'rows','stable');
+% returns the rows of the intersection in the same order that they appear 
+% in the first vector given as input.
+[~, ia ,ic] = intersect(TRsup.Points, TRin.Points,'rows','stable');
 
 ElmtsOK = TRsup.vertexAttachments(ia)';
 ElmtsOK = transpose(unique(horzcat(ElmtsOK{:})));
