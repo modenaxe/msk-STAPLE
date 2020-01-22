@@ -1,12 +1,13 @@
 function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 %Fit an ACS on a femur composed of the distal femur and the femoral head
 
-addpath(genpath(strcat(pwd,'/SubFunctions')));
+% addpath(genpath(strcat(pwd,'/SubFunctions'))); % 
+
+% coordinate system structure to store results
 CSs = struct();
 
+% if this is an entire femur then cut it in two parts
 if ~exist('ProxFem','var')
-     % Only one mesh, this is a long bone that should be cutted in two
-     % parts
       [ProxFem, DistFem] = cutLongBoneMesh(DistFem);
 end
 %% Get initial Coordinate system and volumetric center
@@ -18,20 +19,21 @@ Femur = TriUnite(DistFem,ProxFem);
 
 
 % Initial estimate of the Distal-to-Proximal (DP) axis Z0
-% Check that the distal tibia is 'below' the proximal tibia,
+% Check that the distal femur is 'below' the proximal femur,
 % invert Z0 direction otherwise
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 
+% store approximate Z direction and centre of mass of triangulation
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
 %% Find Femur Head Center
 
 % Find the most proximal on femur top head
-[~ , I_Top_FH] = max( ProxFem.incenter*Z0 );
-I_Top_FH = [I_Top_FH ProxFem.neighbors(I_Top_FH)];
-Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH);
+[~ , I_Top_FH] = max( ProxFem.incenter*Z0 ); % most prox point
+I_Top_FH = [I_Top_FH ProxFem.neighbors(I_Top_FH)]; % triang around it
+Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH); % create a triang with them
 [ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40 );
 
 % Get an initial ML Axis Y0
