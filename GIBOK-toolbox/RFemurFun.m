@@ -52,53 +52,11 @@ EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 % subplot(1,2,2); quickPlotTriang(EpiFem);title('epiFem')
 
 %% Analyze epiphysis to extract nodes lying on the condyles
-[ IdxPointsPair , Edges ] = LargestEdgeConvHull(  EpiFem.Points );
-Idx_Epiphysis_Pts_DF_Slice = unique(EpiFem.freeBoundary);
-
-i=0;
-Ikept = [];
-
-% Keep elements that are not connected to the proximal cut and that are
-% longer than half of the longest Edge
-while length(Ikept) ~= sum(Edges>0.5*max(Edges))
-    i=i+1;
-    if ~any(IdxPointsPair(i,1)==Idx_Epiphysis_Pts_DF_Slice) &&...
-            ~any(IdxPointsPair(i,2)==Idx_Epiphysis_Pts_DF_Slice)
-        Ikept(end+1) = i;
-    end
-end
-
-%Index of nodes identified on condyles:
-IdCdlPts = IdxPointsPair(Ikept,:);
-figure
-plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*'); hold on
-plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*')
-
-% Axes vector of points pairs
-Axes = EpiFem.Points(IdCdlPts(:,1),:)-EpiFem.Points(IdCdlPts(:,2),:);
-
-I_Axes_duplicate = find(Axes*Axes(round(length(Axes)/2),:)'<0);
-
-% Delete duplicate but inverted Axes
-IdCdlPts(I_Axes_duplicate,:)=[];
-Axes(I_Axes_duplicate,:)=[];
-U_Axes = Axes./repmat(sqrt(sum(Axes.^2,2)),1,3);
-
-% Make all the axes point in the Laterat -> Medial direction
-Orientation = round(mean(sign(U_Axes*CSs.Y0)));
-U_Axes = Orientation*U_Axes;
-Axes = Orientation*Axes;
-
-
-% delete if too far from inertial medio-Lat axis;
-IdCdlPts(abs(U_Axes*V_all(:,2))<0.75,:) = [];
-U_Axes(abs(U_Axes*V_all(:,2))<0.75,:) = [];
-
-[ U_Axes_Good] = PCRegionGrowing(U_Axes, normalizeV( mean(U_Axes) )', 0.1);
-LIA = ismember(U_Axes,U_Axes_Good,'rows');
-U_Axes(~LIA,:) = [];
-Axes(~LIA,:) = [];
-IdCdlPts(~LIA,:) = [];
+% extracts:
+% * ind of points on condyles
+% * well oriented M-L axes joining these points
+% * Orientations ?
+[IdCdlPts, U_Axes, Orientation] = processFemoralEpiPhysis(EpiFem, CSs, V_all);
 
 % Assign Points on Lateral or Medial Condyles
 if Orientation < 0
@@ -109,6 +67,7 @@ else
     IdxPtsCondylesLat = IdCdlPts(:,2);
 end
 
+% These are points, almost lines that "walk" on the condyles
 PtsCondylesMed = EpiFem.Points(IdxPtsCondylesMed,:);
 PtsCondylesLat = EpiFem.Points(IdxPtsCondylesLat,:);
 
@@ -136,7 +95,6 @@ PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
 Y1 = normalizeV( (sum(U_Axes,1))' );
 X1 = normalizeV( cross(Y1,Z0) );
 Z1 = cross(X1,Y1);
-
 VC = [X1 Y1 Z1];
 
 % Select Post Condyle points :
@@ -144,27 +102,17 @@ VC = [X1 Y1 Z1];
 X1 = sign((mean(EpiFem.Points)-PtPosterCondyle)*X1)*X1;
 U =  normalizeV( 3*Z0 - X1 );
 
-% Add points on the poximal edges of each condyle that might have been
-% excluded from the initial selection:
-%Med
-[oLSP, nMed] = lsplane(PtsCondylesMed);
-dMed = -oLSP*nMed;
-IonPlan = find(abs(EpiFem.Points*nMed+dMed)<2.5 & ...
-    EpiFem.Points*Z0>max(PtsCondylesMed*Z0-2.5));
-IonC = rangesearch(EpiFem.Points,PtsCondylesMed,7.5);
-IOK = intersect(IonPlan,unique([IonC{:}]'));
-[~,Imax] = max(EpiFem.vertexNormal(IOK)*U);
-PtMedTopCondyle = EpiFem.Points(IOK(Imax),:);
+% Add ONE point (top one) on each proximal edges of each condyle that might
+% have been excluded from the initial selection
 
+%Med
+PtMedTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesMed, U);
 %Lat
-[oLSP, nLat] = lsplane(PtsCondylesLat);
-dLat = -oLSP*nLat;
-IonPlan = find(abs(EpiFem.Points*nLat+dLat)<2.5 & ...
-    EpiFem.Points*Z0>max(PtsCondylesLat*Z0-2.5));
-IonC = rangesearch(EpiFem.Points,PtsCondylesLat,7.5);
-IOK = intersect(IonPlan,unique([IonC{:}]'));
-[~,Imax] = max(EpiFem.vertexNormal(IOK)*U);
-PtLatTopCondyle = EpiFem.Points(IOK(Imax),:);
+PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U);
+
+% % [LM] plotting for debugging
+% plot3(PtMedTopCondyle(:,1), PtMedTopCondyle(:,2), PtMedTopCondyle(:,3),'go');
+% plot3(PtLatTopCondyle(:,1), PtLatTopCondyle(:,2), PtLatTopCondyle(:,3),'go');
 
 %% Separate medial and lateral condyles points
 % Identify condyles points by fitting an ellipse on Long Convexhull
