@@ -4,6 +4,12 @@ function CSs = findFemoralHead(ProxFem, CSs)
 % - CSs.CenterVol
 % - CSs.Z0
 
+% populates
+% CSs.Y0
+% CSs.CenterFH0
+% CSs.CenterFH
+% CSs.RadiusFH
+
 % Find the most proximal on femur top head
 [~ , I_Top_FH] = max( ProxFem.incenter*CSs.Z0 ); 
 % most prox point
@@ -13,7 +19,9 @@ Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH);
 % create a triang with them
 [ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40 );
 
-% Get an initial ML Axis Y0
+% Get an initial ML Axis Y0 (pointing posteriorly)
+% NB: from centerVol, OT points upwards to ~HJC, that is more medial than
+% Z0. The new Y0 is backwards pointing.
 OT = mean(Patch_Top_FH.Points)' - CSs.CenterVol;
 CSs.Y0 = normalizeV(  cross(cross(CSs.Z0,OT),CSs.Z0)  );
 
