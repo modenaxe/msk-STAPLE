@@ -19,7 +19,8 @@ Ikept = [];
 
 % Keep elements that are not connected to the proximal cut and that are
 % longer than half of the longest Edge (default)
-% NB Edges is an ordered vector -> first is largest
+% NB Edges is an ordered vector -> first is largest, and vector Ikept
+% should store the largest elements
 while length(Ikept) ~= sum(Edges>edge_threshold*Edges(1))
     i=i+1;
     if ~any(IdxPointsPair(i,1)==Idx_Epiphysis_Pts_DF_Slice) &&...
