@@ -1,5 +1,4 @@
 function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
-%Fit an ACS on a femur composed of the distal femur and the femoral head
 
 % coordinate system structure to store results
 CSs = struct();
@@ -9,9 +8,16 @@ if ~exist('ProxFem','var')
       [ProxFem, DistFem] = cutLongBoneMesh(DistFem);
 end
 
-%% Get initial Coordinate system and volumetric center
 % join two parts in one triangulation
 Femur = TriUnite(DistFem,ProxFem);
+
+%% Initial Coordinate system (from inertial axes + HJC)
+% The reference system:
+%-------------------------------------
+% Z0: points upwards (inertial axis) 
+% Y0: points posteriorly (from OT and Z0 in findFemoralHead.m)
+% X0: unused
+%-------------------------------------
 
 % Get eigen vectors V_all of the Femur 3D geometry and volumetric center
 [ V_all, CenterVol ] = TriInertiaPpties( Femur );
@@ -26,47 +32,50 @@ Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
-%% Find Femoral Head Center
+% Find Femoral Head Center
+% NB adds a CSs.Y0, pointing A-P direction POSTERIORLY directed
 CSs = findFemoralHead(ProxFem, CSs);
 
-%% Distal Femur Analysis
-% this cell shortens the shaft, separating diaphysis and epiphysis.
+%% Isolates the epiphysis
+% Operations:
+% 1. shortens the shaft and removes points too distal
 
 % First 0.5 mm in Start and End are not accounted for, for stability.
 Alt = linspace( min(DistFem.Points*Z0)+0.5 ,max(DistFem.Points*Z0)-0.5, 100);
 Area= zeros(size(Alt));
-i=0;
+it=0;
 for d = -Alt
-    i = i + 1;
-    [ ~ , Area(i), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
+    it = it + 1;
+    [ ~ , Area(it), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
 end
+% removes mesh above the limit of epiphysis (Zepi)
 [~ , Zepi, ~] = FitCSA(Alt, Area);
 ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 
-% % quick check to see what's going on
+% debugging plot
 % subplot(1,2,1); quickPlotTriang(DistFem);title('distal femur')
 % subplot(1,2,2); quickPlotTriang(EpiFem);title('epiFem')
 
 %% Analyze epiphysis to traces of condyles (lines running on them - plots)
 % extracts:
-% * ind of points on condyles
+% * ind of points on condyles (lines running on them)
 % * well oriented M-L axes joining these points
-% * Orientations ?
-[IdCdlPts, U_Axes, Orientation] = processFemoralEpiPhysis(EpiFem, CSs, V_all);
+% * med_lat_ind: indices [1,2] or [2, 1]. 1st comp is medial cond, 2nd lateral.
+%============
+% PARAMETERS
+%============
+edge_threshold = 0.5;
+axes_dev_thresh = 0.75;
+%============
 
-% Assign Points on Lateral or Medial Condyles
-if Orientation < 0
-    IdxPtsCondylesLat = IdCdlPts(:,1);
-    IdxPtsCondylesMed = IdCdlPts(:,2);
-else
-    IdxPtsCondylesMed = IdCdlPts(:,1);
-    IdxPtsCondylesLat = IdCdlPts(:,2);
-end
+[IdCdlPts, U_Axes, med_lat_ind] = processFemoralEpiPhysis(EpiFem, CSs, V_all,...
+                                  edge_threshold, axes_dev_thresh);
 
+% Assign indices of points on Lateral or Medial Condyles Variable
 % These are points, almost lines that "walk" on the condyles
-PtsCondylesMed = EpiFem.Points(IdxPtsCondylesMed,:);
-PtsCondylesLat = EpiFem.Points(IdxPtsCondylesLat,:);
+PtsCondylesMed = EpiFem.Points(IdCdlPts(:,med_lat_ind(1)),:);
+PtsCondylesLat = EpiFem.Points(IdCdlPts(:,med_lat_ind(2)),:);
 
 % % debugging plots
 % quickPlotTriang(EpiFem);title('epiFem'); hold on
@@ -77,13 +86,13 @@ PtsCondylesLat = EpiFem.Points(IdxPtsCondylesLat,:);
 % plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
 % axis equal
 
-%% Construct a new temporary Coordinate system with a new ML axis guess
-% The intercondyle distance being larger posteriorly the mean center of
-% 50% longest edges connecting the condyles is located posteriorly :
-PtPosterCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(1:ceil(end/2),1),:)+...
-    1/2 * EpiFem.Points(IdCdlPts(1:ceil(end/2),2),:));
-
-% 2nd ACS guess
+%% New temporary Coordinate system (new ML axis guess)
+% The reference system:
+%-------------------------------------
+% Y1: based on U_Axes (?)
+% X1: cross(Y1, Z0), with Z0 being the upwards inertial axis
+% Z1: cross product of prev
+%-------------------------------------
 Y1 = normalizeV( (sum(U_Axes,1))' );
 X1 = normalizeV( cross(Y1,Z0) );
 Z1 = cross(X1,Y1);
@@ -91,6 +100,12 @@ VC = [X1 Y1 Z1];
 
 % stored for use in functions
 CSs.Y1 = Y1;
+
+% The intercondyle distance being larger posteriorly the mean center of
+% 50% longest edges connecting the condyles is located posteriorly :
+n_in = ceil(size(IdCdlPts,1)*edge_threshold);
+PtPosterCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(1:n_in,1),:)+...
+                        1/2 * EpiFem.Points(IdCdlPts(1:n_in,2),:));
 
 % Select Post Condyle points :
 % Med & Lat Points is the most distal-Posterior on the condyles
@@ -110,30 +125,51 @@ PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U)
 % The middle point of all edges connecting the condyles is
 % located distally :
 PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
-    1/2 * EpiFem.Points(IdCdlPts(:,2),:));
+                        1/2 * EpiFem.Points(IdCdlPts(:,2),:));
 
-% Identify condyles points by fitting an ellipse on Long Convexhull
-% edges extremities
-Pt_AxisOnSurf_proj = PtMiddleCondyle*VC ;
+% transformations on the new refernce system: x_n = (R*x')'=x*R' [TO CHECK]
+Pt_AxisOnSurf_proj      = PtMiddleCondyle*VC; % middle point
+Epiphysis_Pts_DF_2D_RC  = EpiFem.Points*VC; % distal femur
+Pts_Proj_CLat           = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
+Pts_Proj_CMed           = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
 
-Epiphysis_Pts_DF_2D_RC = EpiFem.Points*VC ;
-%   Pts_Proj_C = Epiphysis_Pts_DF_2D_RC(IdxPtsCondylesLat,:);
+% divides the epiphesis in med and lat based on where they stand wrt the
+% midpoint identified above
+C1_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)<0,:);
+C2_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)>0,:);
 
-% Lateral Condyles
-Pts_Proj_CLat = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
-C1_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(...
-    Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)<0,:);
+% Identify condyles points (posterior part) by fitting an ellipse on 
+% long convexhull edges extremities
+%============
+% PARAMETERS
+%============
+CutAngle_Lat = 10; 
+CutAngle_Med = 25;
+InSetRatio = 0.6;
+%============
+PtsCondyle_Lat = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,CutAngle_Lat, InSetRatio)');
+PtsCondyle_Med = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,CutAngle_Med, InSetRatio)');
+%============
+% plots the midpoint of all edges
+plot3(Pt_AxisOnSurf_proj(1), Pt_AxisOnSurf_proj(2), Pt_AxisOnSurf_proj(3),'ko', 'Linewidth', 5); axis equal; hold on
+% plots condiles split in medial and lateral
+plot3(C1_Pts_DF_2D_RC(:,1), C1_Pts_DF_2D_RC(:,2),C1_Pts_DF_2D_RC(:,3),'g*'); axis equal; hold on
+plot3(C2_Pts_DF_2D_RC(:,1), C2_Pts_DF_2D_RC(:,2),C2_Pts_DF_2D_RC(:,3),'b*'); axis equal; hold on
+% plots medial and lateral posterior surface on the VC ref system
+plot3(PtsCondyle_Lat(:,1), PtsCondyle_Lat(:,2),PtsCondyle_Lat(:,3),'g.'); axis equal; hold on
+plot3(PtsCondyle_Med(:,1), PtsCondyle_Med(:,2),PtsCondyle_Med(:,3),'b.'); axis equal; hold on
+plot3(PtMiddleCondyle(1), PtMiddleCondyle(2), PtMiddleCondyle(3),'ro', 'Linewidth', 5); axis equal; hold on
 
-PtsCondyle_Lat = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,10, 0.6)');
+
 Pts_0_C1 = transpose(VC*Pts_Proj_CLat');
-
-% Medial Condyles
-Pts_Proj_CMed = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
-C2_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(...
-    Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)>0,:);
-
-PtsCondyle_Med = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,25, 0.6)');
 Pts_0_C2 = transpose(VC*Pts_Proj_CMed');
+Pts_0_C12 = Pts_Proj_CLat*VC';
+
+max(Pts_0_C12-Pts_0_C1)
+
+
+plot3(Pts_0_C1(:,1), Pts_0_C1(:,2),Pts_0_C1(:,3),'rs', 'Linewidth', 5); axis equal; hold on
+
 
 % Select notch point :
 % Notch Points is the most distal-anterior point wich normal points
@@ -156,10 +192,12 @@ Pts_0_C2(Pts_0_C2*X1>PtNotch*X1,:)=[];
 
 %% Fit the Cylinder on the Femur Condyles
 
-% Filter Lat condyles art surface with curvature and normal orientation
+% Filter Lat condyles art surface with curvature and normal orientation so
+% that only the posterior part remains
 Condyle_1_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Lat, Pts_0_C1);
 
-% Filter Med condyles art surface
+% Filter Med condyles art surface with curvature and normal orientation so
+% that only the posterior part remains
 Condyle_2_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_0_C2);
 
 
