@@ -1,5 +1,6 @@
 function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 
+%TODO: change _1 and _2 in lateral and medial 
 % coordinate system structure to store results
 CSs = struct();
 
@@ -65,7 +66,7 @@ EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 %============
 % PARAMETERS
 %============
-edge_threshold = 0.5;
+edge_threshold = 0.5; % used also for new coord syst below
 axes_dev_thresh = 0.75;
 %============
 
@@ -86,10 +87,10 @@ PtsCondylesLat = EpiFem.Points(IdCdlPts(:,med_lat_ind(2)),:);
 % plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'r-', 'Linewidth', 3);
 % axis equal
 
-%% New temporary Coordinate system (new ML axis guess)
+%% New temporary coordinate system (new ML axis guess)
 % The reference system:
 %-------------------------------------
-% Y1: based on U_Axes (?)
+% Y1: based on U_Axes (MED-LAT??)
 % X1: cross(Y1, Z0), with Z0 being the upwards inertial axis
 % Z1: cross product of prev
 %-------------------------------------
@@ -102,10 +103,10 @@ VC = [X1 Y1 Z1];
 CSs.Y1 = Y1;
 
 % The intercondyle distance being larger posteriorly the mean center of
-% 50% longest edges connecting the condyles is located posteriorly :
+% 50% longest edges connecting the condyles is located posteriorly.
+% NB edge threshold is customizable!
 n_in = ceil(size(IdCdlPts,1)*edge_threshold);
-PtPosterCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(1:n_in,1),:)+...
-                        1/2 * EpiFem.Points(IdCdlPts(1:n_in,2),:));
+PtPosterCondyle = mean(0.5*(PtsCondylesMed(1:n_in,:)+PtsCondylesLat(1:n_in,:)));
 
 % Select Post Condyle points :
 % Med & Lat Points is the most distal-Posterior on the condyles
@@ -124,14 +125,16 @@ PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U)
 %% Separate medial and lateral condyles points
 % The middle point of all edges connecting the condyles is
 % located distally :
-PtMiddleCondyle = mean( 1/2 * EpiFem.Points(IdCdlPts(:,1),:) + ...
-                        1/2 * EpiFem.Points(IdCdlPts(:,2),:));
+PtMiddleCondyle         = mean(0.5*(PtsCondylesMed+PtsCondylesLat));
 
 % transformations on the new refernce system: x_n = (R*x')'=x*R' [TO CHECK]
 Pt_AxisOnSurf_proj      = PtMiddleCondyle*VC; % middle point
 Epiphysis_Pts_DF_2D_RC  = EpiFem.Points*VC; % distal femur
 Pts_Proj_CLat           = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
 Pts_Proj_CMed           = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
+
+Pts_0_C1                = Pts_Proj_CLat*VC';
+Pts_0_C2                = Pts_Proj_CMed*VC';
 
 % divides the epiphesis in med and lat based on where they stand wrt the
 % midpoint identified above
@@ -147,42 +150,29 @@ CutAngle_Lat = 10;
 CutAngle_Med = 25;
 InSetRatio = 0.6;
 %============
-PtsCondyle_Lat = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,CutAngle_Lat, InSetRatio)');
-PtsCondyle_Med = transpose(VC*PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,CutAngle_Med, InSetRatio)');
+PtsCondyle_Lat = PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,CutAngle_Lat, InSetRatio)*VC';
+PtsCondyle_Med = PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,CutAngle_Med, InSetRatio)*VC';
 %============
-% plots the midpoint of all edges
-plot3(Pt_AxisOnSurf_proj(1), Pt_AxisOnSurf_proj(2), Pt_AxisOnSurf_proj(3),'ko', 'Linewidth', 5); axis equal; hold on
-% plots condiles split in medial and lateral
-plot3(C1_Pts_DF_2D_RC(:,1), C1_Pts_DF_2D_RC(:,2),C1_Pts_DF_2D_RC(:,3),'g*'); axis equal; hold on
-plot3(C2_Pts_DF_2D_RC(:,1), C2_Pts_DF_2D_RC(:,2),C2_Pts_DF_2D_RC(:,3),'b*'); axis equal; hold on
-% plots medial and lateral posterior surface on the VC ref system
-plot3(PtsCondyle_Lat(:,1), PtsCondyle_Lat(:,2),PtsCondyle_Lat(:,3),'g.'); axis equal; hold on
-plot3(PtsCondyle_Med(:,1), PtsCondyle_Med(:,2),PtsCondyle_Med(:,3),'b.'); axis equal; hold on
-plot3(PtMiddleCondyle(1), PtMiddleCondyle(2), PtMiddleCondyle(3),'ro', 'Linewidth', 5); axis equal; hold on
+% % plots the midpoint of all edges
+% plot3(Pt_AxisOnSurf_proj(1), Pt_AxisOnSurf_proj(2), Pt_AxisOnSurf_proj(3),'ko', 'Linewidth', 5); axis equal; hold on
+% % plots condiles split in medial and lateral
+% plot3(C1_Pts_DF_2D_RC(:,1), C1_Pts_DF_2D_RC(:,2),C1_Pts_DF_2D_RC(:,3),'g*'); axis equal; hold on
+% plot3(C2_Pts_DF_2D_RC(:,1), C2_Pts_DF_2D_RC(:,2),C2_Pts_DF_2D_RC(:,3),'b*'); axis equal; hold on
+% % plots medial and lateral posterior surface on the VC ref system
+% plot3(PtsCondyle_Lat(:,1), PtsCondyle_Lat(:,2),PtsCondyle_Lat(:,3),'g.'); axis equal; hold on
+% plot3(PtsCondyle_Med(:,1), PtsCondyle_Med(:,2),PtsCondyle_Med(:,3),'b.'); axis equal; hold on
+% plot3(PtMiddleCondyle(1), PtMiddleCondyle(2), PtMiddleCondyle(3),'ro', 'Linewidth', 5); axis equal; hold on
+% plot3(Pts_0_C1(:,1), Pts_0_C1(:,2),Pts_0_C1(:,3),'rs', 'Linewidth', 5); axis equal; hold on
 
-
-Pts_0_C1 = transpose(VC*Pts_Proj_CLat');
-Pts_0_C2 = transpose(VC*Pts_Proj_CMed');
-Pts_0_C12 = Pts_Proj_CLat*VC';
-
-max(Pts_0_C12-Pts_0_C1)
-
-
-plot3(Pts_0_C1(:,1), Pts_0_C1(:,2),Pts_0_C1(:,3),'rs', 'Linewidth', 5); axis equal; hold on
-
-
-% Select notch point :
-% Notch Points is the most distal-anterior point wich normal points
+% Identify notch point as the most distal-anterior point with normal points
 % posterior-distally
-PtsCondyle = [PtsCondyle_Lat;PtsCondyle_Med];
+PtsCondyle = [PtsCondyle_Lat; PtsCondyle_Med];
 X1 = sign((mean(EpiFem.Points)-mean(PtsCondyle))*X1)*X1;
 U =  normalizeV( -Z0 - 3*X1 );
 NodesOk = EpiFem.Points(EpiFem.vertexNormal*U>0.98,:);
-
 U =  normalizeV( Z0 - 3*X1 );
 [~,IMax] = min(NodesOk*U);
 PtNotch = NodesOk(IMax,:);
-
 % Delete Points that are anterior to Notch
 PtsCondyle_Lat(PtsCondyle_Lat*X1>PtNotch*X1,:)=[];
 Pts_0_C1(Pts_0_C1*X1>PtNotch*X1,:)=[];
@@ -202,22 +192,24 @@ Condyle_2_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_0_C2);
 
 
 %% Fit 2 Spheres on AS Technic
-[Center1,Radius1] = sphereFit(Condyle_1_end.Points);
-[Center2,Radius2] = sphereFit(Condyle_2_end.Points);
-PtsCondyle = [Condyle_1_end.Points;Condyle_2_end.Points];
+% function fit_spheres(Condyle_1_end, Condyle_2_end)
 
-Axe0 = transpose(Center1 - Center2);
+[Center1,Radius1] = sphereFit(Condyle_1_end.Points); %lat
+[Center2,Radius2] = sphereFit(Condyle_2_end.Points); %med
+
+%============= to remove =======================
+Axe0 = transpose(Center1-Center2);
 Center0 = transpose(0.5*Center1 + 0.5*Center2);
 Radius0 = 0.5*Radius1 + 0.5*Radius2;
+%====================================
+Ysph =  normalizeV(Center1-Center2);
+Ysph = sign(Ysph'*CSs.Y0)*Ysph;
 
-Ysph =  normalizeV( Axe0 );
-Ysph = sign(Ysph'*Y0)*Ysph;
+KneeCenterSph = 0.5*(Center1+Center2);
 
-KneeCenterSph = Center0;
-
-Zend_sph =  normalizeV( CenterFH' - KneeCenterSph );
+Zend_sph =  normalizeV( CSs.CenterFH - KneeCenterSph );
 Xend_sph =  normalizeV( cross(Ysph,Zend_sph) );
-Yend_sph = cross(Zend_sph,Xend_sph);
+Yend_sph = cross(Zend_sph, Xend_sph);
 
 % Write Found ACS
 CSs.PCS.Ysph = Ysph;
@@ -225,9 +217,10 @@ CSs.PCS.Origin = KneeCenterSph;
 CSs.PCS.X = Xend_sph;
 CSs.PCS.Y = Yend_sph;
 CSs.PCS.Z = Zend_sph;
-
+% end
 %% Fit Cylinder on articular surface and get center
 % Fit the condyles with a cylinder
+PtsCondyle = [Condyle_1_end.Points;Condyle_2_end.Points];
 [x0n, an, rn] = lscylinder(PtsCondyle, Center0, Axe0, Radius0, 0.001, 0.001);
 Y2 =  normalizeV( an );
 
@@ -254,7 +247,7 @@ Z2 =  normalizeV( Z0 - Z0'*Y2*Y2 );
 Pt_Knee0 = Pt_Knee0 - rn*Z2';
 
 % Final steps to construct direct ACS
-Zmech =  normalizeV( CenterFH - Pt_Knee );
+Zmech =  normalizeV( CSs.CenterFH - Pt_Knee );
 
 Xend =  normalizeV( cross(Y2,Zmech) );
 Yend = cross(Zmech,Xend);
@@ -312,11 +305,11 @@ center1 = ellipsoid_fit( Condyle_1.Points , '' );
 center2 = ellipsoid_fit( Condyle_2.Points , '' );
 
 Yelpsd =  normalizeV( center2-center1 );
-Yelpsd = sign(Yelpsd'*Y0)*Yelpsd;
+Yelpsd = sign(Yelpsd'*CSs.Y0)*Yelpsd;
 
 KneeCenterElpsd = 0.5*center2 + 0.5*center1;
 
-Zend_elpsd =  normalizeV( CenterFH - KneeCenterElpsd');
+Zend_elpsd =  normalizeV( CSs.CenterFH - KneeCenterElpsd');
 Xend_elpsd =  normalizeV( cross(Yelpsd,Zend_elpsd) );
 Yend_elpsd = cross(Zend_elpsd,Xend_elpsd);
 Yend_elpsd = sign(Yend_elpsd'*Yend_sph)*Yend_elpsd;
@@ -345,7 +338,8 @@ if nargout>1
     TrObjects.ProxFem = ProxFem;
     TrObjects.DistFem = DistFem;
     
-    TrObjects.FemHead = FemHead;
+%     TrObjects.FemHead = CSs.FemHead;
+    TrObjects.FemHead = CSs.CenterFH;
     
     TrObjects.EpiFem = EpiFem;
     
