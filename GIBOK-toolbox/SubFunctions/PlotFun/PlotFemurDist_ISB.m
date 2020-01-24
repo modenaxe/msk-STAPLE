@@ -1,4 +1,4 @@
-function PlotFemur_ISB( CS, TrObjects )
+function PlotFemurDist_ISB( CS, TrObjects )
 %PLOTFEMUR Display figures of the femur
 %   Detailed explanation goes here
 
