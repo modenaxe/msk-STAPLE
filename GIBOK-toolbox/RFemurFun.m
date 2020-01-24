@@ -149,20 +149,25 @@ C2_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSu
 CutAngle_Lat = 10; 
 CutAngle_Med = 25;
 InSetRatio = 0.6;
+ellip_dilat_fact = 0.025;
 %============
-PtsCondyle_Lat = PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,CutAngle_Lat, InSetRatio)*VC';
-PtsCondyle_Med = PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC ,CutAngle_Med, InSetRatio)*VC';
+% posterior
+PtsCondyle_Lat = PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,...
+                        CutAngle_Lat, InSetRatio, ellip_dilat_fact)*VC';
+PtsCondyle_Med = PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC,...
+                        CutAngle_Med, InSetRatio, ellip_dilat_fact)*VC';
 %============
-% % plots the midpoint of all edges
-% plot3(Pt_AxisOnSurf_proj(1), Pt_AxisOnSurf_proj(2), Pt_AxisOnSurf_proj(3),'ko', 'Linewidth', 5); axis equal; hold on
-% % plots condiles split in medial and lateral
-% plot3(C1_Pts_DF_2D_RC(:,1), C1_Pts_DF_2D_RC(:,2),C1_Pts_DF_2D_RC(:,3),'g*'); axis equal; hold on
-% plot3(C2_Pts_DF_2D_RC(:,1), C2_Pts_DF_2D_RC(:,2),C2_Pts_DF_2D_RC(:,3),'b*'); axis equal; hold on
-% % plots medial and lateral posterior surface on the VC ref system
-% plot3(PtsCondyle_Lat(:,1), PtsCondyle_Lat(:,2),PtsCondyle_Lat(:,3),'g.'); axis equal; hold on
-% plot3(PtsCondyle_Med(:,1), PtsCondyle_Med(:,2),PtsCondyle_Med(:,3),'b.'); axis equal; hold on
-% plot3(PtMiddleCondyle(1), PtMiddleCondyle(2), PtMiddleCondyle(3),'ro', 'Linewidth', 5); axis equal; hold on
-% plot3(Pts_0_C1(:,1), Pts_0_C1(:,2),Pts_0_C1(:,3),'rs', 'Linewidth', 5); axis equal; hold on
+% figure
+% plots the midpoint of all edges
+plot3(Pt_AxisOnSurf_proj(1), Pt_AxisOnSurf_proj(2), Pt_AxisOnSurf_proj(3),'ko', 'Linewidth', 5); axis equal; hold on
+% plots condiles split in medial and lateral
+plot3(C1_Pts_DF_2D_RC(:,1), C1_Pts_DF_2D_RC(:,2),C1_Pts_DF_2D_RC(:,3),'g*'); axis equal; hold on
+plot3(C2_Pts_DF_2D_RC(:,1), C2_Pts_DF_2D_RC(:,2),C2_Pts_DF_2D_RC(:,3),'b*'); axis equal; hold on
+% plots medial and lateral posterior surface on the VC ref system
+plot3(PtsCondyle_Lat(:,1), PtsCondyle_Lat(:,2),PtsCondyle_Lat(:,3),'g.'); axis equal; hold on
+plot3(PtsCondyle_Med(:,1), PtsCondyle_Med(:,2),PtsCondyle_Med(:,3),'b.'); axis equal; hold on
+plot3(PtMiddleCondyle(1), PtMiddleCondyle(2), PtMiddleCondyle(3),'ro', 'Linewidth', 5); axis equal; hold on
+plot3(Pts_0_C1(:,1), Pts_0_C1(:,2),Pts_0_C1(:,3),'rs', 'Linewidth', 5); axis equal; hold on
 
 % Identify notch point as the most distal-anterior point with normal points
 % posterior-distally
@@ -173,11 +178,23 @@ NodesOk = EpiFem.Points(EpiFem.vertexNormal*U>0.98,:);
 U =  normalizeV( Z0 - 3*X1 );
 [~,IMax] = min(NodesOk*U);
 PtNotch = NodesOk(IMax,:);
+plot3(PtNotch(:,1), PtNotch(:,2),PtNotch(:,3),'ks', 'Linewidth', 7); axis equal; hold on
+
+%[LM]
+%============
+% anterior
+% initial estimations of anterior patellar groove
+ant_lat = C1_Pts_DF_2D_RC(C1_Pts_DF_2D_RC(:,1)-Pt_AxisOnSurf_proj(1)>0,:)*VC';
+ant_med = C2_Pts_DF_2D_RC(C2_Pts_DF_2D_RC(:,1)-Pt_AxisOnSurf_proj(1)>0,:)*VC';
+PtsGroove_Lat = ant_lat(ant_lat*X1>PtNotch*X1,:);
+PtsGroove_Med = ant_med(ant_med*X1>PtNotch*X1,:);
+%============
+
 % Delete Points that are anterior to Notch
 PtsCondyle_Lat(PtsCondyle_Lat*X1>PtNotch*X1,:)=[];
-Pts_0_C1(Pts_0_C1*X1>PtNotch*X1,:)=[];
-
 PtsCondyle_Med(PtsCondyle_Med*X1>PtNotch*X1,:)=[];
+
+Pts_0_C1(Pts_0_C1*X1>PtNotch*X1,:)=[];
 Pts_0_C2(Pts_0_C2*X1>PtNotch*X1,:)=[];
 
 %% Fit the Cylinder on the Femur Condyles
@@ -185,11 +202,18 @@ Pts_0_C2(Pts_0_C2*X1>PtNotch*X1,:)=[];
 % Filter Lat condyles art surface with curvature and normal orientation so
 % that only the posterior part remains
 Condyle_1_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Lat, Pts_0_C1);
+Groove_Lat = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Lat, Pts_0_C1);
 
 % Filter Med condyles art surface with curvature and normal orientation so
 % that only the posterior part remains
 Condyle_2_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_0_C2);
+Groove_Med = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1);
 
+figure
+plot3(Condyle_1_end.Points(:,1), Condyle_1_end.Points(:,2),Condyle_1_end.Points(:,3),'r.'); axis equal; hold on
+plot3(Condyle_2_end.Points(:,1), Condyle_2_end.Points(:,2),Condyle_2_end.Points(:,3),'b.'); axis equal; hold on
+plot3(Groove_Lat.Points(:,1), Groove_Lat.Points(:,2),Groove_Lat.Points(:,3),'g.'); axis equal; hold on
+plot3(Groove_Med.Points(:,1), Groove_Med.Points(:,2),Groove_Med.Points(:,3),'y.'); axis equal; hold on
 
 %% Fit 2 Spheres on AS Technic
 % function fit_spheres(Condyle_1_end, Condyle_2_end)
