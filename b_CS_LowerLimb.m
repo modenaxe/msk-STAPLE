@@ -15,7 +15,7 @@ addpath(genpath('GIBOK-toolbox'));
 %--------------------------------
 % specify where data are
 bone_geom_folder = './test_geometries';
-dataset_folder_set = {  'P0_MRI_tri',...% working
+dataset_folder_set = {  'P0_MRI_smooth_tri',...% working
                         'TLEM2_MRI_tri',...
                         'TLEM2_CT_tri',...
                         'LHDL_CT_tri'};
