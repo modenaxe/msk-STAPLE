@@ -4,6 +4,10 @@ function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
 % TODO: I think there is a transformation back adn forth from VC that can
 % be esliminated
 
+disp('===================')
+disp('Processing femur_r')
+disp('===================')
+
 % coordinate system structure to store results
 CSs = struct();
 

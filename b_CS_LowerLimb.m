@@ -40,6 +40,9 @@ for nd = nd_given %1:numel(dataset_folder_set)
         % read mat triangulation
         geom_file = fullfile(bone_geom_folder, dataset_folder, [cur_bone_name,'.mat']);
         %TODO: add existence check
+        tic
+        disp('Importing mesh...')
+        disp(['Done in ', num2str(toc), 'sec']);
         geom = load(geom_file);
         % reads field name (might be different due to changes in
         % a_stl2triang.m
