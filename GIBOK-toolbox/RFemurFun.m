@@ -217,6 +217,9 @@ postCondyle_Lat_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Lat, Pts_
 postCondyle_Med_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_0_C2);
 
 %% building reference systems
+% bulding spheres to patellar groove
+CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
+
 % Fit two spheres on articular surfaces of posterior condyles
 try 
     CSs = createFemurCoordSystSpheresOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
