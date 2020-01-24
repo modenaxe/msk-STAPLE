@@ -502,14 +502,10 @@ CSs.Minertia = [Xi Yi Z0];
 if nargout>1
     TrObjects = struct();
     TrObjects.Tibia = Tibia;
-    
     TrObjects.ProxTib = ProxTib;
     TrObjects.DistTib = DistTib;
-    
     TrObjects.AnkleArtSurf = AnkleArtSurf;
-    
     TrObjects.EpiTib = EpiTib;
-    
     TrObjects.EpiTibASMed = EpiTibASMed;
     TrObjects.EpiTibASLat = EpiTibASLat;
 end
