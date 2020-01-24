@@ -1,4 +1,4 @@
-function CSs = findFemoralHead(ProxFem, CSs)
+function [CSs, FemHead] = findFemoralHead(ProxFem, CSs)
     
 % from CSs structures we need:
 % - CSs.CenterVol
