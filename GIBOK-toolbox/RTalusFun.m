@@ -8,11 +8,11 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 %'../test_geometries/MRI_P0_smooth/talus_r.stl'
 %'../test_geometries/JIA_CSm6/talus_r.stl'
 %'../test_geometries/TLEM2/talus_r.stl'
-[Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
+% [Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
 
 % testing mat import
-% [Imported] = load('../test_geometries/P0_MRI_tri/talus_r.mat');
-% Talus = Imported.curr_triang;
+[Imported] = load('../test_geometries/P0_MRI_tri/talus_r.mat');
+Talus = Imported.curr_triang;
 
 % function [ CSs, TrObjects ] = RTalusFun( Talus)
 % Fit an ACS on a Talus
@@ -21,7 +21,11 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix, D ] = TriInertiaPpties( Talus );
 
-X0 = V_all(:,1); Y0 = V_all(:,2); Z0 = V_all(:,3);
+quickPlotTriang(Talus, V_all, CenterVol)
+
+X0 = V_all(:,1); 
+Y0 = V_all(:,2); 
+Z0 = V_all(:,3);
 
 
 %Visually check the Inertia Axis orientation relative to the Talus geometry
