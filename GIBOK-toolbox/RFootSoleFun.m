@@ -4,6 +4,7 @@ close all
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 
 %% Read the mesh of the Foot file
+
 [Foot] = ReadMesh('../test_geometries/TLEM2/foot_r.stl');
 % Need to account for cases where the foot is subidivided into multiple 
 % meshes. 
@@ -11,6 +12,18 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 % Talus. Phalanges are not mandatory and their presence or absence
 % should not impact the results.
 
+%========================
+% LUCA's COMMENT
+%========================
+% The mesh you have chosen for development is special, in the sense that
+% normally in building models we do not attach the phalanges to the rest of
+% the foot, but we have 1) talus, 2) calcn+all other bones, 3)
+% toes/phalanges.
+% trying your script with data more similar to the one we use, e.g.
+% [Foot] = ReadMesh('../test_geometries/TLEM2_CT/calcn_r.stl');
+% it seems to work very nicely, and the blu plane is exactly what I was
+% looking for, without even need for cutting the mesh.
+%========================
 
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
@@ -65,6 +78,8 @@ Foot_Length = Foot_End - Foot_Start;
 ElmtsNoPhalange= find(Foot.incenter*X0 < (Foot_Start+0.80*Foot_Length));
 
 Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
+
+% Foot2 =  Foot;
 
 x = Foot2.Points(:,1); y = Foot2.Points(:,2); z = Foot2.Points(:,3);
 % K = convhull(x,y,z,'simplify', false);
@@ -127,7 +142,7 @@ for i =1:5
     Meta = TriReduceMesh( Foot, ElmtsMeta );
     
     % Get least square plane normal vector of the foot
-    [~,Z0] = lsplane(Foot.Points);
+    [a,Z0] = lsplane(Foot.Points);
     Y0 = normalizeV(cross(Z0,X0));
     X0 = cross(Y0,Z0);
 end
@@ -137,8 +152,32 @@ end
 % plotArrow( X0, 1, mean(Meta.Points), 100, 1, 'm')
 
 
-        
-
+% %============= LUCA ==========
+% 
+% %Visually check the Inertia Axis orientation relative to the Talus geometry
+% figure()
+% % Plot the whole talus, here Talus is a Matlab triangulation object
+% trisurf(Foot,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.6,'edgecolor','none');
+% hold on
+% axis equal
+% 
+% % handle lighting of objects
+% light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
+% light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
+% light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
+% light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
+% lighting gouraud
+% 
+% % Remove grid
+% grid off
+% 
+% %Plot the inertia Axis & Volumic center
+% plotDot( CenterVol', 'k', 2 )
+% plotArrow( X0, 1, CenterVol, 150, 1, 'r')
+% plotArrow( Y0, 1, CenterVol, 50, 1, 'g')
+% plotArrow( Z0, 1, CenterVol, 50, 1, 'b')
+% 
+% plotPlan(   a, Z0)
 
 
 
