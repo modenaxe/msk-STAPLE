@@ -53,8 +53,10 @@ for nd = nd_given %1:numel(dataset_folder_set)
                     [ PelvisACSsResults, PelvisTriangulations ] = PelvisFun( geom);
                     PlotPelvis_ISB( PelvisACSsResults.ISB, PelvisTriangulations.Pelvis )
                 catch EM
-                    disp('=================================');disp(EM.identifier); 
-                    disp(EM.message);disp('=================================');
+                    disp('=================================');
+                    disp(EM.identifier); 
+                    disp(EM.message);
+                    disp('=================================');
                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
                     continue
                 end
@@ -62,8 +64,8 @@ for nd = nd_given %1:numel(dataset_folder_set)
             case 'femur_r'
 %                 try 
                     [ FemACSsResults, FemurTriangulations ] = RFemurFun(geom);
-                    PlotFemurDist_ISB( FemACSsResults.PCC, FemurTriangulations );
-                    PlotFemurProx_ISB( FemACSsResults.PCC, FemurTriangulations, FemACSsResults );
+                    PlotFemurDist_ISB( FemACSsResults.PCS, FemurTriangulations );
+                    PlotFemurProx_ISB( FemACSsResults.PCS, FemurTriangulations, FemACSsResults );
 %                 catch EM
 %                     disp('=================================');disp(EM.identifier); 
 %                     disp(EM.message);disp('=================================');
