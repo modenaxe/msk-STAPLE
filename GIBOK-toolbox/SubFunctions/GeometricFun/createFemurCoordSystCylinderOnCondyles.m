@@ -1,4 +1,9 @@
 function CSs = createFemurCoordSystCylinderOnCondyles(Condyle_1_end, Condyle_2_end, CSs, tolp, tolg)
+% REFERENCE SYSTEM
+% centred in the midpoint of the spheres
+% Z: upwards (Orig->HJC)
+% X: perpendicolar to Z and the plane with cylinder axis (Y2)
+% Y: cross of XZ
 
 if nargin < 4
     % tolp     Tolerance for test on step length. 

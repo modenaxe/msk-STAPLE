@@ -1,4 +1,9 @@
 function CSs = createFemurCoordSystEllipsoidOnCondyles(Condyle_1,Condyle_2, CSs)
+% REFERENCE SYSTEM
+% centred in the midpoint of the ellipsoid
+% Z: upwards (Orig->HJC)
+% X: perpendicolar to Z and the plane with sphere centres (Yelpsd)
+% Y: cross of XZ
 
 % fitting ellipsoids
 center1 = ellipsoid_fit( Condyle_1.Points , '' );

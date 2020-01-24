@@ -1,4 +1,9 @@
 function CSs = createFemurCoordSystSpheresOnCondyles(Condyle_1_end, Condyle_2_end, CSs)
+% REFERENCE SYSTEM
+% centred in the midpoint of the spheres
+% Z: upwards (Orig->HJC)
+% X: perpendicolar to Z and the plane with sphere centres (Ysph)
+% Y: cross of XZ
 
 % function fit_spheres(Condyle_1_end, Condyle_2_end)
 [center1,radius1] = sphereFit(Condyle_1_end.Points); %lat
