@@ -1,10 +1,5 @@
 function [IdCdlPts, U_Axes, med_lat_ind] = processFemoralEpiPhysis(EpiFem, CSs, Inertia_Vects, edge_threshold, axes_dev_thresh)
 
-
-
-%=========================
-% UNEXPOSED PARAMETERS
-%=========================
 % default axes_dev_thresh = 0.75;
 % default edge_threshold = 0.5;
 
@@ -32,9 +27,7 @@ end
 % check on number of saved edges
 N_edges = size(Edges, 1);
 N_saved_edges = size(Ikept,1);
-if N_saved_edges/N_edges < 0.1
-    warning('Less than 20% edges saved after initial processing.')
-end
+disp(['Processing ', num2str(N_saved_edges/N_edges*100), '% of edges in convex hull.'])
 
 %Index of nodes identified on condyles:
 IdCdlPts = IdxPointsPair(Ikept,:);
