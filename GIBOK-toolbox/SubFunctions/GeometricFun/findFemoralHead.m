@@ -10,12 +10,16 @@ function [CSs, FemHead] = findFemoralHead(ProxFem, CSs)
 % CSs.CenterFH
 % CSs.RadiusFH
 
+% PARAMETER TO EXPOSE
+% FemHead_dil_coeff = 1.5;
+%norm_thres
+
 % Find the most proximal on femur top head
 [~ , I_Top_FH] = max( ProxFem.incenter*CSs.Z0 ); 
 % most prox point
 I_Top_FH = [I_Top_FH ProxFem.neighbors(I_Top_FH)]; 
 % triang around it
-Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH); 
+Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH);
 % create a triang with them
 [ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40 );
 
@@ -31,36 +35,94 @@ I_MM_FH = [I_MM_FH ProxFem.neighbors(I_MM_FH)];
 Face_MM_FH = TriReduceMesh(ProxFem,I_MM_FH);
 [ Patch_MM_FH ] = TriDilateMesh( ProxFem ,Face_MM_FH , 40 );
 
+% STEP1: first sphere fit
 FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
-
 % Initial sphere fit
-[~,Radius] = sphereFit(FemHead0.Points);
-[ FemHead1] = TriDilateMesh( ProxFem ,FemHead0 , round(1.5*Radius) );
-[CenterFH,Radius] = sphereFit(FemHead1.Points);
+[~,Radius, ErrorDist] = sphereFit(FemHead0.Points);
+% RMSE = sqrt(mean(ErrorDist.^2.0));
 
+% TODO:  check the errors at various STEPS to evaluate if fitting is
+% improving or not!
+
+% 
+% plot3(FemHead0.Points(:,1), FemHead0.Points(:,2), FemHead0.Points(:,3),'.g'); hold on
+% title('First fit')
+
+
+% STEP2: dilate mesh and sphere fit again
+% dilate fem head
+FemHead_dil_coeff = 1.5;
+[ DilateFemHeadTri] = TriDilateMesh( ProxFem ,FemHead0 , round(FemHead_dil_coeff*Radius) );
+[CenterFH,RadiusDil] = sphereFit(DilateFemHeadTri.Points);
 CenterFH0 = CenterFH;
 
-% Theorial Normal of the face
-CPts_PF_2D  = bsxfun(@minus,FemHead1.incenter,CenterFH);
-normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
+% check
+if ~RadiusDil>Radius
+    warning('Dilated femoral head smaller than original mesh. Please check.')
+end
 
-% Keep points that display a less than 10° difference between the actual
-% normals and the sphere simulated normals &
-Cond1 = sum((normal_CPts_PF_2D.*FemHead1.faceNormal),2)>0.975 ;
+% Theorical Normal of the face (from real fem centre to dilate one)
+CPts_PF_2D  = bsxfun(@minus, DilateFemHeadTri.incenter, CenterFH);
+normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
+% % check normals visually
+% P=FemHead1.incenter;
+% quiver3(P(:,1), P(:,2),P(:,3),...
+%     normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
+
+% COND1: Keep points that display a less than 10° difference between the actual
+% normals and the sphere simulated normals
+FemHead_normals_thresh = 0.975; % acosd(0.975) = 12.87;% deg
+Cond1 = sum((normal_CPts_PF_2D.*DilateFemHeadTri.faceNormal),2)>FemHead_normals_thresh;
 
 % Delete points far from sphere surface outside [90%*Radius 110%*Radius]
-Cond2 = abs(sqrt(sum(bsxfun(@minus,FemHead1.incenter,CenterFH).^2,2))...
+Cond2 = abs(sqrt(sum(bsxfun(@minus,DilateFemHeadTri.incenter,CenterFH).^2,2))...
     -1*Radius)<0.1*Radius ;
 
+% both conditions do not work always, when combined
+if sum(Cond1 & Cond2)> 0
+    combined_Cond = Cond1 & Cond2;
+else
+    % TODO: find out how to deal with combined conditions not working
+    cond1_count = sum(Cond1);
+    % search within conditions Cond1 and Cond2
+    Face_ID_PF_2D_onSphere = find(Cond1);
+    
+    % get the mesh and points on the femoral head
+    FemHead1 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
+    FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3);
+    plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.b');
+    hold on, axis equal
+    
+    
+    cond2_count = sum(Cond2);
+    
+    % search within conditions Cond1 and Cond2
+    Face_ID_PF_2D_onSphere = find(Cond2);
+    
+    % get the mesh and points on the femoral head
+    FemHead2 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
+    FemHead2 = TriOpenMesh(ProxFem ,FemHead2,3);
+    plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
+    
+    combined_Cond = Cond1;
+end
+    
+combined_cond_count = sum(combined_Cond);
+
 % search within conditions Cond1 and Cond2
-Face_ID_PF_2D_onSphere = find(Cond1 & Cond2);
+Face_ID_PF_2D_onSphere = find(combined_Cond);
 
 % get the mesh and points on the femoral head
-FemHead = TriReduceMesh(FemHead1,Face_ID_PF_2D_onSphere);
+FemHead = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
 FemHead = TriOpenMesh(ProxFem ,FemHead,3);
 
+% final fem head
+plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
+
 % Fit the last Sphere
-[CenterFH,Radius] = sphereFit(FemHead.Points);
+[CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);
+
+%RMSE_final = sqrt(mean(ErrorDistFinal.^2.0));
 
 % Write to the results struct
 CSs.CenterFH0 = CenterFH0;
