@@ -23,7 +23,7 @@ Femur = TriUnite(DistFem,ProxFem);
 % The reference system:
 %-------------------------------------
 % Z0: points upwards (inertial axis) 
-% Y0: points posteriorly (from OT and Z0 in findFemoralHead.m)
+% Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
 % X0: unused
 %-------------------------------------
 
@@ -40,7 +40,7 @@ Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
-% Find Femoral Head Center
+%% Find Femoral Head Center
 % NB adds a CSs.Y0, pointing A-P direction POSTERIORLY directed
 [CSs, FemHead] = findFemoralHead(ProxFem, CSs);
 
