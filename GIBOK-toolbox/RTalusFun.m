@@ -8,9 +8,14 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 %'../test_geometries/MRI_P0_smooth/talus_r.stl'
 %'../test_geometries/JIA_CSm6/talus_r.stl'
 %'../test_geometries/TLEM2/talus_r.stl'
-% [Talus] = ReadMesh('../test_geometries/MRI_P0_smooth/talus_r.stl');
+%'../test_geometries/TLEM2_CT_tri/talus_r.stl'
+%JIA_CSm6
+% [Talus] = ReadMesh('../test_geometries/JIA_CSm6/talus_r.stl');
 
-% testing mat import
+%P0_MRI_tri
+%LHDL_CT_tri
+%TLEM2_CT_tri
+% % testing mat import
 [Imported] = load('../test_geometries/P0_MRI_tri/talus_r.mat');
 Talus = Imported.curr_triang;
 
@@ -21,14 +26,52 @@ Talus = Imported.curr_triang;
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix, D ] = TriInertiaPpties( Talus );
 
-quickPlotTriang(Talus, V_all, CenterVol)
-
+% X0 can be seen as a initial antero-posterior or postero-anterior axis,
+% the orientation of Y0 and Z0 can be inconsistent accross subjects because
+% the value of their Moment of inertia are quite close (~15% difference. So
+% another function is used to initiliaze Z0 and Y0. It fits a quadrilateral
+% on the Talus projected onto a plan perpendicular to X0, the edge
+% corresponding to the superior face is identified and provide the
+% inferior-superior direction intial guess (Z0). Y0 is made perpendicular
+% to X0 and Z0.
 X0 = V_all(:,1); 
-Y0 = V_all(:,2); 
-Z0 = V_all(:,3);
+[Z0,Y0] = fitQuadriTalus(Talus, V_all, 1);
+
+% quickPlotTriang(Talus, V_all, CenterVol)
 
 
-%Visually check the Inertia Axis orientation relative to the Talus geometry
+%% 2. Identification of the talonavicular sphere
+% 2.1 Evolution of the cross section area (CSA) along the X0 axis 
+
+Alt =  min(Talus.Points*X0)+0.3 : 0.3 : max(Talus.Points*X0)-0.3;
+Area = zeros(size(Alt));
+i=0;
+for d = -Alt
+    i = i + 1;
+    [ ~ , Area(i), ~ ] = TriPlanIntersect( Talus, X0 , d );
+end
+
+% Plot the curves CSA = f(Alt), Alt : Altitude of the section along X0
+% figure()
+% plot(Alt,Area,'-*')
+
+% Given the shape of the curve we can fit a bi-gaussian curve to identify
+% the two summits
+%   "or" the orientation parameter is positive if X0 is oriented from 
+%   posterior to anterior and negative otherwise
+%
+%   alt_TlNvc_start, gives the altitude along X0 at wich the CSA is maximal
+%   and where the TaloNavicular (TlNvc) articular surface could start
+
+[or, alt_TlNvc_start, alt_TlNeck_start] = FitCSATalus(Alt, Area);
+
+% Change X0 orientation if necessary :
+X0 = or*X0;
+Y0 = or*Y0;
+alt_TlNvc_end = max(Talus.incenter*X0);
+TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
+
+%Visually check the first guess Axis orientation relative to the Talus geometry
 figure()
 % Plot the whole talus, here Talus is a Matlab triangulation object
 trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.8,'edgecolor','none');
@@ -47,56 +90,26 @@ grid off
 
 %Plot the inertia Axis & Volumic center
 plotDot( CenterVol', 'k', 2 )
-plotArrow( X0, 1, CenterVol, 40, 1, 'r')
-plotArrow( Y0, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
-plotArrow( Z0, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
-
-% X0 can be seen as a initial antero-posterior axis, not sure if the
-% orientation of Y0 and Z0 are consistent accross subject because the value
-% of their Moment of inertia are quite close (~15% difference)
-
-%% 2. Identification of the talonavicular sphere
-% 2.1 Evolution of the cross section area (CSA) along the X0 axis 
-
-Alt =  min(Talus.Points*X0)+0.3 : 0.3 : max(Talus.Points*X0)-0.3;
-Area = zeros(size(Alt));
-i=0;
-for d = -Alt
-    i = i + 1;
-    [ ~ , Area(i), ~ ] = TriPlanIntersect( Talus, X0 , d );
-end
-
-% Plot the curves CSA = f(Alt), Alt : Altitude of the section along X0
-figure()
-plot(Alt,Area,'-*')
-
-% Given the shape of the curve we can fit a bi gaussian curve to identify
-% the two summits
-%   "or" the orientation parameter is positive if X0 is oriented from 
-%   posterior to anterior and negative otherwise
-%
-%   alt_TlNvc_start, gives the altitude along X0 at wich the CSA is maximal
-%   and where the TaloNavicular (TlNvc) articular surface could start
-
-[or, alt_TlNvc_start, alt_TlNeck_start] = FitCSATalus(Alt, Area);
-
-% Change X0 orientation if necessary :
-X0 = or*X0;
-alt_TlNvc_end = max(Talus.incenter*X0);
-TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
-
+plotArrow( X0, 1, CenterVol, 40, 0.5, 'r')
+plotArrow( Y0, 1, CenterVol, 40*D(1,1)/D(2,2), 0.5, 'g')
+plotArrow( Z0, 1, CenterVol, 40*D(1,1)/D(3,3), 0.5, 'b')
 
 % 2.2 First guess at the TlNvc articular surface (AS)
 ElmtsTlNvc = find(Talus.incenter*X0> (alt_TlNvc_start+0.25*TlNvc_length));
 TlNvc_AS = TriReduceMesh( Talus, ElmtsTlNvc );
 
 % copy initial figure and add identified TlNvc AS
-figure(1)
+% Same figure with identified Talo-Navecular articular surface
 a1 = gca ;
 f2 = figure ;
 a2 = copyobj(a1,f2) ;
 hold on
 trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
+%Plot the inertia Axis & Volumic center
+plotDot( CenterVol', 'k', 2 )
+plotArrow( X0, 1, CenterVol, 40, 1, 'm')
+plotArrow( Y0, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
+plotArrow( Z0, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
 
 % 2.3 Fit a initial sphere on the TlNvc AS
 [Center_TlNvc,Radius_TlNvc,ErrorDist] = sphereFit(TlNvc_AS.Points) ;
@@ -135,25 +148,42 @@ plotDot( CenterVol', 'k', 2 )
 
 % 3.2 Similar technique as for the tibial ankle AS 
 % Get mean curvature of the Talus
-Cmean = TriCurvature(Talus,false);
+[Cmean, Cgaussian, ~, ~, k1, k2] = TriCurvature(Talus,false);
+% Cnorm = 4*Cmean.^2-
 
 % Identify nodes that should be on the surface based on surface and mean
 % curvature
-TlCcnASNodesOK0 =  find(Cmean>quantile(Cmean,0.25) & ...
-    Cmean<quantile(Cmean,0.90) & ...
+% TlCcnASNodesOK0 =  find(Cmean>quantile(Cmean,0.15) & ...
+%     Cmean<quantile(Cmean,0.75) & ...
+%     rad2deg(acos(-Talus.vertexNormal*Z0))<40 &...
+%     Talus.Points*X0<alt_TlNeck_start);
+
+% TlCcnASNodesOK0 =  find(k1>-0.05*range(k1) & ...
+%     abs(k2)< 0.1*range(k2) & ...
+%     rad2deg(acos(-Talus.vertexNormal*Z0))<40 &...
+%     Talus.Points*X0<alt_TlNeck_start);
+
+% TlCcnASNodesOK0 =  find(k1>0.0*max(k1) & ...
+%     abs(k2)< 10.01*range(k2) );
+
+% TlCcnASNodesOK0 =  find(k2 > quantile(k2,0.25) );
+
+TlCcnASNodesOK0 =  find(k2 > quantile(k2,0.33) &...
     rad2deg(acos(-Talus.vertexNormal*Z0))<40 &...
     Talus.Points*X0<alt_TlNeck_start);
 
 TlCcnAS0 = TriReduceMesh(Talus,[],double(TlCcnASNodesOK0));
+% trisurf(TlCcnAS0,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
 
 % Keep largest connected region and smooth results
+TlCcnAS0 = TriErodeMesh(TlCcnAS0,1);
 TlCcnAS0 = TriKeepLargestPatch( TlCcnAS0 ) ;
-TlCcnAS0 = TriCloseMesh(Talus,TlCcnAS0,2);
-TlCcnAS0 = TriOpenMesh(Talus,TlCcnAS0,1);
-TlCcnAS0 = TriCloseMesh(Talus,TlCcnAS0,2);
+TlCcnAS0 = TriDilateMesh(Talus,TlCcnAS0,2);
+TlCcnAS0 = TriCloseMesh(Talus,TlCcnAS0,3);
+% trisurf(TlCcnAS0,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
 
 % remove elements that are on the wrong side of the AS edges
-TlCcnASElmtsOK1 =  find(abs(TlCcnAS0.faceNormal*X0)<0.5);
+TlCcnASElmtsOK1 =  find(abs(TlCcnAS0.faceNormal*X0)<cosd(30));
 TlCcnAS1 = TriReduceMesh(TlCcnAS0,TlCcnASElmtsOK1);
 TlCcnAS1 = TriKeepLargestPatch( TlCcnAS1 ) ;
 TlCcnAS1 = TriCloseMesh(TlCcnAS0,TlCcnAS1,1);
