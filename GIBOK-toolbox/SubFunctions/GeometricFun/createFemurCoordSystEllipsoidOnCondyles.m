@@ -33,6 +33,6 @@ CSs.CE.Origin   = KneeCenterElpsd;
 CSs.CE.X        = Xend;
 CSs.CE.Y        = Yend;
 CSs.CE.Z        = Zend;
-CSs.CE.V        = [Xend Yend Zmech];
+CSs.CE.V        = [Xend Yend Zend];
 
 end
