@@ -24,7 +24,7 @@ Femur = TriUnite(DistFem,ProxFem);
 %-------------------------------------
 % Z0: points upwards (inertial axis) 
 % Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
-% X0: unused
+% X0: used only in Kai2014
 %-------------------------------------
 
 % Get eigen vectors V_all of the Femur 3D geometry and volumetric center
@@ -41,8 +41,14 @@ CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
 %% Find Femoral Head Center
-% NB adds a CSs.Y0, pointing A-P direction POSTERIORLY directed
+% NB adds a CSs.Y0, (lateral)
 [CSs, FemHead] = findFemoralHead(ProxFem, CSs);
+
+% compute femoral head using Kai2014 method
+[CSs, ProxFemCurves] = findFemoralHead_Kai2014(ProxFem, CSs);
+
+% X0 points backwards
+CSs.X0 = cross(CSs.Y0, CSs.Z0);
 
 %% Isolates the epiphysis
 % First 0.5 mm in Start and End are removed for stability.
@@ -223,6 +229,14 @@ postCondyle_Med_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle_Med, Pts_
 %% building reference systems
 % bulding spheres to patellar groove
 CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
+
+% Kai2014
+% try
+    CSs = createFemurCoordSystKai2014(DistFem, CSs);
+% catch EM
+%     warning('Kai et al 2014 reference system could not be created. Please double check your mesh and error logs.');
+%     disp(EM.message);
+% end
 
 % Fit two spheres on articular surfaces of posterior condyles
 try 
