@@ -117,8 +117,8 @@ Face_ID_PF_2D_onSphere = find(combined_Cond);
 FemHead = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
 FemHead = TriOpenMesh(ProxFem ,FemHead,3);
 
-% final fem head
-plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
+% % final fem head
+% plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
 
 % Fit the last Sphere
 [CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);
