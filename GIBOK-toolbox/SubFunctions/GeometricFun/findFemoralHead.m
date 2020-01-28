@@ -69,7 +69,7 @@ normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
 % quiver3(P(:,1), P(:,2),P(:,3),...
 %     normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
 
-% COND1: Keep points that display a less than 10� difference between the actual
+% COND1: Keep points that display a less than 10deg difference between the actual
 % normals and the sphere simulated normals
 FemHead_normals_thresh = 0.975; % acosd(0.975) = 12.87;% deg
 Cond1 = sum((normal_CPts_PF_2D.*DilateFemHeadTri.faceNormal),2)>FemHead_normals_thresh;
