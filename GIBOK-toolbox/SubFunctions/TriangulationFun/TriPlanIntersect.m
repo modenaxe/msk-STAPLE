@@ -16,7 +16,7 @@ Elmts = Tr.ConnectivityList;
 
 
 n=n/norm(n);
-% If d is a point on the plan and not the altitude at (0,0,z)
+% If d is a point on the plane and not the altitude at (0,0,z)
 if length(d)>2
     if size(d,2)==1
         d = -d'*n;
