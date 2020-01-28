@@ -49,8 +49,9 @@ FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
 % title('First fit')
 
 
-% STEP2: dilate mesh and sphere fit again
-% dilate fem head
+% STEP2: dilate femoral head mesh and sphere fit again
+% IMPORTANT: TriDilateMesh "grows" the original mesh, does not create a
+% larger one!
 FemHead_dil_coeff = 1.5;
 [ DilateFemHeadTri] = TriDilateMesh( ProxFem ,FemHead0 , round(FemHead_dil_coeff*Radius) );
 [CenterFH,RadiusDil] = sphereFit(DilateFemHeadTri.Points);
