@@ -41,11 +41,12 @@ CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
 %% Find Femoral Head Center
-% NB adds a CSs.Y0, (lateral)
-[CSs, FemHead] = findFemoralHead(ProxFem, CSs);
 
 % compute femoral head using Kai2014 method
 [CSs, ProxFemCurves] = findFemoralHead_Kai2014(ProxFem, CSs);
+
+% NB adds a CSs.Y0, (lateral)
+[CSs, FemHead] = findFemoralHead(ProxFem, CSs);
 
 % X0 points backwards
 CSs.X0 = cross(CSs.Y0, CSs.Z0);
