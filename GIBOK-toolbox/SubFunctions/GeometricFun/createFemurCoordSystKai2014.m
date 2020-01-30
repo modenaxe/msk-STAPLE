@@ -1,4 +1,5 @@
 function CSs = createFemurCoordSystKai2014(DistFem, CSs)
+
 [Ok_FC_Pts1, Ok_FC_Pts2] = sliceFemoralCondyles(DistFem, CSs.X0);
 
 % fitting spheres to points from the sliced curves
