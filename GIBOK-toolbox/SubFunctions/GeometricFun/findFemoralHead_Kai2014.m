@@ -13,10 +13,6 @@ disp('Computing Femoral Head Centre (Kai et al. 2014)...')
 [~ , I_Top_FH] = max( ProxFem.Points*CSs.Z0 );
 MostProxPoint = ProxFem.Points(I_Top_FH,:);
 
-% use it for finding the med-lat direction
-frontal_dir = normalizeV(cross(CSs.Z0, MostProxPoint));
-medial_dir  = normalizeV(cross(CSs.Z0, frontal_dir));
-
 %================
 figure
 trisurf(ProxFem.ConnectivityList, ProxFem.Points(:,1), ProxFem.Points(:,2), ProxFem.Points(:,3),'Facecolor','m','Edgecolor','none');
@@ -32,7 +28,7 @@ Ok_FH_Pts_med = [];
 d = MostProxPoint*CSs.Z0 - 0.25;
 keep_slicing = 1;
 count = 1;
-while Nbr_of_curves == 1
+while keep_slicing
     
     % slice the proximal femur
     [ Curves , ~, ~ ] = TriPlanIntersect(ProxFem, corr_dir*CSs.Z0 , d );
@@ -43,10 +39,10 @@ while Nbr_of_curves == 1
     count = count+1;
     
     % plot curves
-    c_set = ['r', 'b'];
+    c_set = ['r', 'b', 'm', 'b'];
     if ~isempty(Curves)
         for c = 1:Nbr_of_curves
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),'r'); hold on; axis equal
+            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),c_set(c)); hold on; axis equal
         end
     end
     
@@ -61,40 +57,21 @@ while Nbr_of_curves == 1
         Ok_FH_Pts = [Ok_FH_Pts; Curves.Pts];
     elseif Nbr_of_curves > 1
         for i = 1:Nbr_of_curves
-            Ok_FH_Pts_med(i,:) = Curves(i).Pts<medial_dir;
-        end
-    end
-    
-    
-end
-
-while Nbr_of_curves > 1
-    Centroid = [];
-    Dist2MostProxPoint = [];
-    for i = 1:Nbr_of_curves
-        Centroid(i,:) = mean(Curves(i).Pts);
-        Dist2MostProxPoint(i) = norm(MostProxPoint-Centroid(i,:));
-    end
-    
-    [~,IcurveMed] = min(Dist2MostProxPoint);
-    Ok_FH_Pts = [Ok_FH_Pts;Curves(IcurveMed).Pts];
-    
-    [ Curves , ~, ~ ] = TriPlanIntersect(ProxFem, corr_dir*CSs.Z0 , d );
-    Nbr_of_curves = length(Curves);
-    d = d - 1;
-    
-        % plot curves
-    c_set = 'm';%, 'g'];
-    if ~isempty(Curves)
-        for c = 1:Nbr_of_curves
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),'b'); hold on; axis equal
+            Ok_FH_Pts_med = [Ok_FH_Pts_med; Curves(i).Pts(Curves(i).Pts(:,1)<MostProxPoint(1),:)];
         end
     end
 end
 
+% assemble the points from one and two curves
+fitPoints = [Ok_FH_Pts; Ok_FH_Pts_med];
 
+% check by plotting
+plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.')
+
+% fit sphere
 [CenterFH, Radius] = sphereFit(Ok_FH_Pts);
 
+% print
 disp('-----------------')
 disp('Final  Estimation')
 disp('-----------------')
