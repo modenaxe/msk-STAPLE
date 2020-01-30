@@ -14,6 +14,8 @@ function [CSs, FemHead] = findFemoralHead(ProxFem, CSs)
 % FemHead_dil_coeff = 1.5;
 %norm_thres
 
+disp('Computing Femoral Head Centre (Renault et al. 2014)...')
+
 % Find the most proximal on femur top head
 [~ , I_Top_FH] = max( ProxFem.incenter*CSs.Z0 ); 
 % most prox point
@@ -38,14 +40,20 @@ Face_MM_FH = TriReduceMesh(ProxFem,I_MM_FH);
 % STEP1: first sphere fit
 FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
 % Initial sphere fit
-[~, Radius, ErrorDist] = sphereFit(FemHead0.Points);
+[Centre, Radius, ErrorDist] = sphereFit(FemHead0.Points);
+
+disp('----------------')
+disp('First Estimation')
+disp('----------------')
+disp(['Centre: ', num2str(Centre)]);
+disp(['Radius: ', num2str(Radius)]);
 % RMSE = sqrt(mean(ErrorDist.^2.0));
 
 % TODO:  check the errors at various STEPS to evaluate if fitting is
 % improving or not!
 % 
-% plot3(FemHead0.Points(:,1), FemHead0.Points(:,2), FemHead0.Points(:,3),'.g'); hold on
-% title('First fit')
+plot3(FemHead0.Points(:,1), FemHead0.Points(:,2), FemHead0.Points(:,3),'.g'); hold on
+title('First fit')
 
 
 % STEP2: dilate femoral head mesh and sphere fit again
@@ -56,6 +64,13 @@ FemHead_dil_coeff = 1.5;
 [CenterFH,RadiusDil] = sphereFit(DilateFemHeadTri.Points);
 CenterFH0 = CenterFH;
 
+disp('----------------')
+disp('Cond  Estimation')
+disp('----------------')
+disp(['Centre: ', num2str(CenterFH)]);
+disp(['Radius: ', num2str(RadiusDil)]);
+
+
 % check
 if ~RadiusDil>Radius
     warning('Dilated femoral head smaller than original mesh. Please check.')
@@ -65,9 +80,9 @@ end
 CPts_PF_2D  = bsxfun(@minus, DilateFemHeadTri.incenter, CenterFH);
 normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
 % % check normals visually
-% P=FemHead1.incenter;
-% quiver3(P(:,1), P(:,2),P(:,3),...
-%     normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
+P=DilateFemHeadTri.incenter;
+quiver3(P(:,1), P(:,2),P(:,3),...
+    normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
 
 % COND1: Keep points that display a less than 10deg difference between the actual
 % normals and the sphere simulated normals
@@ -92,7 +107,7 @@ else
     % get the mesh and points on the femoral head
     FemHead1 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
     FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3);
-    plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.b');
+    plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.m','LineWidth',3);
     hold on, axis equal
     
     % apply condition 2
@@ -123,6 +138,12 @@ FemHead = TriOpenMesh(ProxFem ,FemHead,3);
 % Fit the last Sphere
 [CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);
 
+disp('-----------------')
+disp('Final  Estimation')
+disp('-----------------')
+disp(['Centre: ', num2str(CenterFH)]);
+disp(['Radius: ', num2str(Radius)]);
+disp('-----------------')
 %RMSE_final = sqrt(mean(ErrorDistFinal.^2.0));
 
 % Write to the results struct
