@@ -18,6 +18,7 @@ addpath(genpath('./GIBOK-toolbox'))
 % stl_folder = './test_geometries/P0_MRI';
 % stl_folder = './test_geometries/TLEM2_MRI';
 stl_folder = './test_geometries/LHDL_CT_iso';
+stl_folder = './test_geometries/JIA_CSm6';
 % stl_folder = './test_geometries/P0_MRI_smooth';
 % folder where to store the resulting triangulations
 triang_folder = '';
