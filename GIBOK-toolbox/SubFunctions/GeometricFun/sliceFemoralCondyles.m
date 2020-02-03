@@ -37,7 +37,7 @@ while keep_slicing
     c_set = ['r', 'b'];
     if ~isempty(Curves)
         for c = 1:Nbr_of_curves
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),c_set(c)); hold on; axis equal
+            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3)); hold on; axis equal
         end
     end
 
