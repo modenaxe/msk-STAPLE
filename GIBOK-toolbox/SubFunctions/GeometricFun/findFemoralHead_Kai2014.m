@@ -8,8 +8,12 @@ disp('Computing Femoral Head Centre (Kai et al. 2014)...')
 
 % Find the most proximal point
 [~ , I_Top_FH] = max( ProxFem.Points*CSs.Z0 );
+
 MostProxPoint = ProxFem.Points(I_Top_FH,:);
+
 up = CSs.Z0;
+anterior_dir = normalizeV(cross(MostProxPoint, up));
+medial_dir = normalizeV(cross(anterior_dir, CSs.Z0));
 front = cross(MostProxPoint, up);
 %================
 figure
