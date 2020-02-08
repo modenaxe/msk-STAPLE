@@ -1,11 +1,11 @@
-function CSs = createFemurCoordSystKai2014(DistFem, CSs)
+function CSs = createFemurCoordMiranda2010(DistFem, CSs)
 
 %% Compute the femur diaphysis axis
-
+Z0 = CSs.Z0;
 Alt = linspace( min(DistFem.Points*Z0)+0.1 ,max(DistFem.Points*Z0)-0.1, 200);
 Area=[];
 for d = Alt
-    [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem.Points, DistFem.ConnectivityList, Z0 , d );
+    [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
 end
 
 [maxArea,ImaxArea] = max(Area);
@@ -28,6 +28,9 @@ DiaFem = TriReduceMesh( DistFem, ElmtsDia );
 DiaFem = TriFillPlanarHoles(DiaFem);
 
 [ DiaFem_InertiaMatrix, DiaFem_Center ] = InertiaProperties( DiaFem.Points, DiaFem.ConnectivityList );
+% probably alternative
+% [ V_all, CenterVol ] = TriInertiaPpties( Femur );
+
 [V_DiaFem,~] = eig(DiaFem_InertiaMatrix);
 
 Zdia = V_DiaFem(:,1);
