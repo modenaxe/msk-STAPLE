@@ -53,7 +53,7 @@ CSs.X0 = cross(CSs.Y0, CSs.Z0);
 
 %% Mmiranda approach
 
-% CSs = createFemurCoordMiranda2010(DistFem, CSs);
+CSs = createFemurCoordMiranda2010(DistFem, CSs);
 
 %% Isolates the epiphysis
 % First 0.5 mm in Start and End are removed for stability.
