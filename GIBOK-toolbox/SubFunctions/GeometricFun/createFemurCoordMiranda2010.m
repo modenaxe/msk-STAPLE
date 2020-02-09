@@ -1,12 +1,33 @@
 function CSs = createFemurCoordMiranda2010(DistFem, CSs)
 
+
+% TODO: double check against manuscript
+
 %% Compute the femur diaphysis axis
-Z0 = CSs.Z0;
+[V_all, Center0] = TriInertiaPpties( DistFem );
+
+%
+Z0 = V_all(:,1);
+X0 = V_all(:,3);
+Y0 = V_all(:,2);
+
+
+coeff = -1;
 Alt = linspace( min(DistFem.Points*Z0)+0.1 ,max(DistFem.Points*Z0)-0.1, 200);
 Area=[];
 for d = Alt
-    [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
+    [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem, coeff*Z0 , d );
 end
+
+% bar(Area)
+
+%=======================================
+% figure
+% trisurf(DistFem.ConnectivityList, DistFem.Points(:,1), DistFem.Points(:,2), DistFem.Points(:,3),'Facecolor','m','Edgecolor','none');
+% light; lighting phong; % light
+% hold on, axis equal
+% curves not usable because not stored
+%=======================================
 
 [maxArea,ImaxArea] = max(Area);
 
@@ -26,16 +47,30 @@ ElmtsEpi = find(DistFem.incenter*Z0<(min(Alt) + 1.3*dd));
 
 DiaFem = TriReduceMesh( DistFem, ElmtsDia );
 DiaFem = TriFillPlanarHoles(DiaFem);
+%=======================================
+figure
+trisurf(DiaFem.ConnectivityList, DiaFem.Points(:,1), DiaFem.Points(:,2), DiaFem.Points(:,3),'Facecolor','m','Edgecolor','none');
+light; lighting phong; % light
+hold on, axis equal
+% curves not usable because not stored
+%=======================================
 
-[ DiaFem_InertiaMatrix, DiaFem_Center ] = InertiaProperties( DiaFem.Points, DiaFem.ConnectivityList );
+%[ DiaFem_InertiaMatrix, DiaFem_Center ] = InertiaProperties( DiaFem.Points, DiaFem.ConnectivityList );
+
 % probably alternative
-% [ V_all, CenterVol ] = TriInertiaPpties( Femur );
-
-[V_DiaFem,~] = eig(DiaFem_InertiaMatrix);
+[V_DiaFem, DiaFem_Center] = TriInertiaPpties( DiaFem );
 
 Zdia = V_DiaFem(:,1);
 
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi );
+
+%=======================================
+figure
+trisurf(EpiFem.ConnectivityList, EpiFem.Points(:,1), EpiFem.Points(:,2), EpiFem.Points(:,3),'Facecolor','m','Edgecolor','none');
+light; lighting phong; % light
+hold on, axis equal
+% curves not usable because not stored
+%=======================================
 
 %% Find Pt1 described in their method
 
@@ -47,10 +82,16 @@ Dist = sqrt(sum(CP.^2,2));
 [~,IclosestPt] = min(Dist);
 Pt1 = EpiFem.Points(IclosestPt,:);
 
+plot3(Pt1(1),Pt1(2),Pt1(3),'o','LineWidth',4)
 
 %% Find Pt2
 % Get the curves of the cross section at 
-[ Curves , ~, ~ ] = TriPlanIntersect(DistFem.Points, DistFem.ConnectivityList, Z0 , min(Alt) + dd );
+[ Curves , ~, ~ ] = TriPlanIntersect(DistFem, coeff*Z0 , min(Alt) + dd );
+
+for c = 1:length(Curves)
+    plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),'k'); hold on; axis equal
+end
+
 
 % Get the center of the bounding box inertial axis algined
 NewPts = V_all'*Curves.Pts'; NewPts = NewPts';
@@ -78,6 +119,8 @@ CP = (cross(repmat(X0',length(LinePtNodes),1),LinePtNodes));
 Dist = sqrt(sum(CP.^2,2));
 [~,IclosestPt] = min(Dist);
 Pt2 = PosteriorPts(IclosestPt,:);
+
+plot3(Pt2(1),Pt2(2),Pt2(3),'ro','LineWidth',4)
 
 tic
 %% Define first plan iteration
