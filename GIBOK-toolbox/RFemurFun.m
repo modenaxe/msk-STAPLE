@@ -40,6 +40,10 @@ Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
+%% Miranda approach
+
+CSs = createFemurCoordMiranda2010(DistFem, CSs);
+
 %% Find Femoral Head Center
 
 % compute femoral head using Kai2014 method
@@ -50,10 +54,6 @@ CSs.CenterVol = CenterVol;
 
 % X0 points backwards
 CSs.X0 = cross(CSs.Y0, CSs.Z0);
-
-%% Mmiranda approach
-
-CSs = createFemurCoordMiranda2010(DistFem, CSs);
 
 %% Isolates the epiphysis
 % First 0.5 mm in Start and End are removed for stability.

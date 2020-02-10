@@ -27,14 +27,9 @@ end
 % compare with Fig 3 of Miranda publication.
 % bar(Area)
 
-%=======================================
-quickPlotTriang(DistFem, 'r')
-% figure
-% trisurf(DistFem.ConnectivityList, DistFem.Points(:,1), DistFem.Points(:,2), DistFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-% light; lighting phong; % light
-% hold on, axis equal
-% curves not usable because not stored
-%=======================================
+% debug plot
+quickPlotTriang(DistFem, 'r', 1)
+
 
 % first location: maximum area
 [maxArea,ImaxArea] = max(Area);
@@ -65,12 +60,8 @@ Zdia = V_DiaFem(:,1);
 
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi );
 
-%=======================================
-figure
-trisurf(EpiFem.ConnectivityList, EpiFem.Points(:,1), EpiFem.Points(:,2), EpiFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal
-%=======================================
+% debug plot
+quickPlotTriang(EpiFem, 'b')
 
 %% Find Pt1 described in their method
 
@@ -82,13 +73,14 @@ Dist = sqrt(sum(CP.^2,2));
 [~,IclosestPt] = min(Dist);
 Pt1 = EpiFem.Points(IclosestPt,:);
 
+% debug plot
 plot3(Pt1(1),Pt1(2),Pt1(3),'o','LineWidth',4)
 
 %% Find Pt2
 % curve at second location (max + 1/2 area)
 [ Curves , ~, ~ ] = TriPlanIntersect(DistFem, coeff*Z0 , min(Alt) + dd );
 
-% plot the curve
+% debug plot
 plot3(Curves.Pts(:,1), Curves.Pts(:,2), Curves.Pts(:,3),'k'); hold on; axis equal
 
 % moving curve in inertial axes ref system
@@ -123,6 +115,7 @@ Dist = sqrt(sum(CP.^2,2));
 Pt2 = PosteriorPts(IclosestPt,:);
 %==============================================
 
+% debug plot
 plot3(Pt2(1),Pt2(2),Pt2(3),'ro','LineWidth',4)
 
 %% Define first plan iteration
@@ -137,13 +130,8 @@ ElmtsDPCs = find(EpiFem.incenter*npcs > Pt1*npcs);
 % first iteration fitted geometry
 PCsFem = TriReduceMesh( EpiFem, ElmtsDPCs );
 
-%=======================================
-figure
-trisurf(PCsFem.ConnectivityList, PCsFem.Points(:,1), PCsFem.Points(:,2), PCsFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal; 
-%=======================================
-
+% debug plot
+quickPlotTriang(PCsFem, 'm')
 
 % First Cylinder Fit
 Axe0 = Y0';
@@ -154,7 +142,9 @@ Radius0 = 0.5*(max(PCsFem.Points*npcs)-min(PCsFem.Points*npcs));
 plotCylinder( an, rn, x0n, 15, 1, 'b')
 
 %% Define second plan iteration
-npcs = cross( Pt1-Pt2, an); npcs = npcs'/norm(npcs);
+% TODO: double check: second iteration is very similar to first
+npcs = cross( Pt1-Pt2, an); 
+npcs = npcs'/norm(npcs);
 
 if (Center0'-Pt1)*npcs > 0
     npcs = -npcs;
@@ -163,15 +153,8 @@ end
 ElmtsDPCs = find(EpiFem.incenter*npcs > Pt1*npcs);
 PCsFem = TriReduceMesh( EpiFem, ElmtsDPCs );
 
-%=======================================
-figure
-trisurf(PCsFem.ConnectivityList, PCsFem.Points(:,1), PCsFem.Points(:,2), PCsFem.Points(:,3),'Facecolor','b','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal
-%=======================================
-
 % Second and last Cylinder Fit
-Axe0 = an/norm(an);
+Axe0 = normalizeV(an);
 Radius0 = rn;
 
 [x0n, an, rn, d] = lscylinder(PCsFem.Points(1:3:end,:), x0n, Axe0, Radius0, 0.001, 0.001);
@@ -183,6 +166,8 @@ CylStop = max(EpiPtsOcyl_tmp*an)*an' + x0n';
 
 CylCenter = 1/2*(CylStart + CylStop);
 
+% debug plot
+quickPlotTriang(PCsFem, 'g')
 plotCylinder( an, rn, x0n, norm(CylStart - CylStop), 1, 'r')
 
 Results.Yend_Miranda = an;

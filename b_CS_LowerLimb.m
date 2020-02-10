@@ -16,12 +16,12 @@ addpath(genpath('GIBOK-toolbox'));
 % specify where data are
 bone_geom_folder = './test_geometries';
 dataset_folder_set = {  'P0_MRI_smooth_tri',...% Kai not working
-                        ...%'TLEM2_MRI_tri',... 
-                        ...%'TLEM2_CT_tri',... % kai inverted
-                        ...%'LHDL_CT_tri'}; % kai inverted
+                        'TLEM2_MRI_tri',... 
+                        'TLEM2_CT_tri',... % kai inverted
+                        'LHDL_CT_tri',... % kai inverted
                         'JIA_CSm6_tri'};
 % select dataset (just for testing, will be loop)
-nd_given = 1;
+nd_given = 2;
 % specify the bones you want to calculate the ACSs for
 bone_name_set = { 'femur_r'};%, 'pelvis_no_sacrum','tibia_r', 'patella_r','talus_r', 'toes_r'};
 
