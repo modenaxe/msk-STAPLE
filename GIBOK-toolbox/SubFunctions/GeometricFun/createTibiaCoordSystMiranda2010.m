@@ -26,7 +26,12 @@
 % 
 % Z0 = V_all(:,1);
 
-%% Find the Altitutde of the max Cross Section Area (CSA) along the 1st principal inertia axis
+disp('===================')
+disp('Processing tibia_r')
+disp('===================')
+
+
+%% Find the Altitude of the max Cross Section Area (CSA) along the 1st principal inertia axis
 
 % First step
 Alt0 = linspace( min(ProxTib.Points*Z0)+0.1 ,max(ProxTib.Points*Z0)-0.1, 50);
