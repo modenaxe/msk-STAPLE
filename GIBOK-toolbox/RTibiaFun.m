@@ -330,7 +330,7 @@ CSs.ECASE.V = Vend;
 [ TibArtMed_ppt ] = TriMesh2DProperties( EpiTibASMed );
 Pt_Knee = 0.5*TibArtMed_ppt.Center + 0.5*TibArtLat_ppt.Center;
 
-Zmech = Pt_Knee - ankleCenter; Zmech = Zmech' / norm(Zmech);
+Zmech = normalizeV(Pt_Knee-ankleCenter);
 
 Y2 = TibArtMed_ppt.Center - TibArtLat_ppt.Center;
 Y2 = Y2' / norm(Y2);
