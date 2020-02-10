@@ -10,15 +10,18 @@ function CSs = createFemurCoordMiranda2010(DistFem, CSs)
 Z0 = V_all(:,1);
 X0 = V_all(:,3);
 Y0 = V_all(:,2);
-
-
 coeff = -1;
+
+% slicing femur along the "long" dimension
+
+% TODO: This should be every mm, not on 200 points
 Alt = linspace( min(DistFem.Points*Z0)+0.1 ,max(DistFem.Points*Z0)-0.1, 200);
 Area=[];
 for d = Alt
     [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem, coeff*Z0 , d );
 end
 
+% compare with Fig 3 of Miranda publication.
 % bar(Area)
 
 %=======================================
@@ -29,15 +32,19 @@ end
 % curves not usable because not stored
 %=======================================
 
+% first location: maximum area
 [maxArea,ImaxArea] = max(Area);
-
-[~,Id] = min(abs(maxArea/2-Area(ImaxArea:end)));
-
 Loc1 = Alt(ImaxArea);
-Loc2 = Alt(ImaxArea+Id);
 
+% second location: 1/2 maximum area (after the first location)
+AreasPastMax=Area(ImaxArea:end);
+[~,Id] = min(abs(maxArea/2-AreasPastMax));
+% Original code had a bug here -missed -1 - [LM]
+Loc2 = Alt(ImaxArea+Id-1);
+
+% idenfication of diaphysis
+% TODO: should be Alt(0)
 dd = Loc2 - min(Alt);
-
 
 % ElmtsDia = find(DistFem.incenter*Z0>(dd+1.3*(dd-min(Alt))));
 % ElmtsEpi = find(DistFem.incenter*Z0<(dd+1.3*(dd-min(Alt))));
@@ -47,17 +54,17 @@ ElmtsEpi = find(DistFem.incenter*Z0<(min(Alt) + 1.3*dd));
 
 DiaFem = TriReduceMesh( DistFem, ElmtsDia );
 DiaFem = TriFillPlanarHoles(DiaFem);
-%=======================================
-figure
-trisurf(DiaFem.ConnectivityList, DiaFem.Points(:,1), DiaFem.Points(:,2), DiaFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal
+% %=======================================
+% figure
+% trisurf(DiaFem.ConnectivityList, DiaFem.Points(:,1), DiaFem.Points(:,2), DiaFem.Points(:,3),'Facecolor','m','Edgecolor','none');
+% light; lighting phong; % light
+% hold on, axis equal
 % curves not usable because not stored
 %=======================================
 
 %[ DiaFem_InertiaMatrix, DiaFem_Center ] = InertiaProperties( DiaFem.Points, DiaFem.ConnectivityList );
 
-% probably alternative
+% updated
 [V_DiaFem, DiaFem_Center] = TriInertiaPpties( DiaFem );
 
 Zdia = V_DiaFem(:,1);
@@ -139,6 +146,8 @@ Radius0 = 0.5*(max(PCsFem.Points*npcs)-min(PCsFem.Points*npcs));
 
 [x0n, an, rn, d] = lscylinder(PCsFem.Points(1:3:end,:), mean(PCsFem.Points)' - 2*npcs, Axe0, Radius0, 0.001, 0.001);
 
+plotCylinder( an, rn, x0n, 15, 1, 'b')
+
 %% Define second plan iteration
 npcs = cross( Pt1-Pt2, an); npcs = npcs'/norm(npcs);
 
@@ -163,6 +172,8 @@ CylStart = min(EpiPtsOcyl_tmp*an)*an' + x0n';
 CylStop = max(EpiPtsOcyl_tmp*an)*an' + x0n';
 
 CylCenter = 1/2*(CylStart + CylStop);
+
+plotCylinder( an, rn, x0n, norm(CylStart - CylStop), 1, 'r')
 
 Results.Yend_Miranda = an;
 Results.Xend_Miranda = cross(an,Zdia); 
