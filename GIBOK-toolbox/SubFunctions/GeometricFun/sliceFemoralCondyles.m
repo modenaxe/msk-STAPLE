@@ -16,30 +16,19 @@ d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
 %================
-figure
-trisurf(DistFem.ConnectivityList, DistFem.Points(:,1), DistFem.Points(:,2), DistFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal
+quickPlotTriang(DistFem, 'm', 1);
 plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
 %================
 
 keep_slicing = 1;
 while keep_slicing
 
-    [ Curves , ~, ~ ] = TriPlanIntersect(DistFem, X0 , d );
+    [ Curves , Area, ~ ] = TriPlanIntersect(DistFem, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices
     disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
     count = count+1;
-    
-    % plot curves
-    c_set = ['r', 'b'];
-    if ~isempty(Curves)
-        for c = 1:Nbr_of_curves
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3)); hold on; axis equal
-        end
-    end
 
     % stop if just one curve is found after there has been a second profile
     if Nbr_of_curves == 1 && ~isempty(Ok_FC_Pts2)
@@ -47,6 +36,14 @@ while keep_slicing
     else
         % next slicing plane moved by 1 mm
         d = d - 1;
+    end
+    
+    % plot curves after break condition!
+    c_set = ['r', 'b','k','k'];
+    if ~isempty(Curves)
+        for c = 1:Nbr_of_curves
+            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3), c_set(c)); hold on; axis equal
+        end
     end
     
     % otherwise store slices
