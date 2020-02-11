@@ -15,13 +15,10 @@ up = CSs.Z0;
 anterior_dir = normalizeV(cross(MostProxPoint, up));
 medial_dir = normalizeV(cross(anterior_dir, CSs.Z0));
 front = cross(MostProxPoint, up);
-%================
-figure
-trisurf(ProxFem.ConnectivityList, ProxFem.Points(:,1), ProxFem.Points(:,2), ProxFem.Points(:,3),'Facecolor','m','Edgecolor','none');
-light; lighting phong; % light
-hold on, axis equal
+
+% debug plot
+quickPlotTriang(ProxFem, 'm', 1)
 plot3(MostProxPoint(:,1), MostProxPoint(:,2), MostProxPoint(:,3),'g*', 'LineWidth', 3.0);
-%================
 
 % Slice the femoral head starting from the top
 Ok_FH_Pts = [];
@@ -58,15 +55,19 @@ while keep_slicing
         Ok_FH_Pts = [Ok_FH_Pts; Curves.Pts];
     elseif Nbr_of_curves > 1
         for i = 1:Nbr_of_curves
-            % if I assume centre of CT/MRI is always more medial than HJC
-            % then I can work with abs values
-            ind_med_point = abs(Curves(i).Pts(:,1))<abs(MostProxPoint(1));
-            % it is however a weak solution.
             
-            % it would be more robust to check that the cross product of 
-            % dot ( cross( (x_P-x_MostProx), Z0 ) , front ) > 0
-            ind_med_point2 = (front*bsxfun(@cross,MostProxPoint', Curves(i).Pts'))>0;
+            % if I assume centre of CT/MRI is always more medial than HJC
+            % then medial points can be identified as closer to mid
+            % it is however a weak solution - depends on medical images.
+            ind_med_point = abs(Curves(i).Pts(:,1))<abs(MostProxPoint(1));
             Ok_FH_Pts_med = [Ok_FH_Pts_med; Curves(i).Pts(ind_med_point,:)];
+            
+            % More robust (?) to check if the cross product of 
+            % dot ( cross( (x_P-x_MostProx), Z0 ) , front ) > 0
+%             v_MostProx2Points = bsxfun(@minus,  Curves(i).Pts, MostProxPoint);
+            % this condition is valid for right leg, left should be <0
+%             ind_med_point = (medial_dir'*bsxfun(@cross, v_MostProx2Points', up))>0;
+%             Ok_FH_Pts_med = [Ok_FH_Pts_med; Curves(i).Pts(ind_med_point,:)];
         end
     end
 end
@@ -75,7 +76,7 @@ end
 fitPoints = [Ok_FH_Pts; Ok_FH_Pts_med];
 
 % check by plotting
-plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.')
+plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.');hold on
 
 % fit sphere
 [CenterFH, Radius] = sphereFit(Ok_FH_Pts);
