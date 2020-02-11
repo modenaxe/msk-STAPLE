@@ -28,6 +28,12 @@ OSJoint.setName(jointName);
 parentName = struct.parent;
 location_in_parent = ArrayDouble.createVec3(struct.parent_location);
 orientation_in_parent = ArrayDouble.createVec3(struct.parent_orientation);
+
+% % OpenSim 4 way of building the joint
+% OSJoint.connectSocket_parent_frame
+% OSJoint.connectSocket_parent_frame
+% OSJoint.finalizeConnections()
+
 OSJoint.setParentName(parentName);
 OSJoint.setLocationInParent(location_in_parent);
 OSJoint.setOrientationInParent(orientation_in_parent);

@@ -23,6 +23,9 @@ test_case = 'LHDL';
 osim_folder = './opensim_models';
 %--------------------------------
 
+% check folder existance
+if ~isdir(osim_folder); mkdir(osim_folder); end
+
 % OpenSim libraries
 import org.opensim.modeling.*
 
@@ -39,20 +42,32 @@ osimModel.setGravity(Vec3(0, -9.8081, 0));
 zeroVec3 = ArrayDouble.createVec3(0);
 
 % bodies
-ground = osimModel.getGroundBody();
+
+% ground
+ground = Ground();
+osimModel.set_ground(ground);
+osimModel.print('check_cleanModel.xml')
 
 % TODO need to personalize masses from volumes or regress eq 
+% e.g. 
+% [mass, CoM, Inertias] = Anthropometry(H, M, 'method')
+
 % TODO model needs to link to geometries for display
 % TODO model needs to have appropriate rotation sequence
 % TODO add ankle complex
 % TODO add patello-femoral
-pelvis = Body(); pelvis.setName('pelvis'); pelvis.setMass(10); pelvis.setMassCenter(zeroVec3); pelvis.addDisplayGeometry(fullfile(bone_geom_folder, 'pelvis_remeshed_10_m.stl' ))
+pelvis = Body(); 
+pelvis.setName('pelvis'); 
+pelvis.setMass(10); 
+pelvis.setMassCenter(zeroVec3); 
+pelvis.attachGeometry(Mesh(fullfile(bone_geom_folder, 'pelvis_remeshed_10_m.stl' )));
+
 femur_r = Body(); femur_r.setName('femur_r'); femur_r.setMass(10);femur_r.setMassCenter(zeroVec3);femur_r.addDisplayGeometry(fullfile(bone_geom_folder, 'femur_r_LHDL_remeshed8_m.stl' ))
 tibia_r = Body(); tibia_r.setName('tibia_r'); tibia_r.setMass(10); tibia_r.setMassCenter(zeroVec3); tibia_r.addDisplayGeometry(fullfile(bone_geom_folder, 'tibia_r_LHDL_remeshed8_m.stl' ))
 
 % building bodyset
 MSK_BodySet = BodySet();
-MSK_BodySet.cloneAndAppend(ground);
+% MSK_BodySet.cloneAndAppend(ground);
 MSK_BodySet.cloneAndAppend(pelvis);
 MSK_BodySet.cloneAndAppend(femur_r);
 MSK_BodySet.cloneAndAppend(tibia_r);
@@ -179,11 +194,16 @@ updJointSet = createJointSet(JointParams, MSK_BodySet);
 % BodySet
 BodySet_to_upd = osimModel.updBodySet;
 BodySet_to_upd.assign(MSK_BodySet);
+BodySet_to_upd.print('check_bodyset_v4.xml')
+osimModel.print('check1_model_v4.xml')
+% MISSING GROUND
+
 % JointSet
 JointSet_to_upd = osimModel.updJointSet;
 JointSet_to_upd.assign(updJointSet);
 
 osimModel.disownAllComponents();
+
 if ~isdir(osim_folder); mkdir(osim_folder); end
 osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
 
