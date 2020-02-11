@@ -3,10 +3,13 @@ function CSs = createTibiaCoordSystKai2014(Tibia, CSs)
 % NOTE THAT INERTIAL AXES SHOULD ACTUALLY BE PCA OF TIBIA AND FIBULA
 % (COMPLETE BONES)
 
-[ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Tibia );
+[ V_all, CenterVol, ~, d] = TriInertiaPpties( Tibia );
+V_all = pca(Tibia.Points);
 
 Z0 = V_all(:,1);
 
+% pca(Tibia.Points)
+Y0 = V_all(:,1);
 % Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
 % THIS IS INCORRECT: THEY SHOULD BE SLICED USING PCA AXES
@@ -24,7 +27,7 @@ Z0 = V_all(:,1);
 % % original
 % Alt = AltAtMax-0.6:0.05:AltAtMax+0.6;
 
-Alt = linspace( min(Tibia.Points*Z0)+0.5 ,max(Tibia.Points*Z0)-0.5, 100);
+Alt = linspace( min(Tibia.Points*Z0)+0.5 ,max(Tibia.Points*Z0)-0.5, 400);
 
 Area=[];
 quickPlotTriang(Tibia,'m')
@@ -38,12 +41,14 @@ end
 
 % Get the bone outline at maximal CSA
 AltAtMax = Alt(Area==max(Area));
+
 % check max area
 figure; plot(Alt, Area); hold on; plot(AltAtMax, max(Area),'o')
+
 % slice at max area
 [ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Z0 , -AltAtMax );
 
-% keep just tibia section
+% keep just tibia section (largest outline)
 N_Curves = length(Curves);
 max_area = 0;
 if N_Curves>1
@@ -53,7 +58,7 @@ if N_Curves>1
     area_curve = area(slice);
     if area_curve>max_area
         max_area = area_curve;
-        slice_to_fit = Curve(n);
+        slice_to_fit = Curves(nc);
     end
     end
 end
@@ -61,17 +66,20 @@ end
 % debug plots
 quickPlotTriang(Tibia,'m', 1)
 for nn = 1:N_Curves
-    plot3(Curves(nn).Pts(:,1), Curves(nn).Pts(:,2), Curves(nn).Pts(:,3),'r-', 'LineWidth',4); hold on
+    plot3(slice_to_fit.Pts(:,1), slice_to_fit.Pts(:,2), slice_to_fit.Pts(:,3),'r-', 'LineWidth',4); hold on
 end
     
-% Move the outline curve points in the PIA CS
+% Move the outline curve points in the inertial ref system, so the vertical
+% component (:,1) is on a plane
 PtsCurves = vertcat(Curves(:).Pts)*V_all;
 
-% Fit an ellipse to the moved points and move back to the original CS
+% Fit a planar ellipse to the outline of the tibia section
 FittedEllipse = fit_ellipse(PtsCurves(:,2), PtsCurves(:,3));
-CenterEllipse = transpose(  V_all*[ mean(PtsCurves(:,1));
-                                    FittedEllipse.X0_in;
-                                    FittedEllipse.Y0_in]);
+
+% back to medical images reference system
+CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1)); % constant anyway
+                                 FittedEllipse.X0_in;
+                                 FittedEllipse.Y0_in]);
 
 YElpsMax = V_all*[  0 ;
                    cos(FittedEllipse.phi);
@@ -99,5 +107,6 @@ CSs.KAI2014.Z       = Zend;
 
 CSs.KAI2014.V       = [Xend Yend Zend];
 CSs.KAI2014.ElpsPts = EllipsePts;
+
 
 end
