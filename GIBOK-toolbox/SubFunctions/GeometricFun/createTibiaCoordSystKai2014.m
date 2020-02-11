@@ -61,6 +61,8 @@ if N_Curves>1
         slice_to_fit = Curves(nc);
     end
     end
+else
+    slice_to_fit = Curves;
 end
 
 % debug plots
