@@ -23,7 +23,7 @@ dataset_folder_set = {  'P0_MRI_smooth_tri',...% Kai not working
 % select dataset (just for testing, will be loop)
 nd_given = 2;
 % specify the bones you want to calculate the ACSs for
-bone_name_set = { 'femur_r'};%, 'pelvis_no_sacrum','tibia_r', 'patella_r','talus_r', 'toes_r'};
+bone_name_set = { 'tibia_r'};%, 'pelvis_no_sacrum','femur_r','tibia_r', 'patella_r','talus_r', 'toes_r'};
 
 % specify where to store the results
 ACs_store_folder = './ACs';
@@ -77,15 +77,15 @@ for nd = nd_given %1:numel(dataset_folder_set)
 %                     continue
 %                 end
             case 'tibia_r'
-                try
+%                 try
                     [ TibACSsResults, TibiaTriangulations ] = RTibiaFun(geom);
                     PlotTibiaProx_ISB( TibACSsResults.PIAASL, TibiaTriangulations )
-                catch EM
-                    disp('=================================');disp(EM.identifier); 
-                    disp(EM.message);disp('=================================');
-                    warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
-                    continue
-                end
+%                 catch EM
+%                     disp('=================================');disp(EM.identifier); 
+%                     disp(EM.message);disp('=================================');
+%                     warning([cur_bone_name, ' could not be processed. Please double check your mesh and error logs.']);
+%                     continue
+%                 end
             case 'patella_r'
                 try
                     [ PatACSsResults, PatellaTriangulations ] = RPatellaFun( geom );

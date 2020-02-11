@@ -1,4 +1,4 @@
-function [ CSs, TrObjects ] = RTibiaFun( ProxTib , DistTib)
+function [ CSs, TrObjects ] = RTibiaFun( Tibia , DistTib)
 % Fit an ACS on a Tibia composed of the proximal tibia and the tibial part of
 % the ankle
 
@@ -8,8 +8,13 @@ CSs = struct();
 if ~exist('DistTib','var')
      % Only one mesh, this is a long bone that should be cutted in two
      % parts
-      [ProxTib, DistTib] = cutLongBoneMesh(ProxTib);
+      [ProxTib, DistTib] = cutLongBoneMesh(Tibia);
 end
+
+%% Technic 4 fitted, Ellipse at the the largest cross section area
+
+CSs = createTibiaCoordSystKai2014(Tibia, CSs);
+return
 
 %% Get initial Coordinate system and volumetric center
 Tibia = TriUnite(ProxTib,DistTib);
@@ -439,53 +444,6 @@ CSs.PIAASL.Z = Zend;
 
 CSs.PIAASL.V = Vend;
 CSs.PIAASL.Name='ArtSurfPIA';
-
-%% Technic 4 fitted, Ellipse at the the largest cross section area
-%--------------------- Kai et Al. 2014 technic ----------------------------
-Alt = AltAtMax-0.6:0.05:AltAtMax+0.6;
-Area=[];
-for d = -Alt
-    [ ~ , Area(end+1), ~ ] = TriPlanIntersect( ProxTib, Z0 , d );
-end
-
-% Get the bone outline at maximal CSA
-AltAtMax = Alt(Area==max(Area));
-[ Curves , ~, ~ ] = TriPlanIntersect( ProxTib, Z0 , -AltAtMax );
-
-
-% Move the outline curve points in the PIA CS
-PtsCurves = vertcat(Curves(:).Pts)*V_all;
-
-% Fit an ellipse to the moved points and move back to the original CS
-FittedEllipse = fit_ellipse( PtsCurves(:,2),PtsCurves(:,3));
-CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1));FittedEllipse.X0_in;FittedEllipse.Y0_in]);
-
-YElpsMax = V_all*[0;cos(FittedEllipse.phi);-sin(FittedEllipse.phi)]; 
-YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
-
-
-EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
-
-% Construct the Kai et Al. 2014 CS
-Zend = Z0;
-Xend = normalizeV( cross(YElpsMax,Zend) );
-Yend = cross(Zend,Xend);
-
-Yend = normalizeV( sign(Yend'*Y0)*Yend );
-Xend = cross(Yend,Zend);
-
-% Result write
-CSs.KAI2014.CenterVol = CenterVol;
-CSs.KAI2014.CenterKnee = CenterEllipse;
-CSs.KAI2014.YElpsMax = YElpsMax;
-
-CSs.KAI2014.Origin = CenterEllipse;
-CSs.KAI2014.X = Xend;
-CSs.KAI2014.Y = Yend;
-CSs.KAI2014.Z = Zend;
-
-CSs.KAI2014.V = [Xend Yend Zend];
-CSs.KAI2014.ElpsPts = EllipsePts;
 
 
 %% Inertia Results
