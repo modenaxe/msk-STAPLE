@@ -18,11 +18,13 @@ coeff = -1;
 % slicing femur along the "long" dimension
 
 % TODO: This should be every mm, not on 200 points
-Alt = linspace( min(DistFem.Points*Z0)+0.1 ,max(DistFem.Points*Z0)-0.1, 400);
+disp('Slicing femur for Miranda et al. 2010 method....')
+Alt = linspace( min(DistFem.Points*Z0)+0.1 ,max(DistFem.Points*Z0)-0.1, 200);
 Area=[];
 for d = Alt
     [ Curves , Area(end+1), ~ ] = TriPlanIntersect(DistFem, coeff*Z0 , d );
 end
+disp('DONE')
 
 % compare with Fig 3 of Miranda publication.
 % bar(Area)
@@ -170,10 +172,10 @@ CylCenter = 1/2*(CylStart + CylStop);
 quickPlotTriang(PCsFem, 'g')
 plotCylinder( an, rn, x0n, norm(CylStart - CylStop), 1, 'r')
 
-Results.Yend_Miranda = an;
-Results.Xend_Miranda = cross(an,Zdia); 
-Results.Xend_Miranda = Results.Xend_Miranda  / norm(Results.Xend_Miranda);
-Results.Zend_Miranda = cross(Results.Xend_Miranda,Results.Yend_Miranda);
-Results.CenterKnee_Miranda = CylCenter;
+CSs.Yend_Miranda = an;
+CSs.Xend_Miranda = cross(an,Zdia); 
+CSs.Xend_Miranda = CSs.Xend_Miranda  / norm(CSs.Xend_Miranda);
+CSs.Zend_Miranda = cross(CSs.Xend_Miranda,CSs.Yend_Miranda);
+CSs.CenterKnee_Miranda = CylCenter;
 
 end

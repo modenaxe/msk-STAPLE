@@ -1,4 +1,4 @@
-function [ CSs, TrObjects ] = RFemurFun( DistFem , ProxFem)
+function [ CSs, TrObjects ] = RFemurFun( Femur , ProxFem)
 
 % TODO: use a projectOnTo.m for lines like: Pts_0_C1*X1>PtNotch*X1
 % TODO: I think there is a transformation back adn forth from VC that can
@@ -13,7 +13,7 @@ CSs = struct();
 
 % if this is an entire femur then cut it in two parts
 if ~exist('ProxFem','var')
-      [ProxFem, DistFem] = cutLongBoneMesh(DistFem);
+      [ProxFem, DistFem] = cutLongBoneMesh(Femur);
 end
 
 % join two parts in one triangulation
@@ -40,9 +40,9 @@ Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 
-%% Miranda approach
+%% Miranda et al. 2010
 
-CSs = createFemurCoordMiranda2010(DistFem);
+% CSs_Miranda = createFemurCoordMiranda2010(DistFem);
 
 %% Find Femoral Head Center
 
@@ -143,11 +143,14 @@ PtMiddleCondyle         = mean(0.5*(PtsCondylesMed+PtsCondylesLat));
 % transformations on the new refernce system: x_n = (R*x')'=x*R' [TO CHECK]
 Pt_AxisOnSurf_proj      = PtMiddleCondyle*VC; % middle point
 Epiphysis_Pts_DF_2D_RC  = EpiFem.Points*VC; % distal femur
+
+% THESE TRANSFORMATION ARE INVERSE - DOESN'T MAKE MUCH SENSE
+%============================
 Pts_Proj_CLat           = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
 Pts_Proj_CMed           = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
-
 Pts_0_C1                = Pts_Proj_CLat*VC';
 Pts_0_C2                = Pts_Proj_CMed*VC';
+%============================
 
 % divides the epiphesis in med and lat based on where they stand wrt the
 % midpoint identified above
