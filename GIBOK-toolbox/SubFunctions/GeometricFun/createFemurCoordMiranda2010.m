@@ -1,4 +1,4 @@
-function CSs = createFemurCoordMiranda2010(DistFem, CSs)
+function CSs = createFemurCoordMiranda2010(DistFem)
 
 
 % TODO: double check against manuscript

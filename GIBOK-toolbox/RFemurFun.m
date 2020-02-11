@@ -42,7 +42,7 @@ CSs.CenterVol = CenterVol;
 
 %% Miranda approach
 
-CSs = createFemurCoordMiranda2010(DistFem, CSs);
+CSs = createFemurCoordMiranda2010(DistFem);
 
 %% Find Femoral Head Center
 
