@@ -22,7 +22,7 @@
 % --------------------------------------------------------------------------- %
 % Luca Modenese ported the function in MATLAB
 
-function joint = connectBodyWithJoint(model, parentFrame, childFrame, jointName, jointType)
+function [model, joint] = connectBodyWithJoint(model, parentFrame, childFrame, jointName, jointType)
 % 	Connect a childFrame on a Body to a parentFrame (on another Body or Ground)
 % 	in the model using a Joint of the specified type.
 % 	Arguments:
