@@ -16,7 +16,6 @@ addpath('autoMSK_functions');
 %--------------------------------
 % SETTINGS
 %--------------------------------
-addpath(genpath('GIBOK-toolbox'));
 bone_geom_folder = './test_geometries';
 ACs_folder = './ACs';
 test_case = 'LHDL';
@@ -44,34 +43,37 @@ zeroVec3 = ArrayDouble.createVec3(0);
 % bodies
 
 % ground
-ground = Ground();
-osimModel.set_ground(ground);
-osimModel.print('check_cleanModel.xml')
+ground = osimModel.getGround();
 
+% osimModel.print('check_cleanModel.xml')
+offset_ground = addOffsetToFrame(osimModel, ground, 'ground_offset', zeroVec3, zeroVec3);
+% osimModel.print('check_offset.xml')
 % TODO need to personalize masses from volumes or regress eq 
 % e.g. 
 % [mass, CoM, Inertias] = Anthropometry(H, M, 'method')
 
-% TODO model needs to link to geometries for display
-% TODO model needs to have appropriate rotation sequence
-% TODO add ankle complex
-% TODO add patello-femoral
+% defining bodies is "normal"
 pelvis = Body(); 
 pelvis.setName('pelvis'); 
 pelvis.setMass(10); 
 pelvis.setMassCenter(zeroVec3); 
 pelvis.attachGeometry(Mesh(fullfile(bone_geom_folder, 'pelvis_remeshed_10_m.stl' )));
+osimModel.addBody(pelvis);
+offset_pelvis = addOffsetToFrame(osimModel, pelvis, 'pelvis_offset', zeroVec3, zeroVec3);
 
-femur_r = Body(); femur_r.setName('femur_r'); femur_r.setMass(10);femur_r.setMassCenter(zeroVec3);femur_r.addDisplayGeometry(fullfile(bone_geom_folder, 'femur_r_LHDL_remeshed8_m.stl' ))
-tibia_r = Body(); tibia_r.setName('tibia_r'); tibia_r.setMass(10); tibia_r.setMassCenter(zeroVec3); tibia_r.addDisplayGeometry(fullfile(bone_geom_folder, 'tibia_r_LHDL_remeshed8_m.stl' ))
+% the joint can be built between two PhysicalOffsetFrames (body, ground or
+% PhysicalFrame)
+joint = CustomJoint('test', ground, pelvis );
+osimModel.addJoint(joint);
 
-% building bodyset
-MSK_BodySet = BodySet();
-% MSK_BodySet.cloneAndAppend(ground);
-MSK_BodySet.cloneAndAppend(pelvis);
-MSK_BodySet.cloneAndAppend(femur_r);
-MSK_BodySet.cloneAndAppend(tibia_r);
+% [model, joint] = connectBodyWithJoint(osimModel, offset_ground, offset_pelvis, 'pelvis_ground', 'FreeJoint');
+% 
 
+updc = joint.upd_coordinates(0);
+updc.setName('mycoord_X');
+% updc.
+osimModel.finalizeConnections()
+osimModel.print('1_pelvis_model.osim');
 % joint parameters
 % load('LHDL_ACSsResults.mat'); 
 load(fullfile(ACs_folder, [test_case,'_ACSsResults.mat'])); 
