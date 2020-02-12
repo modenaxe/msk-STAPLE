@@ -42,7 +42,7 @@ child_frame = model.getBodySet.get(childName);
 
 
 % OSJoint = setCustomJointSpatialTransform(OSJoint, struct);
-jointSpatialTransf = createCustomJointSpatialTransform(struct);
+jointSpatialTransf = createSpatialTransformFromStruct(struct);
 
 % create the f... joint m...f...!!
 myCustomJoint= CustomJoint(jointName,...
