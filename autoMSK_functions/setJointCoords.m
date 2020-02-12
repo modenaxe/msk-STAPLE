@@ -20,9 +20,10 @@ function OSJoint = setJointCoords(OSJoint, struct)
 % OpenSim libraries
 import org.opensim.modeling.*
 
+% This needs fixing - not working on OpenSim 4
 % get coordinate set to update
 updCoordinates = OSJoint.upd_CoordinateSet();
-
+OSJoint.upd_coordinates(0)
 % creating coordinates
 coordsNames = struct.coordsNames;
 coordsTypes = struct.coordsTypes;
@@ -31,15 +32,26 @@ coordsTypes = struct.coordsTypes;
 N = size(coordsNames,2);
 
 for n_c = 1:N
-    coord = Coordinate();
+    % get coords values
     curr_coord_name = coordsNames{n_c};
-    coord.setName(curr_coord_name);
     curr_coord_type = coordsTypes{n_c};
-    if strcmp(curr_coord_type,'rotational') || strcmp(curr_coord_type,'translational')
-        coord.set_motion_type(curr_coord_type);
+    curr_def_value  = 0;
+    
+    % define ranges
+    if strcmp(curr_coord_type,'rotational')
+        curr_range_min = -90/180*pi;
+        curr_range_max =  90/180*pi;
     else
-        error([curr_coord_type,' must be ''rotational'' or ''translational''.']);
+        curr_range_min = -4;
+        curr_range_max =  4;
     end
+    
+    % define the coordinate
+    Coordinate(curr_coord_name,...
+               curr_coord_type,...
+               curr_def_value,... 
+               curr_range_min,...
+               curr_range_max);
     
     % updating the coordinate set
     updCoordinates.cloneAndAppend(coord);
