@@ -21,7 +21,7 @@
 % limitations under the License.                                              %
 % --------------------------------------------------------------------------- %
 % Luca Modenese ported the function in MATLAB
-function offset = addOffsetToFrame(model, baseFrame, offsetName, trans, rot)
+function [model, offset] = addOffsetToFrame(model, baseFrame, offsetName, trans, rot)
 % 	Define a PhysicalOffsetFrame in terms of its translational and rotational
 % 		offset with respect to a base (Physical) frame and add it to the model.
 % 		Arguments:
