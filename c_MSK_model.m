@@ -4,12 +4,11 @@
 %    Author:   Luca Modenese, April 2018                                  % 
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-% trying to create a knee joint
-% TODO: scale geometries
 % TODO: transform them to ascii for OpenSim visualization
 
 clearvars; clear all
 close all
+
 % add useful scripts
 addpath(genpath('GIBOK-toolbox'));
 addpath(genpath('autoMSK_functions'));
@@ -24,7 +23,6 @@ bone_geom_folder = './test_geometries';
 ACs_folder = './ACs';
 test_case = 'LHDL';
 osim_folder = './opensim_models';
-
 in_mm = 1;
 %--------------------------------
 % TODO need to personalize masses from volumes or regress eq 
@@ -37,9 +35,10 @@ tibia_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/tibia_r.mat';
 % pelvis_mesh = './test_geometries/P0_MRI_smooth/pelvis_no_sacrum.stl';
 pelvis_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\pelvis.vtp';
 femur_r_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\femur_r.vtp';
+tibia_r_mesh_vtp = 'test_geometries/P0_MRI_smooth_vtp/tibia_r.vtp';
 
 
-
+% adjust dimensional factors based on mm / m scales
 if in_mm == 1
     dim_fact = 0.001;
     bone_density = 0.000001420;%kg/mm3
@@ -51,6 +50,8 @@ end
 
 % check folder existance
 if ~isdir(osim_folder); mkdir(osim_folder); end
+
+
 % create the model
 osimModel = Model();
 % setting the model
@@ -162,10 +163,6 @@ osimModel.addJoint(pelvis_ground_joint);
 osimModel.finalizeConnections()
 osimModel.print('2_pelvis_model.osim');
 
-% % joint parameters
-% % load('LHDL_ACSsResults.mat'); 
-% load(fullfile(ACs_folder, [test_case,'_ACSsResults.mat'])); 
-
 
 %============== just the mesh is given in input =========================
 
@@ -242,38 +239,58 @@ osimModel.print('3_pelvis_model.osim');
 
 
 
-% % % knee parameters
-% % knee_location_in_parent = FemACSsResults.PCC.Origin/1000;
-% % knee_child_location = (FemACSsResults.PCC.Origin-TibACSsResults.PIAASL.Origin)/1000;
-% % rotation_axes = 'zxy';
-% % % transforming to ISB ref system
-% % ISB2GB = [1  0  0
-% %           0  0 -1
-% %           0  1 0];
-% % GB2Glob = TibACSsResults.PIAASL.V;
-% % FX = GB2Glob*ISB2GB*[1 0 0]';
-% % FY = GB2Glob*ISB2GB*[0 1 0]';
-% % FZ = GB2Glob*ISB2GB*[0 0 1]';
-% % F.V = [FX, FY, FZ];
-% % Rot  = F.V;
-% % beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-% % alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-% % gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-% % disp([alpha2 beta2 gamma2])
-% % tibia_orientation = [  alpha2  beta2  gamma2];
-% % 
-
-
+% % knee parameters
 %--------------------------
 % load mesh
 geom = load(tibia_r_mat_mesh); 
 geom = geom.triang_geom;
-bone_name = 'femur_r';
-vis_mesh_file = femur_r_mesh_vtp;
+bone_name = 'tibia_r';
+vis_mesh_file = tibia_r_mesh_vtp;
 %--------------------------
 
+%  function addBodyFromTriangGeom(osimModel, body_name, Tr, density, in_mm)
+
+% compute geometrical mass properties from segmentation
+boneMassProps= calcMassInfo_Mirtich1996(geom.Points, geom.ConnectivityList);
+bone_mass    = boneMassProps.mass * bone_density;
+bone_COP     = boneMassProps.COM  * dim_fact;
+bone_inertia = boneMassProps.Ivec * bone_density * dim_fact^2.0; 
+% create opensim body
+osim_body    =  Body( bone_name,...
+                bone_mass,... 
+                ArrayDouble.createVec3(bone_COP),...
+                Inertia(boneMassProps.Ivec(1), boneMassProps.Ivec(2), boneMassProps.Ivec(3),...
+                        boneMassProps.Ivec(4), boneMassProps.Ivec(5), boneMassProps.Ivec(6))...
+               );
+
+% add body to model
+osimModel.addBody(osim_body);
+
+% add visualization
+% I could write the mat file as stl
+vis_geom = Mesh(vis_mesh_file);
+vis_geom.set_scale_factors(Vec3(dim_fact));
+osim_body.attachGeometry(vis_geom);
+%========================================================================
+
+% knee centre in femur
+knee_location_in_parent = (CS.Center1+CS.Center2)/2.0*dim_fact;
+
+% defines the axis for the tibia
  CS = computeTibiaISBCoordSystKai2014(geom);
+ 
+% knee_location_in_parent = CS.Origin/1000;
+% knee_child_location = (FemACSsResults.PCC.Origin-TibACSsResults.PIAASL.Origin)/1000;
+rotation_axes = 'zxy';
+Rot  = CS.V;
+beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
+alpha2 = atan2(-Rot(2,3)/cos(beta2),        Rot(3,3)/cos(beta2));
+gamma2 = atan2(-Rot(1, 2)/cos(beta2),       Rot(1,1)/cos(beta2));
+tibia_orientation = [  alpha2  beta2  gamma2];
+
+
  quickPlotRefSystem(CS)
+ 
 % knee
 nj = nj + 1;
 JointParams(nj).name               = 'knee_r';
@@ -287,25 +304,18 @@ JointParams(nj).coordsNames        = {'knee_angle_r'};
 JointParams(nj).coordsTypes        = {'rotational'};
 JointParams(nj).rotationAxes       = rotation_axes;
 
-% % 
-% % updJointSet = createJointSet(JointParams, MSK_BodySet);
-% % 
-% % % BodySet
-% % BodySet_to_upd = osimModel.updBodySet;
-% % BodySet_to_upd.assign(MSK_BodySet);
-% % BodySet_to_upd.print('check_bodyset_v4.xml')
-% % osimModel.print('check1_model_v4.xml')
-% % % MISSING GROUND
-% % 
-% % % JointSet
-% % JointSet_to_upd = osimModel.updJointSet;
-% % JointSet_to_upd.assign(updJointSet);
-% % 
-% % osimModel.disownAllComponents();
-% % 
-% % if ~isdir(osim_folder); mkdir(osim_folder); end
-% % osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
-% 
-% % remove paths
-% rmpath(genpath('GIBOK-toolbox'));
-% rmpath('autoMSK_functions');
+% create the joint
+knee_r = createCustomJointFromStruct(osimModel, JointParams(nj));
+osimModel.addJoint(knee_r);
+
+
+osimModel.finalizeConnections()
+osimModel.print('4_pelvis_model.osim');
+
+% % print
+% osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
+% osimModel.disownAllComponents();
+
+% remove paths
+rmpath(genpath('GIBOK-toolbox'));
+rmpath('autoMSK_functions');
