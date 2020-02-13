@@ -24,7 +24,7 @@ bone_geom_folder = './test_geometries';
 ACs_folder = './ACs';
 test_case = 'LHDL';
 osim_folder = './opensim_models';
-bone_density = 0.000001420;%kg/mm3
+
 in_mm = 1;
 %--------------------------------
 % TODO need to personalize masses from volumes or regress eq 
@@ -32,9 +32,21 @@ in_mm = 1;
 
 % bone geometries
 pelvis_mat_mesh = './test_geometries/P0_MRI_smooth_tri/pelvis_no_sacrum.mat';
+femur_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/femur_r.mat';
 % pelvis_mesh = './test_geometries/P0_MRI_smooth/pelvis_no_sacrum.stl';
-pelvis_mesh_vtp = 'F:\MATLAB\auto-msk-model-git\test_geometries\P0_MRI_smooth_vtp\pelvis_no_sacrum.vtp';
+pelvis_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\pelvis.vtp';
+femur_r_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\femur_r.vtp';
 
+
+
+if in_mm == 1
+    dim_fact = 0.001;
+    bone_density = 0.000001420;%kg/mm3
+else
+    % assumed in metres
+    dim_fact = 1;
+    bone_density = 1420;%kg/m3
+end
 
 % check folder existance
 if ~isdir(osim_folder); mkdir(osim_folder); end
@@ -55,18 +67,20 @@ ground = osimModel.getGround();
 geom = load(pelvis_mat_mesh); 
 geom = geom.triang_geom;
 % compute mass properties
-PelvisInfo = calcMassInfo_Mirtich1996(geom.Points, geom.ConnectivityList, bone_density);
+boneMassProps = calcMassInfo_Mirtich1996(geom.Points, geom.ConnectivityList);
 % create opensim body
 pelvis = Body(); 
 pelvis.setName('pelvis'); 
-pelvis.setMass(PelvisInfo.mass); 
-pelvis.setMassCenter(ArrayDouble.createVec3(PelvisInfo.COM/1000)); 
-exp_inertia = Inertia(PelvisInfo.Ivec(1), PelvisInfo.Ivec(2), PelvisInfo.Ivec(3),...
-                      PelvisInfo.Ivec(4), PelvisInfo.Ivec(5), PelvisInfo.Ivec(6));
+pelvis.setMass(boneMassProps.mass*bone_density); 
+pelvis.setMassCenter(ArrayDouble.createVec3(boneMassProps.COM/1000)); 
+exp_inertia = Inertia(boneMassProps.Ivec(1), boneMassProps.Ivec(2), boneMassProps.Ivec(3),...
+                      boneMassProps.Ivec(4), boneMassProps.Ivec(5), boneMassProps.Ivec(6));
 pelvis.setInertia(exp_inertia);
 % add body
 osimModel.addBody(pelvis);
-pelvis.attachGeometry(Mesh(pelvis_mesh_vtp));
+vis_geom = Mesh(pelvis_mesh_vtp);
+vis_geom.set_scale_factors(Vec3(0.001));
+pelvis.attachGeometry(vis_geom);
 %========================================================================
 
 % solve reference system
@@ -79,9 +93,18 @@ pelvis_location = PelvisRS.ISB.Origin/1000;
 beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
 alpha2 = atan2(-Rot(2,3)/cos(beta2),        Rot(3,3)/cos(beta2));
 gamma2 = atan2(-Rot(1, 2)/cos(beta2),       Rot(1,1)/cos(beta2));
-disp([alpha2 beta2 gamma2])
+disp([alpha2 beta2 gamma2]);
 % pelvis_orientation = ArrayDouble.createVec3([  alpha2  beta2  gamma2]);
 pelvis_orientation = [  alpha2  beta2  gamma2];
+
+% %XYZ fixed frame: https://en.wikipedia.org/wiki/Euler_angles
+% R1 = PelvisRS.V;
+% beta = asin( R1(1,3));
+% alpha = asin(-R1(2,3)/ cos(beta) );
+% gamma = acos(R1(1,1)/ cos(beta) );
+% disp([alpha beta gamma])
+%  %this goes in the osim file as <xyz_body_rotation>
+% pelvis_orientation = [  alpha  beta  gamma]; 
 
 % % this is basically what addOffsetToFrame does already
 % pelvis_ofs = PhysicalOffsetFrame();
@@ -142,88 +165,81 @@ osimModel.print('2_pelvis_model.osim');
 % % load('LHDL_ACSsResults.mat'); 
 % load(fullfile(ACs_folder, [test_case,'_ACSsResults.mat'])); 
 
-% FROM HERE DOWN IT USED TO WORK IN OPENSIM 3.3
-% % ground_pelvis
-% load(fullfile(ACs_folder,'PelvisRS'));
-% % [XPelvAngle, YPelvAngle, ZPelvAngle] = FIXED_ROT_XYZ(PelvisRS.V , 'Glob2Loc');
-% % pelvis_orientation = [ZPelvAngle, YPelvAngle, XPelvAngle];
-% pelvis_location = PelvisRS.Origin/1000;
-% 
-% %XYZ fixed frame: https://en.wikipedia.org/wiki/Euler_angles
-% R1 = PelvisRS.V;
-% beta = asin( R1(1,3));
-% alpha = asin(-R1(2,3)/ cos(beta) );
-% gamma = acos(R1(1,1)/ cos(beta) );
-% disp([alpha beta gamma])
-%  %this goes in the osim file as <xyz_body_rotation>
-% pelvis_orientation = [  alpha  beta  gamma]; 
-% 
-% Rot  =R1
-% beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-% alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-% gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-% disp([alpha2 beta2 gamma2])
-% pelvis_orientation = [  alpha2  beta2  gamma2];
-% 
-% nj = 1;
-% JointParams(nj).name                = 'ground_pelvis';
-% JointParams(nj).parent              = 'ground';
-% JointParams(nj).child               = 'pelvis';
-% JointParams(nj).parent_location     = [0.0000	0.0000	0.0000];
-% JointParams(nj).parent_orientation  = [0.0000	0.0000	0.0000];
-% JointParams(nj).child_location      = pelvis_location;
-% JointParams(nj).child_orientation   = pelvis_orientation;
-% JointParams(nj).coordsNames         = {'pelvis_tilt','pelvis_list','pelvis_rotation', 'pelvis_tx','pelvis_ty', 'pelvis_tz'};
-% JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
-% JointParams(nj).rotationAxes        = 'zxy'; 
-% 
-% 
-% updJointSet = createJointSet(JointParams, osimModel.getBodySet)
-% 
-% % hip parameters
-% % transforming to ISB ref system
-% ISB2GB = [1  0  0
-%           0  0 -1
-%           0  1 0];
-% GB2Glob = FemACSsResults.PCC.V;
-% FX = GB2Glob*ISB2GB*[1 0 0]';
-% FY = GB2Glob*ISB2GB*[0 1 0]';
-% FZ = GB2Glob*ISB2GB*[0 0 1]';
-% F.V = [FX, FY, FZ];
-% 
-% % %XYZ fixed frame
-% % R2 = F.V;%(FemACSsResults.PCC.V*ISB2GB)';
-% %   beta = asin( R2(1,3));
-% %  alpha = acos(R2(1,1)/ cos(beta) );
-% %  gamma = asin(-R2(2,3)/ cos(beta) );
-% %  %this goes in the osim file as <xyz_body_rotation>
-% % femur_orientation = [  gamma  beta alpha ]; 
-% 
-% Rot  = F.V;
-% beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-% alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-% gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-% disp([alpha2 beta2 gamma2])
-% femur_orientation = [  alpha2  beta2  gamma2];
-% 
-% % [XFemAngle, YFemAngle, ZFemAngle] = FIXED_ROT_XYZ(R2, 'Glob2Loc');
-% % femur_orientation = [ZFemAngle, YFemAngle, XFemAngle];
-% 
-% 
-% HJC_location = FemACSsResults.CenterFH/1000;
-% 
+
+%============== just the mesh is given in input =========================
+
+%--------------------------
+% load mesh
+geom = load(femur_r_mat_mesh); 
+geom = geom.triang_geom;
+bone_name = 'femur_r';
+vis_mesh_file = femur_r_mesh_vtp;
+%--------------------------
+
+%  function addBodyFromTriangGeom(osimModel, body_name, Tr, density, in_mm)
+
+% compute geometrical mass properties from segmentation
+boneMassProps= calcMassInfo_Mirtich1996(geom.Points, geom.ConnectivityList);
+bone_mass    = boneMassProps.mass * bone_density;
+bone_COP     = boneMassProps.COM  * dim_fact;
+bone_inertia = boneMassProps.Ivec * bone_density * dim_fact^2.0; 
+% create opensim body
+osim_body    =  Body( bone_name,...
+                bone_mass,... 
+                ArrayDouble.createVec3(bone_COP),...
+                Inertia(boneMassProps.Ivec(1), boneMassProps.Ivec(2), boneMassProps.Ivec(3),...
+                        boneMassProps.Ivec(4), boneMassProps.Ivec(5), boneMassProps.Ivec(6))...
+               );
+
+% add body to model
+osimModel.addBody(osim_body);
+
+% add visualization
+% I could write the mat file as stl
+vis_geom = Mesh(vis_mesh_file);
+vis_geom.set_scale_factors(Vec3(dim_fact));
+osim_body.attachGeometry(vis_geom);
+%========================================================================
+
+% solve reference system
+CS = computeFemurISBCoordSyst_Kai2014(geom);
+
+% debug plots
+quickPlotTriang(geom)
+quickPlotRefSystem(CS)
+
+
+HJC_location = CS.CenterFH_Kai/1000;
+
+Rot  = CS.V;
+beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
+alpha2 = atan2(-Rot(2,3)/cos(beta2),        Rot(3,3)/cos(beta2));
+gamma2 = atan2(-Rot(1, 2)/cos(beta2),       Rot(1,1)/cos(beta2));
+disp([alpha2 beta2 gamma2])
+femur_orientation = [  alpha2  beta2  gamma2];
+
 % % hip joint
-% nj = nj + 1;
-% JointParams(nj).name                = 'hip_r';
-% JointParams(nj).parent              = 'pelvis';
-% JointParams(nj).child               = 'femur_r';
-% JointParams(nj).parent_location     = HJC_location;
-% JointParams(nj).parent_orientation  = pelvis_orientation;
-% JointParams(nj).child_location      = HJC_location;
-% JointParams(nj).child_orientation   = femur_orientation;
-% JointParams(nj).coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
-% JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational'};
-% JointParams(nj).rotationAxes        = 'zxy'; 
+nj = nj + 1;
+JointParams(nj).name                = 'hip_r';
+JointParams(nj).parent              = 'pelvis';
+JointParams(nj).child               = 'femur_r';
+JointParams(nj).parent_location     = HJC_location;
+JointParams(nj).parent_orientation  = pelvis_orientation;
+JointParams(nj).child_location      = HJC_location;
+JointParams(nj).child_orientation   = femur_orientation;
+JointParams(nj).coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
+JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational'};
+JointParams(nj).rotationAxes        = 'zxy'; 
+
+
+% create the joint
+hip_r = createCustomJointFromStruct(osimModel, JointParams(nj));
+osimModel.addJoint(hip_r);
+
+osimModel.finalizeConnections()
+osimModel.print('3_pelvis_model.osim');
+
+
 % 
 % 
 % 
