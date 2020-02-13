@@ -33,6 +33,7 @@ in_mm = 1;
 % bone geometries
 pelvis_mat_mesh = './test_geometries/P0_MRI_smooth_tri/pelvis_no_sacrum.mat';
 femur_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/femur_r.mat';
+tibia_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/tibia_r.mat';
 % pelvis_mesh = './test_geometries/P0_MRI_smooth/pelvis_no_sacrum.stl';
 pelvis_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\pelvis.vtp';
 femur_r_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\femur_r.vtp';
@@ -240,9 +241,7 @@ osimModel.finalizeConnections()
 osimModel.print('3_pelvis_model.osim');
 
 
-% 
-% 
-% 
+
 % % % knee parameters
 % % knee_location_in_parent = FemACSsResults.PCC.Origin/1000;
 % % knee_child_location = (FemACSsResults.PCC.Origin-TibACSsResults.PIAASL.Origin)/1000;
@@ -263,19 +262,31 @@ osimModel.print('3_pelvis_model.osim');
 % % disp([alpha2 beta2 gamma2])
 % % tibia_orientation = [  alpha2  beta2  gamma2];
 % % 
-% % % knee
-% % nj = nj + 1;
-% % JointParams(nj).name               = 'knee_r';
-% % JointParams(nj).parent             = 'femur_r';
-% % JointParams(nj).child              = 'tibia_r';
-% % JointParams(nj).parent_location    = knee_location_in_parent;
-% % JointParams(nj).parent_orientation = femur_orientation;
-% % JointParams(nj).child_location     = knee_location_in_parent;
-% % JointParams(nj).child_orientation  = tibia_orientation;
-% % JointParams(nj).coordsNames        = {'knee_angle_r'};
-% % JointParams(nj).coordsTypes        = {'rotational'};
-% % JointParams(nj).rotationAxes       = rotation_axes;
-% % % JointParams(nj).rotationAxes       = [0.0488	-0.0463	-0.9977];
+
+
+%--------------------------
+% load mesh
+geom = load(tibia_r_mat_mesh); 
+geom = geom.triang_geom;
+bone_name = 'femur_r';
+vis_mesh_file = femur_r_mesh_vtp;
+%--------------------------
+
+ CS = computeTibiaISBCoordSystKai2014(geom);
+ quickPlotRefSystem(CS)
+% knee
+nj = nj + 1;
+JointParams(nj).name               = 'knee_r';
+JointParams(nj).parent             = 'femur_r';
+JointParams(nj).child              = 'tibia_r';
+JointParams(nj).parent_location    = knee_location_in_parent;
+JointParams(nj).parent_orientation = femur_orientation;
+JointParams(nj).child_location     = knee_location_in_parent;
+JointParams(nj).child_orientation  = tibia_orientation;
+JointParams(nj).coordsNames        = {'knee_angle_r'};
+JointParams(nj).coordsTypes        = {'rotational'};
+JointParams(nj).rotationAxes       = rotation_axes;
+
 % % 
 % % updJointSet = createJointSet(JointParams, MSK_BodySet);
 % % 

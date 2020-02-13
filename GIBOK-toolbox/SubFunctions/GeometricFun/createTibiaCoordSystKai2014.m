@@ -9,7 +9,9 @@ V_all = pca(Tibia.Points);
 Z0 = V_all(:,1);
 
 % pca(Tibia.Points)
-Y0 = V_all(:,1);
+error('need to compute ankle joint centre to ensure med-lat axis');
+Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
+
 % Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
 % THIS IS INCORRECT: THEY SHOULD BE SLICED USING PCA AXES
