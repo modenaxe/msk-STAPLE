@@ -10,7 +10,7 @@
 % of polihedron, but is optimized to work with triangular meshes. The
 % implementation was taken from Eberly, D., 2003. Polyhedral mass 
 % properties (revisited). AVAILABLE AT: 
-% www. magic-sofiware. com/Documentation/PolyhedratMassProperties. pdf 
+% www.magic-sofiware.com/Documentation/PolyhedratMassProperties.pdf 
 %
 % VERIFICATION: this code yealds the same values as NMSBuilder for a femur
 % and a sphere. (Exactly the same values, but it's faster!)
@@ -20,11 +20,10 @@
 %        each facet of the mesh
 %
 % OUTPUT:   MassInfo.mass       = mass;
-%           MassInfo.density    = density;
 %           MassInfo.COM        = COM;
 %           MassInfo.Imat       = I; inertia matrix calculated at COM
 
-function MassInfo = calcMassInfo_Mirtich1996(v, f, density)
+function MassInfo = calcMassInfo_Mirtich1996(v, f)
 
 % feedback to the user
 % I tried a waitbar, but the script was too slow!
@@ -75,7 +74,7 @@ end
 intg = intg.*coeff;
 
 % mass
-mass = intg(1)*density;
+mass = intg(1);
 
 % center of mass
 COM(1) = intg(2)/mass;
@@ -103,7 +102,6 @@ display(['Elapsed time ', num2str(toc),' ms.'])
 
 % Collecting all results together
 MassInfo.mass       = mass;
-MassInfo.density    = density;
 MassInfo.COM        = COM;
 MassInfo.Imat       = I;
 MassInfo.Ivec       = Iv;
