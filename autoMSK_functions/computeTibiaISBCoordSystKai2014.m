@@ -22,13 +22,11 @@ Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
 % need to 
-error('need to compute ankle joint centre to ensure med-lat axis');
+warning('need to compute ankle joint centre to ensure med-lat axis');
 Y0 = V_all(:,2);
 
 
-% THIS IS INCORRECT: THEY SHOULD BE SLICED USING PCA AXES
-% slice the proximal tibia
-
+% THIS IS INCORRECT: SLICES SHOULD BE 1mm APART
 Alt = linspace( min(Tibia.Points*Z0)+0.5 ,max(Tibia.Points*Z0)-0.5, 300);
 
 Area=[];
@@ -93,11 +91,18 @@ YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
 
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
+% % create GIBOK ref system
+% Zend = Z0;
+% Xend = normalizeV( cross(YElpsMax,Zend) );
+% Yend = cross(Zend,Xend);
+% Yend = normalizeV( sign(Yend'*Y0)*Yend );
+% Xend = cross(Yend,Zend);
+
 % create ISB ref system
-Zend = Z0;
-Xend = normalizeV( cross(YElpsMax,Zend) );
-Yend = cross(Zend,Xend);
-Yend = normalizeV( sign(Yend'*Y0)*Yend );
+Yend = Z0;
+Xend = normalizeV(cross(Yend, YElpsMax));
+Zend = cross(Xend, Yend);
+Zend = normalizeV( sign(Zend'*Y0)*Zend );
 Xend = cross(Yend,Zend);
 
 % Store geometrical info
