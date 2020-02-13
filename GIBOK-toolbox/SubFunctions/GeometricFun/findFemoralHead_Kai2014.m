@@ -1,8 +1,8 @@
-function [CSs, Curves] = findFemoralHead_Kai2014(ProxFem, CSs)
+function [CSs, MostProxPoint] = findFemoralHead_Kai2014(ProxFem, CSs)
 
-% TODO understand axis
-% Z0 points upwards, but plane needs to point downwards
+% TODO: remove CS and output just fitting results could be an issue for GIBOK
 
+% plane normal must be negative (GIBOK)
 corr_dir = -1;
 disp('Computing Femoral Head Centre (Kai et al. 2014)...')
 
