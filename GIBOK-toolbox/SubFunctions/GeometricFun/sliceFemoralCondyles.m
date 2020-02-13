@@ -2,7 +2,7 @@
 % slice starts with just one curve, until it slices two condyles
 % when there are two curves, the next time there is one is the end of
 % loop
-function [Ok_FC_Pts1, Ok_FC_Pts2] = sliceFemoralCondyles(DistFem, X0)
+function [FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, X0)
 
 % X0 points backwards in GIBOK
 
@@ -10,8 +10,8 @@ function [Ok_FC_Pts1, Ok_FC_Pts2] = sliceFemoralCondyles(DistFem, X0)
 [~ , I_Post_FC] = max( DistFem.Points*-X0 );
 MostPostPoint = DistFem.Points(I_Post_FC,:);
 
-Ok_FC_Pts1 = [];
-Ok_FC_Pts2 = [];
+FC_Med_Pts = [];
+FC_Lat_Pts = [];
 d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
@@ -29,9 +29,15 @@ while keep_slicing
     % counting slices
     disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
     count = count+1;
-
+    if Nbr_of_curves > 4
+        disp('The condyle slicing is likely to be happening in the incorrect direction of the anterior-posterior axis.')
+        disp('Inverting axis.')
+        [FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, -X0);
+        return
+    end
+    
     % stop if just one curve is found after there has been a second profile
-    if Nbr_of_curves == 1 && ~isempty(Ok_FC_Pts2)
+    if Nbr_of_curves == 1 && ~isempty(FC_Lat_Pts)
         break
     else
         % next slicing plane moved by 1 mm
@@ -48,7 +54,7 @@ while keep_slicing
     
     % otherwise store slices
     if Nbr_of_curves == 1
-        Ok_FC_Pts1 = [Ok_FC_Pts1; Curves.Pts];
+        FC_Med_Pts = [FC_Med_Pts; Curves.Pts];
     elseif Nbr_of_curves == 2
         % needs to identify which is the section near starting point
         % using distance from centroid for that
@@ -62,8 +68,8 @@ while keep_slicing
         % single curve
         [~,IcurvePost1] = min(Dist2MostPostPoint);
         % store data accordingly
-        Ok_FC_Pts1 = [Ok_FC_Pts1; Curves(IcurvePost1).Pts];
-        Ok_FC_Pts2 = [Ok_FC_Pts2; Curves(3-IcurvePost1).Pts];
+        FC_Med_Pts = [FC_Med_Pts; Curves(IcurvePost1).Pts];
+        FC_Lat_Pts = [FC_Lat_Pts; Curves(3-IcurvePost1).Pts];
     end
 end
 
