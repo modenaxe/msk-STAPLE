@@ -122,10 +122,10 @@ if debug_plot
     %Plot the Axis & Volumic center
     
     % axis based on subtalar estimation
-    plotDot( CenterVol', 'k', 2 )
-    plotArrow( X1, 1, CenterVol, 40, 1, 'r')
-    plotArrow( Y1, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
-    plotArrow( Z1, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
+%     plotDot( CenterVol', 'k', 2 )
+%     plotArrow( X1, 1, CenterVol, 40, 1, 'r')
+%     plotArrow( Y1, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
+%     plotArrow( Z1, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
     
     % orginal inertial + quad axes
     plotArrow( X0, 1, CenterVol, 40, 1, 'r')
