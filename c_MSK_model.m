@@ -18,7 +18,7 @@ import org.opensim.modeling.*
 %--------------------------------
 bone_geom_folder = './test_geometries';
 ACs_folder = './ACs';
-test_case = 'LHDL';
+test_case = 'P0';
 osim_folder = './opensim_models';
 in_mm = 1;
 %--------------------------------
@@ -56,17 +56,23 @@ ground = osimModel.getGround();
 
 
 % add to osim model all bodies
-mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
-geom_dir = 'test_geometries/P0_MRI_smooth_tri';
+% geom_dir = 'test_geometries/P0_MRI_smooth_tri';
+% mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
+% type_mesh = '.stl';
+% type_geom = '';
+% JIA
+geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
+mesh_dir = 'test_geometries/JIA_CSm6';
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r'};
 geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
+type_mesh = '.stl';
 vis_file_list = body_list;
 
 for nb = 1:length(body_list)
     % update variables
     cur_body_name = body_list{nb};
     cur_geom_file = fullfile(geom_dir, geom_file_list{nb});
-    cur_vis_file = fullfile(mesh_dir, [vis_file_list{nb},'.vtp']);    
+    cur_vis_file = fullfile(mesh_dir, [vis_file_list{nb},type_mesh]);    
     % load mesh
     cur_geom = load_mesh(cur_geom_file);
     % create and add the body
