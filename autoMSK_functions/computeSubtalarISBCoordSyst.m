@@ -2,6 +2,7 @@ function CS = computeSubtalarISBCoordSyst(Talus)
 
 % switch th efinal fitting plot
 debug_plot = 1;
+fit_debug_plot = 0;
 
 % structure to store ref system info
 CS = struct;
@@ -20,7 +21,8 @@ CS = struct;
 % inferior-superior direction intial guess (Z0). Y0 is made perpendicular
 % to X0 and Z0.
 X0 = V_all(:,1); 
-[Z0,Y0] = fitQuadriTalus(Talus, V_all, 1);
+
+[Z0,Y0] = fitQuadriTalus(Talus, V_all, fit_debug_plot);
 
 %% 2. Identification of the talonavicular sphere
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
