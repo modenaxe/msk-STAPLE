@@ -1,7 +1,7 @@
 function CS = computeAnkleISBCoordSyst(Talus)
 
 
-debug_plot = 1
+debug_plot = 1;
 
 % structure to store ref system info
 CS = computeSubtalarISBCoordSyst(Talus);
@@ -89,7 +89,7 @@ Y2 =  normalizeV( an );
 Z3 = normalizeV(sign(-Y1'*Y2)*Y2);
 
 % NB X0 SHOULD BE X from foot sole!!
-Y3 = normalizeV(cross(X0, Z3));
+Y3 = normalizeV(cross(Z3, X0));
 X3 = cross(Y3, Z3);
 
 
