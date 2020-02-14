@@ -70,8 +70,21 @@ osimModel.setName([test_case,'_auto']);
 osimModel.setGravity(Vec3(0, -9.8081, 0));
 % vector of zeros for convenience
 zeroVec3 = ArrayDouble.createVec3(0);
+
 % ground
 ground = osimModel.getGround();
+
+
+% add bodies
+% body_list = {'pelvis','femur_r','tibia_r','talus_r'};
+% geom_file_list = {};
+% vis_file_list = {};
+% for nb = 1:length(body_list)
+%     cur_body_name = body_list{nb};
+%     cur_geom_file = ;
+%     cur_vis_file = ;
+%     addTriangGeomBody(osimModel, cur_body_name, cur_geom_file, cur_vis_file);
+% end
 
 %============== just the mesh is given in input =========================
 %--------------------------
@@ -83,7 +96,7 @@ vis_mesh_file = pelvis_mesh_vtp;
 % load mesh
 geom = load_mesh(geom_file);
 % create pelvis bone
-pelvis = createBodyFromTriangGeom(geom, bone_name, bone_density, in_mm);
+pelvis = createBodyFromTriGeom(geom, bone_name, bone_density, in_mm);
 % add body to model
 osimModel.addBody(pelvis);
 % attach geom
@@ -131,7 +144,7 @@ vis_mesh_file = femur_r_mesh_vtp;
 % load mesh
 geom = load_mesh(geom_file);
 % create pelvis bone
-osim_body = createBodyFromTriangGeom(geom, bone_name, bone_density, in_mm);
+osim_body = createBodyFromTriGeom(geom, bone_name, bone_density, in_mm);
 
 % add body to model
 osimModel.addBody(osim_body);
@@ -185,7 +198,7 @@ vis_mesh_file = tibia_r_mesh_vtp;
 % load mesh
 geom = load_mesh(geom_file);
 % create pelvis bone
-osim_body = createBodyFromTriangGeom(geom, bone_name, bone_density, in_mm);
+osim_body = createBodyFromTriGeom(geom, bone_name, bone_density, in_mm);
 
 % add body to model
 osimModel.addBody(osim_body);
@@ -236,7 +249,7 @@ vis_mesh_file = talus_r_mesh_vtp;
 % load mesh
 geom = load_mesh(geom_file);
 % create pelvis bone
-osim_body = createBodyFromTriangGeom(geom, bone_name, bone_density, in_mm);
+osim_body = createBodyFromTriGeom(geom, bone_name, bone_density, in_mm);
 
 % add body to model
 osimModel.addBody(osim_body);
