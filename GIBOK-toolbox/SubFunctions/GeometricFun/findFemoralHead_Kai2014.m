@@ -17,7 +17,7 @@ medial_dir = normalizeV(cross(anterior_dir, CSs.Z0));
 front = cross(MostProxPoint, up);
 
 % debug plot
-quickPlotTriang(ProxFem, 'm', 1)
+quickPlotTriang(ProxFem, 'm')
 plot3(MostProxPoint(:,1), MostProxPoint(:,2), MostProxPoint(:,3),'g*', 'LineWidth', 3.0);
 
 % Slice the femoral head starting from the top

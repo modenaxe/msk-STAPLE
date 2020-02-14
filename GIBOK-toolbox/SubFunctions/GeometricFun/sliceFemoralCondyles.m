@@ -15,10 +15,9 @@ FC_Lat_Pts = [];
 d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
-%================
-quickPlotTriang(DistFem, 'm', 1);
+% debug plot
+quickPlotTriang(DistFem, 'm');
 plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
-%================
 
 keep_slicing = 1;
 while keep_slicing
