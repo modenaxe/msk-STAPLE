@@ -32,10 +32,12 @@ in_mm = 1;
 pelvis_mat_mesh = './test_geometries/P0_MRI_smooth_tri/pelvis_no_sacrum.mat';
 femur_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/femur_r.mat';
 tibia_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/tibia_r.mat';
+talus_r_mat_mesh = './test_geometries/P0_MRI_smooth_tri/talus_r.mat';
 % pelvis_mesh = './test_geometries/P0_MRI_smooth/pelvis_no_sacrum.stl';
 pelvis_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\pelvis.vtp';
 femur_r_mesh_vtp = 'test_geometries\P0_MRI_smooth_vtp\femur_r.vtp';
 tibia_r_mesh_vtp = 'test_geometries/P0_MRI_smooth_vtp/tibia_r.vtp';
+talus_r_mesh_vtp = 'test_geometries/P0_MRI_smooth_vtp/talus_r.vtp';
 
 
 % adjust dimensional factors based on mm / m scales
@@ -62,6 +64,7 @@ osimModel.setGravity(Vec3(0, -9.8081, 0));
 zeroVec3 = ArrayDouble.createVec3(0);
 % ground
 ground = osimModel.getGround();
+
 
 
 %============== just the mesh is given in input =========================
@@ -161,7 +164,7 @@ pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(pelvis_ground_joint);
 
 osimModel.finalizeConnections()
-osimModel.print('2_pelvis_model.osim');
+osimModel.print('2_auto_model.osim');
 
 
 %============== just the mesh is given in input =========================
@@ -235,7 +238,7 @@ hip_r = createCustomJointFromStruct(osimModel, JointParams(nj));
 osimModel.addJoint(hip_r);
 
 osimModel.finalizeConnections()
-osimModel.print('3_pelvis_model.osim');
+osimModel.print('3_auto_model.osim');
 
 
 % % knee parameters
@@ -277,10 +280,10 @@ knee_location_in_parent = (CS.Center1+CS.Center2)/2.0*dim_fact;
 
 % defines the axis for the tibia
  CS = computeTibiaISBCoordSystKai2014(geom);
+ quickPlotRefSystem(CS)
  
 % knee_location_in_parent = CS.Origin/1000;
 % knee_child_location = (FemACSsResults.PCC.Origin-TibACSsResults.PIAASL.Origin)/1000;
-rotation_axes = 'zxy';
 Rot  = CS.V;
 beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
 alpha2 = atan2(-Rot(2,3)/cos(beta2),        Rot(3,3)/cos(beta2));
@@ -288,7 +291,7 @@ gamma2 = atan2(-Rot(1, 2)/cos(beta2),       Rot(1,1)/cos(beta2));
 tibia_orientation = [  alpha2  beta2  gamma2];
 
 
-quickPlotRefSystem(CS)
+
  
 % knee
 nj = nj + 1;
@@ -301,15 +304,72 @@ JointParams(nj).child_location     = knee_location_in_parent;
 JointParams(nj).child_orientation  = tibia_orientation;
 JointParams(nj).coordsNames        = {'knee_angle_r'};
 JointParams(nj).coordsTypes        = {'rotational'};
-JointParams(nj).rotationAxes       = rotation_axes;
+JointParams(nj).rotationAxes       = 'zxy';
 
 % create the joint
 knee_r = createCustomJointFromStruct(osimModel, JointParams(nj));
 osimModel.addJoint(knee_r);
 
+osimModel.finalizeConnections()
+osimModel.print('4_auto_model.osim');
+
+
+
+%============== just the mesh is given in input =========================
+% load mesh
+geom = load(talus_r_mat_mesh); 
+geom = geom.triang_geom;
+% compute mass properties
+boneMassProps = calcMassInfo_Mirtich1996(geom.Points, geom.ConnectivityList);
+% create opensim body
+talus_r = Body(); 
+talus_r.setName('talus_r'); 
+talus_r.setMass(boneMassProps.mass*bone_density); 
+talus_r.setMassCenter(ArrayDouble.createVec3(boneMassProps.COM/1000)); 
+exp_inertia = Inertia(boneMassProps.Ivec(1), boneMassProps.Ivec(2), boneMassProps.Ivec(3),...
+                      boneMassProps.Ivec(4), boneMassProps.Ivec(5), boneMassProps.Ivec(6));
+talus_r.setInertia(exp_inertia);
+% add body
+osimModel.addBody(talus_r);
+vis_geom = Mesh(talus_r_mesh_vtp);
+vis_geom.set_scale_factors(Vec3(0.001));
+talus_r.attachGeometry(vis_geom);
+%========================================================================
+
+
+CS = computeAnkleISBCoordSyst(geom);
+% quickPlotRefSystem(CS)
+
+ankle_location = CS.Origin* dim_fact;
+
+Rot  = CS.V;
+beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
+alpha2 = atan2(-Rot(2,3)/cos(beta2),        Rot(3,3)/cos(beta2));
+gamma2 = atan2(-Rot(1, 2)/cos(beta2),       Rot(1,1)/cos(beta2));
+talus_orientation = [  alpha2  beta2  gamma2];
+
+
+% tibiotalar
+nj = nj + 1;
+JointParams(nj).name               = 'ankle_r';
+JointParams(nj).parent             = 'tibia_r';
+JointParams(nj).child              = 'talus_r';
+JointParams(nj).parent_location    = ankle_location;
+JointParams(nj).parent_orientation = tibia_orientation;
+JointParams(nj).child_location     = ankle_location;
+JointParams(nj).child_orientation  = talus_orientation;
+JointParams(nj).coordsNames        = {'ankle_angle_r'};
+JointParams(nj).coordsTypes        = {'rotational'};
+JointParams(nj).rotationAxes       = 'zxy';
+
+% create the joint
+ankle_r = createCustomJointFromStruct(osimModel, JointParams(nj));
+osimModel.addJoint(ankle_r);
 
 osimModel.finalizeConnections()
-osimModel.print('4_pelvis_model.osim');
+osimModel.print('5_auto_model.osim');
+
+
 
 % % print
 % osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
