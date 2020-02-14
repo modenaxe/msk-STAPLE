@@ -1,4 +1,4 @@
-function osim_body = createBodyFromTriangGeom(TriGeom, body_name, density, in_mm)
+function osim_body = createBodyFromTriGeom(TriGeom, body_name, density, in_mm)
 % function assumes density will be provided externally, consistently with
 % the dimension of the body and the tissue to represent.
 % specifications of dimensions are required for scaling COP and inertia.
