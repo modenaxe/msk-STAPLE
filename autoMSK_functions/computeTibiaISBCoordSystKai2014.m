@@ -42,8 +42,8 @@ end
 % Get the bone outline at maximal CSA
 AltAtMax = Alt(Area==max(Area));
 
-% check max area
-figure; plot(Alt, Area); hold on; plot(AltAtMax, max(Area),'o')
+% % check max area
+% figure; plot(Alt, Area); hold on; plot(AltAtMax, max(Area),'o')
 
 % slice at max area
 [ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Z0 , -AltAtMax );
