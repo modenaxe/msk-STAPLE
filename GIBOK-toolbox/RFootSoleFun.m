@@ -5,7 +5,9 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 
 %% Read the mesh of the Foot file
 
-[Foot] = ReadMesh('../test_geometries/TLEM2/foot_r.stl');
+% [Foot] = ReadMesh('../test_geometries/TLEM2/foot_r.stl');
+[Foot] = ReadMesh('../test_geometries/LHDL_CT/calcn_r.stl');
+
 % Need to account for cases where the foot is subidivided into multiple 
 % meshes. 
 % Foot define here all the bone distal to the ankle joint except from the
@@ -60,7 +62,8 @@ plotArrow( Y0, 1, CenterVol, 50, 1, 'g')
 plotArrow( Z0, 1, CenterVol, 50, 1, 'b')
 
 % 2. Get a convex hull of the Foot
-x = Foot.Points(:,1); y = Foot.Points(:,2); z = Foot.Points(:,3);
+[x, y, z] = deal(Foot.Points(:,1), Foot.Points(:,2), Foot.Points(:,3));
+
 % K = convhull(x,y,z,'simplify', false);
 
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Foot.Points);
@@ -71,19 +74,22 @@ x = Foot.Points(:,1); y = Foot.Points(:,2); z = Foot.Points(:,3);
 %         'k-*','linewidth',2)
 % end
 %% Convexhull approach with prior deleting of the phalanges
-Foot_Start = min(Foot.Points*X0);
-Foot_End = max(Foot.Points*X0);
-Foot_Length = Foot_End - Foot_Start;
-    
-ElmtsNoPhalange= find(Foot.incenter*X0 < (Foot_Start+0.80*Foot_Length));
 
-Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
+% In the vast majority of cases, the reference system at the foot is
+% computed using the geometries from talus to metatarsal bone, without the
+% phalanges.
+% This part of code is not needed
+%==========================================
+% Foot_Start = min(Foot.Points*X0);
+% Foot_End = max(Foot.Points*X0);
+% Foot_Length = Foot_End - Foot_Start; 
+% ElmtsNoPhalange= find(Foot.incenter*X0 < (Foot_Start+0.80*Foot_Length));
+% Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
+%==========================================
 
-% Foot2 =  Foot;
-
-x = Foot2.Points(:,1); y = Foot2.Points(:,2); z = Foot2.Points(:,3);
+Foot2 = Foot;
 % K = convhull(x,y,z,'simplify', false);
-
+[x, y, z] = deal(Foot2.Points(:,1), Foot2.Points(:,2), Foot2.Points(:,3));
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Foot2.Points);
 
 trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
@@ -115,12 +121,7 @@ for f = Nghbrs0
     if n0*Foot2_CH.faceNormal(f)' > 0.9994
         Nghbrs_OK(end+1) = f
     end
-end
-
-
-    
-
-
+end  
 
 % Project all the facet in the plane associated to the largest facet
 
@@ -146,38 +147,5 @@ for i =1:5
     Y0 = normalizeV(cross(Z0,X0));
     X0 = cross(Y0,Z0);
 end
-
-
-% trisurf(Meta,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
-% plotArrow( X0, 1, mean(Meta.Points), 100, 1, 'm')
-
-
-% %============= LUCA ==========
-% 
-% %Visually check the Inertia Axis orientation relative to the Talus geometry
-% figure()
-% % Plot the whole talus, here Talus is a Matlab triangulation object
-% trisurf(Foot,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.6,'edgecolor','none');
-% hold on
-% axis equal
-% 
-% % handle lighting of objects
-% light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
-% light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
-% light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
-% light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
-% lighting gouraud
-% 
-% % Remove grid
-% grid off
-% 
-% %Plot the inertia Axis & Volumic center
-% plotDot( CenterVol', 'k', 2 )
-% plotArrow( X0, 1, CenterVol, 150, 1, 'r')
-% plotArrow( Y0, 1, CenterVol, 50, 1, 'g')
-% plotArrow( Z0, 1, CenterVol, 50, 1, 'b')
-% 
-% plotPlan(   a, Z0)
-
 
 
