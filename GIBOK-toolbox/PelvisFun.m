@@ -19,10 +19,10 @@ y_pelvis_in_global = [0 0 1];
 z_pelvis_in_global = [-1 0 0];
 
 % building the rot mat from global to pelvis ISB (roughly)
-RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
+% RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
 
 % Get eigen vectors V_all and volumetric center
-[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties( Pelvis );
+[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties(Pelvis);
 
 % store them for consistency with other bone functions
 CSs.CenterVol = CenterVol;
