@@ -41,7 +41,6 @@ end
 % check folder existance
 if ~isdir(osim_folder); mkdir(osim_folder); end
 
-
 % create the model
 osimModel = Model();
 % setting the model
@@ -79,14 +78,13 @@ for nb = 1:length(body_list)
 end
 
 %---- PATELLA -----
-PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
 [ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
-quickPlotTriang(geom_set.patella_r)
-quickPlotRefSystem(PatellaRS)
 
 %---- PELVIS -----
 % solve reference system from geometry
-PelvisRS = PelvisFun(geom_set.pelvis);
+[PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
+addMarkersFromStruct(osimModel, 'pelvis', PelvisBL)
 
 % compute joint params
 pelvis_location = PelvisRS.ISB.Origin*dim_fact;
