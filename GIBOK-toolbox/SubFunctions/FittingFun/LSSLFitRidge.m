@@ -1,8 +1,8 @@
 function [ U, Uridge ,LowestPoints_End ] = LSSLFitRidge( TR,U,nbSlice,StartDist,EndDist)
 %Least Square Straight Line Fit on Patellar Ridge
-%To obain the direction of the ridge a Least Square Straight Line is
+%To obtain the direction of the ridge a Least Square Straight Line is
 %fitted on the lowest points on slices of normal U, and the normal U is
-%updated until convergence (of U or number of iterations > 100
+%updated until convergence (of U or number of iterations > 100)
 
 
 %% inputs Tests
