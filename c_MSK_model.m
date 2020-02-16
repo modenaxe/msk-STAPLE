@@ -77,10 +77,6 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-%---- PATELLA -----
-% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
-[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
-
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
@@ -121,7 +117,11 @@ osimModel.addJoint(hip_r);
 %---- TIBIA -----
 % defines the axis for the tibia
 CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
-autoLandmarkTibia(geom_set.tibia_r, CS, 1)
+TTB = autoLandmarkTibia(geom_set.tibia_r, CS, 1);
+
+%---- PATELLA -----
+% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
 
 % knee joint
 % joint centre in femur

@@ -43,7 +43,7 @@ Circularity3rdOffSettedQuart = Circularity(Alt>quantile(Alt,0.7) & Alt<quantile(
 % Check that the circularity is higher in the anterior part otherwise
 % invert AP axis direction :
 if mean(Circularity1stOffSettedQuart)<mean(Circularity3rdOffSettedQuart)
-    sprintf('invert AP axis')
+    disp('Based on patella circularity invert AP axis')
     V_all(:,3) = - V_all(:,3);
     V_all(:,2) = cross(V_all(:,3),V_all(:,1));
     V_all(:,1) = cross(V_all(:,2),V_all(:,3));

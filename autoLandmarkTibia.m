@@ -1,12 +1,17 @@
-function autoLandmarkTibia(TibiaTriang, CS, is_fibula_in_triang)
+function TTB = autoLandmarkTibia(TibiaTriang, CS, is_fibula_in_triang)
 
-% move to standard ref syst
+% % move to standard ref syst
+% BoneCS = TriChangeCS(BoneTriang, CS.V, CS.Origin');
+% 
+% % % get relevant points in all directions of ISB axes
+% [a, max_ind] = max(BoneCS.Points);
+% [c, min_ind] = min(BoneCS.Points);
+
+% [TrProx, TrDist] = cutLongBoneMesh(TibiaTriang);
+% 
+% TrProxISB = TriChangeCS(TrProx, CS.V, CS.Origin');
+% TrDistISB = TriChangeCS(TrDist, CS.V, CS.Origin');
 TibiaISB = TriChangeCS(TibiaTriang, CS.V, CS.Origin');
-
-% % get relevant points in all directions of ISB axes
-% [a, b] = max(TibiaISB.Points);
-% [c, d] = min(TibiaISB.Points);
-
 [tibia_Px, tibia_Py, tibia_Pz] = deal(TibiaISB.Points(:,1),... 
                                       TibiaISB.Points(:,2),...
                                       TibiaISB.Points(:,3));
@@ -25,8 +30,8 @@ tot_length = rangeZ(2)-rangeZ(1);
 [~, ind4] = max(tibia_Pz);% lateral malleolus Condyle
 [~, ind5] = min(tibia_Pz);% medial malleolus (fib or tibial)
 
-TTB = Tibia.Points(ind,:);
-quickPlotTriang(Tibia,'m',1)
+TTB = TibiaISB.Points(ind1,:);
+quickPlotTriang(TibiaISB,'m',1)
 
 % Tibial Malleolus
 
