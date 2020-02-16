@@ -121,6 +121,7 @@ osimModel.addJoint(hip_r);
 %---- TIBIA -----
 % defines the axis for the tibia
 CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
+autoLandmarkTibia(geom_set.tibia_r, CS, 1)
 
 % knee joint
 % joint centre in femur
