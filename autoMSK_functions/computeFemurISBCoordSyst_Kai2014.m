@@ -53,7 +53,7 @@ CS.CenterVol = CenterVol;
 [CS, MostProxPoint] = findFemoralHead_Kai2014(ProxFem, CS);
 
 % completing the inertia-based reference system
-CS.Y0 = normalizeV(cross(cross(CS.Z0,MostProxPoint),CS.Z0));
+CS.Y0 = normalizeV(cross(cross(CS.Z0, MostProxPoint),CS.Z0));
 CS.X0 = cross(CS.Y0, CS.Z0);
 
 % slicing the femoral condyles
