@@ -4,7 +4,7 @@
 %    Author:   Luca Modenese, April 2018                                  % 
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-function [ CSs, TrObjects ] = PelvisFun( Pelvis)
+function [ CSs, BoneLandmarks] = PelvisFun( Pelvis)
 
 % adds required functions
 addpath(genpath(strcat(pwd,'/SubFunctions')));
@@ -119,12 +119,10 @@ CSs.ISB.V = [X', Y', Z'];
 
 %% Export identified objects of interest
 if nargout > 1
-    TrObjects.Pelvis    = Pelvis;
-%     TrObjects.PelvisISB = PelvisPseudoISB;
-    TrObjects.RASIS     = RASIS; % in Pelvis ref 
-    TrObjects.LASIS     = LASIS; % in Pelvis ref 
-    TrObjects.RPSIS     = RPSIS; % in Pelvis ref 
-    TrObjects.LPSIS     = LPSIS; % in Pelvis ref 
+    BoneLandmarks.RASIS     = RASIS; % in Pelvis ref 
+    BoneLandmarks.LASIS     = LASIS; % in Pelvis ref 
+    BoneLandmarks.RPSIS     = RPSIS; % in Pelvis ref 
+    BoneLandmarks.LPSIS     = LPSIS; % in Pelvis ref 
 end
 
 end
