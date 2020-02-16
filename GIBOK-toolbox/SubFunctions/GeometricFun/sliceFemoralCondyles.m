@@ -16,13 +16,14 @@ d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
 % debug plot
-quickPlotTriang(DistFem, 'm');
+quickPlotTriang(DistFem, 'm', 1);
 plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
 
 keep_slicing = 1;
+
 while keep_slicing
 
-    [ Curves , Area, ~ ] = TriPlanIntersect(DistFem, X0 , d );
+    [ Curves , Area(count), ~ ] = TriPlanIntersect(DistFem, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices

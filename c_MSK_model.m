@@ -48,25 +48,23 @@ osimModel = Model();
 osimModel.setName([test_case,'_auto']);
 % set gravity
 osimModel.setGravity(Vec3(0, -9.8081, 0));
-% vector of zeros for convenience
-zeroVec3 = ArrayDouble.createVec3(0);
-
-% ground
-ground = osimModel.getGround();
-
 
 % add to osim model all bodies
-% geom_dir = 'test_geometries/P0_MRI_smooth_tri';
-% mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
-% type_mesh = '.stl';
-% type_geom = '';
-% JIA
-geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
-mesh_dir = 'test_geometries/JIA_CSm6';
-body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r'};
-geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
+geom_dir = 'test_geometries/P0_MRI_smooth_tri';
+mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
 type_mesh = '.stl';
+type_geom = '';
+% JIA
+% geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
+% mesh_dir = 'test_geometries/JIA_CSm6';
+% type_mesh = '.stl';
+% vis_file_list = body_list;
+
+body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+type_mesh = '.vtp';
 vis_file_list = body_list;
+
 
 for nb = 1:length(body_list)
     % update variables
@@ -80,12 +78,18 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
+%---- PATELLA -----
+PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
+quickPlotTriang(geom_set.patella_r)
+quickPlotRefSystem(PatellaRS)
+
 %---- PELVIS -----
 % solve reference system from geometry
 PelvisRS = PelvisFun(geom_set.pelvis);
 
 % compute joint params
-pelvis_location = PelvisRS.ISB.Origin/1000;
+pelvis_location = PelvisRS.ISB.Origin*dim_fact;
 pelvis_orientation = computeZXYAngleSeq(PelvisRS.ISB.V);
 
 % ground_pelvis
@@ -102,7 +106,7 @@ osimModel.addJoint(pelvis_ground_joint);
 %---- FEMUR -----
 FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
 
-HJC_location = FemurCS.CenterFH_Kai/1000;
+HJC_location = FemurCS.CenterFH_Kai*dim_fact;
 femur_orientation = computeZXYAngleSeq(FemurCS.V);
 
 % % hip joint
