@@ -1,3 +1,4 @@
+% modified by LM in 2020
 function [ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018( Patella )
 
 CSs = struct();
@@ -54,13 +55,15 @@ PatPIACS = TriChangeCS( Patella, V_all, CenterVol );
 %% Identify initial guess of patella posterior ridge
 % Optimization to find the ridge orientation
 U0 = [1;0;0];
-U = LSSLFitRidge( PatPIACS,U0,30);
+N_slices_guess1 = 30;
+U = LSSLFitRidge( PatPIACS, U0, N_slices_guess1);
 % Refine the guess with higher number of slices (75)
-[ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge( PatPIACS,U,75);
+N_slices_guess2 = 75;
+[ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge(PatPIACS, U, N_slices_guess2);
 V = [U(2); -U(1); 0];
 
 
-%% Seperate the ridge region from the apex region
+%% Separate the ridge region from the apex region
 % Move the lowest point to CS updated with initial ridge orientation PIACSU
 LowestPoints_PIACSU = LowestPoints_PIACS*[U V [0;0;1]];
 
@@ -96,14 +99,18 @@ else
 end
 
 
-%% Update the ridge orienation with optimisation only on the ridge regioon
-[ U, Uridge , LowestPoints_end ] = LSSLFitRidge( PatPIACS,U,75,StartDist, EndDist);
+%% Update the ridge orientation with optimisation only on the ridge region
+N_slices = 75;
+[ U, Uridge , LowestPoints_end ] = LSSLFitRidge(PatPIACS,...
+                                                U,...
+                                                N_slices,...
+                                                StartDist,...
+                                                EndDist);
 U = Side*U;
 
 LowestPoints_CS0 = bsxfun(@plus,LowestPoints_end*V_all',Center');
 
-quickPlotTriang(Patella)
-plot3
+
 
 %% Technic VR volume ridge
 Z = V_all*U;
@@ -117,6 +124,13 @@ CSs.VR.Theta = -asin(U(1));
 CSs.VR.V = [X Y Z];
 CSs.VR.Origin = CenterVol';
 
+quickPlotTriang(Patella, 'm',1)
+quickPlotRefSystem(CSs.VR)
+
+% plot3(LowestPoints_CS0(:,1),LowestPoints_CS0(:,2),LowestPoints_CS0(:,3),'g*')
+% [~,LP_ind] = min(PatPIACS.Points(:,3));
+% LP_min = V_all'*([PatPIACS.Points(LP_ind,1); PatPIACS.Points(LP_ind,2); PatPIACS.Points(LP_ind,3)]+CenterVol);
+% plot3(LP_min(1), LP_min(2), LP_min(3),'Kx')
 
 %% Technic Ridge Line ( ridge Least Square line fit )
 % LS line fit on the ridge and ridge midpoint
@@ -179,7 +193,6 @@ ArtSurf = TriCloseMesh(Patella,ArtSurf,30);
 ArtSurf = TriOpenMesh(Patella,ArtSurf,15);
 ArtSurf = TriErodeMesh(ArtSurf,2);
 ArtSurf = TriCloseMesh(Patella,ArtSurf,5);
-
 
 % Principal Inertia Matrix of the Articular Surface
 [V_AS,~] = eig(TriCovMatrix(ArtSurf));
