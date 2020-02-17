@@ -123,9 +123,19 @@ CSs.VR.Z = Z;
 CSs.VR.Theta = -asin(U(1));
 CSs.VR.V = [X Y Z];
 CSs.VR.Origin = CenterVol';
-
 quickPlotTriang(Patella, 'm',1)
 quickPlotRefSystem(CSs.VR)
+
+% ISB axes
+CSs.VR.X = -X;
+CSs.VR.Y = Z;
+CSs.VR.Z = Y;
+CSs.VR.Theta = -asin(U(1));
+CSs.VR.V = [-X Z Y ];
+CSs.VR.Origin = CenterVol';
+
+% quickPlotTriang(Patella, 'm',1)
+% quickPlotRefSystem(CSs.VR)
 
 % plot3(LowestPoints_CS0(:,1),LowestPoints_CS0(:,2),LowestPoints_CS0(:,3),'g*')
 % [~,LP_ind] = min(PatPIACS.Points(:,3));
@@ -214,9 +224,17 @@ CSs.PIAAS.Y = Y4;
 CSs.PIAAS.Z = Z4;
 CSs.PIAAS.V = V_AS;
 
+% ISB
+% CSs.PIAAS.X = -X4;
+% CSs.PIAAS.Y = Z4;
+% CSs.PIAAS.Z = Y4;
+% CSs.PIAAS.V = [-X4 Z4 Y4];
+
 CSs.PIAAS.Origin = Origin;
 CSs.PIAAS.CenteronMesh = D4.onMeshCenter;
 
+
+quickPlotRefSystem(CSs.PIAAS)
 
 %% Export Identified Objects
 if nargout > 1

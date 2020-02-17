@@ -79,4 +79,5 @@ CS.Y = Y0;
 CS.Z = Z0;
 CS.V = [X0 Y0 Z0];
 
+quickPlotRefSystem(CS)
 end

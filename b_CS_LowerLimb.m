@@ -23,7 +23,7 @@ dataset_folder_set = {  'P0_MRI_smooth_tri',...% Kai not working
 % select dataset (just for testing, will be loop)
 nd_given = 1;
 % specify the bones you want to calculate the ACSs for
-bone_name_set = { 'femur_r', 'tibia_r'};%, 'pelvis_no_sacrum','femur_r','tibia_r', 'patella_r','talus_r', 'toes_r'};
+bone_name_set = {'patella_r', 'femur_r', 'tibia_r'};%, 'pelvis_no_sacrum','femur_r','tibia_r', 'patella_r','talus_r', 'toes_r'};
 
 % specify where to store the results
 ACs_store_folder = './ACs';
@@ -89,7 +89,11 @@ for nd = nd_given %1:numel(dataset_folder_set)
             case 'patella_r'
                 try
                     [ PatACSsResults, PatellaTriangulations ] = RPatellaFun( geom );
-                    PlotPatella( PatACSsResults.VR, PatellaTriangulations )
+                    quickPlotTriang(PatellaTriangulations.Patella);
+%                     quickPlotRefSystem(PatACSsResults.PIAAS)
+                    quickPlotRefSystem(PatACSsResults.RAINBOW2013)
+                    quickPlotRefSystem(PatACSsResults.VR)
+                    PlotPatella( PatACSsResults.PIAAS, PatellaTriangulations )
                 catch EM
                     disp('=================================');disp(EM.identifier); 
                     disp(EM.message);disp('=================================');

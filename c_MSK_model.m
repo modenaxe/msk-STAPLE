@@ -49,21 +49,28 @@ osimModel.setName([test_case,'_auto']);
 osimModel.setGravity(Vec3(0, -9.8081, 0));
 
 % add to osim model all bodies
-geom_dir = 'test_geometries/P0_MRI_smooth_tri';
-mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
-type_mesh = '.stl';
-type_geom = '';
-% JIA
-% geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
-% mesh_dir = 'test_geometries/JIA_CSm6';
+
 % type_mesh = '.stl';
-% vis_file_list = body_list;
-
+type_geom = '';
+%---------------
+% JIA
+%---------------
+geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
+mesh_dir = 'test_geometries/JIA_CSm6_MRI_vtp';
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+geom_file_list = body_list; 
 type_mesh = '.vtp';
-vis_file_list = body_list;
-
+vis_file_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+%---------------
+% P0_MRI_smooth
+%---------------
+% geom_dir = 'test_geometries/P0_MRI_smooth_tri';
+% mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
+% body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+% geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+% type_mesh = '.vtp';
+% vis_file_list = body_list;
+%---------------
 
 for nb = 1:length(body_list)
     % update variables
@@ -80,7 +87,7 @@ end
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
-addMarkersFromStruct(osimModel, 'pelvis', PelvisBL)
+addMarkersFromStruct(osimModel, 'pelvis', PelvisBL, in_mm)
 
 % compute joint params
 pelvis_location = PelvisRS.ISB.Origin*dim_fact;
@@ -119,10 +126,6 @@ osimModel.addJoint(hip_r);
 CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
 TTB = autoLandmarkTibia(geom_set.tibia_r, CS, 1);
 
-%---- PATELLA -----
-% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
-[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
-
 % knee joint
 % joint centre in femur
 knee_location_in_parent = (FemurCS.Center1+FemurCS.Center2)/2.0*dim_fact;
@@ -139,7 +142,32 @@ JointParams.child_orientation  = tibia_orientation;
 knee_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(knee_r);
 
+%---- PATELLA -----
+
+[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
+% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+
+% patello-femoral joint
+patfemjoint_location_in_parent = knee_location_in_parent;
+patfemjoint_location_in_child = knee_location_in_parent-CSs.VR.Origin*dim_fact;
+patella_orientation = computeZXYAngleSeq(CSs.VR.V);
+
+% joint
+JointParams = getJointParams('patellofemoral_r');
+JointParams.parent_location     = patfemjoint_location_in_parent;
+JointParams.parent_orientation  = femur_orientation;
+JointParams.child_location      = patfemjoint_location_in_child;
+JointParams.child_orientation   = patella_orientation;
+
+% create the joint
+patfem_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(patfem_r);
+
+% add patellofemoral constraint
+addPatFemJointCoordCouplerConstraint(osimModel, 'r');
+
 %---- TALUS -----
+% not working for JIA
 CS = computeAnkleISBCoordSyst(geom_set.talus_r);
 
 JointParams = getJointParams('ankle_r');
@@ -171,7 +199,6 @@ subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 
 osimModel.finalizeConnections()
-
 
 % print
 osimModel.print('5_auto_model.osim');
