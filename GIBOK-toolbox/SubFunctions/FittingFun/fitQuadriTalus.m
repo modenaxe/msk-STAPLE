@@ -103,17 +103,17 @@ Z0 = V_all*[0;Z0_proj];
 Y0 = cross(Z0,V_all(:,1));
 
 if plotOn
-    figure()
-    plot(Pts_proj_2D(:,1),Pts_proj_2D(:,2),'b.')
-    hold on
-    plot(Pts_proj_2D(K,1),Pts_proj_2D(K,2),'k-')
-    axis equal
-    plot(Pts_proj_2D(pointPair1,1),Pts_proj_2D(pointPair1,2),'r-*')
-    plot(Pts_proj_2D(pointPair2,1),Pts_proj_2D(pointPair2,2),'r-*')
-    plot(Pts_proj_2D(quadriV,1),Pts_proj_2D(quadriV,2),'g-s',...
-        'linewidth',2)
-    plot(Pts_proj_2D(Edge_sup,1),Pts_proj_2D(Edge_sup,2),'m-o',...
-        'linewidth',3)
+%     figure()
+%     plot(Pts_proj_2D(:,1),Pts_proj_2D(:,2),'b.')
+%     hold on
+%     plot(Pts_proj_2D(K,1),Pts_proj_2D(K,2),'k-')
+%     axis equal
+%     plot(Pts_proj_2D(pointPair1,1),Pts_proj_2D(pointPair1,2),'r-*')
+%     plot(Pts_proj_2D(pointPair2,1),Pts_proj_2D(pointPair2,2),'r-*')
+%     plot(Pts_proj_2D(quadriV,1),Pts_proj_2D(quadriV,2),'g-s',...
+%         'linewidth',2)
+%     plot(Pts_proj_2D(Edge_sup,1),Pts_proj_2D(Edge_sup,2),'m-o',...
+%         'linewidth',3)
 end
 
 end

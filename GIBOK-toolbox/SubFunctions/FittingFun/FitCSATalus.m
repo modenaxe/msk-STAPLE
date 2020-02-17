@@ -33,14 +33,14 @@ opts.Lower = [0.1*max(Area) -Inf 0 0.1*max(Area) -Inf 0];
 % Fit model to data.
 [fitresult, gof] = fit( xData, yData, ft, opts );
 
-% Plot fit with data.
-figure( 'Name', 'untitled fit 1' );
-h = plot( fitresult, xData, yData );
-legend( h, 'Area vs. Alt', 'untitled fit 1', 'Location', 'NorthEast' );
-% Label axes
-xlabel Alt
-ylabel Area
-grid on
+% % Plot fit with data.
+% figure( 'Name', 'untitled fit 1' );
+% h = plot( fitresult, xData, yData );
+% legend( h, 'Area vs. Alt', 'untitled fit 1', 'Location', 'NorthEast' );
+% % Label axes
+% xlabel Alt
+% ylabel Area
+% grid on
 
 % Orientation of bone along the y axis
 or_test_a = fitresult.a1 < fitresult.a2 ;
