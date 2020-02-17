@@ -60,16 +60,13 @@ switch joint_name
         JointParamsStruct.coordsNames        = {'subtalar_angle_r'};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.rotationAxes       = 'zxy';
-    case 'patello_femoral_r'
-        %         JointParamsStruct.name               = 'knee_r';
-        %         JointParamsStruct.parent             = 'femur_r';
-        %         JointParamsStruct.child              = 'tibia_r';
-        %         JointParamsStruct.parent_location    = knee_location_in_parent;
-        %         JointParamsStruct.parent_orientation = femur_orientation;
-        %         JointParamsStruct.child_location     = knee_location_in_parent;
-        %         JointParamsStruct.child_orientation  = tibia_orientation;
-        %         JointParamsStruct.coordsNames        = {'knee_angle_r'};
-        %         JointParamsStruct.coordsTypes        = {'rotational'};
-        %         JointParamsStruct.rotationAxes       = rotation_axes;
+    case 'patellofemoral_r'
+                JointParamsStruct.name               = 'patellofemoral_r';
+                JointParamsStruct.parent             = 'femur_r';
+                JointParamsStruct.child              = 'patella_r';
+                JointParamsStruct.coordsNames        = {'knee_angle_r_beta'};
+                JointParamsStruct.coordsTypes        = {'rotational'};
+                JointParamsStruct.rotationAxes       = 'zxy';
     otherwise
+        error('unsupported joint')
 end
