@@ -55,21 +55,21 @@ type_geom = '';
 %---------------
 % JIA
 %---------------
-geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
-mesh_dir = 'test_geometries/JIA_CSm6_MRI_vtp';
-body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-geom_file_list = body_list; 
-type_mesh = '.vtp';
-vis_file_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+% geom_dir = 'test_geometries/JIA_CSm6_MRI_tri';
+% mesh_dir = 'test_geometries/JIA_CSm6';
+% body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+% geom_file_list = body_list; 
+% type_mesh = '.stl';
+% vis_file_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 %---------------
 % P0_MRI_smooth
 %---------------
-% geom_dir = 'test_geometries/P0_MRI_smooth_tri';
-% mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
-% body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-% geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-% type_mesh = '.vtp';
-% vis_file_list = body_list;
+geom_dir = 'test_geometries/P0_MRI_smooth_tri';
+mesh_dir = 'test_geometries/P0_MRI_smooth_vtp';
+body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+type_mesh = '.vtp';
+vis_file_list = body_list;
 %---------------
 
 for nb = 1:length(body_list)
@@ -148,8 +148,8 @@ osimModel.addJoint(knee_r);
 % PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
 
 % patello-femoral joint
-patfemjoint_location_in_parent = knee_location_in_parent;
-patfemjoint_location_in_child = knee_location_in_parent-CSs.VR.Origin*dim_fact;
+patfemjoint_location_in_parent = CSs.VR.Origin*dim_fact;
+patfemjoint_location_in_child = CSs.VR.Origin*dim_fact;
 patella_orientation = computeZXYAngleSeq(CSs.VR.V);
 
 % joint
@@ -198,6 +198,7 @@ JointParams.child_orientation  = subtalar_orientation;
 subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 
+% finali
 osimModel.finalizeConnections()
 
 % print

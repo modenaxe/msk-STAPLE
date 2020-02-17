@@ -30,14 +30,13 @@ tot_length = rangeZ(2)-rangeZ(1);
 [~, ind4] = max(tibia_Pz);% lateral malleolus Condyle
 [~, ind5] = min(tibia_Pz);% medial malleolus (fib or tibial)
 
-TTB = TibiaISB.Points(ind1,:);
-quickPlotTriang(TibiaISB,'m',1)
+% NEEDS TO BE DIVIDED IN PROX AND DISTAL: DISTAL PART SOMETIMES IS MORE
+% ANTERIOR THAN PROXIMAL PART
 
 % Tibial Malleolus
-
-
-
-plot3(TTB(1), TTB(2), TTB(3), 'go', 'LineWidth',5)
+TTB = TibiaISB.Points(ind1,:);
+% quickPlotTriang(TibiaISB,'m',1)
+% plot3(TTB(1), TTB(2), TTB(3), 'go', 'LineWidth',5)
 
 if is_fibula_in_triang==1
     % Lateral Malleolus

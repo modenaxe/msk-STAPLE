@@ -98,13 +98,18 @@ EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) Fi
 % Yend = cross(Zend,Xend);
 % Yend = normalizeV( sign(Yend'*Y0)*Yend );
 % Xend = cross(Yend,Zend);
+% GIBOK.Origin = CenterEllipse;
+% GIBOK.X=Xend;
+% GIBOK.Y=Yend;
+% GIBOK.Z=Zend;
+% quickPlotRefSystem(GIBOK);
 
 % create ISB ref system
 Yend = Z0;
 Xend = normalizeV(cross(Yend, YElpsMax));
 Zend = cross(Xend, Yend);
 Zend = normalizeV( sign(Zend'*Y0)*Zend );
-Xend = cross(Yend,Zend);
+Xend = cross(Yend, Zend);
 
 % Store geometrical info
 CS.CenterVol = CenterVol;
@@ -118,5 +123,7 @@ CS.X       = Xend;
 CS.Y       = Yend;
 CS.Z       = Zend;
 CS.V       = [Xend Yend Zend];
+
+quickPlotRefSystem(CS)
 
 end
