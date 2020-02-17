@@ -9,6 +9,15 @@ The MSK models are built using the following approaches:
     1. Kai et al. 2014
     2. Miranda et al. 2010
     3. Renault et al. 2018
+* tibia:
+    1. Kai et al. 2014
+    2. Miranda et al. 2010
+    3. Renault et al. 2018
+* patella:
+    1. Rainbow et al. 2010
+    2. Renault et al. 2018
+* talus:
+    1. this study
 
 # Requirements
 Requires:
