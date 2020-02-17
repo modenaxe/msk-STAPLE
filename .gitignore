@@ -15,6 +15,9 @@ __*
 /_old
 test_geometries/
 docs/
+PatellaACS
+
+*.zip
 
 # openSim files
 *.log
