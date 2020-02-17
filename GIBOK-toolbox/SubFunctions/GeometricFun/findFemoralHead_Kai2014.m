@@ -2,6 +2,8 @@ function [CSs, MostProxPoint] = findFemoralHead_Kai2014(ProxFem, CSs)
 
 % TODO: remove CS and output just fitting results could be an issue for GIBOK
 
+sections_limit = 15;
+
 % plane normal must be negative (GIBOK)
 corr_dir = -1;
 disp('Computing Femoral Head Centre (Kai et al. 2014)...')
@@ -55,6 +57,13 @@ while keep_slicing
         Ok_FH_Pts = [Ok_FH_Pts; Curves.Pts];
     elseif Nbr_of_curves > 1
         for i = 1:Nbr_of_curves
+            
+            % first check the size of the areas. If too small it might be
+            % spurious
+            if size(Curves(2).Pts,1)<sections_limit
+                disp('Slice recognized as artefact. Skipping it.')
+                continue
+            end
             
             % if I assume centre of CT/MRI is always more medial than HJC
             % then medial points can be identified as closer to mid
