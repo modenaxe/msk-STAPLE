@@ -62,14 +62,24 @@ type_geom = '';
 % type_mesh = '.stl';
 % vis_file_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 %---------------
-% LHDL
+% TLEM
 %---------------
-geom_dir = 'test_geometries/LHDL_CT_iso_tri';
-mesh_dir = 'test_geometries/LHDL_CT_iso';
-body_list = {'pelvis','femur_r','tibia_r','patella_r'};
-geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r'};
+geom_dir = 'test_geometries/TLEM2_CT_tri';
+mesh_dir = 'test_geometries/TLEM2_CT';
+body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 type_mesh = '.stl';
 vis_file_list = body_list;
+%---------------
+%---------------
+% LHDL
+%---------------
+% geom_dir = 'test_geometries/LHDL_CT_iso_tri';
+% mesh_dir = 'test_geometries/LHDL_CT_iso';
+% body_list = {'pelvis','femur_r','tibia_r','patella_r'};
+% geom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r'};
+% type_mesh = '.stl';
+% vis_file_list = body_list;
 %---------------
 %---------------
 % P0_MRI_smooth
