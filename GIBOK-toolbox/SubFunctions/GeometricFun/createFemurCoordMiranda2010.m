@@ -60,17 +60,24 @@ DiaFem = TriFillPlanarHoles(DiaFem);
 [V_DiaFem, DiaFem_Center] = TriInertiaPpties( DiaFem );
 Zdia = V_DiaFem(:,1);
 
+% create distal epiphysis triangulation
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi );
 
 % debug plot
 quickPlotTriang(EpiFem, 'b')
 
 %% Find Pt1 described in their method
+% Pt1 : Closest epiphysis point to the diaphysis 1st inertia axis
 
+% Get the vectors of the epiphysis points to a point on the 
+% 1st inertial axis (the centroid of the diaphysis)
 LinePtNodes = bsxfun(@minus, EpiFem.Points, DiaFem_Center');
 
+% Get the vectors connecting the epiphysis point to their othogonal 
+% projection point on the 1st inertia axis
 CP = (cross(repmat(Zdia',length(LinePtNodes),1),LinePtNodes));
 
+% Find the closest point to the diaphysis 1st inertia axis
 Dist = sqrt(sum(CP.^2,2));
 [~,IclosestPt] = min(Dist);
 Pt1 = EpiFem.Points(IclosestPt,:);
@@ -101,18 +108,28 @@ CenterCS = V_all*Center_BBox';
 %======================== 
 % THIS IS A MESS AND NEEDS TO BE REWRITTEN
 
+% Identify the posterior part of the cross section :
+% assume that the closest point of the cross section 
+% border is posterior
 % getting the nearest neighbour in Curves for the point in CenterCS
 IDX = knnsearch(Curves.Pts,CenterCS');
 
+% Get a raw Anterior to Posterior vector : Uap
 Uap = normalizeV(Curves.Pts(IDX,:)-CenterCS');
 
+% From the cross section border keep only the points that are 
+% posterior to the center point of the bounding box
 PosteriorPts = Curves.Pts(Curves.Pts*Uap>CenterCS'*Uap,:);
-% ClosestPts = Curves.Pts(IDX,:);
-% The Point P2
+
+% Find the The Point P2
+% Get the orthogonal distance of the points on the posterior
+% part of the cross section border to the 3rd inertia axis of
+% the whole distal femur
 LinePtNodes = bsxfun(@minus, PosteriorPts, CenterCS');
 CP = (cross(repmat(X0',length(LinePtNodes),1),LinePtNodes));
-
 Dist = sqrt(sum(CP.^2,2));
+
+% Identify the closest point which is Pt2
 [~,IclosestPt] = min(Dist);
 Pt2 = PosteriorPts(IclosestPt,:);
 %==============================================
@@ -135,32 +152,49 @@ PCsFem = TriReduceMesh( EpiFem, ElmtsDPCs );
 % debug plot
 quickPlotTriang(PCsFem, 'm')
 
-% First Cylinder Fit
+%% First Cylinder Fit
+% Initialize axis, radius and center of the cylinder
 Axe0 = Y0';
 Radius0 = 0.5*(max(PCsFem.Points*npcs)-min(PCsFem.Points*npcs));
+Center0 = mean(PCsFem.Points)' - 2*npcs;
+% Get a subset of the points for speed
+CylPtsSS = PCsFem.Points(1:3:end,:)
 
-[x0n, an, rn, d] = lscylinder(PCsFem.Points(1:3:end,:), mean(PCsFem.Points)' - 2*npcs, Axe0, Radius0, 0.001, 0.001);
+% Fit the 1st cylinder
+[x0n, an, rn, d] = lscylinder(CylPtsSS, Center0, Axe0, Radius0,, 0.001, 0.001);
 
 plotCylinder( an, rn, x0n, 15, 1, 'b')
 
 %% Define second plan iteration
 % TODO: double check: second iteration is very similar to first
+% The normal of the cut plan separting the posterior condyles is 
+% updated with the just identified cylinder axis
 npcs = cross( Pt1-Pt2, an); 
 npcs = npcs'/norm(npcs);
 
+% Make sure the plan normal npcs points posteriorly and distally
 if (Center0'-Pt1)*npcs > 0
     npcs = -npcs;
 end
 
+% Select the points of the epiphysis lying posteriorly to the plan
 ElmtsDPCs = find(EpiFem.incenter*npcs > Pt1*npcs);
 PCsFem = TriReduceMesh( EpiFem, ElmtsDPCs );
 
 % Second and last Cylinder Fit
-Axe0 = normalizeV(an);
-Radius0 = rn;
+Axe1 = normalizeV(an);
+Radius1 = rn;
+Center1 = X0n;
+% Get a subset of the points for speed
+CylPtsSS = PCsFem.Points(1:3:end,:)
 
-[x0n, an, rn, d] = lscylinder(PCsFem.Points(1:3:end,:), x0n, Axe0, Radius0, 0.001, 0.001);
+% Fit the 2nd cylinder
+[x0n, an, rn, d] = lscylinder(CylPtsSS, Center1, Axe1, Radius1, 0.001, 0.001);
 
+%% Get the origin of the CS : the centroid of the fitted cylinder
+% Here we take it as the middle point on the cylinder axis between the most
+% lateral point projected on the axis and the most medial point projected on the 
+% cylinder axis.
 EpiPtsOcyl_tmp = bsxfun(@minus,PCsFem.Points,x0n');
 
 CylStart = min(EpiPtsOcyl_tmp*an)*an' + x0n';
