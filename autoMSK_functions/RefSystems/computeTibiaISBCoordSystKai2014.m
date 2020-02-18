@@ -24,8 +24,15 @@ Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
 % need to 
 warning('need to compute ankle joint centre to ensure med-lat axis');
-Y0 = V_all(:,2);
+% assuming tibia is in the geometry
+% Find the most distal point
+[~ , I_dist_fib] = min( Tibia.Points* -Z0 );
+MostDistalPoint = Tibia.Points(I_dist_fib,:);
 
+% this will point laterally, as Z should do for right side
+% med2lat = MostDistalPoint-CenterVol';
+% Y0 = med2lat';
+Y0 = V_all(:,2);
 
 % THIS IS INCORRECT: SLICES SHOULD BE 1mm APART
 Alt = linspace( min(Tibia.Points*Z0)+0.5 ,max(Tibia.Points*Z0)-0.5, 300);
@@ -92,7 +99,7 @@ YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
 
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
-% % create GIBOK ref system
+% % % create GIBOK ref system
 % Zend = Z0;
 % Xend = normalizeV( cross(YElpsMax,Zend) );
 % Yend = cross(Zend,Xend);
@@ -105,11 +112,11 @@ EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) Fi
 % quickPlotRefSystem(GIBOK);
 
 % create ISB ref system
-Yend = Z0;
-Xend = normalizeV(cross(Yend, YElpsMax));
-Zend = cross(Xend, Yend);
-Zend = normalizeV( sign(Zend'*Y0)*Zend );
-Xend = cross(Yend, Zend);
+Zend = Z0;
+Xend = normalizeV( cross(YElpsMax,Zend) );
+Yend = cross(Zend,Xend);
+Yend = normalizeV( sign(Yend'*Y0)*Yend );
+Xend = cross(Yend,Zend);
 
 % Store geometrical info
 CS.CenterVol = CenterVol;
