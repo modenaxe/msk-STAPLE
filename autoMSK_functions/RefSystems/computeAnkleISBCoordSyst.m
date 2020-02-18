@@ -22,7 +22,10 @@ end
 %====================================================
 [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = ...
                                                     FitCSATalus(Alt, Area);
-                                                
+
+% Change X0 orientation if necessary ( or = +/- 1 )
+X0 = or*X0;
+Y0 = or*Y0;
 %% 5. Identification of the ankle joint cylinder
 % 5.1 Get a new CS from the subaxis 
 X1 = CS.SubTal_axis;
