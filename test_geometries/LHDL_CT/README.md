@@ -13,6 +13,8 @@ Reference publication is:
 }
 ```
 
+The bones have been processed using MeshLab
+
 ![LHDL-CT](https://github.com/modenaxe/auto-msk-model/blob/master/images/LHDL_CT_bones.PNG)
 
 
