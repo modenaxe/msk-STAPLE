@@ -36,12 +36,12 @@ maxAbsCurv =  max(abs(k1), abs(k2));
 
 TlTrcASNodesOK0 =  find(maxAbsCurv<quantile(maxAbsCurv,0.5) & ...
     rad2deg(acos(Talus.vertexNormal*Z0))<60 & ...
-    rad2deg(acos(Talus.vertexNormal*Y1))>60 &...
+    rad2deg(acos(Talus.vertexNormal*Y0))>60 &...% this was Y1
     Talus.Points*X0 < alt_TlNeck_start);
 
 TlTrcASNodesOK1 =  find(maxAbsCurv<quantile(maxAbsCurv,0.5) & ...
-    rad2deg(acos(Talus.vertexNormal*Z1))<60 & ...
-    rad2deg(acos(Talus.vertexNormal*Y1))>60 &...
+    rad2deg(acos(Talus.vertexNormal*Z0))<60 & ...% this was Z1
+    rad2deg(acos(Talus.vertexNormal*Y0))>60 &...% this was Y1
     Talus.Points*X0 < alt_TlNeck_start);
 
 TlTrcASNodesOK = unique([TlTrcASNodesOK0;TlTrcASNodesOK1],'rows');
@@ -58,18 +58,29 @@ TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2);
 % 5.3 Get the first cylinder 
 % Fit a sphere to a get an initial guess at the radius and a point on the
 % axis
-
 [Center_TlTrc_0,Radius_TlTrc_0] = sphereFit(TlTrcAS0.incenter) ;
-[x0n, an, rn, d] = lscylinder( TlTrcAS0.incenter, Center_TlTrc_0', Y1,...
+[x0n, an, rn, d] = lscylinder( TlTrcAS0.incenter, Center_TlTrc_0', Y0,...%this was Y1
                             Radius_TlTrc_0, 0.001, 0.001);
 Y2 =  normalizeV( an );
 
+quickPlotTriang(Talus); hold on
+quickPlotTriang(TlTrcAS0, 'm')
+T.X=X0; T.Y=Y0; T.Z=Z0;T.Origin=CenterVol;
+quickPlotRefSystem(T)
+
+% T1 is much more skewed
+figure
+quickPlotTriang(Talus); hold on
+quickPlotTriang(TlTrcAS0, 'g')
+T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
+quickPlotRefSystem(T)
 % 5.4 Refine the articular surface 
 % Remove elements that are too for from from initial cylinder fit
 %   more than 5% of radius inside or more than 10% outside
 % Also remove elements that are too posterior
-TlTrcASElmtsOK =  find(d > -0.05*rn & abs(d) < 0.1*rn &...
-                TlTrcAS0.incenter*X0 > alt_TlTib_start);
+TlTrcASElmtsOK =  find( d > -0.05*rn &...% cond1
+                        abs(d) < 0.1*rn &... % cond2
+                        TlTrcAS0.incenter*X0 > alt_TlTib_start);% cond3
 TlTrcAS1 = TriReduceMesh(TlTrcAS0, TlTrcASElmtsOK);
 % TlTrcAS1 = TriCloseMesh(TlTrcAS0, TlTrcAS1, 3);
 TlTrcAS1 = TriKeepLargestPatch( TlTrcAS1 );

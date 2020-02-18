@@ -104,87 +104,87 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-%---- PELVIS -----
-% solve reference system from geometry
-[PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
-addMarkersFromStruct(osimModel, 'pelvis', PelvisBL, in_mm)
-
-% compute joint params
-pelvis_location = PelvisRS.ISB.Origin*dim_fact;
-pelvis_orientation = computeZXYAngleSeq(PelvisRS.ISB.V);
-
-% ground_pelvis
-JointParams = getJointParams('ground_pelvis');
-JointParams.parent_location     = [0.0000	0.0000	0.0000];
-JointParams.parent_orientation  = [0.0000	0.0000	0.0000];
-JointParams.child_location      = pelvis_location;
-JointParams.child_orientation   = pelvis_orientation;
-
-% create the joint
-pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
-osimModel.addJoint(pelvis_ground_joint);
-
-%---- FEMUR -----
-FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
-
-HJC_location = FemurCS.CenterFH_Kai*dim_fact;
-femur_orientation = computeZXYAngleSeq(FemurCS.V);
-
-% % hip joint
-JointParams = getJointParams('hip_r');
-JointParams.parent_location     = HJC_location;
-JointParams.parent_orientation  = pelvis_orientation;
-JointParams.child_location      = HJC_location;
-JointParams.child_orientation   = femur_orientation;
-
-% create the joint
-hip_r = createCustomJointFromStruct(osimModel, JointParams);
-osimModel.addJoint(hip_r);
-
-%---- TIBIA -----
-% defines the axis for the tibia
-CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
-TTB = autoLandmarkTibia(geom_set.tibia_r, CS, 1);
-
-% knee joint
-% joint centre in femur
-knee_location_in_parent = (FemurCS.Center1+FemurCS.Center2)/2.0*dim_fact;
-tibia_orientation = computeZXYAngleSeq(CS.V);
-
-% knee
-JointParams = getJointParams('knee_r');
-JointParams.parent_location    = knee_location_in_parent;
-JointParams.parent_orientation = femur_orientation;
-JointParams.child_location     = knee_location_in_parent;
-JointParams.child_orientation  = tibia_orientation;
-
-% create the joint
-knee_r = createCustomJointFromStruct(osimModel, JointParams);
-osimModel.addJoint(knee_r);
-
-%---- PATELLA -----
-
-[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
-% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
-
-% patello-femoral joint
-patfemjoint_location_in_parent = CSs.VR.Origin*dim_fact;
-patfemjoint_location_in_child = CSs.VR.Origin*dim_fact;
-patella_orientation = computeZXYAngleSeq(CSs.VR.V);
-
-% joint
-JointParams = getJointParams('patellofemoral_r');
-JointParams.parent_location     = patfemjoint_location_in_parent;
-JointParams.parent_orientation  = femur_orientation;
-JointParams.child_location      = patfemjoint_location_in_child;
-JointParams.child_orientation   = patella_orientation;
-
-% create the joint
-patfem_r = createCustomJointFromStruct(osimModel, JointParams);
-osimModel.addJoint(patfem_r);
-
-% add patellofemoral constraint
-addPatFemJointCoordCouplerConstraint(osimModel, 'r');
+% %---- PELVIS -----
+% % solve reference system from geometry
+% [PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
+% addMarkersFromStruct(osimModel, 'pelvis', PelvisBL, in_mm)
+% 
+% % compute joint params
+% pelvis_location = PelvisRS.ISB.Origin*dim_fact;
+% pelvis_orientation = computeZXYAngleSeq(PelvisRS.ISB.V);
+% 
+% % ground_pelvis
+% JointParams = getJointParams('ground_pelvis');
+% JointParams.parent_location     = [0.0000	0.0000	0.0000];
+% JointParams.parent_orientation  = [0.0000	0.0000	0.0000];
+% JointParams.child_location      = pelvis_location;
+% JointParams.child_orientation   = pelvis_orientation;
+% 
+% % create the joint
+% pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
+% osimModel.addJoint(pelvis_ground_joint);
+% 
+% %---- FEMUR -----
+% FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
+% 
+% HJC_location = FemurCS.CenterFH_Kai*dim_fact;
+% femur_orientation = computeZXYAngleSeq(FemurCS.V);
+% 
+% % % hip joint
+% JointParams = getJointParams('hip_r');
+% JointParams.parent_location     = HJC_location;
+% JointParams.parent_orientation  = pelvis_orientation;
+% JointParams.child_location      = HJC_location;
+% JointParams.child_orientation   = femur_orientation;
+% 
+% % create the joint
+% hip_r = createCustomJointFromStruct(osimModel, JointParams);
+% osimModel.addJoint(hip_r);
+% 
+% %---- TIBIA -----
+% % defines the axis for the tibia
+% CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
+% TTB = autoLandmarkTibia(geom_set.tibia_r, CS, 1);
+% 
+% % knee joint
+% % joint centre in femur
+% knee_location_in_parent = (FemurCS.Center1+FemurCS.Center2)/2.0*dim_fact;
+% tibia_orientation = computeZXYAngleSeq(CS.V);
+% 
+% % knee
+% JointParams = getJointParams('knee_r');
+% JointParams.parent_location    = knee_location_in_parent;
+% JointParams.parent_orientation = femur_orientation;
+% JointParams.child_location     = knee_location_in_parent;
+% JointParams.child_orientation  = tibia_orientation;
+% 
+% % create the joint
+% knee_r = createCustomJointFromStruct(osimModel, JointParams);
+% osimModel.addJoint(knee_r);
+% 
+% %---- PATELLA -----
+% 
+% [ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
+% % PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+% 
+% % patello-femoral joint
+% patfemjoint_location_in_parent = CSs.VR.Origin*dim_fact;
+% patfemjoint_location_in_child = CSs.VR.Origin*dim_fact;
+% patella_orientation = computeZXYAngleSeq(CSs.VR.V);
+% 
+% % joint
+% JointParams = getJointParams('patellofemoral_r');
+% JointParams.parent_location     = patfemjoint_location_in_parent;
+% JointParams.parent_orientation  = femur_orientation;
+% JointParams.child_location      = patfemjoint_location_in_child;
+% JointParams.child_orientation   = patella_orientation;
+% 
+% % create the joint
+% patfem_r = createCustomJointFromStruct(osimModel, JointParams);
+% osimModel.addJoint(patfem_r);
+% 
+% % add patellofemoral constraint
+% addPatFemJointCoordCouplerConstraint(osimModel, 'r');
 
 %---- TALUS -----
 % not working for JIA
