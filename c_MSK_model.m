@@ -104,6 +104,8 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
+[ CSs, TrObjects ] = GIBOK_process_femur(geom_set.femur_r);
+
 % %---- PELVIS -----
 % % solve reference system from geometry
 % [PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);

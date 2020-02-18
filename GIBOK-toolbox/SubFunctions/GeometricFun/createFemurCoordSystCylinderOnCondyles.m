@@ -89,6 +89,7 @@ Xend = cross(Yend, Zmech);
 % assembling the output structure
 % store Y used in convex hull
 CSs.PCC.YCvxHull            = CSs.Y1;% [LM] is this necessary?
+
 % store cylinder data
 CSs.PCC.cyl_Y               = Y2; %normalised axis from lst
 CSs.PCC.cyl_Pt              = x0n;
