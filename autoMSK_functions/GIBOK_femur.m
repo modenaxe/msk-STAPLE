@@ -4,20 +4,17 @@ function [ CSs, TrObjects ] = GIBOK_femur( Femur , ProxFem)
 % TODO: I think there is a transformation back adn forth from VC that can
 % be eliminated
 
-disp('===================')
-disp('Processing femur_r')
-disp('===================')
-
 % coordinate system structure to store results
 CSs = struct();
 
 % if this is an entire femur then cut it in two parts
-if ~exist('ProxFem','var')
+% but keep track of all geometries
+if ~exist('DistFem','var')
       [ProxFem, DistFem] = cutLongBoneMesh(Femur);
+else
+    % join two parts in one triangulation
+    Femur = TriUnite(DistFem, ProxFem);
 end
-
-% join two parts in one triangulation
-Femur = TriUnite(DistFem,ProxFem);
 
 % Initial Coordinate system (from inertial axes and femoral head)
 %-------------------------------------
@@ -64,11 +61,14 @@ ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
 EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat] = GIBOK_extractEpiFemArticSurf(EpiFem, CSs, 'full_conds');
+[fullCondyle_Med, fullCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'full_condyles');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med_end, postCondyle_Lat_end] = GIBOK_extractEpiFemArticSurf(EpiFem, CSs, 'post_conds');
+[postCondyle_Med_end, postCondyle_Lat_end, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'post_condyles');
+
+% extract patellar grooves
+[Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'pat_groove');
 
 % Fit two spheres to patellar groove
 CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
@@ -81,12 +81,6 @@ CSs = createFemurCoordSystCylinderOnCondyles(postCondyle_Lat_end, postCondyle_Me
 
 % Fit the entire condyles with an ellipsoid
 CSs = createFemurCoordSystEllipsoidOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
-
-% Store adjusted inertial axes for output if required
-% CSs.Xinertia = sign(V_all(:,3)'*Xend)*V_all(:,3);
-% CSs.Yinertia = sign(V_all(:,2)'*Yend)*V_all(:,2);
-% CSs.Zinertia = Z0;
-% CSs.Minertia = [CSs.Xinertia,CSs.Yinertia,Z0];
 
 % Store triangulation objects for output if required
 if nargout>1

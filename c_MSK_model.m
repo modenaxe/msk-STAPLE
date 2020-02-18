@@ -104,8 +104,6 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-[ CSs, TrObjects ] = GIBOK_process_femur(geom_set.femur_r);
-
 % %---- PELVIS -----
 % % solve reference system from geometry
 % [PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
@@ -128,6 +126,7 @@ end
 % 
 % %---- FEMUR -----
 % FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
+% [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
 % 
 % HJC_location = FemurCS.CenterFH_Kai*dim_fact;
 % femur_orientation = computeZXYAngleSeq(FemurCS.V);
