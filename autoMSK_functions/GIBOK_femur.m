@@ -43,22 +43,7 @@ CSs.V_all = V_all;
 CSs.X0 = cross(CSs.Y0, CSs.Z0);
 
 % Isolates the epiphysis
-% TODO: replace with slicing function
-%=========================================
-% First 0.5 mm in Start and End are removed for stability.
-Alt = linspace( min(DistFem.Points*Z0)+0.5 ,max(DistFem.Points*Z0)-0.5, 100);
-Area= zeros(size(Alt));
-it=0;
-for d = -Alt
-    it = it + 1;
-    [ ~ , Area(it), ~ ] = TriPlanIntersect(DistFem, Z0 , d );
-end
-%=========================================
-
-% removes mesh above the limit of epiphysis (Zepi)
-[~ , Zepi, ~] = FitCSA(Alt, Area);
-ElmtsEpi = find(DistFem.incenter*Z0<Zepi);
-EpiFem = TriReduceMesh( DistFem, ElmtsEpi);
+EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
 [fullCondyle_Med, fullCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'full_condyles');

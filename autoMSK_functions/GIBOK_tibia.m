@@ -1,9 +1,13 @@
-function [CSs, TrObjects] = GIBOK_tibia(Tibia, DistTib)
+function [CSs, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
+
+if nargin<3
+    in_mm=1;
+end
 
 if in_mm == 0
-    dim_fac = 0.001;
+    dim_fact = 0.001;
 else
-    dim_fac = 1;
+    dim_fact = 1;
 end
 
 % coordinate system structure to store results
@@ -32,6 +36,10 @@ Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 CSs.InertiaMatrix = InertiaMatrix;
+CSs.V_all = V_all;
+
+% extract the tibia (used to compute the mechanical Z axis)
+CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs);
 
 % extract the distal tibia articular surface
 AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs);
@@ -44,7 +52,7 @@ AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs);
 %-----------
 % parameters
 %-----------
-plane_thick = 5 * dim_fac; 
+plane_thick = 5 * dim_fact; 
 %-----------
 [oLSP_AAS,nAAS] = lsplane(AnkleArtSurf.Points, Z0);
 Curves          = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
@@ -81,22 +89,10 @@ end
 % Make the vector U_tmp orthogonal to Z0 and normalize it
 Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
 
-%% Proximal Tibia, Separate epiphysis from diaphysis
-% Get the evolution of the cross section area along the longitudinal axis
+%% Proximal Tibia
 
-% this should be a function
-%=============================
-% First 0.5 mm in Start and End are not accounted for, for stability.
-Alt = linspace( min(ProxTib.Points*Z0)+0.5 ,max(ProxTib.Points*Z0)-0.5, 100);
-Area=[];
-for d = -Alt
-    [ ~ , Area(end+1), ~ ] = TriPlanIntersect( ProxTib, Z0 , d );
-end
-%=============================
 % isolate tibia proximal epiphysis 
-[~,Zepi,~] = FitCSA(Alt, Area);
-ElmtsEpi = find(ProxTib.incenter*Z0>Zepi);
-EpiTib = TriReduceMesh( ProxTib, ElmtsEpi );
+EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 
 %% Identified a first raw Articular Surfaces (AS)
 
