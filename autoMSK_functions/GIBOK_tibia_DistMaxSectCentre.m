@@ -17,22 +17,12 @@ end
 % section where the are is maximum 
 Curves = TriPlanIntersect( DistTib, Z0 , -Alt(Imax) );
 
-N_curves = length(Curves);
-% TODO: check to exclude fibula
-if N_curves==1
-    % compute centroid, which is consider to be the Ankle joint centre
-    CenterAnkleInside = PlanPolygonCentroid3D(Curves.Pts);
-elseif N_curves>1
-    disp(['There are ', num2str(length(Curves)), ' section areas.']);
-    warning('fibular is in geometry');
-    % compute areas
-    [CenterAnkleInside1, Area1] = PlanPolygonCentroid3D( Curves(1).Pts);
-    [CenterAnkleInside2, Area2] = PlanPolygonCentroid3D( Curves(2).Pts);
-    if abs(Area1)>abs(Area2)
-        CenterAnkleInside = CenterAnkleInside1;
-    else
-        CenterAnkleInside = CenterAnkleInside2;
-    end
-else
+[Curve, N_curves] = GIBOK_getLargerPlanarSect(Curves);
+
+CenterAnkleInside = PlanPolygonCentroid3D( Curve.Pts);
+
+if N_curves>2
     error(['There are ', num2str(length(Curves)), ' section areas.']);
+end
+
 end
