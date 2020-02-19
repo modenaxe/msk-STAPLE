@@ -1,30 +1,7 @@
 function AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs)
 
 Z0 = CSs.Z0;
-
-% this should be a function
-%=============================
-Alt =  min(DistTib.Points*Z0)+1 : 0.3 : max(DistTib.Points*Z0)-1;
-Area = zeros(size(Alt));
-i=0;
-for d = -Alt
-    i = i + 1;
-    [ ~ , Area(i), ~ ] = TriPlanIntersect( DistTib, Z0 , d );
-end
-%=============================
-[~,Imax] = max(Area);
-
-% section where the are is maximum 
-Curves = TriPlanIntersect( DistTib, Z0 , -Alt(Imax) );
-% TODO: check to exclude fibula
-if length(Curves)>1
-    disp(['There are ', num2str(length(Curves))]);
-    error('fibular is in geometry');
-end
-
-% compute centroid, which is consider to be the Ankle joint centre
-CenterAnkleInside = PlanPolygonCentroid3D( Curves.Pts);
-
+V_all = CSs.V_all;
 % Get mean curvature of Distal Tibia
 Cmean = TriCurvature(DistTib,false);
 
