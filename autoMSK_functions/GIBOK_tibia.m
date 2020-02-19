@@ -106,10 +106,10 @@ CSs.Y0 = Y0;
 % isolate tibia proximal epiphysis 
 EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 
-%========================
-% GROUP TOGETHER (ITER 1)
-%========================
-% ITERATION 1: Identify raw Articular Surfaces (AS) based on curvature
+%============
+% ITERATION 1 
+%============
+%Identify raw Articular Surfaces (AS) based on curvature
 %--------------
 % parameters
 %--------------
@@ -121,259 +121,37 @@ curv_quartile = 0.25;
 % remove the ridge and the central part of the surface
 EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP);
 
-% debug plot
-quickPlotTriang(EpiTibAS);hold on
 warning('Needs a check on the filter')
-
 % % Smooth found ArtSurf
 % % makes the algorithm fail
-% EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15);
-% EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30);
-EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 1);
-EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 2);
-quickPlotTriang(EpiTibAS, 'g', 1);hold on
-
-%========================
-% GROUP TOGETHER (ITER 2)
-%========================
-EpiTibAS2 = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs);
-
-% Update the AS and the fitted LS plane
-[oLSP,Ztp] = lsplane(EpiTibAS.Points, Z0);
-d = -oLSP * Ztp;
-
-% Seperate Medial and lateral
-[ Xel, Yel, ellipsePts , ellipsePpties] = ...
-                        EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
-a = ellipsePpties.a;
-b = ellipsePpties.b;
-Xel = sign(Xel'*Y0)*Xel;
-Yel = sign(Yel'*Y0)*Yel;
-
-MedPtsInit = mean(ellipsePts) + 2/3*b*Yel';
-LatPtsInit = mean(ellipsePts) - 2/3*b*Yel';
-
-MedPtsInit = [MedPtsInit; MedPtsInit - 1/3*a*Xel'; MedPtsInit + 1/3*a*Xel'];
-LatPtsInit = [LatPtsInit; LatPtsInit - 1/3*a*Xel'; LatPtsInit + 1/3*a*Xel'];
-
-EpiTibASMed = TriConnectedPatch( EpiTibAS, MedPtsInit);
-EpiTibASLat = TriConnectedPatch( EpiTibAS, LatPtsInit );
-
-% Filter out element with wrong normal or too far from LS plane + Smoothing
-% norm_thresh = 0.9;
-% dist_thresh = 0.5;
-% EpiTibAS = GIBOK_tibia_FilterSurf(EpiTibAS, Ztp, d, norm_thresh, dist_thresh);
-%=============================
-EpiTibASMedElmtsOK = find(abs(EpiTibASMed.incenter*Ztp+d) < 5 & ...
-                              EpiTibASMed.faceNormal*Ztp > 0.9 );
-EpiTibASMed = TriReduceMesh(EpiTibASMed,EpiTibASMedElmtsOK);
-EpiTibASMed = TriOpenMesh(EpiTib,EpiTibASMed,2);
-EpiTibASMed = TriConnectedPatch( EpiTibASMed, MedPtsInit );
-EpiTibASMed = TriCloseMesh(EpiTib,EpiTibASMed,10);
-%=============================
-% exactly the same as above!
-EpiTibASLatElmtsOK = find(abs(EpiTibASLat.incenter*Ztp+d)<5 & ...
-                              EpiTibASLat.faceNormal*Ztp>0.9 );
-EpiTibASLat = TriReduceMesh(EpiTibASLat,EpiTibASLatElmtsOK);
-EpiTibASLat = TriOpenMesh(EpiTib,EpiTibASLat,2);
-EpiTibASLat = TriConnectedPatch( EpiTibASLat, LatPtsInit );
-EpiTibASLat = TriCloseMesh(EpiTib,EpiTibASLat,10);
-%===============================================================
-quickPlotTriang(EpiTibASLat,'r');hold on
-quickPlotTriang(EpiTibASMed,'b');hold on
-
-EpiTibAS = TriUnite(EpiTibASMed,EpiTibASLat);
-max(EpiTibAS.Points-EpiTibAS2.Points)
-
-%========================
-% GROUP TOGETHER (ITER 3)
-%========================
-% grouped function
-[EpiTibASMed, EpiTibASLat] = GIBOK_tibia_it3(EpiTibAS, CSs, EpiTibASMed, EpiTibASLat);
-EpiTibAS3 = TriUnite(EpiTibASMed,EpiTibASLat);
-
-% check against this
-[oLSP,Ztp] = lsplane(EpiTibAS.Points,  Z0);
-d = -oLSP*Ztp;
-EpiTibASMedElmtsOK = find(abs(EpiTibASMed.incenter  *Ztp+d)<5 & ...
-                              EpiTibASMed.faceNormal*Ztp>0.95 );
-EpiTibASMed = TriReduceMesh(EpiTibASMed,EpiTibASMedElmtsOK);
-EpiTibASMed = TriOpenMesh(EpiTib,EpiTibASMed,2);
-EpiTibASMed = TriConnectedPatch( EpiTibASMed, MedPtsInit );
-EpiTibASMed = TriCloseMesh(EpiTib,EpiTibASMed,10);
-
-EpiTibASLatElmtsOK = find(abs(EpiTibASLat.incenter*Ztp+d)<3 & ...
-                              EpiTibASLat.faceNormal*Ztp>0.95 );
-EpiTibASLat = TriReduceMesh(EpiTibASLat,EpiTibASLatElmtsOK);
-EpiTibASLat = TriOpenMesh(EpiTib,EpiTibASLat,2);
-EpiTibASLat = TriConnectedPatch( EpiTibASLat, LatPtsInit );
-EpiTibASLat = TriCloseMesh(EpiTib,EpiTibASLat,10);
-
-EpiTibAS = TriUnite(EpiTibASMed,EpiTibASLat);
-
-%===========================================================
-max(EpiTibAS.Points-EpiTibAS3.Points)
-
-
-%% BETTER TO INCLUDE IN INDIVIDUAL FUNCTIONS
-% final fit
-% fit a plane to the resulting tibial epiPhysis 
-[oLSP, Ztp] = lsplane(EpiTibAS.Points,Z0);
-
-
-%% Technic 1 : Fitted Ellipse
-[ Xel, Yel, ellipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
-Xel = sign(Xel'*Y0)*Xel;
-Yel = sign(Yel'*Y0)*Yel;
-
-Pt_Knee = mean(ellipsePts);
-
-Zmech = Pt_Knee - ankleCenter; 
-Zmech = Zmech' / norm(Zmech);
-
-% Final ACS
-Xend = cross(Yel,Zmech)/norm(cross(Yel,Zmech));
-Yend = cross(Zmech,Xend);
-
-Yend = sign(Yend'*Y0)*Yend;
-Zend = Zmech;
-Xend = cross(Yend,Zend);
-
-Vend = [Xend Yend Zend];
-
-% Result write
-CSs.ECASE.CenterVol = CenterVol;
-CSs.ECASE.CenterAnkle = ankleCenter;
-CSs.ECASE.CenterKnee = Pt_Knee;
-CSs.ECASE.Z0 = Z0;
-CSs.ECASE.Ztp = Ztp;
-CSs.ECASE.Zmech = Zmech;
-
-CSs.ECASE.Origin = Pt_Knee;
-CSs.ECASE.X = Xend;
-CSs.ECASE.Y = Yend;
-CSs.ECASE.Z = Zend;
-
-CSs.ECASE.Origin = Pt_Knee;
-CSs.ECASE.V = Vend;
-
-
-%% Technic 2 : Center of medial & lateral condyles
-
-[ TibArtLat_ppt ] = TriMesh2DProperties( EpiTibASLat );
-[ TibArtMed_ppt ] = TriMesh2DProperties( EpiTibASMed );
-Pt_Knee = 0.5*TibArtMed_ppt.Center + 0.5*TibArtLat_ppt.Center;
-
-Zmech = normalizeV(Pt_Knee-ankleCenter);
-
-Y2 = TibArtMed_ppt.Center - TibArtLat_ppt.Center;
-Y2 = Y2' / norm(Y2);
-
-% Final ACS
-Xend = cross(Y2,Zmech)/norm(cross(Y2,Zmech));
-Yend = cross(Zmech,Xend);
-
-Xend = sign(Xend'*Y0)*Xend;
-Yend = sign(Yend'*Y0)*Yend;
-Zend = Zmech;
-Xend = cross(Yend,Zend);
-
-Vend = [Xend Yend Zend];
-
-% Result write
-CSs.CASC.CenterVol = CenterVol;
-CSs.CASC.CenterAnkle = ankleCenter;
-CSs.CASC.CenterKnee = Pt_Knee;
-CSs.CASC.Z0 = Z0;
-CSs.CASC.Ztp = Ztp;
-
-CSs.CASC.Origin = Pt_Knee;
-CSs.CASC.X = Xend;
-CSs.CASC.Y = Yend;
-CSs.CASC.Z = Zend;
-
-CSs.CASC.V  = Vend ;
-
-
-%% Technic 3 : Compute the inertial axis of a slice of the tp plateau
-% 10% below and the 5% above : Fill it with equally spaced points to
-% simulate inside volume
-%
-[ Xel, Yel, ellipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
-Xel = sign(Xel'*Y0)*Xel;
-Yel = sign(Yel'*Y0)*Yel;
-
-H = 0.1 * sqrt(4*0.75*max(Area)/pi);
-
-Alt_TP = linspace( -d-H ,-d+0.5*H, 20);
-PointSpace = mean(diff(Alt_TP));
-TPLayerPts = zeros(round(length(Alt_TP)*1.1*max(Area)/PointSpace^2),3);
-j=0;
-i=0;
-for alt = -Alt_TP
-    [ Curves , ~ , ~ ] = TriPlanIntersect( EpiTib, Ztp , alt );
-    for c=1:length(Curves)
-        
-        Pts_Tmp = Curves(c).Pts*[Xel Yel Ztp];
-        xmg = min(Pts_Tmp(:,1)) -0.1 : PointSpace : max(Pts_Tmp(:,1)) +0.1 ;
-        ymg = min(Pts_Tmp(:,2)) -0.1 : PointSpace : max(Pts_Tmp(:,2)) +0.1;
-        [XXmg , YYmg] = meshgrid(xmg,ymg);
-        in = inpolygon(XXmg(:),YYmg(:),Pts_Tmp(:,1),Pts_Tmp(:,2));
-        Iin = find(in, 1);
-        if ~isempty(Iin)
-            i = j+1;
-            j=i+length(find(in))-1;
-            TPLayerPts(i:j,:) = transpose([Xel Yel Ztp]*[XXmg(in),YYmg(in),ones(length(find(in)),1)*alt]');
-        end
-    end
-    
+try
+    EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15);
+    EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30);
+catch
+    warning('original GIBOK filters not working...relaxing them')
+    EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 7);
+    EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 15);
 end
+%==================
+% ITERATION 2 & 3 
+%==================
+[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs);
+% builld the triangulation
+EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
 
-TPLayerPts(j+1:end,:) = [];
+% NOTE: EpiTibAS3 is the final mesh from the functions
+EpiTibAS = EpiTibAS3;
 
-[V,~] = eig(cov(TPLayerPts));
+% quick final check
+quickPlotTriang(EpiTib,'y',1);hold on
+quickPlotTriang(EpiTibASMed,'r')
+quickPlotTriang(EpiTibASLat,'b')
 
-Xtp = V(:,2); Ytp = V(:,3);
-Xtp = sign(Xtp'*Y0)*Xtp;
-Ytp = sign(Ytp'*Y0)*Ytp;
+CSs = GIBOK_tibia_EllipseACS(EpiTibAS, CSs);
 
-idx = kmeans(TPLayerPts,2);
+CSs = GIBOK_tibia_DoubleEllipseACS(EpiTibASMed, EpiTibASLat);
 
-[ CenterMed ] = ProjectOnPlan( mean(TPLayerPts(idx==1,:)) , Ztp , d );
-[ CenterLat ] = ProjectOnPlan( mean(TPLayerPts(idx==2,:)) , Ztp , d );
-
-CenterKnee = 0.5*( CenterMed + CenterLat);
-
-Zmech = CenterKnee - CenterAnkleInside; Zmech = Zmech' / norm(Zmech);
-
-% Final ACS
-Xend = cross(Ytp,Zmech)/norm(cross(Ytp,Zmech));
-Yend = cross(Zmech,Xend);
-
-
-Yend = sign(Yend'*Y0)*Yend;
-Zend = Zmech;
-Xend = cross(Yend,Zend);
-
-Vend = [Xend Yend Zend];
-
-% Result write
-CSs.PIAASL.CenterVol = CenterVol;
-CSs.PIAASL.CenterAnkle = ankleCenter;
-CSs.PIAASL.CenterKnee = CenterKnee;
-CSs.PIAASL.Z0 = Z0;
-CSs.PIAASL.Ztp = Ztp;
-CSs.PIAASL.Ytp = Ytp;
-CSs.PIAASL.Xtp = Xtp;
-
-CSs.PIAASL.Origin = CenterKnee;
-CSs.PIAASL.X = Xend;
-CSs.PIAASL.Y = Yend;
-CSs.PIAASL.Z = Zend;
-
-CSs.PIAASL.V = Vend;
-CSs.PIAASL.Name='ArtSurfPIA';
-
+CSs = GIBOK_tibia_PlateauLayerACS(EpiTibAS, CSs);
 
 %% Inertia Results
 Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
