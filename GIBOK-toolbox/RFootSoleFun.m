@@ -6,7 +6,19 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 %% Read the mesh of the Foot file
 
 % [Foot] = ReadMesh('../test_geometries/TLEM2/foot_r.stl');
-[Foot] = ReadMesh('../test_geometries/LHDL_CT/calcn_r.stl');
+% [Foot] = ReadMesh('../test_geometries/LHDL_CT/calcn_r.stl');
+
+cwd = 'C:\Users\jbapt\Documents\Research\auto-msk-model\test_geometries';
+% load( strcat(cwd, '\TLEM2_MRI_tri\calcn_l.mat') )
+% load( strcat(cwd, '\TLEM2_MRI_tri\calcn_r.mat') )
+% load( strcat(cwd, '\TLEM2_CT_tri\calcn_l.mat') )
+% load( strcat(cwd, '\TLEM2_CT_tri\calcn_r.mat') )
+% load( strcat(cwd, '\P0_MRI_tri\calcn_r.mat') )
+% load( strcat(cwd, '\LHDL_CT_tri\calcn_l.mat') )
+load( strcat(cwd, '\LHDL_CT_tri\calcn_r.mat') )
+
+Foot = curr_triang;
+% Foot = ReadMesh(strcat(cwd,'\JIA_CSm6\calcn_r.stl'));
 
 % Need to account for cases where the foot is subidivided into multiple 
 % meshes. 
@@ -98,11 +110,50 @@ for i = 1:round(0.02*length(IdxPtsPair))
         'k-*','linewidth',2)
 end
 
+% Convert the convexHull to triangulation object
 Foot2_CH = triangulation(K,x,y,z);
-[ Foot2_CH_Ppties ] = TriMesh2DProperties( Foot2_CH );
-[~,I] = max(Foot2_CH_Ppties.Area);
+[V_all_CH, CenterVol_CH] = TriInertiaPpties( Foot2_CH );
+
+% Get a vector superior to inferior from the center of the foot and its
+% convex hull to creat a new temporary coordinate system R1
+Ucenters0 = normalizeV(CenterVol_CH - CenterVol);
+Ucenters = Ucenters0 - (Ucenters0'*X0)*X0;
+Z1 = normalizeV(Ucenters);
+X1 = X0;
+Y1 = cross( Z1, X1 );
+
+% Project the convex hull along the previously found direction
+XY1 = [X1,Y1];
+ProjZ1 = XY1*inv(XY1'*XY1)*XY1';
+
+Foot2_CH_PTS_Proj = (ProjZ1*Foot2_CH.Points')';
+Foot2_CH_Proj = triangulation(Foot2_CH.ConnectivityList, Foot2_CH_PTS_Proj);
+
+% Find the largest triangle on the projected Convex Hull
+[ Foot2_CH_Proj_Ppties ] = TriMesh2DProperties( Foot2_CH_Proj );
+[~,I] = max(Foot2_CH_Proj_Ppties.Area);
 
 trisurf(Foot2_CH.ConnectivityList(I,:),x,y,z,'Facecolor','b','FaceAlpha',1,'edgecolor','k');
+
+
+
+%% Get the three points of interest 
+%   1.  Select from the longest edges those which are below a plan 
+%       parallel to the one defined by the largest triangle (the start and
+%       end of those edges must be below that plan)
+%   2.  Cluster the points defining the largest edges in 3 clusters
+%   3.  Associate the the cluster to the medial and lateral distal points
+%       of the triangles
+%   4.  Get the the points as the furthest one from the ones from the
+%       triangles
+%   5.  Keep the proximal vertices of the triangle as the calcaneus tip
+
+
+
+
+
+
+%% This section will certainly disappear in the terminal version
 
 % Get neighbour facets of the largest one if the normal are not too
 % different
