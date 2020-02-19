@@ -2,7 +2,10 @@ function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
-% returns the rows of the intersection in the same order that they appear 
+% Round the number of elements to upper integer;
+nbElmts = ceil(nbElmts);
+
+% returns the rows of the intersection in the same order as they appear 
 % in the first vector given as input.
 [~, ia ,ic] = intersect(TRsup.Points, TRin.Points,'rows','stable');
 
