@@ -46,8 +46,8 @@ dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
 dataset = dataset_set{nd};
 tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
 visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
-body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
+body_list = {'tibia_r'};%{'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+triGeom_file_list = {'tibia_r'};%{'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
 visual_file_list = triGeom_file_list;
 type_mesh = '.vtp';
 
