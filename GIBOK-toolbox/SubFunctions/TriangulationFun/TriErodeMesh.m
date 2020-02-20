@@ -2,6 +2,9 @@ function [ TRout ] = TriErodeMesh( TRin, nbElmts )
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 
+% Round the number of elements to upper integer;
+nbElmts = ceil(nbElmts);
+
 BorderNodesID = unique(TRin.freeBoundary);
 ElmtsInitial = TRin.ConnectivityList;
 ElmtsBorder = find(sum(ismember(ElmtsInitial,BorderNodesID),2)>0);

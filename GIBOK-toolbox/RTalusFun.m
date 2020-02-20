@@ -1,26 +1,15 @@
-%% Initial Set up 
-clearvars
-close all
-addpath(genpath(strcat(pwd,'/SubFunctions')));
-
-%% Read the mesh of the Talus file
-%'../test_geometries/MRI_P0/talus_r.stl'
-%'../test_geometries/MRI_P0_smooth/talus_r.stl'
-%'../test_geometries/JIA_CSm6/talus_r.stl'
-%'../test_geometries/TLEM2/talus_r.stl'
-%'../test_geometries/TLEM2_CT_tri/talus_r.stl'
-%'../test_geometries/SMIR_92/talus_r.stl'
-% [Talus] = ReadMesh('../test_geometries/MRI_P0/talus_l.stl');
-
-%P0_MRI_tri
-%LHDL_CT_tri
-%TLEM2_CT_tri
-% % testing mat import
-[Imported] = load('../test_geometries/TLEM2_CT_tri/talus_l.mat');
-Talus = Imported.curr_triang;
-
-% function [ CSs, TrObjects ] = RTalusFun( Talus)
+function [CSs, TrObjects] = RTalusFun(Talus)
+% Function RTalusFun( Talus)
 % Fit an ACS on a Talus
+% Input : 
+%   - Talus : A triangulation object of the talus
+% 
+% Output : 
+%   - CSs : a structure containing the axis of points of the coordinate
+%   system of the talus
+%   - TrObjects : a structure containing the identifie region of the talus
+%   that are used to identify the axis and points to construct the
+%   coordinate system
 
 %% 1. Indentify the inertia axis of the Talus
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
@@ -399,3 +388,22 @@ plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.3)
 plotDot( Center_TlCcn, 'c', 2 )
 plotSphere( Center_TlNvc, Radius_TlNvc , 'm' , 0.3)
 plotDot( Center_TlNvc, 'm', 2 )
+
+%% Write CS
+% Initial inertia based coordinate system
+CSs.CS0 = [X0,Y0,Z0];
+CSs.UCyl = Y2;
+CSs.USubAxis = u_SubAxis;
+CSs.CenterNavicularSphere = Center_TlNvc;
+CSs.CenterCalcanearSphere = Center_TlCcn;
+
+%% Write TrObjetcs
+TrObjects.Talus = Talus;
+TrObjects.TalusWithoutAS = Talus_NoAS;
+TrObjects.TaloCalcanearAS = TlCcnAS1;
+TrObjects.TaloNavicularAS = TlNvc_AS;
+TrObjects.TaloTibialAS = TlTrcAS;
+TrObjects.FinalPlot = f2;
+
+
+end

@@ -4,7 +4,16 @@ function [ CSs, TrObjects ] = RPatellaFun( Patella )
 addpath(genpath(strcat(pwd,'/SubFunctions')));
 CSs = struct();
 
-% Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
+%% Get the mean edge length of the triangles composing the patella
+PptiesPatella = TriMesh2DProperties( Patella );
+% Assume triangles are equilaterals
+meanEdgeLength = sqrt( 4/sqrt(3) * PptiesPatella.TotalArea / Patella.size(1) );
+% Get the coefficient for morphology operations
+CoeffMorpho = 0.5 / meanEdgeLength ;
+% This is necessary because the functions were originally developped for
+% triangulation with constant mean edge lengths of 0.5 mm
+
+%% Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Patella );
 Center = CenterVol;
 
@@ -150,10 +159,11 @@ CSs.VR.Origin = CenterVol';
 %% Technic Ridge Line ( ridge Least Square line fit )
 % LS line fit on the ridge and ridge midpoint
 Uridge = sign(U'*Uridge)*Uridge;
+% Uridge in the initial (CT/MRI) coordinate system
+UridgeR0 = V_all*Uridge;
 
 % Construct RL ACS
 Center3 = mean(LowestPoints_CS0);
-
 Z3 = V_all*Uridge;
 X3 = -V_all(:,3);
 Y3 = normalizeV( cross(Z3,X3) );
@@ -162,6 +172,7 @@ X3 = cross(Y3,Z3);
 % Write RL ACS
 CSs.RL.X = X3;
 CSs.RL.Uridge = Uridge;
+CSs.RL.UridgeR0 = UridgeR0;
 CSs.RL.Y = Y3;
 CSs.RL.Z = Z3;
 CSs.RL.V = [X3 Y3 Z3];
@@ -182,15 +193,15 @@ IgoodElmts = find(Condition1&Condition2&Condition3);
 
 ArtSurf = TriReduceMesh(Patella,IgoodElmts);
 ArtSurf0 = ArtSurf ;
-ArtSurf = TriOpenMesh(Patella,ArtSurf,2);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,4);
-ArtSurf = TriConnectedPatch(ArtSurf,LowestPoints_CS0);
+ArtSurf = TriOpenMesh(Patella,ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriCloseMesh(Patella,ArtSurf, 4*CoeffMorpho);
+ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
 
 % Fit a plane to the AS
 [~,Nrml] = lsplane( ArtSurf.Points, X3 ); 
 
 % Update conditions with fitted plane orientation
-ArtSurfDilated = TriDilateMesh(Patella,ArtSurf,15);
+ArtSurfDilated = TriDilateMesh(Patella, ArtSurf, 15*CoeffMorpho);
 Condition1 = abs(ArtSurfDilated.faceNormal*Z3)<0.375;
 Condition2 = ArtSurfDilated.faceNormal*Nrml>cos(3*pi/10);
 Condition3 = ArtSurfDilated.incenter*Z3>PtRidgeDist*Z3+0.15*LengthRidge & ...
@@ -200,14 +211,14 @@ IgoodElmts = unique([find(Condition1&Condition2);find(Condition3)]);
 ArtSurf = TriReduceMesh(ArtSurfDilated,IgoodElmts);
 
 % Smooth found region with morphologic operations
-ArtSurf = TriOpenMesh(Patella,ArtSurf,3);
-ArtSurf = TriUnite(ArtSurf0,ArtSurf);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,2);
-ArtSurf = TriConnectedPatch(ArtSurf,LowestPoints_CS0);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,30);
-ArtSurf = TriOpenMesh(Patella,ArtSurf,15);
-ArtSurf = TriErodeMesh(ArtSurf,2);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,5);
+ArtSurf = TriOpenMesh(Patella, ArtSurf, 3*CoeffMorpho);
+ArtSurf = TriUnite(ArtSurf0, ArtSurf);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 30*CoeffMorpho);
+ArtSurf = TriOpenMesh(Patella, ArtSurf, 15*CoeffMorpho);
+ArtSurf = TriErodeMesh(ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 5*CoeffMorpho);
 
 
 % Principal Inertia Matrix of the Articular Surface
@@ -217,12 +228,12 @@ D4 = TriMesh2DProperties(ArtSurf);
 % Construct PIAAS ACS
 Origin = D4.Center;
 Z4 = V_AS(:,2);
-Z4 = sign(Uridge'*Z4)*Z4;
+Z4 = sign(UridgeR0'*Z4)*Z4;
 
 X4 = V_AS(:,1); 
-X4 = -sign(V_all(:,3)'*X4)*X4;
+X4 = -sign( V_all(:,3)' * X4) * X4;
 
-Y4 = cross(Z4,X4);
+Y4 = cross(Z4, X4);
 
 % Write PIAAS ACS
 CSs.PIAAS.X = X4;
@@ -239,7 +250,7 @@ if nargout > 1
     TrObjects.Patella = Patella;
     TrObjects.PatArtSurf = ArtSurf;
     TrObjects.RidgePts_Separated = LowestPoints_CS0;
-    TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS,Center')*V_all';  
+    TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS*V_all',Center');  
 end
     
 
