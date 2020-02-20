@@ -116,7 +116,7 @@ EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
-[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf_it1(EpiTib, CSs, angle_thresh, curv_quartile);
+[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, angle_thresh, curv_quartile);
 
 % remove the ridge and the central part of the surface
 EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP);
@@ -132,6 +132,7 @@ catch
     EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 7);
     EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 15);
 end
+
 %==================
 % ITERATION 2 & 3 
 %==================
