@@ -14,17 +14,23 @@ ELP1.Xel = sign(Xel'*Y0)*Xel ;
 ELP1.Yel = sign(Yel'*Y0)*Yel ;
 ELP1.ellipsePts = ellipsePts;
 
+% debug
+quickPlotTriang(EpiTibAS);hold on
+
 % remove area between ridges
 EpiTibCenterRidgeMed = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'medial');
 EpiTibCenterRidgeLat = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'lateral');
-EpiTibCenterRidge    = TriUnite(EpiTibCenterRidgeLat,EpiTibCenterRidgeMed);
+% if there is no area to be removed keep EpiTibAS as it was, otherwise
+% remove that area
+if ~isempty(EpiTibCenterRidgeMed) || ~isempty(EpiTibCenterRidgeLat)
+    EpiTibCenterRidge    = TriUnite(EpiTibCenterRidgeLat,EpiTibCenterRidgeMed);
+    % Remove between ridge points from identified AS points
+    EpiTibAS = TriDifferenceMesh(EpiTibAS , EpiTibCenterRidge);
+    % debug
+    quickPlotTriang(EpiTibAS);hold on
+    quickPlotTriang(EpiTibCenterRidge,'r')
+end
 
-% Remove between ridge points from identified AS points
-EpiTibAS = TriDifferenceMesh(EpiTibAS , EpiTibCenterRidge);
-
-% debug
-quickPlotTriang(EpiTibAS);hold on
-quickPlotTriang(EpiTibCenterRidge,'r')
 
 %% Refine and separete medial and lateral AS region
 % Compute seed points to get a patch of AS on each condyle

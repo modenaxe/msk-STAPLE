@@ -52,6 +52,12 @@ dm = -mean(ellipsePts)*nm;
 % Identify the point contained between this plan and ellipse middle plan
 NodesOnCenterID = find(sign(EpiTibAS.Points*np+dp) + sign(EpiTibAS.Points*nm+dm)>0.1);
 
+if isempty(NodesOnCenterID)
+    warning(['No areas near the ridge to remove on the ', is_medial, ' side of knee'])
+    EpiTibCenterRidge = [];
+    return
+end
+    
 EpiTibCenterRidge = TriReduceMesh( EpiTibAS, [] , NodesOnCenterID );
 
 % as in original GIBOK
