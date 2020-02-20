@@ -1,4 +1,4 @@
-function [EpiTibAS, oLSP,Ztp] = GIBOK_tibia_FullProxArtSurf_it1(EpiTib, CSs, angle_thresh, curv_quartile)
+function [EpiTibAS, oLSP,Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, angle_thresh, curv_quartile)
 
 % 1) identify surface
 % 2) fit plane 
@@ -13,7 +13,7 @@ Y0 = CSs.Y0;
 Curvtr = sqrt(4*Cmean.^2-2*Cgaussian);
 
 % Keep only the elements that respect both criteria :
-%   1) Make an angle inferior to 35° with Z0
+%   1) Make an angle inferior to 35ï¿½ with Z0
 %   2) Within the 1st quartile of curvature "intensity"
 NodesEpiAS_OK = find(rad2deg(acos(EpiTib.vertexNormal*Z0))<angle_thresh &...
                      Curvtr<quantile(Curvtr, curv_quartile)) ;
