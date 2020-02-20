@@ -1,4 +1,4 @@
-function EpiTibCenterRidge = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, ELP1, Ztp , is_medial)
+function EpiTibCenterRidge = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , is_medial)
 
 Z0 = CSs.Z0;
 
@@ -28,8 +28,8 @@ if strcmp(is_medial, 'medial')
     coeff = 1;
 elseif strcmp(is_medial, 'lateral')
     Pts_tmp = Curve.Pts( term*Yel<0 & ...
-                                    term*Yel>-b/3&...
-                                    abs(term*Z0)<a/2,:);
+                         term*Yel>-b/3&...
+                         abs(term*Z0)<a/2,:);
     [~,IDPtsMax] = min(Pts_tmp*Z0);
     coeff = -1;
 else
@@ -56,7 +56,7 @@ EpiTibCenterRidge = TriReduceMesh( EpiTibAS, [] , NodesOnCenterID );
 
 % as in original GIBOK
 if strcmp(is_medial, 'lateral')
-    EpiTibCenterRidge = TriDilateMesh(EpiTibAS, EpiTibCenterRidge,5);
+    EpiTibCenterRidge = TriDilateMesh(EpiTibAS, EpiTibCenterRidge,5*CoeffMorpho);
 end
 
 end

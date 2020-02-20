@@ -1,4 +1,4 @@
-function AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs)
+function AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho)
 
 Z0 = CSs.Z0;
 V_all = CSs.V_all;
@@ -21,8 +21,8 @@ AnkleArtSurfNodesOK0 =  find(Cmean>quantile(Cmean,lb_quant) & ...%cond1
                              rad2deg(acos(-DistTib.vertexNormal*Z0))<Z0_ang_dev_it1);%cond3
 % filtering the surface
 AnkleArtSurf0 = TriReduceMesh(DistTib,[],double(AnkleArtSurfNodesOK0));
-AnkleArtSurf0 = TriCloseMesh(DistTib,AnkleArtSurf0,6);
-AnkleArtSurf0 = TriOpenMesh(DistTib,AnkleArtSurf0,4);
+AnkleArtSurf0 = TriCloseMesh(DistTib,AnkleArtSurf0,6*CoeffMorpho);
+AnkleArtSurf0 = TriOpenMesh(DistTib,AnkleArtSurf0,4*CoeffMorpho);
 AnkleArtSurf0 = TriConnectedPatch( AnkleArtSurf0, mean(AnkleArtSurf0.Points));
 
 % 2nd : fit a polynomial surface to it AND 
@@ -31,9 +31,9 @@ AnkleArtSurf0 = TriConnectedPatch( AnkleArtSurf0, mean(AnkleArtSurf0.Points));
 TibiaElmtsIDOK = AnkleSurfFit( AnkleArtSurf0, DistTib, V_all );
 AnkleArtSurf = TriReduceMesh(DistTib , TibiaElmtsIDOK);
 AnkleArtSurf = TriErodeMesh(AnkleArtSurf,2);
-AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,6);
-AnkleArtSurf = TriOpenMesh(DistTib,AnkleArtSurf,4);
-AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,2);
+AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,6*CoeffMorpho);
+AnkleArtSurf = TriOpenMesh(DistTib,AnkleArtSurf,4*CoeffMorpho);
+AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,2*CoeffMorpho);
 
 % Filter elements that are not oriented towards the "axis" of the AS
 AnkleArtSurfProperties = TriMesh2DProperties(AnkleArtSurf);
@@ -51,7 +51,7 @@ AnkleArtSurfElmtsOK = find(rad2deg(acos(AnkleArtSurf.faceNormal*ZAnkleSurf))<Z0_
                                  sqrt(sum(term.^2,2))<0.1);
 % filter the surface (iter 2)
 AnkleArtSurf = TriReduceMesh(AnkleArtSurf,AnkleArtSurfElmtsOK);
-AnkleArtSurf = TriOpenMesh(DistTib,AnkleArtSurf,4);
-AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,10);
+AnkleArtSurf = TriOpenMesh(DistTib,AnkleArtSurf,4*CoeffMorpho);
+AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,10*CoeffMorpho);
 
 end

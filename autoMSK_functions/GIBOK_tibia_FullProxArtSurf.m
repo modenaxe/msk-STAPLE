@@ -1,4 +1,4 @@
-function [EpiTibAS, oLSP,Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, angle_thresh, curv_quartile)
+function [EpiTibAS, oLSP,Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, CoeffMorpho, angle_thresh, curv_quartile)
 
 % 1) identify surface
 % 2) fit plane 
@@ -25,7 +25,7 @@ Pcondyle = EpiTib.Points(NodesEpiAS_OK,:);
 
 % Smooth resulting surface
 EpiTibAS = TriReduceMesh( EpiTib, [] , NodesEpiAS_OK );
-EpiTibAS = TriCloseMesh( EpiTib, EpiTibAS, 6 );
+EpiTibAS = TriCloseMesh( EpiTib, EpiTibAS, 6*CoeffMorpho);
  
 % Fit an ellipse on proximal AS to get an initial Ml and AP axis
 [ Xel, Yel, ellipsePts , ellipsePpties] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );

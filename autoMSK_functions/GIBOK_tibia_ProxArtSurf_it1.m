@@ -1,4 +1,4 @@
-function EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP)
+function EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP, CoeffMorpho)
 
 Z0 = CSs.Z0;
 Y0 = CSs.Y0;
@@ -15,8 +15,8 @@ ELP1.Yel = sign(Yel'*Y0)*Yel ;
 ELP1.ellipsePts = ellipsePts;
 
 % remove area between ridges
-EpiTibCenterRidgeMed = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, ELP1, Ztp , 'medial');
-EpiTibCenterRidgeLat = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, ELP1, Ztp , 'lateral');
+EpiTibCenterRidgeMed = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'medial');
+EpiTibCenterRidgeLat = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'lateral');
 EpiTibCenterRidge    = TriUnite(EpiTibCenterRidgeLat,EpiTibCenterRidgeMed);
 
 % Remove between ridge points from identified AS points

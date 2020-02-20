@@ -1,5 +1,6 @@
 function [CSs, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
 
+
 if nargin<3
     in_mm=1;
 end
@@ -25,6 +26,15 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
 end
 
+%% Get the mean edge length of the triangles composing the patella
+PptiesTibia = TriMesh2DProperties( Tibia );
+% Assume triangles are equilaterals
+meanEdgeLength = sqrt( 4/sqrt(3) * PptiesTibia.TotalArea / Tibia.size(1) );
+% Get the coefficient for morphology operations
+CoeffMorpho = 0.5 / meanEdgeLength ;
+% This is necessary because the functions were originally developped for
+% triangulation with constant mean edge lengths of 0.5 mm
+
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Tibia );
 
@@ -42,7 +52,7 @@ CSs.V_all = V_all;
 CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs);
 
 % extract the distal tibia articular surface
-AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs);
+AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho);
 
 % Method to get ankle center : 
 %  1) Fit a LS plan to the distal tibia art surface, 
@@ -116,27 +126,19 @@ EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
-[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, angle_thresh, curv_quartile);
+[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, CoeffMorpho, angle_thresh, curv_quartile);
 
 % remove the ridge and the central part of the surface
-EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP);
+EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP, CoeffMorpho);
 
-warning('Needs a check on the filter')
-% % Smooth found ArtSurf
-% % makes the algorithm fail
-try
-    EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15);
-    EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30);
-catch
-    warning('original GIBOK filters not working...relaxing them')
-    EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 7);
-    EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 15);
-end
+% Smooth found ArtSurf
+EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15*CoeffMorpho);
+EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 
 %==================
 % ITERATION 2 & 3 
 %==================
-[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs);
+[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs, CoeffMorpho);
 % builld the triangulation
 EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
 

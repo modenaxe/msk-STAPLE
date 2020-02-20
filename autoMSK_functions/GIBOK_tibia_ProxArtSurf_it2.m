@@ -1,4 +1,4 @@
-function [EpiTibASMed, EpiTibASLat, EpiTibAS_it2] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs)
+function [EpiTibASMed, EpiTibASLat, EpiTibAS_it2] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs, CoeffMorpho)
 
 Z0 = CSs.Z0;
 Y0 = CSs.Y0;
@@ -34,9 +34,9 @@ for nc = 1:2
     EpiTibASElmtsOK = find(abs(cEpiTibAS.incenter*Ztp+d) < dist_thresh & ...
         cEpiTibAS.faceNormal*Ztp > norm_thresh );
     cEpiTibAS = TriReduceMesh(cEpiTibAS,EpiTibASElmtsOK);
-    cEpiTibAS = TriOpenMesh(EpiTib,cEpiTibAS,2);
+    cEpiTibAS = TriOpenMesh(EpiTib,cEpiTibAS,2*CoeffMorpho);
     cEpiTibAS = TriConnectedPatch( cEpiTibAS, PtsInit(:,:,nc) );
-    cEpiTibAS = TriCloseMesh(EpiTib,cEpiTibAS,10);
+    cEpiTibAS = TriCloseMesh(EpiTib,cEpiTibAS,10*CoeffMorpho);
     s(nc) = {cEpiTibAS};
     clear PtsInitv cEpiTibAS EpiTibASElmtsOK
 end
@@ -63,9 +63,9 @@ for ncc =1:2
     EpiTibASElmtsOK = find(abs(cur_EpiTibAS.incenter*Ztp+d)<dist_thresh(ncc) & ...
         cur_EpiTibAS.faceNormal*Ztp>norm_thresh);
     cur_EpiTibAS = TriReduceMesh(cur_EpiTibAS,EpiTibASElmtsOK);
-    cur_EpiTibAS = TriOpenMesh(EpiTib,cur_EpiTibAS,2);
+    cur_EpiTibAS = TriOpenMesh(EpiTib,cur_EpiTibAS,2*CoeffMorpho);
     cur_EpiTibAS = TriConnectedPatch( cur_EpiTibAS, PtsInit(:,:,ncc) );
-    cur_EpiTibAS = TriCloseMesh(EpiTib,cur_EpiTibAS,10);
+    cur_EpiTibAS = TriCloseMesh(EpiTib,cur_EpiTibAS,10*CoeffMorpho);
     s2(ncc) = {cur_EpiTibAS};
     clear cur_EpiTibAS EpiTibASElmtsOK
 end
