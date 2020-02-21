@@ -20,7 +20,7 @@ bone_geom_folder = './test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 3;
+nd = 2;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
