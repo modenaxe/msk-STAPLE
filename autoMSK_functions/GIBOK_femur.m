@@ -16,6 +16,15 @@ else
     Femur = TriUnite(DistFem, ProxFem);
 end
 
+% Get the mean edge length of the triangles composing the femur
+% This is necessary because the functions were originally developped for
+% triangulation with constant mean edge lengths of 0.5 mm
+PptiesFemur = TriMesh2DProperties( Femur );
+% Assume triangles are equilaterals
+meanEdgeLength = sqrt( 4/sqrt(3) * PptiesFemur.TotalArea / Femur.size(1) );
+% Get the coefficient for morphology operations
+CoeffMorpho = 0.5 / meanEdgeLength ;
+
 % Initial Coordinate system (from inertial axes and femoral head)
 %-------------------------------------
 % Z0: points upwards (inertial axis) 
@@ -37,7 +46,7 @@ CSs.V_all = V_all;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
-[CSs, FemHead] = findFemoralHead(ProxFem, CSs);
+[CSs, FemHead] = findFemoralHead(ProxFem, CSs, CoeffMorpho);
 
 % X0 points backwards
 CSs.X0 = cross(CSs.Y0, CSs.Z0);
@@ -46,14 +55,14 @@ CSs.X0 = cross(CSs.Y0, CSs.Z0);
 EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'full_condyles');
+[fullCondyle_Med, fullCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'full_condyles');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med_end, postCondyle_Lat_end, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'post_condyles');
+[postCondyle_Med_end, postCondyle_Lat_end, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
-[Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, 'pat_groove');
+[Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
 CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);

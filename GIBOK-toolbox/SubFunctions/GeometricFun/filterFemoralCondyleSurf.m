@@ -1,4 +1,4 @@
-function Condyle_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle, Pts_0_C)
+function Condyle_end = filterFemoralCondyleSurf(EpiFem, CSs, PtsCondyle, Pts_0_C, CoeffMorpho)
 
 
 % NOTE in the original toolbox lateral and medial condyles were processed
@@ -14,7 +14,7 @@ Y1 = CSs.Y1;
 
 Center = sphereFit(PtsCondyle);
 Condyle = TriReduceMesh(EpiFem, [], PtsCondyle);
-Condyle = TriCloseMesh(EpiFem, Condyle, 4);
+Condyle = TriCloseMesh(EpiFem, Condyle, 4*CoeffMorpho);
 
 % Get Curvature
 [Cmean,Cgaussian,~,~,~,~] = TriCurvature(Condyle, false);
@@ -51,7 +51,7 @@ Prob_Edge = 0.6*sqrt(Prob_Edge_Angle.*Prob_Edge_Curv) +...
 Condyle_edges = TriReduceMesh(Condyle,[],find(Prob_Edge_Curv.*Prob_Edge_Angle>0.5));
 Condyle_end = TriReduceMesh(Condyle,[],find(Prob_Edge<0.20));
 Condyle_end = TriConnectedPatch( Condyle_end, Pts_0_C  );
-Condyle_end = TriCloseMesh(EpiFem,Condyle_end,10);
+Condyle_end = TriCloseMesh(EpiFem,Condyle_end,10*CoeffMorpho);
 
 % medial condyle (in original script)
 Condyle_end = TriKeepLargestPatch( Condyle_end );

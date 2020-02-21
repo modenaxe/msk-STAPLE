@@ -1,4 +1,4 @@
-function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, art_surface)
+function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface)
 
 V_all = CSs.V_all;
 Z0 = CSs.Z0;
@@ -139,8 +139,8 @@ CSs.Z1 = Z1;
 switch art_surface
     case 'full_condyles'
         % if output is full condyles then just filter and create triang
-        DesiredArtSurfLat_Tri = smoothFemoralCondyles(EpiFem, ArticularSurface_Lat);
-        DesiredArtSurfMed_Tri = smoothFemoralCondyles(EpiFem, ArticularSurface_Med);
+        DesiredArtSurfLat_Tri = smoothFemoralCondyles(EpiFem, ArticularSurface_Lat, CoeffMorpho);
+        DesiredArtSurfMed_Tri = smoothFemoralCondyles(EpiFem, ArticularSurface_Med, CoeffMorpho);
         
     case 'post_condyles'
         % Delete points that are anterior to Notch
@@ -151,8 +151,8 @@ switch art_surface
         
         % Filter with curvature and normal orientation to keep only the post parts
         % these are triangulations
-        DesiredArtSurfLat_Tri = filterFemoralCondyleSurf(EpiFem, CSs, ArticularSurface_Lat, Pts_0_C1);
-        DesiredArtSurfMed_Tri = filterFemoralCondyleSurf(EpiFem, CSs, ArticularSurface_Med, Pts_0_C2);
+        DesiredArtSurfLat_Tri = filterFemoralCondyleSurf(EpiFem, CSs, ArticularSurface_Lat, Pts_0_C1, CoeffMorpho);
+        DesiredArtSurfMed_Tri = filterFemoralCondyleSurf(EpiFem, CSs, ArticularSurface_Med, Pts_0_C2, CoeffMorpho);
     case 'pat_groove'
         % Generating patellar groove triangulations (med and lat)
         % initial estimations of anterior patellar groove (anterior to mid point)
@@ -163,8 +163,8 @@ switch art_surface
         PtsGroove_Lat = ant_lat(ant_lat*X1>PtNotch*X1,:);
         PtsGroove_Med = ant_med(ant_med*X1>PtNotch*X1,:);
         % triangulations of medial and lateral patellar groove surfaces
-        DesiredArtSurfLat_Tri = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Lat, Pts_0_C1);
-        DesiredArtSurfMed_Tri = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1);
+        DesiredArtSurfLat_Tri = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Lat, Pts_0_C1, CoeffMorpho);
+        DesiredArtSurfMed_Tri = filterFemoralCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1, CoeffMorpho);
     otherwise
 end
 end

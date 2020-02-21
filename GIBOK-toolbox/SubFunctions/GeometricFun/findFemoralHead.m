@@ -1,4 +1,4 @@
-function [CSs, FemHead] = findFemoralHead(ProxFem, CSs)
+function [CSs, FemHead] = findFemoralHead(ProxFem, CSs, CoeffMorpho)
     
 % from CSs structures we need:
 % - CSs.CenterVol
@@ -23,7 +23,7 @@ I_Top_FH = [I_Top_FH ProxFem.neighbors(I_Top_FH)];
 % triang around it
 Face_Top_FH = TriReduceMesh(ProxFem,I_Top_FH);
 % create a triang with them
-[ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40 );
+[ Patch_Top_FH ] = TriDilateMesh( ProxFem ,Face_Top_FH , 40*CoeffMorpho);
 
 % Get an initial ML Axis Y0 (pointing medio-laterally)
 % NB: from centerVol, OT points upwards to ~HJC, that is more medial than
@@ -35,7 +35,7 @@ CSs.Y0 = normalizeV(  cross(cross(CSs.Z0,OT),CSs.Z0)  );
 [~ , I_MM_FH] = max( ProxFem.incenter*CSs.Y0 );
 I_MM_FH = [I_MM_FH ProxFem.neighbors(I_MM_FH)];
 Face_MM_FH = TriReduceMesh(ProxFem,I_MM_FH);
-[ Patch_MM_FH ] = TriDilateMesh( ProxFem ,Face_MM_FH , 40 );
+[ Patch_MM_FH ] = TriDilateMesh( ProxFem ,Face_MM_FH , 40*CoeffMorpho );
 
 % STEP1: first sphere fit
 FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
@@ -106,7 +106,7 @@ else
     Face_ID_PF_2D_onSphere = find(Cond1);
     % get the mesh and points on the femoral head
     FemHead1 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
-    FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3);
+    FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3*CoeffMorpho);
     plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.m','LineWidth',3);
     hold on, axis equal
     
@@ -130,7 +130,7 @@ Face_ID_PF_2D_onSphere = find(combined_Cond);
 
 % get the mesh and points on the femoral head
 FemHead = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
-FemHead = TriOpenMesh(ProxFem ,FemHead,3);
+FemHead = TriOpenMesh(ProxFem ,FemHead,3*CoeffMorpho);
 
 % % final fem head
 % plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
