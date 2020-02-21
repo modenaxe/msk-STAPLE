@@ -26,7 +26,7 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
 end
 
-%% Get the mean edge length of the triangles composing the patella
+%% Get the mean edge length of the triangles composing the tibia
 PptiesTibia = TriMesh2DProperties( Tibia );
 % Assume triangles are equilaterals
 meanEdgeLength = sqrt( 4/sqrt(3) * PptiesTibia.TotalArea / Tibia.size(1) );
