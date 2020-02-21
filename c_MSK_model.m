@@ -46,8 +46,8 @@ dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
 dataset = dataset_set{nd};
 tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
 visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
-body_list = {'tibia_r'};%{'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
-triGeom_file_list = {'tibia_r'};%{'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
+body_list = {'femur_r','calcn_r','tibia_r'};%{'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+triGeom_file_list = {'femur_r','calcn_r','tibia_r'};%{'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
 visual_file_list = triGeom_file_list;
 type_mesh = '.vtp';
 
@@ -69,6 +69,8 @@ for nb = 1:length(body_list)
     addTriGeomBody(osimModel, cur_body_name, cur_geom, bone_density, in_mm, cur_vis_file);
     geom_set.(cur_body_name) = cur_geom;
 end
+
+[CSs, TrObjects] = GIBOK_calcn(geom_set.calcn_r);
 
 % %---- PELVIS -----
 % % solve reference system from geometry
@@ -92,7 +94,7 @@ end
 % 
 % %---- FEMUR -----
 % FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
-% [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
+[ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
 % 
 % HJC_location = FemurCS.CenterFH_Kai*dim_fact;
 % femur_orientation = computeZXYAngleSeq(FemurCS.V);
@@ -112,7 +114,7 @@ end
 % defines the axis for the tibia
 % CS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
 
-[CSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r)
+[CSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r);
 
 TTB = autoLandmarkTibia(geom_set.tibia_r, CS, 1);
 
