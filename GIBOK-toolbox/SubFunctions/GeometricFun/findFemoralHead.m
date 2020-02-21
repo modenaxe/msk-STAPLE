@@ -60,7 +60,7 @@ title('First fit')
 % IMPORTANT: TriDilateMesh "grows" the original mesh, does not create a
 % larger one!
 FemHead_dil_coeff = 1.5;
-[ DilateFemHeadTri] = TriDilateMesh( ProxFem ,FemHead0 , round(FemHead_dil_coeff*Radius) );
+[ DilateFemHeadTri] = TriDilateMesh( ProxFem ,FemHead0 , round(FemHead_dil_coeff*Radius*CoeffMorpho));
 [CenterFH,RadiusDil] = sphereFit(DilateFemHeadTri.Points);
 CenterFH0 = CenterFH;
 
@@ -95,45 +95,45 @@ Cond2 = abs(sqrt(sum(bsxfun(@minus,DilateFemHeadTri.incenter,CenterFH).^2,2))...
 
 % [LM] I have found both conditions do not work always, when combined
 % check if using both conditions produces results
-if sum(Cond1 & Cond2)> 1
-    combined_Cond = Cond1 & Cond2;
+single_cond = 0;
+min_number_of_points = 20;
+if sum(Cond1 & Cond2)> min_number_of_points
+    % combined conditions
+    applied_Cond = Cond1 & Cond2;
 else
-
-% TODO: find out how to deal with combined conditions not working
-
-    % apply cond 1
+    % flag that only one condition is used
+    single_cond = 1;
     cond1_count = sum(Cond1);
-    Face_ID_PF_2D_onSphere = find(Cond1);
-    % get the mesh and points on the femoral head
-    FemHead1 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
-    FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3*CoeffMorpho);
-    plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.m','LineWidth',3);
-    hold on, axis equal
     
-    % apply condition 2
-    cond2_count = sum(Cond2);
-    Face_ID_PF_2D_onSphere = find(Cond2);
-    
-    % get the mesh and points on the femoral head
-    FemHead2 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
-    FemHead2 = TriOpenMesh(ProxFem ,FemHead2,3);
-    plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
-    
+    % for debug plotting
+%     Face_ID_PF_2D_onSphere = find(Cond1);
+%     % get the mesh and points on the femoral head
+%     FemHead1 = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
+%     FemHead1 = TriOpenMesh(ProxFem ,FemHead1,3*CoeffMorpho);
+%     plot3(FemHead1.Points(:,1), FemHead1.Points(:,2), FemHead1.Points(:,3),'.m','LineWidth',3);
+%     hold on, axis equal
+
     % export just one cond
-    combined_Cond = Cond1;
+    applied_Cond = Cond1;
 end
-    
-combined_cond_count = sum(combined_Cond);
+
+% % count the number of points satisfying the condition
+% applied_cond_count = sum(applied_Cond);
 
 % search within conditions Cond1 and Cond2
-Face_ID_PF_2D_onSphere = find(combined_Cond);
+Face_ID_PF_2D_onSphere = find(applied_Cond);
 
-% get the mesh and points on the femoral head
+% get the mesh and points on the femoral head 
 FemHead = TriReduceMesh(DilateFemHeadTri,Face_ID_PF_2D_onSphere);
+% if just one condition is active JB suggests to keep largest patch
+if single_cond ==1
+    FemHead = TriKeepLargestPatch(FemHead);
+end
 FemHead = TriOpenMesh(ProxFem ,FemHead,3*CoeffMorpho);
 
-% % final fem head
-% plot3(FemHead2.Points(:,1), FemHead2.Points(:,2), FemHead2.Points(:,3),'.r');
+% final femoral head used for fitting
+quickPlotTriang(FemHead, 'r')
+
 
 % Fit the last Sphere
 [CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);

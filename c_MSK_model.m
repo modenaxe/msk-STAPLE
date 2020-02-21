@@ -70,7 +70,7 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-[CSs, TrObjects] = GIBOK_calcn(geom_set.calcn_r);
+% [CSs, TrObjects] = GIBOK_calcn(geom_set.calcn_r);
 
 % %---- PELVIS -----
 % % solve reference system from geometry
