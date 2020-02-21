@@ -99,7 +99,7 @@ YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
 
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
-TODO PLOT THE AXES OF THE ELLIPSE
+warning('!!!TODO PLOT THE AXES OF THE ELLIPSE!!!');
 
 % % % create GIBOK ref system
 % Zend = Z0;
