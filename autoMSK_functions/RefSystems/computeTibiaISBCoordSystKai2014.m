@@ -1,6 +1,8 @@
 
 function CS = computeTibiaISBCoordSystKai2014(Tibia, DistTib)
 
+% NOTE THAT PCA AND INERTIAL AXES ARE ALMOST IDENTICAL
+
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
 if ~exist('DistTib','var')
@@ -15,9 +17,6 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
     [ V_all, CenterVol] = TriInertiaPpties( Tibia );
 end
-
-% NOTE THAT INERTIAL AXES SHOULD ACTUALLY BE PCA OF TIBIA AND FIBULA
-% (COMPLETE BONES)
 
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
@@ -36,13 +35,7 @@ Y0 = V_all(:,2);
 
 % Slices of 1mm as in Kai et al. 2014
 slices_thick = 1;
-Areas = TriSliceObjAlongAxis(Tibia, Z0, slices_thick, 0);
-
-% Get the bone outline at maximal CSA
-AltAtMax = Alt(Areas==max(Areas));
-
-% % check max area
-% figure; plot(Alt, Area); hold on; plot(AltAtMax, max(Area),'o')
+[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Z0, slices_thick);
 
 % slice at max area
 [ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Z0 , -AltAtMax );
@@ -53,7 +46,7 @@ max_area = 0;
 if N_Curves>1
     for nc = 1:N_Curves
     slice = polyshape(Curves(nc).Pts(:,1), Curves(nc).Pts(:,2));
-    plot(slice)
+%     plot(slice)
     area_curve = area(slice);
     if area_curve>max_area
         max_area = area_curve;
@@ -105,10 +98,10 @@ warning('!!!TODO PLOT THE AXES OF THE ELLIPSE!!!');
 % quickPlotRefSystem(GIBOK);
 
 % create ISB ref system
-Zend = Z0;
-Xend = normalizeV( cross(YElpsMax,Zend) );
-Yend = cross(Zend,Xend);
-Yend = normalizeV( sign(Yend'*Y0)*Yend );
+Yend = Z0;
+Xend = normalizeV( -cross(YElpsMax,Z0) );
+Zend = cross(Xend, Yend);
+Zend = normalizeV( sign(Zend'*Y0)*Zend );
 Xend = cross(Yend,Zend);
 
 % Store geometrical info

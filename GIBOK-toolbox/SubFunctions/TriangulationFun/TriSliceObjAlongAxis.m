@@ -1,11 +1,18 @@
 % Author: Luca Modenese
 % Feb 2020
 
-function Areas = TriSliceObjAlongAxis(TriObj, Axis, step, debug_plot)
+function [Areas, Alt, maxArea, maxAreaInd, maxAlt] = TriSliceObjAlongAxis(TriObj, Axis, step, cut_offset, debug_plot)
 
-% THIS IS INCORRECT: SLICES SHOULD BE 1mm APART
-min_coord = min(TriObj.Points*Axis)+0.5;
-max_coord = max(TriObj.Points*Axis)-0.5;
+if nargin<4
+    cut_offset = 0.5;
+end
+
+if nargin<5
+    debug_plot=0;
+end
+
+min_coord = min(TriObj.Points*Axis)+cut_offset;
+max_coord = max(TriObj.Points*Axis)-cut_offset;
 Alt = min_coord:step:max_coord;
 
 Areas=[];
@@ -25,5 +32,8 @@ for d = -Alt
         end
     end
 end
+
+[maxArea, maxAreaInd] = max(Areas);
+maxAlt = Alt(maxAreaInd);
 
 end
