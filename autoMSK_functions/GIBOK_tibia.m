@@ -150,11 +150,11 @@ quickPlotTriang(EpiTib,'y',1);hold on
 quickPlotTriang(EpiTibASMed,'r')
 quickPlotTriang(EpiTibASLat,'b')
 
-CSs = GIBOK_tibia_EllipseACS(EpiTibAS, CSs);
-
-CSs = GIBOK_tibia_DoubleEllipseACS(EpiTibASMed, EpiTibASLat);
-
-CSs = GIBOK_tibia_PlateauLayerACS(EpiTibAS, CSs);
+% CSs = GIBOK_tibia_EllipseACS(EpiTibAS, CSs);
+% 
+% CSs = GIBOK_tibia_DoubleEllipseACS(EpiTibASMed, EpiTibASLat);
+% 
+% CSs = GIBOK_tibia_PlateauLayerACS(EpiTibAS, CSs);
 
 %% Inertia Results
 Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
