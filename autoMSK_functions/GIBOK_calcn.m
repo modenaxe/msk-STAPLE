@@ -169,7 +169,8 @@ Y3 = cross(Z3, X3);
 CSs.X = X3; % Distal proximal
 CSs.Y = Y3; % Lateral to medial
 CSs.Z = Z3; % Ventral to dorsal
-
+CSs.V = [X3, Y3, Z3];
+CSs.Origin = heelPt;
 CSs.MedDistalMeta = PtMetaMed;
 CSs.LatDistalMeta = PtMetaLat;
 CSs.HeelTip = heelPt;
