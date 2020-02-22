@@ -70,7 +70,7 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-% [CSs, TrObjects] = GIBOK_calcn(geom_set.calcn_r);
+CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
 
 %---- PELVIS -----
 % solve reference system from geometry
@@ -93,7 +93,7 @@ osimModel.addJoint(pelvis_ground_joint);
 % 
 % %---- FEMUR -----
 FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
-% [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
+[ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
 
 HJC_location = FemurCS.CenterFH_Kai*dim_fact;
 femur_orientation = computeZXYAngleSeq(FemurCS.V);
@@ -112,8 +112,7 @@ osimModel.addJoint(hip_r);
 %---- TIBIA -----
 % defines the axis for the tibia
 TibiaRCS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
-
-% [CSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r);
+[CSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r);
 
 % knee joint
 % joint centre in femur
@@ -183,20 +182,23 @@ JointParams.parent_location    = subtalar_location;
 JointParams.parent_orientation = subtalar_orientation;
 JointParams.child_location     = subtalar_location;
 JointParams.child_orientation  = subtalar_orientation;
+
 % create the joint
 subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 
-
-
+% landmarking
+close all
+% quickPlotTriang(geom_set.femur_r);hold on
+% quickPlotRefSystem(FemurCS);
 FemurRBL = LandmarkGeom(geom_set.femur_r, FemurCS, 'femur_r');
 TibiaRBL = LandmarkGeom(geom_set.tibia_r, TibiaRCS, 'tibia_r');
+CalcaneusBL = LandmarkGeom(geom_set.calcn_r, CalcaneusCS, 'calcn_r');
 addMarkersFromStruct(osimModel, 'pelvis' , PelvisBL, in_mm)
 addMarkersFromStruct(osimModel, 'tibia_r', TibiaRBL, in_mm)
 addMarkersFromStruct(osimModel, 'femur_r', FemurRBL, in_mm)
 
-
-% finali
+% finalise
 osimModel.finalizeConnections()
 
 % print
