@@ -34,21 +34,12 @@ MostDistalPoint = Tibia.Points(I_dist_fib,:);
 % Y0 = med2lat';
 Y0 = V_all(:,2);
 
-% THIS IS INCORRECT: SLICES SHOULD BE 1mm APART
-Alt = linspace( min(Tibia.Points*Z0)+0.5 ,max(Tibia.Points*Z0)-0.5, 300);
-
-Area=[];
-quickPlotTriang(Tibia,'m')
-for d = -Alt
-    [ Curves , Area(end+1), ~ ] = TriPlanIntersect( Tibia, Z0 , d );
-    N_Curves = length(Curves);
-    for nn = 1:N_Curves
-        plot3(Curves(nn).Pts(:,1), Curves(nn).Pts(:,2), Curves(nn).Pts(:,3),'k-', 'LineWidth',3); hold on
-    end
-end
+% Slices of 1mm as in Kai et al. 2014
+slices_thick = 1;
+Areas = TriSliceObjAlongAxis(Tibia, Z0, slices_thick, 0);
 
 % Get the bone outline at maximal CSA
-AltAtMax = Alt(Area==max(Area));
+AltAtMax = Alt(Areas==max(Areas));
 
 % % check max area
 % figure; plot(Alt, Area); hold on; plot(AltAtMax, max(Area),'o')
