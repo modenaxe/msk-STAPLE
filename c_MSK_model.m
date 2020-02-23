@@ -133,7 +133,7 @@ osimModel.addJoint(knee_r);
 %---- PATELLA -----
 
 [ CSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
-% PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
+PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
 
 % patello-femoral joint
 patfemjoint_location_in_parent = CSs.VR.Origin*dim_fact;
