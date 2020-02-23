@@ -1,4 +1,4 @@
-function [ CS, TrObjects ] = computePatellaISBCoordSyst_Rainbow2013( Patella )
+function [ CS, TrObjects ] = MSK_patella_Rainbow2013( Patella )
 % It is assumed here that the patella is in a standard position in the
 % imaging device, so that Z0 point toward Superior direction
 

@@ -1,4 +1,4 @@
-function CS = computeSubtalarISBCoordSyst(Talus)
+function CS = GIBOK_fit_subtalar_ArtSurf(Talus)
 
 % switch th efinal fitting plot
 debug_plot = 1;

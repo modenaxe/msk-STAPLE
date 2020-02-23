@@ -1,5 +1,5 @@
 
-function CS = computeTibiaISBCoordSystKai2014(Tibia, DistTib)
+function CS = MSK_tibia_Kai2014(Tibia, DistTib)
 
 % NOTE THAT PCA AND INERTIAL AXES ARE ALMOST IDENTICAL
 

@@ -1,4 +1,4 @@
-function CS = computeAnkleISBCoordSyst(Talus)
+function CS = GIBOK_talus(Talus)
 
 
 debug_plot = 1;

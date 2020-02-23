@@ -1,5 +1,5 @@
 % modified by LM in 2020
-function [ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018( Patella )
+function [ CSs, TrObjects ] = MSK_patella_Renault2018( Patella )
 
 CSs = struct();
 

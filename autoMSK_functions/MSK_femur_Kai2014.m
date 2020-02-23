@@ -18,7 +18,7 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function CS = computeFemurISBCoordSyst_Kai2014(Femur, DistFem)
+function CS = MSK_femur_Kai2014(Femur, DistFem)
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
