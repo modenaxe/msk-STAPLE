@@ -1,10 +1,10 @@
-function CS = GIBOK_talus(Talus)
+function [TalocruralCS, SubtalarCS] = GIBOK_talus(Talus)
 
 
 debug_plot = 1;
 
 % structure to store ref system info
-CS = computeSubtalarISBCoordSyst(Talus);
+SubtalarCS = GIBOK_fit_subtalar_ArtSurf(Talus);
 
 [ V_all, CenterVol, InertiaMatrix, D ] = TriInertiaPpties( Talus );
 X0 = V_all(:,1); 
@@ -28,7 +28,7 @@ X0 = or*X0;
 Y0 = or*Y0;
 %% 5. Identification of the ankle joint cylinder
 % 5.1 Get a new CS from the subaxis 
-X1 = CS.SubTal_axis;
+X1 = SubtalarCS.SubTal_axis;
 Z1 = normalizeV(cross(X1,Y0));
 Y1 = cross(Z1,X1);
 
@@ -108,14 +108,14 @@ X3 = cross(Y3, Z3);
 
 
 % store ankle info
-CS.cyl_rad    = rn;
-CS.cyl_centre = x0n;
-CS.cyl_axis   = Y2;
-CS.Origin = x0n; % this could be the middle point of the cyl
-CS.X = X3;
-CS.Y = Y3;
-CS.Z = Z3;
-CS.V = [X3 Y3 Z3];
+TalocruralCS.cyl_rad    = rn;
+TalocruralCS.cyl_centre = x0n;
+TalocruralCS.cyl_axis   = Y2;
+TalocruralCS.Origin = x0n; % this could be the middle point of the cyl
+TalocruralCS.X = X3;
+TalocruralCS.Y = Y3;
+TalocruralCS.Z = Z3;
+TalocruralCS.V = [X3 Y3 Z3];
 if debug_plot
     % 5.5 Plot the results
     figure()
