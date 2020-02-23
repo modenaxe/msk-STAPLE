@@ -1,9 +1,18 @@
 % modified by LM in 2020
-function [ CSs, TrObjects ] = MSK_patella_Renault2018( Patella )
+function [ CSs, TrObjects ] = GIBOK_patella( Patella )
 
 CSs = struct();
 
-% Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
+%% Get the mean edge length of the triangles composing the patella
+PptiesPatella = TriMesh2DProperties( Patella );
+% Assume triangles are equilaterals
+meanEdgeLength = sqrt( 4/sqrt(3) * PptiesPatella.TotalArea / Patella.size(1) );
+% Get the coefficient for morphology operations
+CoeffMorpho = 0.5 / meanEdgeLength ;
+% This is necessary because the functions were originally developped for
+% triangulation with constant mean edge lengths of 0.5 mm
+
+%% Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Patella );
 Center = CenterVol;
 
@@ -43,7 +52,7 @@ Circularity3rdOffSettedQuart = Circularity(Alt>quantile(Alt,0.7) & Alt<quantile(
 % Check that the circularity is higher in the anterior part otherwise
 % invert AP axis direction :
 if mean(Circularity1stOffSettedQuart)<mean(Circularity3rdOffSettedQuart)
-    disp('Based on patella circularity invert AP axis')
+    sprintf('invert AP axis')
     V_all(:,3) = - V_all(:,3);
     V_all(:,2) = cross(V_all(:,3),V_all(:,1));
     V_all(:,1) = cross(V_all(:,2),V_all(:,3));
@@ -55,15 +64,12 @@ PatPIACS = TriChangeCS( Patella, V_all, CenterVol );
 %% Identify initial guess of patella posterior ridge
 % Optimization to find the ridge orientation
 U0 = [1;0;0];
-N_slices_guess1 = 30;
-U = LSSLFitRidge( PatPIACS, U0, N_slices_guess1);
+U = LSSLFitRidge( PatPIACS,U0,30);
 % Refine the guess with higher number of slices (75)
-N_slices_guess2 = 75;
-[ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge(PatPIACS, U, N_slices_guess2);
+[ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge( PatPIACS,U,75);
 V = [U(2); -U(1); 0];
 
-
-%% Separate the ridge region from the apex region
+%% Seperate the ridge region from the apex region
 % Move the lowest point to CS updated with initial ridge orientation PIACSU
 LowestPoints_PIACSU = LowestPoints_PIACS*[U V [0;0;1]];
 
@@ -99,17 +105,11 @@ else
 end
 
 
-%% Update the ridge orientation with optimisation only on the ridge region
-N_slices = 75;
-[ U, Uridge , LowestPoints_end ] = LSSLFitRidge(PatPIACS,...
-                                                U,...
-                                                N_slices,...
-                                                StartDist,...
-                                                EndDist);
+%% Update the ridge orienation with optimisation only on the ridge regioon
+[ U, Uridge , LowestPoints_end ] = LSSLFitRidge( PatPIACS,U,75,StartDist, EndDist);
 U = Side*U;
 
 LowestPoints_CS0 = bsxfun(@plus,LowestPoints_end*V_all',Center');
-
 
 
 %% Technic VR volume ridge
@@ -126,29 +126,14 @@ CSs.VR.Origin = CenterVol';
 quickPlotTriang(Patella, 'm',1)
 quickPlotRefSystem(CSs.VR)
 
-% ISB axes
-CSs.VR.X = -X;
-CSs.VR.Y = Z;
-CSs.VR.Z = Y;
-CSs.VR.Theta = -asin(U(1));
-CSs.VR.V = [-X Z Y ];
-CSs.VR.Origin = CenterVol';
-
-% quickPlotTriang(Patella, 'm',1)
-% quickPlotRefSystem(CSs.VR)
-
-% plot3(LowestPoints_CS0(:,1),LowestPoints_CS0(:,2),LowestPoints_CS0(:,3),'g*')
-% [~,LP_ind] = min(PatPIACS.Points(:,3));
-% LP_min = V_all'*([PatPIACS.Points(LP_ind,1); PatPIACS.Points(LP_ind,2); PatPIACS.Points(LP_ind,3)]+CenterVol);
-% plot3(LP_min(1), LP_min(2), LP_min(3),'Kx')
-
 %% Technic Ridge Line ( ridge Least Square line fit )
 % LS line fit on the ridge and ridge midpoint
 Uridge = sign(U'*Uridge)*Uridge;
+% Uridge in the initial (CT/MRI) coordinate system
+UridgeR0 = V_all*Uridge;
 
 % Construct RL ACS
 Center3 = mean(LowestPoints_CS0);
-
 Z3 = V_all*Uridge;
 X3 = -V_all(:,3);
 Y3 = normalizeV( cross(Z3,X3) );
@@ -157,6 +142,7 @@ X3 = cross(Y3,Z3);
 % Write RL ACS
 CSs.RL.X = X3;
 CSs.RL.Uridge = Uridge;
+CSs.RL.UridgeR0 = UridgeR0;
 CSs.RL.Y = Y3;
 CSs.RL.Z = Z3;
 CSs.RL.V = [X3 Y3 Z3];
@@ -177,15 +163,15 @@ IgoodElmts = find(Condition1&Condition2&Condition3);
 
 ArtSurf = TriReduceMesh(Patella,IgoodElmts);
 ArtSurf0 = ArtSurf ;
-ArtSurf = TriOpenMesh(Patella,ArtSurf,2);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,4);
-ArtSurf = TriConnectedPatch(ArtSurf,LowestPoints_CS0);
+ArtSurf = TriOpenMesh(Patella,ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriCloseMesh(Patella,ArtSurf, 4*CoeffMorpho);
+ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
 
 % Fit a plane to the AS
 [~,Nrml] = lsplane( ArtSurf.Points, X3 ); 
 
 % Update conditions with fitted plane orientation
-ArtSurfDilated = TriDilateMesh(Patella,ArtSurf,15);
+ArtSurfDilated = TriDilateMesh(Patella, ArtSurf, 15*CoeffMorpho);
 Condition1 = abs(ArtSurfDilated.faceNormal*Z3)<0.375;
 Condition2 = ArtSurfDilated.faceNormal*Nrml>cos(3*pi/10);
 Condition3 = ArtSurfDilated.incenter*Z3>PtRidgeDist*Z3+0.15*LengthRidge & ...
@@ -195,14 +181,15 @@ IgoodElmts = unique([find(Condition1&Condition2);find(Condition3)]);
 ArtSurf = TriReduceMesh(ArtSurfDilated,IgoodElmts);
 
 % Smooth found region with morphologic operations
-ArtSurf = TriOpenMesh(Patella,ArtSurf,3);
-ArtSurf = TriUnite(ArtSurf0,ArtSurf);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,2);
-ArtSurf = TriConnectedPatch(ArtSurf,LowestPoints_CS0);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,30);
-ArtSurf = TriOpenMesh(Patella,ArtSurf,15);
-ArtSurf = TriErodeMesh(ArtSurf,2);
-ArtSurf = TriCloseMesh(Patella,ArtSurf,5);
+ArtSurf = TriOpenMesh(Patella, ArtSurf, 3*CoeffMorpho);
+ArtSurf = TriUnite(ArtSurf0, ArtSurf);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 30*CoeffMorpho);
+ArtSurf = TriOpenMesh(Patella, ArtSurf, 15*CoeffMorpho);
+ArtSurf = TriErodeMesh(ArtSurf, 2*CoeffMorpho);
+ArtSurf = TriCloseMesh(Patella, ArtSurf, 5*CoeffMorpho);
+
 
 % Principal Inertia Matrix of the Articular Surface
 [V_AS,~] = eig(TriCovMatrix(ArtSurf));
@@ -211,12 +198,12 @@ D4 = TriMesh2DProperties(ArtSurf);
 % Construct PIAAS ACS
 Origin = D4.Center;
 Z4 = V_AS(:,2);
-Z4 = sign(Uridge'*Z4)*Z4;
+Z4 = sign(UridgeR0'*Z4)*Z4;
 
 X4 = V_AS(:,1); 
-X4 = -sign(V_all(:,3)'*X4)*X4;
+X4 = -sign( V_all(:,3)' * X4) * X4;
 
-Y4 = cross(Z4,X4);
+Y4 = cross(Z4, X4);
 
 % Write PIAAS ACS
 CSs.PIAAS.X = X4;
@@ -224,15 +211,8 @@ CSs.PIAAS.Y = Y4;
 CSs.PIAAS.Z = Z4;
 CSs.PIAAS.V = V_AS;
 
-% ISB
-% CSs.PIAAS.X = -X4;
-% CSs.PIAAS.Y = Z4;
-% CSs.PIAAS.Z = Y4;
-% CSs.PIAAS.V = [-X4 Z4 Y4];
-
 CSs.PIAAS.Origin = Origin;
 CSs.PIAAS.CenteronMesh = D4.onMeshCenter;
-
 
 quickPlotRefSystem(CSs.PIAAS)
 
@@ -241,7 +221,7 @@ if nargout > 1
     TrObjects.Patella = Patella;
     TrObjects.PatArtSurf = ArtSurf;
     TrObjects.RidgePts_Separated = LowestPoints_CS0;
-    TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS,Center')*V_all';  
+    TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS*V_all',Center');  
 end
     
 

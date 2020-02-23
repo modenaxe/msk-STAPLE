@@ -92,7 +92,7 @@ pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(pelvis_ground_joint);
 % 
 % %---- FEMUR -----
-FemurCS = computeFemurISBCoordSyst_Kai2014(geom_set.femur_r);
+FemurCS = MSK_femur_Kai2014(geom_set.femur_r);
 [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
 
 HJC_location = FemurCS.CenterFH_Kai*dim_fact;
@@ -111,8 +111,8 @@ osimModel.addJoint(hip_r);
 
 %---- TIBIA -----
 % defines the axis for the tibia
-TibiaRCS = computeTibiaISBCoordSystKai2014(geom_set.tibia_r);
-[CSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r);
+TibiaRCS = MSK_tibia_Kai2014(geom_set.tibia_r);
+[TibiaCSs, TrObjects] = GIBOK_tibia(geom_set.tibia_r);
 
 % knee joint
 % joint centre in femur
@@ -132,7 +132,7 @@ osimModel.addJoint(knee_r);
 
 %---- PATELLA -----
 
-[ CSs, TrObjects ] = computePatellaISBCoordSyst_Renault2018(geom_set.patella_r);
+[ CSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 % PatellaRS = computePatellaISBCoordSyst_Rainbow2013(geom_set.patella_r);
 
 % patello-femoral joint
@@ -155,12 +155,11 @@ osimModel.addJoint(patfem_r);
 addPatFemJointCoordCouplerConstraint(osimModel, 'r');
 
 %---- TALUS -----
-% not working for JIA
-CS = computeAnkleISBCoordSyst(geom_set.talus_r);
+[AnkleCS, SubtalarCS] = GIBOK_talus(geom_set.talus_r);
 
 JointParams = getJointParams('ankle_r');
-ankle_location = CS.Origin* dim_fact;
-talus_orientation = computeZXYAngleSeq(CS.V);
+ankle_location = AnkleCS.Origin* dim_fact;
+talus_orientation = computeZXYAngleSeq(AnkleCS.V);
 
 % tibiotalar
 JointParams.parent_location    = ankle_location;
@@ -173,9 +172,8 @@ ankle_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(ankle_r);
 
 %---- TALUS - SUBTALAR -----
-SubCS = computeSubtalarISBCoordSyst(geom_set.talus_r);
-subtalar_orientation = computeZXYAngleSeq(SubCS.V);
-subtalar_location = SubCS.Origin * dim_fact;
+subtalar_orientation = computeZXYAngleSeq(SubtalarCS.V);
+subtalar_location = SubtalarCS.Origin * dim_fact;
 % subtalar
 JointParams = getJointParams('subtalar_r');
 JointParams.parent_location    = subtalar_location;
