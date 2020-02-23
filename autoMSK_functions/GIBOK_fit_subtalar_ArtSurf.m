@@ -1,11 +1,11 @@
-function CS = GIBOK_fit_subtalar_ArtSurf(Talus)
+function SubtalarCS = GIBOK_fit_subtalar_ArtSurf(Talus)
 
 % switch th efinal fitting plot
 debug_plot = 1;
 fit_debug_plot = 0;
 
 % structure to store ref system info
-CS = struct;
+SubtalarCS = struct;
 
 
 %% 1. Indentify the inertia axis of the Talus
@@ -144,18 +144,18 @@ Z1 = normalizeV(cross(X1,Y0));
 Y1 = cross(Z1,X1);
 
 % store info about talo-navicular artic surf
-CS.TaloCalc_centre = Center_TlCcn;
-CS.TaloCalc_radius = Radius_TlCcn;
+SubtalarCS.TaloCalc_centre = Center_TlCcn;
+SubtalarCS.TaloCalc_radius = Radius_TlCcn;
 % store info about talo-navicular artic surf
-CS.TaloNav_centre = Center_TlNvc;
-CS.TaloNav_radius = Radius_TlNvc;
+SubtalarCS.TaloNav_centre = Center_TlNvc;
+SubtalarCS.TaloNav_radius = Radius_TlNvc;
 % ref system
-CS.SubTal_axis = u_SubAxis;
-CS.Origin = Center_TlCcn;
-CS.Z = X1;
-CS.Y = Z1;
-CS.X = Y1;
-CS.V = [CS.X CS.Y CS.Z];
+SubtalarCS.SubTal_axis = u_SubAxis;
+SubtalarCS.Origin = Center_TlCcn;
+SubtalarCS.Z = X1;
+SubtalarCS.Y = Z1;
+SubtalarCS.X = Y1;
+SubtalarCS.V = [SubtalarCS.X SubtalarCS.Y SubtalarCS.Z];
 
 if debug_plot
     % plot the results figure :
