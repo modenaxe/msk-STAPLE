@@ -12,7 +12,7 @@ addpath(genpath('autoMSK_functions'));
 
 % OpenSim libraries
 import org.opensim.modeling.*
-
+tic
 %--------------------------------
 % SETTINGS
 %--------------------------------
@@ -20,7 +20,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 2;
+nd = 1;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
@@ -132,13 +132,18 @@ osimModel.addJoint(knee_r);
 
 %---- PATELLA -----
 
-[ CSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
-PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
+[ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
+% PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
 
-% patello-femoral joint
-patfemjoint_location_in_parent = CSs.VR.Origin*dim_fact;
-patfemjoint_location_in_child = CSs.VR.Origin*dim_fact;
-patella_orientation = computeZXYAngleSeq(CSs.VR.V);
+% patello-femoral joint (OpenSim way)
+patfemjoint_location_in_parent = FemurCSs.PatGr.Origin*dim_fact;
+patfemjoint_location_in_child = FemurCSs.PatGr.Origin*dim_fact;
+patella_orientation = computeZXYAngleSeq(FemurCSs.PatGr.V);
+
+% % patello-femoral joint (OpenSim way)
+% patfemjoint_location_in_parent = PatellaCSs.VR.Origin*dim_fact;
+% patfemjoint_location_in_child = PatellaCSs.VR.Origin*dim_fact;
+% patella_orientation = computeZXYAngleSeq(PatellaCSs.VR.V);
 
 % joint
 JointParams = getJointParams('patellofemoral_r');
@@ -151,8 +156,6 @@ JointParams.child_orientation   = patella_orientation;
 patfem_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(patfem_r);
 
-% add patellofemoral constraint
-addPatFemJointCoordCouplerConstraint(osimModel, 'r');
 
 %---- TALUS -----
 [AnkleCS, SubtalarCS] = GIBOK_talus(geom_set.talus_r);
@@ -191,13 +194,27 @@ close all
 % quickPlotRefSystem(FemurCS);
 FemurRBL = LandmarkGeom(geom_set.femur_r, FemurCS, 'femur_r');
 TibiaRBL = LandmarkGeom(geom_set.tibia_r, TibiaRCS, 'tibia_r');
-CalcaneusBL = LandmarkGeom(geom_set.calcn_r, CalcaneusCS, 'calcn_r');
+PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCSs.VR, 'patella_r');
+CalcnBL = LandmarkGeom(geom_set.calcn_r, CalcaneusCS, 'calcn_r');
+% add markers to model
 addMarkersFromStruct(osimModel, 'pelvis' , PelvisBL, in_mm)
-addMarkersFromStruct(osimModel, 'tibia_r', TibiaRBL, in_mm)
 addMarkersFromStruct(osimModel, 'femur_r', FemurRBL, in_mm)
+addMarkersFromStruct(osimModel, 'tibia_r', TibiaRBL, in_mm)
+addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm)
+addMarkersFromStruct(osimModel, 'calcn_r', CalcnBL,  in_mm)
 
-% finalise
-osimModel.finalizeConnections()
+% add patellofemoral constraint
+% add patello-femoral joint
+
+% addPatFemJointCoordCouplerConstraint(osimModel, 'r');
+ptf = ConstantDistanceConstraint(osimModel.get_BodySet().get('tibia_r'),...
+                                 Vec3(TibiaRBL.RTTB(1)*dim_fact, TibiaRBL.RTTB(2)*dim_fact, TibiaRBL.RTTB(3)*dim_fact),...
+                                 osimModel.get_BodySet().get('patella_r'),...
+                                 Vec3(PatellaRBL.RLOW(1)*dim_fact, PatellaRBL.RLOW(2)*dim_fact, PatellaRBL.RLOW(3)*dim_fact),...
+                                 norm(TibiaRBL.RTTB-PatellaRBL.RLOW)*dim_fact);
+addConstraint(osimModel, ptf)                                
+
+osimModel.finalizeConnections();
 
 % print
 osimModel.print('5_auto_model.osim');
@@ -205,7 +222,7 @@ osimModel.print('5_auto_model.osim');
 % CS = computeCalcnISBCoordSyst(geom);
 
 osimModel.disownAllComponents();
-
+toc
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
 rmpath('autoMSK_functions');
