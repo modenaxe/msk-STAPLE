@@ -27,15 +27,16 @@ for nL = 1:NL
     % store names
     cur_name = cur_land{1};
     if strcmp(cur_land(end), 'proximal')
-        Landmarks.(cur_name) = getLandmark(TriPoints(TriPoints(:,2)>COM(2),:), cur_land{2}, cur_land{3});
+        local_BL = getLandmark(TriPoints(TriPoints(:,2)>COM(2),:), cur_land{2}, cur_land{3});
     elseif strcmp(cur_land(end), 'distal')
-        Landmarks.(cur_name) = getLandmark(TriPoints(TriPoints(:,2)<COM(2),:), cur_land{2}, cur_land{3});
+        local_BL = getLandmark(TriPoints(TriPoints(:,2)<COM(2),:), cur_land{2}, cur_land{3});
     else
         % get landmark
-        Landmarks.(cur_name) = getLandmark(TriPoints, cur_land{2}, cur_land{3});
+        local_BL = getLandmark(TriPoints, cur_land{2}, cur_land{3});
     end
-    % plot marker
-    plotDot(Landmarks.(cur_name),'r',10);
+    % plot marker (I have to transform it back
+    plotDot(local_BL,'r',10);
+    Landmarks.(cur_name) = CS.Origin+local_BL*CS.V';
 end
 
 end
