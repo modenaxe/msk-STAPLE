@@ -52,7 +52,7 @@ Circularity3rdOffSettedQuart = Circularity(Alt>quantile(Alt,0.7) & Alt<quantile(
 % Check that the circularity is higher in the anterior part otherwise
 % invert AP axis direction :
 if mean(Circularity1stOffSettedQuart)<mean(Circularity3rdOffSettedQuart)
-    sprintf('invert AP axis')
+    disp('Based on circularity analysis invert AP axis');
     V_all(:,3) = - V_all(:,3);
     V_all(:,2) = cross(V_all(:,3),V_all(:,1));
     V_all(:,1) = cross(V_all(:,2),V_all(:,3));
@@ -117,12 +117,22 @@ Z = V_all*U;
 X = -V_all(:,3);
 Y = cross(Z,X);
 
-CSs.VR.X = X;
-CSs.VR.Y = Y;
-CSs.VR.Z = Z;
+% %GIBOK
+% CSs.VR.X = X;
+% CSs.VR.Y = Y;
+% CSs.VR.Z = Z;
+% CSs.VR.Theta = -asin(U(1));
+% CSs.VR.V = [X Y Z];
+% CSs.VR.Origin = CenterVol';
+
+% ISB standards
+CSs.VR.X = -X;
+CSs.VR.Y = Z;
+CSs.VR.Z = cross(-X, Z);
 CSs.VR.Theta = -asin(U(1));
-CSs.VR.V = [X Y Z];
+CSs.VR.V = [-X Z cross(-X, Z)];
 CSs.VR.Origin = CenterVol';
+
 quickPlotTriang(Patella, 'm',1)
 quickPlotRefSystem(CSs.VR)
 
@@ -139,15 +149,27 @@ X3 = -V_all(:,3);
 Y3 = normalizeV( cross(Z3,X3) );
 X3 = cross(Y3,Z3);
 
-% Write RL ACS
-CSs.RL.X = X3;
+% % GIBOK
+% CSs.RL.X = X3;
+% CSs.RL.Uridge = Uridge;
+% CSs.RL.UridgeR0 = UridgeR0;
+% CSs.RL.Y = Y3;
+% CSs.RL.Z = Z3;
+% CSs.RL.V = [X3 Y3 Z3];
+% CSs.RL.Origin = Center3;
+
+% ISB
+CSs.RL.X = -X3;
 CSs.RL.Uridge = Uridge;
 CSs.RL.UridgeR0 = UridgeR0;
-CSs.RL.Y = Y3;
-CSs.RL.Z = Z3;
-CSs.RL.V = [X3 Y3 Z3];
+CSs.RL.Y = Z3;
+CSs.RL.Z = Y3;
+CSs.RL.V = [-X3 Z3 Y3];
 CSs.RL.Origin = Center3;
 
+
+% quickPlotTriang(Patella, 'm')
+quickPlotRefSystem(CSs.RL)
 
 %% Technic PIAAS
 % Identify articular surface and get principal axis
@@ -205,11 +227,17 @@ X4 = -sign( V_all(:,3)' * X4) * X4;
 
 Y4 = cross(Z4, X4);
 
-% Write PIAAS ACS
-CSs.PIAAS.X = X4;
-CSs.PIAAS.Y = Y4;
-CSs.PIAAS.Z = Z4;
-CSs.PIAAS.V = V_AS;
+% % Write PIAAS ACS
+% CSs.PIAAS.X = X4;
+% CSs.PIAAS.Y = Y4;
+% CSs.PIAAS.Z = Z4;
+% CSs.PIAAS.V = V_AS;
+
+% ISB
+CSs.PIAAS.X = -X4;
+CSs.PIAAS.Y = Z4;
+CSs.PIAAS.Z = Y4;
+CSs.PIAAS.V =[-X4 Z4 Y4];
 
 CSs.PIAAS.Origin = Origin;
 CSs.PIAAS.CenteronMesh = D4.onMeshCenter;

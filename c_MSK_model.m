@@ -20,7 +20,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 1;
+nd = 3;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
@@ -69,6 +69,8 @@ for nb = 1:length(body_list)
     addTriGeomBody(osimModel, cur_body_name, cur_geom, bone_density, in_mm, cur_vis_file);
     geom_set.(cur_body_name) = cur_geom;
 end
+
+[ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 
 CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
 
