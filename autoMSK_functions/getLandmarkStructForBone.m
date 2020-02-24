@@ -14,6 +14,8 @@ switch bone_name
         LandmarkStruct{2} = {'RLFH','z', 'max', 'proximal'};
         LandmarkStruct{3} = {'RLM', 'z', 'max', 'distal'};
         LandmarkStruct{4} = {'RMM', 'z', 'min', 'distal'};
+    case 'patella_r'
+        LandmarkStruct{1} = {'RLOW','y', 'min', 'distal'};
     case 'calcn_r'
         LandmarkStruct{1} = {'RHEE','x', 'min'};
         LandmarkStruct{2} = {'R5M', 'z', 'max'};
