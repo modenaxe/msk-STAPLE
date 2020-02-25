@@ -23,10 +23,15 @@ function CS = MSK_femur_Kai2014(Femur, DistFem)
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
 if ~exist('DistFem','var')
+      V_all = pca(Femur.Points);
       [ProxFem, DistFem] = cutLongBoneMesh(Femur);
+      [ ~, CenterVol] = TriInertiaPpties(Femur);
+      
 else
     % join two parts in one triangulation
+    ProxFem = Femur;
     Femur = TriUnite(DistFem, ProxFem);
+    [ V_all, CenterVol] = TriInertiaPpties( Femur );
 end
 
 %-------------------------------------
@@ -34,9 +39,6 @@ end
 % Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
 % X0: used only in Kai2014
 %-------------------------------------
-
-% Get eigen vectors V_all of the Femur 3D geometry and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties(Femur);
 
 % Initial estimate of the Distal-to-Proximal (DP) axis Z0
 % Check that the distal femur is 'below' the proximal femur,
