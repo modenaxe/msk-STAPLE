@@ -20,7 +20,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 1;
+nd = 3;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
@@ -70,35 +70,31 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-[ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
+% [ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 
-CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
-quickPlotTriang(geom_set.femur_r)
+% CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
+% quickPlotTriang(geom_set.femur_r)
 
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
-
-% ground_pelvis
+% ground_pelvis joint
 JointParams = getJointParams('ground_pelvis', [], PelvisRS);
-
 % create the joint
 pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(pelvis_ground_joint);
+%-----------------
 
 % %---- FEMUR -----
 FemurCS = MSK_femur_Kai2014(geom_set.femur_r);
 [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);
 
-HJC_location = FemurCS.CenterFH_Kai*dim_fact;
-femur_orientation = computeZXYAngleSeq(FemurCS.V);
-
 % % hip joint
-JointParams = getJointParams('hip_r');
-JointParams.parent_location     = HJC_location;
-JointParams.parent_orientation  = pelvis_orientation;
-JointParams.child_location      = HJC_location;
-JointParams.child_orientation   = femur_orientation;
+JointParams = getJointParams('hip_r', PelvisRS, FemurCS);
+% JointParams.parent_location     = HJC_location;
+% JointParams.parent_orientation  = pelvis_orientation;
+% JointParams.child_location      = HJC_location;
+% JointParams.child_orientation   = femur_orientation;
 
 % create the joint
 hip_r = createCustomJointFromStruct(osimModel, JointParams);
