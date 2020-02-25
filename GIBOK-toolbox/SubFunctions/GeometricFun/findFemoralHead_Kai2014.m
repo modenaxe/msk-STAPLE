@@ -27,6 +27,7 @@ Ok_FH_Pts_med = [];
 d = MostProxPoint*CS.Z0 - 0.25;
 keep_slicing = 1;
 count = 1;
+max_area_so_far = 0;
 while keep_slicing
     
     % slice the proximal femur
@@ -71,10 +72,18 @@ while keep_slicing
             disp('Slice recognized as artefact. Skipping it.')
             continue
         else
-            [~, ind_max_area] = max(areas);
+            [max_area, ind_max_area] = max(areas);
             Ok_FH_Pts_med = [Ok_FH_Pts_med; Curves(ind_max_area).Pts];
             clear areas
+            if max_area>=max_area_so_far
+                max_area_so_far=max_area;
+            else
+                disp('Reached femoral neck. End of slicing...')
+                keep_slicing = 0;
+                continue
+            end
         end
+        
         %-------------------------------
         % THIS ATTEMPT DID NOT WORK WELL
         %-------------------------------
