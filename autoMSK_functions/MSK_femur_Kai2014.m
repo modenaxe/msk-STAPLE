@@ -22,7 +22,7 @@ function CS = MSK_femur_Kai2014(Femur, DistFem, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else  dim_fact = 1; end
+if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
