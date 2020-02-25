@@ -78,18 +78,16 @@ quickPlotTriang(geom_set.femur_r)
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
-
+PelvisRS.child_loc = PelvisRS.Origin*dim_fact;
+PelvisRS.child_orient = computeZXYAngleSeq(PelvisRS.V);
 % addTriGeomJoint(PelvisRS, in_mm)
-% compute joint params
-pelvis_location = PelvisRS.Origin*dim_fact;
-pelvis_orientation = computeZXYAngleSeq(PelvisRS.V);
 
 % ground_pelvis
 JointParams = getJointParams('ground_pelvis');
 JointParams.parent_location     = [0.0000	0.0000	0.0000];
 JointParams.parent_orientation  = [0.0000	0.0000	0.0000];
-JointParams.child_location      = pelvis_location;
-JointParams.child_orientation   = pelvis_orientation;
+JointParams.child_location      = PelvisRS.child_loc;
+JointParams.child_orientation   = PelvisRS.child_orient;
 
 % create the joint
 pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
