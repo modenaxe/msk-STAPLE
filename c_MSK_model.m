@@ -20,7 +20,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 3;
+nd = 1;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
@@ -48,7 +48,7 @@ tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
 visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
-visual_file_list = body_list;
+visual_file_list = triGeom_file_list;
 type_mesh = '.vtp';
 
 % create the model
@@ -73,14 +73,16 @@ end
 [ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 
 CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
+quickPlotTriang(geom_set.femur_r)
 
 %---- PELVIS -----
 % solve reference system from geometry
-[PelvisRS, PelvisBL]  = PelvisFun(geom_set.pelvis);
+[PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 
+% addTriGeomJoint(PelvisRS, in_mm)
 % compute joint params
-pelvis_location = PelvisRS.ISB.Origin*dim_fact;
-pelvis_orientation = computeZXYAngleSeq(PelvisRS.ISB.V);
+pelvis_location = PelvisRS.Origin*dim_fact;
+pelvis_orientation = computeZXYAngleSeq(PelvisRS.V);
 
 % ground_pelvis
 JointParams = getJointParams('ground_pelvis');
