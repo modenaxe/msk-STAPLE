@@ -78,21 +78,14 @@ quickPlotTriang(geom_set.femur_r)
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
-PelvisRS.child_loc = PelvisRS.Origin*dim_fact;
-PelvisRS.child_orient = computeZXYAngleSeq(PelvisRS.V);
-% addTriGeomJoint(PelvisRS, in_mm)
 
 % ground_pelvis
-JointParams = getJointParams('ground_pelvis');
-JointParams.parent_location     = [0.0000	0.0000	0.0000];
-JointParams.parent_orientation  = [0.0000	0.0000	0.0000];
-JointParams.child_location      = PelvisRS.child_loc;
-JointParams.child_orientation   = PelvisRS.child_orient;
+JointParams = getJointParams('ground_pelvis', [], PelvisRS);
 
 % create the joint
 pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(pelvis_ground_joint);
-% 
+
 % %---- FEMUR -----
 FemurCS = MSK_femur_Kai2014(geom_set.femur_r);
 [ FemurCSs, TrObjects ] = GIBOK_femur(geom_set.femur_r);

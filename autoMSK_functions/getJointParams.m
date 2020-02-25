@@ -3,17 +3,27 @@ function JointParamsStruct = getJointParams(joint_name, parentBodyCS, childBodyC
 % the assumption is that the reference system will be provided for each
 % body. Each body will have specified the parameters for the joint.
 % TODO: ensure a body is connected to ground if no specifics are provided.
-if isempty(osimParentBody)
-    JointParamsStruct.parent_location     = [0.0000	0.0000	0.0000];
-    JointParamsStruct.parent_orientation  = [0.0000	0.0000	0.0000];
-else
-    JointParamsStruct.parent_location     = parentBodyCS.parent_location;
-    JointParamsStruct.parent_orientation  = parentBodyCS.parent_orientation;
+if isempty(parentBodyCS)
+    parentBodyCS.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
+    parentBodyCS.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
 end
 
-JointParamsStruct.child_location      = childBodyCS.child_location;
-JointParamsStruct.child_orientation   = childBodyCS.child_orientation;
+% dealing with the cases where the joint centre is computed just in one
+% body and set for the other
+if isfield(childBodyCS.(joint_name), 'child_location')
+    JointParamsStruct.child_location      = childBodyCS.(joint_name).child_location;
+else
+    JointParamsStruct.child_location   = parentBodyCS.(joint_name).parent_location;
+end
 
+if isfield(parentBodyCS.(joint_name), 'parent_location')
+    JointParamsStruct.parent_location      = parentBodyCS.(joint_name).parent_location;
+else
+    JointParamsStruct.parent_location   = childBodyCS.(joint_name).child_location;
+end
+% assign orientations
+JointParamsStruct.parent_orientation     = parentBodyCS.(joint_name).parent_orientation;
+JointParamsStruct.child_orientation      = childBodyCS.(joint_name).child_orientation;
 switch joint_name
     case 'ground_pelvis'
         JointParamsStruct.name                = 'ground_pelvis';

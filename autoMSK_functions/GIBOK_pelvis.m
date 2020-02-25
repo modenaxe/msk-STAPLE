@@ -15,11 +15,18 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, BoneLandmarks] = GIBOK_pelvis( Pelvis)
+function [ CS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
 
-% adds required functions
-addpath(genpath(strcat(pwd,'/SubFunctions')));
+if nargin<2
+    in_mm = 1;
+end
 
+if in_mm == 1
+    dim_fact = 0.001;
+else
+    % assumed in metres
+    dim_fact = 1;
+end
 % guess of direction of axes on medical images (not always correct)
 % Z : pointing cranially
 % Y : pointing posteriorly
@@ -102,7 +109,7 @@ pseudo_X = temp_X/norm(temp_X);
 Y = cross(Z, pseudo_X)/norm(cross(Z, pseudo_X));
 X = cross(Y, Z)/norm(cross(Y, Z));
 
-
+% reference system
 CS.CenterVol = CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
 % ISB reference system
@@ -111,6 +118,10 @@ CS.X = X;
 CS.Y = Y;
 CS.Z = Z;
 CS.V = [X', Y', Z'];
+% storing joint details
+CS.ground_pelvis.child_location    = PelvisOr*dim_fact;
+CS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);
+CS.hip_r.parent_orientation        = computeZXYAngleSeq(CS.V);
 
 % for debugging purposes
 % PlotPelvis_ISB( CSs.ISB, Pelvis); hold on
