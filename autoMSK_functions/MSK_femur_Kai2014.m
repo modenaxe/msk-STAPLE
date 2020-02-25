@@ -18,7 +18,11 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function CS = MSK_femur_Kai2014(Femur, DistFem)
+function CS = MSK_femur_Kai2014(Femur, DistFem, in_mm)
+
+% check units
+if nargin<3;     in_mm = 1;  end
+if in_mm == 1;     dim_fact = 0.001;  else  dim_fact = 1; end
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
@@ -71,26 +75,45 @@ quickPlotRefSystem(CS)
 [CS, FC_Med_Pts1, FC_Lat_Pts2] = sliceFemoralCondyles(DistFem, CS);
 
 % fitting spheres to points from the sliced curves
-[center1,radius1] = sphereFit(FC_Med_Pts1);
-[center2,radius2] = sphereFit(FC_Lat_Pts2);
+[center_med,radius_med] = sphereFit(FC_Med_Pts1);
+[center_lat,radius_lat] = sphereFit(FC_Lat_Pts2);
 
-% define the reference system (NB: this is different from the other ref
-% systems - mechanical axis just defines the plane, not an axis)
-CenterKneeKai = 0.5*(center1+center2);
-Zml = normalizeV(center2-center1);
-Xap = normalizeV(cross((CS.CenterFH_Kai- CenterKneeKai), Zml));
-Ydp = cross(Zml,Xap);
+% centre of the knee if the midpoint between spheres
+CenterKneeKai = 0.5*(center_med+center_lat);
+
+% define the knee reference system
+CS.Ori_knee = CenterKneeKai;
+Zml_knee = normalizeV(center_lat-center_med);
+Xap_knee = normalizeV(cross((CS.CenterFH_Kai- CenterKneeKai), Zml_knee));
+Ydp_knee = cross(Zml_knee,Xap_knee);
+CS.Ori_knee = CenterKneeKai;
+CS.V_knee  = [Xap_knee Ydp_knee Zml_knee];
+
+% define the hip reference system
+CS.Ori_hip = CS.CenterFH_Kai;
+Ydp_hip = normalizeV(CS.Ori_hip-CS.Ori_knee);
+Xap_hip = normalizeV(cross(Ydp_hip, Zml_knee));
+Zml_hip = cross(Xap_hip, Ydp_hip);
+CS.V_hip  = [Xap_hip Ydp_hip Zml_hip];
 
 % store axes in structure
-CS.Center1 = center1;
-CS.Center2 = center2;
-CS.Radius1 = radius1;
-CS.Radius2 = radius2;
+CS.Center1 = center_med;
+CS.Center2 = center_lat;
+CS.Radius1 = radius_med;
+CS.Radius2 = radius_lat;
 CS.Origin  = CenterKneeKai;
-CS.X       = Xap;
-CS.Y       = Ydp;
-CS.Z       = Zml;
-CS.V       = [Xap Ydp Zml];
+CS.X       = Xap_knee;
+CS.Y       = Ydp_knee;
+CS.Z       = Zml_knee;
+CS.V  = [Xap_knee Ydp_knee Zml_knee];
+
+% define hip_r joint
+CS.hip_r.child_location    = CS.Ori_hip*dim_fact;
+CS.hip_r.child_orientation = computeZXYAngleSeq(CS.V_hip);
+
+% define knee_r joint
+CS.knee_r.parent_location = CS.Origin*dim_fact;
+CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 end
 
