@@ -1,29 +1,32 @@
 function JointParamsStruct = getJointParams(joint_name, parentBodyCS, childBodyCS)
 
-% the assumption is that the reference system will be provided for each
-% body. Each body will have specified the parameters for the joint.
-% TODO: ensure a body is connected to ground if no specifics are provided.
-if isempty(parentBodyCS)
-    parentBodyCS.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
-    parentBodyCS.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
+if nargin>1
+    % the assumption is that the reference system will be provided for each
+    % body. Each body will have specified the parameters for the joint.
+    % TODO: ensure a body is connected to ground if no specifics are provided.
+    if isempty(parentBodyCS)
+        parentBodyCS.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
+        parentBodyCS.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
+    end
+    
+    % dealing with the cases where the joint centre is computed just in one
+    % body and set for the other
+    if isfield(childBodyCS.(joint_name), 'child_location')
+        JointParamsStruct.child_location      = childBodyCS.(joint_name).child_location;
+    else
+        JointParamsStruct.child_location   = parentBodyCS.(joint_name).parent_location;
+    end
+    
+    if isfield(parentBodyCS.(joint_name), 'parent_location')
+        JointParamsStruct.parent_location      = parentBodyCS.(joint_name).parent_location;
+    else
+        JointParamsStruct.parent_location   = childBodyCS.(joint_name).child_location;
+    end
+    % assign orientations
+    JointParamsStruct.parent_orientation     = parentBodyCS.(joint_name).parent_orientation;
+    JointParamsStruct.child_orientation      = childBodyCS.(joint_name).child_orientation;
 end
 
-% dealing with the cases where the joint centre is computed just in one
-% body and set for the other
-if isfield(childBodyCS.(joint_name), 'child_location')
-    JointParamsStruct.child_location      = childBodyCS.(joint_name).child_location;
-else
-    JointParamsStruct.child_location   = parentBodyCS.(joint_name).parent_location;
-end
-
-if isfield(parentBodyCS.(joint_name), 'parent_location')
-    JointParamsStruct.parent_location      = parentBodyCS.(joint_name).parent_location;
-else
-    JointParamsStruct.parent_location   = childBodyCS.(joint_name).child_location;
-end
-% assign orientations
-JointParamsStruct.parent_orientation     = parentBodyCS.(joint_name).parent_orientation;
-JointParamsStruct.child_orientation      = childBodyCS.(joint_name).child_orientation;
 switch joint_name
     case 'ground_pelvis'
         JointParamsStruct.name                = 'ground_pelvis';
@@ -64,12 +67,12 @@ switch joint_name
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.rotationAxes       = 'zxy';
     case 'patellofemoral_r'
-                JointParamsStruct.name               = 'patellofemoral_r';
-                JointParamsStruct.parent             = 'femur_r';
-                JointParamsStruct.child              = 'patella_r';
-                JointParamsStruct.coordsNames        = {'knee_angle_r_beta'};
-                JointParamsStruct.coordsTypes        = {'rotational'};
-                JointParamsStruct.rotationAxes       = 'zxy';
+        JointParamsStruct.name               = 'patellofemoral_r';
+        JointParamsStruct.parent             = 'femur_r';
+        JointParamsStruct.child              = 'patella_r';
+        JointParamsStruct.coordsNames        = {'knee_angle_r_beta'};
+        JointParamsStruct.coordsTypes        = {'rotational'};
+        JointParamsStruct.rotationAxes       = 'zxy';
     otherwise
         error('unsupported joint')
 end
