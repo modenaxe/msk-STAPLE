@@ -1,4 +1,5 @@
-function [ IdxPointsPair , EdgesLength , K, EdgesIdx_merged ] = LargestEdgeConvHull( Pts, Minertia )
+function [ IdxPointsPair , EdgesLength , K, ...
+    Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
 %Compute the convex hull of the points cloud Pts and sort the edges by 
 % their length
 % INPUTS :
@@ -16,7 +17,8 @@ function [ IdxPointsPair , EdgesLength , K, EdgesIdx_merged ] = LargestEdgeConvH
 %
 %       - K :               The convex hull of the point cloud
 %
-%       - EdgesIdx_merged : A [mx3] matrix with first column corresponding 
+%       - Edges_Length_and_VerticesIDs_merged_sorted : 
+%                           A [mx3] matrix with first column corresponding 
 %                           to the edges length and the last two columns 
 %                           corresponding to the Index of the points
 %                           forming the the edge.
@@ -25,7 +27,6 @@ function [ IdxPointsPair , EdgesLength , K, EdgesIdx_merged ] = LargestEdgeConvH
 %
 % TODO: this function can benefit from squeeze
 if min(size(Pts)) == 2
-%     K = convhull(Pts,'simplify', true);
     K = convhull(Pts,'simplify', false);
     EdgeLength = sqrt(sum(diff(Pts(K,:),1).^2,2));
     [EdgesLength,I] = sort(EdgeLength,'descend');
@@ -44,10 +45,11 @@ elseif min(size(Pts)) == 3
     %   the number of triangular facets. That is, each row of K is a triangle 
     %   defined in terms of the point indices.
     K = convhull(Pts,'simplify', false);
+    n_ch_elmts = size(K,1);
     % [LM] plot
     % plot3(Pts3(:,1), Pts3(:,2), Pts3(:,3),'.')
 
-    % compute the edge length of the triangles of the convex hull
+    % compute the length of the edges of the triangles of the convex hull
     % [LM] convenient arrangement for using diff and compute edge lengths
     % Pts3[n_points, x-y-z_coords, v1-v2-v3-v1_of_facets]
     Pts3(:,:,1)  = Pts(K(:,1),:);
@@ -55,58 +57,42 @@ elseif min(size(Pts)) == 3
     Pts3(:,:,3)  = Pts(K(:,3),:);
     Pts3(:,:,4)  = Pts(K(:,1),:);
     
-% % %===============================================================   
-% %     % [LM] @RrenaultJB Note that the code below is partially incorrect.
-% %     % you are overwriting the edge lengths of columns 2-3 BEFORE sortrow
-% %     % so the EdgesLength variable actually does NOT necessarily include the
-% %     % true longest edges.
-% % %=============================================================== 
-% % % PROPOSED CORRECTION
-% % %=============================================================== 
-% %     % edge lengths
-% %     EdgeLength2 = squeeze(sqrt(sum(diff(Pts3,1,3).^2,2)));
-% %     
-% %     % sorting edge length (based on max length on facet)
-% %     EdgesIdx_merged2=[];
-% %     EdgesLength2 = [];
-% %     for n = 1:3
-% %         [EdgesIdx_col,I2] = sort(EdgeLength2(:,n),'descend');
-% %         Ksorted_col = K(I2,n:mod(n,3)+1);
-% %         % accumulate variables
-% %         EdgesLength2 = [EdgesLength2; EdgesIdx_col];
-% %         EdgesIdx_merged2 = [EdgesIdx_merged2; [Ksorted_col(:,n) Ksorted_col(:,mod(n,3)+1)]];
-% %     end
-% %     [EdgesLength, I_edge] = sort(EdgesLength2,'descend');
-% %     IdxPointsPair = EdgesIdx_merged2(I_edge,:);
-% % %===============================================================
+    % diff across coords of vertices to get the edges length
+    % EdgeLength = [n_ch_elements x 1 x 3(edges)]
+    Edges_Length = sqrt(sum(diff(Pts3,1,3).^2,2));
+    
+    % Create a matrix where the 1st colmuns is the length of the edges
+    % the 2nd and 3rd columns contains the ID of the vertices composing the
+    % edge. This matrix is repeated 3 times on a third axis because each
+    % element is composed of 3 edges. So index 1 on the 3rd axis
+    % corresponds to all the 1st edges, index 2 to all the 2nd edges and
+    % index 3 to all the 3rd edges. This is convenient because we later sort
+    % the edges by length and we can sort the first columns and keep the
+    % correspondance with the corresponding edges vertices Ids.
+    Edges_Length_and_VerticesIDs = zeros(n_ch_elmts, 3, 3) ;
+    Edges_Length_and_VerticesIDs(:,1,:) = Edges_Length ;
+    
+    % Assign the edges vertices ID to each edge length
+    Edges_Length_and_VerticesIDs(:, 2:3, 1) = [K(:,1) K(:,2)];
+    Edges_Length_and_VerticesIDs(:, 2:3, 2) = [K(:,2) K(:,3)];
+    Edges_Length_and_VerticesIDs(:, 2:3, 3) = [K(:,3) K(:,1)];
+    
+    % Concatenate the data from edges 1, 2 and 3 to the first axis
+    Edges_Length_and_VerticesIDs_merged = ...
+        [Edges_Length_and_VerticesIDs(:,:,1);...
+        Edges_Length_and_VerticesIDs(:,:,2);...
+        Edges_Length_and_VerticesIDs(:,:,3)];
+    
+    % Sort all edges by edge length
+    Edges_Length_and_VerticesIDs_sorted = sortrows(...
+        Edges_Length_and_VerticesIDs_merged,1,'descend');
 
-    % diff across coords of vertices
-    % EdgeLength = [n_points x 1 x 3(edges)]
-    EdgeLength = sqrt(sum(diff(Pts3,1,3).^2,2));
-    
-    % sorting edge length
-    % [LM] I = [n_points x 1 x 3(edges)]
-    [EdgesIdx,I] = sort(EdgeLength,'descend');
-    % reordering K indices in EdgesIdx so that they go from largest to smaller edge
-    % indices stored in 2&3 col, so first column with length remains for
-    % sortrow
-    EdgesIdx(:,2:3,1) = [K(I(:,:,1),1) K(I(:,:,1),2)];
-    EdgesIdx(:,2:3,2) = [K(I(:,:,2),2) K(I(:,:,2),3)];
-    EdgesIdx(:,2:3,3) = [K(I(:,:,3),3) K(I(:,:,3),1)];
-    
-    % [LM] putting the vertices of the three edges together + ascending order
-    % sorting (using edge length)
-    EdgesIdx_merged = sortrows([EdgesIdx(:,:,1);EdgesIdx(:,:,2);EdgesIdx(:,:,3)],1);
-    
-    % [LM] and descending order again
-    EdgesIdx_merged = flipud(EdgesIdx_merged);
-    
     % outputs 
     %---------
     % the indices of the vertices
-    IdxPointsPair = EdgesIdx_merged(:,2:3);
-    % and their corresponding lengths
-    EdgesLength = EdgesIdx_merged(:,1);
+    IdxPointsPair = Edges_Length_and_VerticesIDs_sorted(:,2:3);
+    % and their corresponding edges lengths
+    EdgesLength = Edges_Length_and_VerticesIDs_sorted(:,1);
 
 end
 
