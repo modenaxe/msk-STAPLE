@@ -1,15 +1,8 @@
 function [CSs, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
 
-
-if nargin<3
-    in_mm=1;
-end
-
-if in_mm == 0
-    dim_fact = 0.001;
-else
-    dim_fact = 1;
-end
+% check units
+if nargin<3;     in_mm = 1;  end
+if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % coordinate system structure to store results
 CSs = struct();
@@ -79,11 +72,8 @@ elseif N_curves>2
 end
 Centr           = PlanPolygonCentroid3D( Curve.Pts );
 
-% ankle centre (stored later)
+% ankle centre
 ankleCenter = Centr - plane_thick * nAAS';
-
-
-BoneLandmarks.AJC = ankleCenter;
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENCE FROM ORIGINAL TOOLBOX
