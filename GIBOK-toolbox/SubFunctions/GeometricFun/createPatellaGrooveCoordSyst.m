@@ -30,33 +30,7 @@ CSs.PatGr.Y       = Yend_sph;
 CSs.PatGr.Z       = Zend_sph;
 CSs.PatGr.V       = [Xend_sph Yend_sph Zend_sph];
 
-
-% figure()
-% % Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
-% trisurf(Groove_Lat,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
-% hold on
-% axis equal
-% 
-% % handle lighting of objects
-% light('Position',CSs.PatGr.Origin' + 500*CSs.PatGr.Y + 500*CSs.PatGr.X,'Style','local')
-% light('Position',CSs.PatGr.Origin' + 500*CSs.PatGr.Y - 500*CSs.PatGr.X,'Style','local')
-% light('Position',CSs.PatGr.Origin' - 500*CSs.PatGr.Y + 500*CSs.PatGr.X - 500*CSs.PatGr.Z,'Style','local')
-% light('Position',CSs.PatGr.Origin' - 500*CSs.PatGr.Y - 500*CSs.PatGr.X + 500*CSs.PatGr.Z,'Style','local')
-% lighting gouraud
-% 
-% % Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
-% trisurf(Groove_Med,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
-% hold on
-% axis equal
-% 
-% % handle lighting of objects
-% light('Position',CSs.PatGr.Origin' + 500*CSs.PatGr.Y + 500*CSs.PatGr.X,'Style','local')
-% light('Position',CSs.PatGr.Origin' + 500*CSs.PatGr.Y - 500*CSs.PatGr.X,'Style','local')
-% light('Position',CSs.PatGr.Origin' - 500*CSs.PatGr.Y + 500*CSs.PatGr.X - 500*CSs.PatGr.Z,'Style','local')
-% light('Position',CSs.PatGr.Origin' - 500*CSs.PatGr.Y - 500*CSs.PatGr.X + 500*CSs.PatGr.Z,'Style','local')
-% lighting gouraud
-% 
-% % Remove grid
+% % debug plots
 % grid off
 % plotSphere( center1, radius1 , 'c')
 % plotSphere( center2, radius2 , 'c')
