@@ -83,7 +83,7 @@ osimModel.addJoint(pelvis_ground_joint);
 %-----------------
 
 %---- FEMUR -----
-FemurCS  = MSK_femur_Kai2014(geom_set.femur_r);
+FemurCS  = MSK_femur_ACS_Kai2014(geom_set.femur_r);
 FemurCSs = GIBOK_femur(geom_set.femur_r);
 % hip joint
 JointParams = getJointParams('hip_r', PelvisRS, FemurCS);
