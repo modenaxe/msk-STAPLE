@@ -79,36 +79,30 @@ quickPlotRefSystem(CS)
 [center_lat,radius_lat] = sphereFit(FC_Lat_Pts2);
 
 % centre of the knee if the midpoint between spheres
-CenterKneeKai = 0.5*(center_med+center_lat);
+KneeCenter = 0.5*(center_med+center_lat);
 
 % store axes in structure
-CS.Center1 = center_med;
-CS.Center2 = center_lat;
-CS.Radius1 = radius_med;
-CS.Radius2 = radius_lat;
-CS.Origin  = CenterKneeKai;
+CS.Center_Lat = center_lat;
+CS.Radius_Lat = radius_lat;
+CS.Center_Med = center_med;
+CS.Radius_Med = radius_med;
+CS.Origin     = KneeCenter;
 
-% common axes
+% common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(center_lat-center_med);
-Y = normalizeV(CS.CenterFH_Kai- CenterKneeKai);
+Y = normalizeV(CS.CenterFH_Kai- KneeCenter);
 X = cross(Y,Z);
 
-% define the knee reference system
-Ori_knee = CenterKneeKai;
-Ydp_knee = cross(Z, X);
-CS.V_knee  = [X Ydp_knee Z];
-
 % define the hip reference system
-Ori_hip = CS.CenterFH_Kai;
 Zml_hip = cross(X, Y);
 CS.V_hip  = [X Y Zml_hip];
-
-% define hip_r joint
-CS.hip_r.child_location    = Ori_hip*dim_fact;
+CS.hip_r.child_location    = CS.CenterFH_Kai*dim_fact;
 CS.hip_r.child_orientation = computeZXYAngleSeq(CS.V_hip);
 
-% define knee_r joint
-CS.knee_r.parent_location = Ori_knee*dim_fact;
+% define the knee reference system
+Ydp_knee = cross(Z, X);
+CS.V_knee  = [X Ydp_knee Z];
+CS.knee_r.parent_location = KneeCenter*dim_fact;
 CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 end
