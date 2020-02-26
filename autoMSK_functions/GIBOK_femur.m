@@ -20,8 +20,10 @@ end
 % This is necessary because the functions were originally developped for
 % triangulation with constant mean edge lengths of 0.5 mm
 PptiesFemur = TriMesh2DProperties( Femur );
+
 % Assume triangles are equilaterals
 meanEdgeLength = sqrt( 4/sqrt(3) * PptiesFemur.TotalArea / Femur.size(1) );
+
 % Get the coefficient for morphology operations
 CoeffMorpho = 0.5 / meanEdgeLength ;
 
@@ -59,7 +61,7 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med_end, postCondyle_Lat_end, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs,  CoeffMorpho, 'post_condyles');
+[postCondyle_Med, postCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
 [Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'pat_groove');
@@ -68,14 +70,13 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
 
 % Fit two spheres on articular surfaces of posterior condyles
-quickPlotTriang(Femur,'m',1);
-CSs = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
+CSs = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
 
 % Fit the posterior condyles with a cylinder
-CSs = createFemurCoordSystCylinderOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
+CSs = MSK_femur_ACS_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
 
 % Fit the entire condyles with an ellipsoid
-CSs = createFemurCoordSystEllipsoidOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
+CSs = MSK_femur_ACS_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
 
 % Store triangulation objects for output if required
 if nargout>1
@@ -87,8 +88,8 @@ if nargout>1
     % store pieces used throughout the processing
     TrObjects.FemHead       = FemHead;
     TrObjects.EpiFem        = EpiFem;
-    TrObjects.EpiFemASLat   = postCondyle_Lat_end;
-    TrObjects.EpiFemASMed   = postCondyle_Med_end;
+    TrObjects.EpiFemASLat   = postCondyle_Lat;
+    TrObjects.EpiFemASMed   = postCondyle_Med;
     TrObjects.PatGrooveLat  = Groove_Lat;
     TrObjects.PatGrooveMed  = Groove_Med;
 end
