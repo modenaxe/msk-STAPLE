@@ -68,7 +68,8 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
 
 % Fit two spheres on articular surfaces of posterior condyles
-CSs = createFemurCoordSystSpheresOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
+quickPlotTriang(Femur,'m',1);
+CSs = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
 
 % Fit the posterior condyles with a cylinder
 CSs = createFemurCoordSystCylinderOnCondyles(postCondyle_Lat_end, postCondyle_Med_end, CSs);
