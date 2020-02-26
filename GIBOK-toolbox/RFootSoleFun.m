@@ -73,24 +73,14 @@ plotArrow( X0, 1, CenterVol, 150, 1, 'r')
 plotArrow( Y0, 1, CenterVol, 50, 1, 'g')
 plotArrow( Z0, 1, CenterVol, 50, 1, 'b')
 
-% 2. Get a convex hull of the Foot
-[x, y, z] = deal(Foot.Points(:,1), Foot.Points(:,2), Foot.Points(:,3));
-
-% K = convhull(x,y,z,'simplify', false);
-
-[ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Foot.Points);
-
-% trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
-% for i = 1:10
-%     plot3(x(IdxPtsPair(i,:)),y(IdxPtsPair(i,:)),z(IdxPtsPair(i,:)),...
-%         'k-*','linewidth',2)
-% end
-%% Convexhull approach with prior deleting of the phalanges
+%% 2. Get a convex hull of the Foot
+% Convexhull approach with prior deleting of the phalanges
 
 % In the vast majority of cases, the reference system at the foot is
 % computed using the geometries from talus to metatarsal bone, without the
 % phalanges.
 % This part of code is not needed
+% TODO : Adapt the code in case there are the phalanges
 %==========================================
 % Foot_Start = min(Foot.Points*X0);
 % Foot_End = max(Foot.Points*X0);
@@ -100,15 +90,14 @@ plotArrow( Z0, 1, CenterVol, 50, 1, 'b')
 %==========================================
 
 Foot2 = Foot;
-% K = convhull(x,y,z,'simplify', false);
 [x, y, z] = deal(Foot2.Points(:,1), Foot2.Points(:,2), Foot2.Points(:,3));
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Foot2.Points);
 
-trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
-% for i = 1:round(0.02*length(IdxPtsPair))
-%     plot3(x(IdxPtsPair(i,:)),y(IdxPtsPair(i,:)),z(IdxPtsPair(i,:)),...
-%         'k-*','linewidth',2)
-% end
+trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor',[0.5 0.5 0.5]);
+for i = 1:round(0.02*length(IdxPtsPair))
+    plot3(x(IdxPtsPair(i,:)),y(IdxPtsPair(i,:)),z(IdxPtsPair(i,:)),...
+        'k-*','linewidth',2)
+end
 
 % Convert the convexHull to triangulation object
 Foot2_CH = triangulation(K,x,y,z);
@@ -124,7 +113,7 @@ Y1 = cross( Z1, X1 );
 
 % Project the convex hull along the previously found direction
 XY1 = [X1,Y1];
-ProjZ1 = XY1*inv(XY1'*XY1)*XY1';
+ProjZ1 = XY1*inv(XY1'*XY1)*XY1'; % Orthogonal projection matrix
 
 Foot2_CH_PTS_Proj = (ProjZ1*Foot2_CH.Points')';
 Foot2_CH_Proj = triangulation(Foot2_CH.ConnectivityList, Foot2_CH_PTS_Proj);
@@ -222,7 +211,7 @@ newTriangleNrml = sign(newTriangleNrml'*triangleNrml)*newTriangleNrml;
 
 
 %   5.  Keep the proximal vertices of the triangle as the calcaneus tip
-
+% Already found before, corresponding variable -> heelPt
 
 %   6. Identify the medial side of the foot
 Z2 = newTriangleNrml;
