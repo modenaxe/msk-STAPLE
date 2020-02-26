@@ -18,7 +18,7 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function CS = MSK_femur_Kai2014(Femur, DistFem, in_mm)
+function CS = MSK_femur_ACS_Kai2014(Femur, DistFem, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end
