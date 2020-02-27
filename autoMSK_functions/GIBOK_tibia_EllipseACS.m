@@ -1,13 +1,12 @@
-function GIBOK_tibia_EllipseACS(EpiTibAS)
+function GIBOK_tibia_EllipseACS(EpiTibAS, CSs)
 
 % fit a plane to the resulting tibial epiPhysis 
-[oLSP, Ztp] = lsplane(EpiTibAS.Points,Z0);
+[oLSP, Ztp] = lsplane(EpiTibAS.Points,CSs.Z0);
 
 %% Technic 1 : Fitted Ellipse
 [ Xel, Yel, ellipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
 Xel = sign(Xel'*Y0)*Xel;
 Yel = sign(Yel'*Y0)*Yel;
-
 Pt_Knee = mean(ellipsePts);
 
 Zmech = Pt_Knee - ankleCenter; 
