@@ -19,14 +19,16 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
 end
 
-%% Get the mean edge length of the triangles composing the tibia
+% Get the mean edge length of the triangles composing the tibia
+% This is necessary because the functions were originally developed for
+% triangulation with constant mean edge lengths of 0.5 mm
 PptiesTibia = TriMesh2DProperties( Tibia );
+
 % Assume triangles are equilaterals
 meanEdgeLength = sqrt( 4/sqrt(3) * PptiesTibia.TotalArea / Tibia.size(1) );
+
 % Get the coefficient for morphology operations
 CoeffMorpho = 0.5 / meanEdgeLength ;
-% This is necessary because the functions were originally developped for
-% triangulation with constant mean edge lengths of 0.5 mm
 
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Tibia );
@@ -36,6 +38,7 @@ CoeffMorpho = 0.5 / meanEdgeLength ;
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
+% store approximate Z direction and centre of mass of triangulation
 CSs.Z0 = Z0;
 CSs.CenterVol = CenterVol;
 CSs.InertiaMatrix = InertiaMatrix;
@@ -60,6 +63,7 @@ plane_thick = 5 * dim_fact;
 [oLSP_AAS,nAAS] = lsplane(AnkleArtSurf.Points, Z0);
 Curves          = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 % this gets the larger area (allows tibia to be in the geometry)
+CORRECT LINE BELOW
 [Curve, N_curves] = GIBOK_getLargerPlanarSect(Curves);
 
 % check on the objects that have been sliced
@@ -70,10 +74,11 @@ elseif N_curves>2
     warning(['There are ', num2str(length(Curves)), ' section areas.']);
     error('This should not be the case (only tibia and fibular should be there.')
 end
+CORRECT THIS LINE
 Centr           = PlanPolygonCentroid3D( Curve.Pts );
 
 % ankle centre
-ankleCenter = Centr - plane_thick * nAAS';
+CSs.ankleCenter = Centr - plane_thick * nAAS';
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENCE FROM ORIGINAL TOOLBOX
@@ -86,6 +91,7 @@ ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
 [~,I] = max(DistTib.Points*ZAnkleSurf);
 
 % define a pseudo-medial axis
+THIS NEEDS PROPER TESTING
 if only_tibia == 1
     % Vector between ankle center and the most Distal point (MDMMPt)
     MDMM_Pt = DistTib.Points(I,:);
