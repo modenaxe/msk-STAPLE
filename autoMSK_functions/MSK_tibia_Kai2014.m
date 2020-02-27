@@ -19,7 +19,7 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
     [ V_all, CenterVol] = TriInertiaPpties( Tibia );
 end
-
+warning('PCA WITH/WITHOT TIBIA NEEDS TESTNG')
 % checks on vertical direction
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
