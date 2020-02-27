@@ -17,7 +17,7 @@ else
 end
 
 % Get the mean edge length of the triangles composing the femur
-% This is necessary because the functions were originally developped for
+% This is necessary because the functions were originally developed for
 % triangulation with constant mean edge lengths of 0.5 mm
 PptiesFemur = TriMesh2DProperties( Femur );
 
