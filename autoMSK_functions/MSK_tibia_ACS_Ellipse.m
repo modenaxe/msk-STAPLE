@@ -1,4 +1,4 @@
-function MSK_tibia_ACSEllipse(EpiTibAS, CS)
+function MSK_tibia_ACS_Ellipse(EpiTibAS, CS)
 
 % fit a plane to the resulting tibial epiPhysis 
 [oLSP, Ztp] = lsplane(EpiTibAS.Points,CS.Z0);

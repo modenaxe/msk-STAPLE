@@ -13,9 +13,12 @@ disp('Computing Femoral Head Centre (Kai et al. 2014)...')
 MostProxPoint = ProxFem.Points(I_Top_FH,:);
 
 up = CS.Z0;
+% unused - consider removing
+%==================================================
 anterior_dir = normalizeV(cross(MostProxPoint, up));
 medial_dir = normalizeV(cross(anterior_dir, CS.Z0));
 front = cross(MostProxPoint, up);
+%==================================================
 
 % debug plot
 quickPlotTriang(ProxFem, 'm')
