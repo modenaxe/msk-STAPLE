@@ -86,11 +86,11 @@ YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
 % Store body info
-CS.Origin  = CenterEllipse;
-CS.CenterVol = CenterVol;
-% CS.CenterKnee = CenterEllipse;
+CS.Origin        = CenterEllipse;
+CS.CenterVol     = CenterVol;
+% CS.CenterKnee  = CenterEllipse;
 CS.ElpsMaxPtVect = YElpsMax;
-CS.ElpsPts = EllipsePts;
+CS.ElpsPts       = EllipsePts;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(Z0);
