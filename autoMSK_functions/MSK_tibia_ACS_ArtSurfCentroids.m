@@ -1,26 +1,22 @@
-% fitting one ellipse to the articular surfaces identified on the proximal
-% tibia.
-%    TODO: copy description from paper
-function MSK_tibia_ACS_Ellipse(EpiTibAS, CS)
+%Reference system built from the centroids of the articular surfaces
+function CS = MSK_tibia_ACS_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS)
 
-% fit a plane to the resulting tibial epiPhysis 
-[oLSP, Ztp] = lsplane(EpiTibAS.Points,CS.Z0);
+% compute 2D prop  for articular surfaces
+[ TibArtLat_ppt ] = TriMesh2DProperties( EpiTibASLat );
+[ TibArtMed_ppt ] = TriMesh2DProperties( EpiTibASMed );
 
-% fit ellipse to articular surface
-[~, Yelps, ellipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
-
-% centroid of the ellipse is considered knee centre on tibia
-KneeCenter = mean(ellipsePts);
+% midpoint of centroids is knee centre
+KneeCenter = 0.5*(TibArtMed_ppt.Center + TibArtLat_ppt.Center);
 
 % Store body info
 CS.Origin        = KneeCenter;
-CS.ElpsMaxPtVect = Yelps;
-CS.ElpsPts       = EllipsePts;
+CS.Centroid_med  = TibArtMed_ppt.Center;
+CS.Centroid_lat  = TibArtLat_ppt.Center;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Z = sign(Yelps'*CS.Y0)*Yelps;
 Y = normalizeV(KneeCenter-CS.AnkleCenter); % mechanical axis
-X = cross(Z, Y);
+Z = normalizeV(TibArtMed_ppt.Center - TibArtLat_ppt.Center);
+X = cross(Y, Z);
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
