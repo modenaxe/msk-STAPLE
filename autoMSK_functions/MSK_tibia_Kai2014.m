@@ -86,7 +86,7 @@ YElpsMax = sign(Y0'*YElpsMax)*YElpsMax;
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
 % Store body info
-CS.Origin        = CenterEllipse;
+CS.Origin        = CenterEllipse*dim_fact;
 CS.CenterVol     = CenterVol;
 % CS.CenterKnee  = CenterEllipse;
 CS.ElpsMaxPtVect = YElpsMax;

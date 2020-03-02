@@ -96,19 +96,8 @@ osimModel.addJoint(hip_r);
 % defines the axis for the tibia
 TibiaRCS = MSK_tibia_Kai2014(geom_set.tibia_r);
 TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
-
 % knee joint
-% joint centre in femur
-knee_location_in_parent = (FemurCS.Center1+FemurCS.Center2)/2.0*dim_fact;
-tibia_orientation = computeZXYAngleSeq(TibiaRCS.V);
-
-% knee
-JointParams = getJointParams('knee_r');
-JointParams.parent_location    = knee_location_in_parent;
-JointParams.parent_orientation = FemurCS.hip_r.child_orientation;
-JointParams.child_location     = knee_location_in_parent;
-JointParams.child_orientation  = tibia_orientation;
-
+JointParams = getJointParams('knee_r', FemurCS, TibiaRCS);
 % create the joint
 knee_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(knee_r);
