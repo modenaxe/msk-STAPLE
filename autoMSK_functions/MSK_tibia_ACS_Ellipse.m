@@ -1,16 +1,16 @@
 % fitting one ellipse to the articular surfaces identified on the proximal
 % tibia.
 %    TODO: copy description from paper
-function MSK_tibia_ACS_Ellipse(EpiTibAS, CS)
+function CS = MSK_tibia_ACS_Ellipse(EpiTibAS, CS)
 
 % fit a plane to the resulting tibial epiPhysis 
 [oLSP, Ztp] = lsplane(EpiTibAS.Points,CS.Z0);
 
 % fit ellipse to articular surface
-[~, Yelps, ellipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
+[~, Yelps, EllipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
 
 % centroid of the ellipse is considered knee centre on tibia
-KneeCenter = mean(ellipsePts);
+KneeCenter = mean(EllipsePts);
 
 % Store body info
 CS.Origin        = KneeCenter;
