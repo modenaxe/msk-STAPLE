@@ -7,8 +7,7 @@ function CS = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CS)
 
 % fit a plane to the resulting tibial epiPhysis 
 [oLSP, Ztp] = lsplane(EpiTibAS.Points, CS.Z0);
-% not exactly as in GIBOK, where d is computed BEFORE the final filters in
-% it2.
+% not exactly as in GIBOK, where d is computed BEFORE the filters of it2.
 d = -oLSP*Ztp;
 
 % fit the ellipsoid and define the axes on it
@@ -16,17 +15,23 @@ d = -oLSP*Ztp;
 Xel = sign(Xel'* CS.Y0)*Xel;
 Yel = sign(Yel'* CS.Y0)*Yel;
 
+% slice the epiphysis
+slice_step = 1; %mm 
+[Areas, Alt, maxArea] = TriSliceObjAlongAxis(EpiTib, CS.Z0, slice_step);
+
 % long axis of ellipse
-H = 0.1 * sqrt(4*0.75*maxAreaEpiTib/pi);
+H = 0.1 * sqrt(4*0.75*maxArea/pi);
 Alt_TP = linspace( -d-H ,-d+0.5*H, 20);
 PointSpace = mean(diff(Alt_TP));
-TPLayerPts = zeros(round(length(Alt_TP)*1.1*maxAreaEpiTib/PointSpace^2),3);
+TPLayerPts = zeros(round(length(Alt_TP)*1.1*maxArea/PointSpace^2),3);
 j=0;
 i=0;
 for alt = -Alt_TP
     [ Curves , ~ , ~ ] = TriPlanIntersect( EpiTib, Ztp , alt );
-    for c=1:length(Curves)
-        NEEDS A CHECK TO BE THE LARGEST AREA!
+    N_curves = length(Curves);
+    for c=1:N_curves
+        % I think JB needs to check here if the algorithm is robust to the
+        % presence of fibula
         Pts_Tmp = Curves(c).Pts*[Xel Yel Ztp];
         xmg = min(Pts_Tmp(:,1)) -0.1 : PointSpace : max(Pts_Tmp(:,1)) +0.1 ;
         ymg = min(Pts_Tmp(:,2)) -0.1 : PointSpace : max(Pts_Tmp(:,2)) +0.1;
@@ -47,8 +52,8 @@ TPLayerPts(j+1:end,:) = [];
 % inertial axes of the tibial plateau layer
 [V,~] = eig(cov(TPLayerPts));
 Xtp = V(:,2); Ytp = V(:,3);
-Xtp = sign(Xtp'*Y0)*Xtp;
-Ytp = sign(Ytp'*Y0)*Ytp;
+Xtp = sign(Xtp'*CS.Y0)*Xtp;
+Ytp = sign(Ytp'*CS.Y0)*Ytp;
 
 idx = kmeans(TPLayerPts,2);
 
@@ -67,7 +72,7 @@ CS.Xtibplat = Xtp;
 % CS.Centroid_lat  = TibArtLat_ppt.Center;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Y = normalizeV(KneeCenter - CenterAnkleInside);
+Y = normalizeV(KneeCenter - CS.CenterAnkleInside);
 Z = normalizeV(Ytp);
 X = cross(Z, Y);
 
