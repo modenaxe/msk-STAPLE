@@ -60,25 +60,24 @@ AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho);
 %-----------
 plane_thick = 5 * dim_fact; 
 %-----------
-[oLSP_AAS,nAAS] = lsplane(AnkleArtSurf.Points, Z0);
-Curves          = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
-% this gets the larger area (allows tibia to be in the geometry)
-CORRECT LINE BELOW
-[Curve, N_curves] = GIBOK_getLargerPlanarSect(Curves);
+[oLSP_AAS, nAAS] = lsplane(AnkleArtSurf.Points, Z0);
+Curves           = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 
-% check on the objects that have been sliced
-only_tibia=1;
+% this gets the larger area (allows tibia to be in the geometry)
+[Curve, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);
+
+% checks how many objects have been sliced
+tibia_and_fibula=0;
 if N_curves==2
-    only_tibia=0;
+    tibia_and_fibula=1;
 elseif N_curves>2
-    warning(['There are ', num2str(length(Curves)), ' section areas.']);
-    error('This should not be the case (only tibia and fibular should be there.')
+    warning(['There are ', num2str(N_curves), ' section areas.']);
+    error('This should not be the case (only tibia and fibula should be there.')
 end
-CORRECT THIS LINE
-Centr           = PlanPolygonCentroid3D( Curve.Pts );
 
 % ankle centre
-CSs.ankleCenter = Centr - plane_thick * nAAS';
+Centre = PlanPolygonCentroid3D( Curve.Pts );
+CSs.AnkleCenter = Centre - plane_thick * nAAS';
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENCE FROM ORIGINAL TOOLBOX
@@ -91,16 +90,21 @@ ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
 [~,I] = max(DistTib.Points*ZAnkleSurf);
 
 % define a pseudo-medial axis
-THIS NEEDS PROPER TESTING
-if only_tibia == 1
+warning('THIS NEEDS PROPER TESTING')
+quickPlotTriang(DistTib,'m',1); hold on
+if tibia_and_fibula == 1
     % Vector between ankle center and the most Distal point (MDMMPt)
     MDMM_Pt = DistTib.Points(I,:);
-    U_tmp = MDMM_Pt - ankleCenter;
+    U_tmp = MDMM_Pt - CSs.AnkleCenter;
+    % debug
+    plotDot(MDMM_Pt,'k',3)
 else
-    % if fibular is there, the most distal will be fibula tip. Adjusting
-    % for that case
+    % if fibula is there, the most distal point will be fibula tip. 
+    % Adjusting for that case.
     MDLM_Pt = DistTib.Points(I,:);
-    U_tmp = ankleCenter - MDLM_Pt;
+    U_tmp = CSs.AnkleCenter - MDLM_Pt;
+    % debug
+    plotDot(MDLM_Pt,'k',3)
 end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
@@ -135,6 +139,7 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 % ITERATION 2 & 3 
 %==================
 [EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs, CoeffMorpho);
+
 % builld the triangulation
 EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
 
@@ -146,11 +151,13 @@ quickPlotTriang(EpiTib,'y',1);hold on
 quickPlotTriang(EpiTibASMed,'r')
 quickPlotTriang(EpiTibASLat,'b')
 
-% CSs = GIBOK_tibia_EllipseACS(EpiTibAS, CSs);
-% 
-% CSs = GIBOK_tibia_DoubleEllipseACS(EpiTibASMed, EpiTibASLat);
-% 
-% CSs = GIBOK_tibia_PlateauLayerACS(EpiTibAS, CSs);
+% fit an ellipse to the articular surface
+% CSs = MSK_tibia_ACS_Ellipse(EpiTibAS, CSs);
+
+% uses the centroid of the articular surfaces to define the Z axis
+% CSs = MSK_tibia_ACS_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CSs);
+
+CSs = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CSs);
 
 %% Inertia Results
 Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
