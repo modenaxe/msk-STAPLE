@@ -45,7 +45,7 @@ CSs.InertiaMatrix = InertiaMatrix;
 CSs.V_all = V_all;
 
 % extract the tibia (used to compute the mechanical Z axis)
-CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs);
+CSs.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs);
 
 % extract the distal tibia articular surface
 AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho);
@@ -160,15 +160,15 @@ quickPlotTriang(EpiTibASLat,'b')
 CSs = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CSs);
 
 %% Inertia Results
-Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
-Xi = cross(Yi,Z0);
-
-CSs.CenterAnkle2 = CenterAnkleInside;
-CSs.CenterAnkle = ankleCenter;
-CSs.Zinertia = Z0;
-CSs.Yinertia = Yi;
-CSs.Xinertia = Xi;
-CSs.Minertia = [Xi Yi Z0];
+% Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
+% Xi = cross(Yi,Z0);
+% 
+% CSs.CenterAnkle2 = CenterAnkleInside;
+% CSs.CenterAnkle = ankleCenter;
+% CSs.Zinertia = Z0;
+% CSs.Yinertia = Yi;
+% CSs.Xinertia = Xi;
+% CSs.Minertia = [Xi Yi Z0];
 
 if nargout>1
     TrObjects = struct();
