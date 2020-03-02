@@ -6,12 +6,14 @@ slice_step = 1; %mm
 
 % removes mesh above the limit of epiphysis (Zepi)
 [~ , Zepi, ~] = FitCSA(Alt, Areas);
+
 % choose the bone part of interest
 if strcmp(prox_epi, 'proximal')
     ElmtsEpi = find(TriObj.incenter*Z0>Zepi);
 elseif strcmp(prox_epi, 'distal')
     ElmtsEpi = find(TriObj.incenter*Z0<Zepi);
 end
+
 % return the triangulation
 EpiTri = TriReduceMesh( TriObj, ElmtsEpi);
 end
