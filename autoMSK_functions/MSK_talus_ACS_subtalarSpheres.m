@@ -1,18 +1,14 @@
-function SubtalarCS = GIBOK_fit_subtalar_ArtSurf(Talus, X0, Y0, debug_plot)
+function [SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plot)
 
 % structure to store ref system info
 SubtalarCS = struct;
 
-% Change X0 orientation if necessary ( or = +/- 1 )
-X0 = or*X0;
-Y0 = or*Y0;
-
-alt_TlNvc_end = max(Talus.incenter*X0);
+alt_TlNvc_end = max(Talus.incenter*CS.X0);
 TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
 
 
 % 2.2 First guess at the TlNvc articular surface (AS)
-ElmtsTlNvc = find(Talus.incenter*X0 > (alt_TlNvc_start+0.25*TlNvc_length));
+ElmtsTlNvc = find(Talus.incenter*CS.X0 > (alt_TlNvc_start+0.25*TlNvc_length));
 TlNvc_AS = TriReduceMesh( Talus, ElmtsTlNvc );
 
 % 2.3 Fit a initial sphere on the TlNvc AS
@@ -30,18 +26,18 @@ TlNvc_AS = TriReduceMesh( Talus, ElmtsTlNvc );
 % maxAbsCurv =  max(abs(k1), abs(k2));
 
 % Estimated mean direction of the normals of the talocalcaneal surface
-U1 = - Z0 + 0.5*Y0 - 0.4*X0;
+U1 = - CS.Z0 + 0.5*CS.Y0 - 0.4*CS.X0;
 U1 = normalizeV(U1);
 
-U2 = - Z0 - 0.5*Y0 - 0.3*X0;
+U2 = - CS.Z0 - 0.5*CS.Y0 - 0.3*CS.X0;
 U2 = normalizeV(U2);
 
 % First guess of the nodes that should be on the surface based on normal
 % orientation relative to the estimated directions U1 and U2
 TlCcnASNodesOK0 =  find(k2 > quantile(k2,0.33) &...
     (acosd(Talus.vertexNormal*U1)<30 | acosd(Talus.vertexNormal*U2)<30) &...
-    Talus.Points*X0<CenterVol'*X0 &...
-    Talus.vertexNormal*Z0 < 0);
+    Talus.Points*CS.X0<CS.CenterVol'*CS.X0 &...
+    Talus.vertexNormal*CS.Z0 < 0);
 TlCcnAS0 = TriReduceMesh(Talus,[],double(TlCcnASNodesOK0));
 TlCcnAS0 = TriKeepLargestPatch( TlCcnAS0 ) ;
 
@@ -49,7 +45,7 @@ TlCcnAS0 = TriKeepLargestPatch( TlCcnAS0 ) ;
 TlCcnASCenter0 = mean(TlCcnAS0.Points);
 
 % Select the good vector between U1 and U2
-U_TlCcnASCenter0 = TlCcnASCenter0 - CenterVol';
+U_TlCcnASCenter0 = TlCcnASCenter0 - CS.CenterVol';
 U_TlCcnASCenter0 = normalizeV(U_TlCcnASCenter0');
 U1U2 = [U1, U2];
 [~,i] = max(U1U2'*U_TlCcnASCenter0);
@@ -66,8 +62,8 @@ normal_CPts = -CPts./repmat(sqrt(sum(CPts.^2,2)),1,3);
 TlCcnASNodesOK1 =  find(k2 > quantile(k2,0.33) &...
     acosd(Talus.vertexNormal*U)<60 &...
     sum(Talus.vertexNormal.*normal_CPts,2)>0 &...
-    Talus.vertexNormal*Z0 < 0 &...
-    Talus.Points*X0 < alt_TlNeck_start);
+    Talus.vertexNormal*CS.Z0 < 0 &...
+    Talus.Points*CS.X0 < alt_TlNeck_start);
 
 TlCcnAS1 = TriReduceMesh(Talus, [], TlCcnASNodesOK1);
 TlCcnAS1 = TriKeepLargestPatch( TlCcnAS1 ) ;
@@ -87,9 +83,9 @@ center_SubAxis = (Center_TlCcn+Center_TlNvc)/2;
 
 
 %% 5. Save reference system details
-X1 = u_SubAxis;
-Z1 = normalizeV(cross(X1,Y0));
-Y1 = cross(Z1,X1);
+CS.X1 = u_SubAxis;
+CS.Z1 = normalizeV(cross(CS.X1,CS.Y0));
+CS.Y1 = cross(CS.Z1,CS.X1);
 
 % store info about talo-navicular artic surf
 SubtalarCS.TaloCalc_centre = Center_TlCcn;
@@ -100,10 +96,10 @@ SubtalarCS.TaloNav_radius = Radius_TlNvc;
 % ref system
 SubtalarCS.SubTal_axis = u_SubAxis;
 SubtalarCS.Origin = Center_TlCcn;
-SubtalarCS.Z = X1;
-SubtalarCS.Y = Z1;
-SubtalarCS.X = Y1;
-SubtalarCS.V = [SubtalarCS.X SubtalarCS.Y SubtalarCS.Z];
+SubtalarCS.Z = CS.X1;
+SubtalarCS.Y = CS.Z1;
+SubtalarCS.X = CS.Y1;
+SubtalarCS.V_subtalar = [SubtalarCS.X SubtalarCS.Y SubtalarCS.Z];
 
 if debug_plot
     % plot the results figure :
@@ -115,20 +111,20 @@ if debug_plot
     axis equal
     
     % handle lighting of objects
-    light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
-    light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
-    light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
-    light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
+    light('Position',CS.CenterVol' + 500*CS.Y0' + 500*CS.X0','Style','local')
+    light('Position',CS.CenterVol' + 500*CS.Y0' - 500*CS.X0','Style','local')
+    light('Position',CS.CenterVol' - 500*CS.Y0' + 500*CS.X0' - 500*CS.Z0','Style','local')
+    light('Position',CS.CenterVol' - 500*CS.Y0' - 500*CS.X0' + 500*CS.Z0','Style','local')
     lighting gouraud
     
     % Remove grid
     grid off
     
     %Plot the inertia Axis & Volumic center
-    plotDot( CenterVol', 'k', 2 )
-    plotArrow( X0, 1, CenterVol, 40, 1, 'r')
-    plotArrow( Y0, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
-    plotArrow( Z0, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
+    plotDot( CS.CenterVol', 'k', 2 )
+    plotArrow( CS.X0, 1, CS.CenterVol, 40, 1, 'r')
+    plotArrow( CS.Y0, 1, CS.CenterVol, 40*CS.D(1,1)/CS.D(2,2), 1, 'g')
+    plotArrow( CS.Z0, 1, CS.CenterVol, 40*CS.D(1,1)/CS.D(3,3), 1, 'b')
     
     %Plot the Tl Nvc part
     trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
