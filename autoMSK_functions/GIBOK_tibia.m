@@ -70,6 +70,7 @@ Curves           = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAA
 tibia_and_fibula=0;
 if N_curves==2
     tibia_and_fibula=1;
+    disp('Tibia and Fibula are detected in the triangulation.')
 elseif N_curves>2
     warning(['There are ', num2str(N_curves), ' section areas.']);
     error('This should not be the case (only tibia and fibula should be there.')
@@ -90,7 +91,9 @@ ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
 [~,I] = max(DistTib.Points*ZAnkleSurf);
 
 % define a pseudo-medial axis
+warning('==========================')
 warning('THIS NEEDS PROPER TESTING')
+warning('==========================')
 quickPlotTriang(DistTib,'m',1); hold on
 if tibia_and_fibula == 1
     % Vector between ankle center and the most Distal point (MDMMPt)
