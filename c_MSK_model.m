@@ -70,8 +70,6 @@ for nb = 1:length(body_list)
     geom_set.(cur_body_name) = cur_geom;
 end
 
-% quickPlotTriang(geom_set.femur_r)
-
 %---- PELVIS -----
 % solve reference system from geometry
 [PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
@@ -94,10 +92,10 @@ osimModel.addJoint(hip_r);
 
 %---- TIBIA -----
 % defines the axis for the tibia
-TibiaRCS = MSK_tibia_Kai2014(geom_set.tibia_r);
+TibiaCS = MSK_tibia_Kai2014(geom_set.tibia_r);
 % TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
 % knee joint
-JointParams = getJointParams('knee_r', FemurCS, TibiaRCS);
+JointParams = getJointParams('knee_r', FemurCS, TibiaCS);
 % create the joint
 knee_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(knee_r);
@@ -106,8 +104,8 @@ osimModel.addJoint(knee_r);
 %---- TALUS/ANKLE -----
 TalusCS = GIBOK_talus(geom_set.talus_r);
 % ankle joint
-TibiaRCS = assembleAnkleParentOrientation(TibiaRCS, TalusCS);
-JointParams = getJointParams('ankle_r', TibiaRCS, TalusCS);
+TibiaCS = assembleAnkleParentOrientation(TibiaCS, TalusCS);
+JointParams = getJointParams('ankle_r', TibiaCS, TalusCS);
 ankle_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(ankle_r);
 %-----------------
@@ -120,50 +118,34 @@ subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 %-----------------
 
-
 %---- PATELLA -----
-[ PatellaCSs, TrObjects ] = GIBOK_patella(geom_set.patella_r);
+[ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 % PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
-% patello-femoral joint (OpenSim way)
-patfemjoint_location_in_parent = FemurCSs.PatGr.Origin*dim_fact;
-patfemjoint_location_in_child = FemurCSs.PatGr.Origin*dim_fact;
-patella_orientation = computeZXYAngleSeq(FemurCSs.PatGr.V);
-% % patello-femoral joint (OpenSim way)
-% patfemjoint_location_in_parent = PatellaCSs.VR.Origin*dim_fact;
-% patfemjoint_location_in_child = PatellaCSs.VR.Origin*dim_fact;
-% patella_orientation = computeZXYAngleSeq(PatellaCSs.VR.V);
-% joint
-JointParams = getJointParams('patellofemoral_r');
-JointParams.parent_location     = patfemjoint_location_in_parent;
-JointParams.parent_orientation  = FemurCS.hip_r.child_orientation;
-JointParams.child_location      = patfemjoint_location_in_child;
-JointParams.child_orientation   = patella_orientation;
-% create the joint
+NEED TO DEFINE PATELLA PARENT ORIENT: Z from groove Y from femur
+NEED TO CHECK PATELLA CHILD ORIENT: ??
+PatellaCS = assemblePatellofemoralParentOrientation(FemurCS, PatellaCS);
+% patellofemoral joint
+JointParams = getJointParams('patellofemoral_r', FemurCS, PatellaCS);
 patfem_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(patfem_r);
-% add patellofemoral constraint
-ptf = ConstantDistanceConstraint(osimModel.get_BodySet().get('tibia_r'),...
-                                 Vec3(TibiaRBL.RTTB(1)*dim_fact, TibiaRBL.RTTB(2)*dim_fact, TibiaRBL.RTTB(3)*dim_fact),...
-                                 osimModel.get_BodySet().get('patella_r'),...
-                                 Vec3(PatellaRBL.RLOW(1)*dim_fact, PatellaRBL.RLOW(2)*dim_fact, PatellaRBL.RLOW(3)*dim_fact),...
-                                 norm(TibiaRBL.RTTB-PatellaRBL.RLOW)*dim_fact);
-addConstraint(osimModel, ptf)  
 %-----------------
 
 % landmarking
 close all
-% quickPlotTriang(geom_set.femur_r);hold on
-% quickPlotRefSystem(FemurCS);
-FemurRBL = LandmarkGeom(geom_set.femur_r, FemurCS, 'femur_r');
-TibiaRBL = LandmarkGeom(geom_set.tibia_r, TibiaRCS, 'tibia_r');
-PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCSs.VR, 'patella_r');
-CalcnBL = LandmarkGeom(geom_set.calcn_r, CalcaneusCS, 'calcn_r');
+FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
+TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCS.VR, 'patella_r');
+CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
+
 % add markers to model
-addMarkersFromStruct(osimModel, 'pelvis' , PelvisBL, in_mm)
-addMarkersFromStruct(osimModel, 'femur_r', FemurRBL, in_mm)
-addMarkersFromStruct(osimModel, 'tibia_r', TibiaRBL, in_mm)
-addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm)
-addMarkersFromStruct(osimModel, 'calcn_r', CalcnBL,  in_mm)                              
+addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
+addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
+addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
+addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm);
+addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
+
+% add patellofemoral constraint
+addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, 'r')
 
 % finalize
 osimModel.finalizeConnections();
