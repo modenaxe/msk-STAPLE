@@ -25,9 +25,9 @@ CS.Origin     = PaTGrooveCenter;
 
 % define patellofemoral axes
 Y_ptf = cross(Z, X);
-CS.V_ptf = [X Y_ptf Z];
+CS.patellofemoral_r.V = [X Y_ptf Z];
 CS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
-CS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(CS.V_ptf);
+CS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(CS.patellofemoral_r.V);
 
 % % debug plots
 % grid off
