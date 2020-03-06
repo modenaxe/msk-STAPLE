@@ -121,6 +121,7 @@ LowestPoints_CS0 = bsxfun(@plus,LowestPoints_end*V_all',CenterVol');
 % LS line fit on the ridge and ridge midpoint
 Uridge = sign(U'*Uridge)*Uridge;
 
+quickPlotTriang(Patella, 'm')
 
 % volume ridge approach
 CS = ACS_patella_VolumeRidge(CS, U);
@@ -129,165 +130,9 @@ CS = ACS_patella_VolumeRidge(CS, U);
 CS = ACS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0);
 
 % principal axes of inertia of the articular surface
-[CS, ArtSurf] = ACS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0);
+[CS, ArtSurf] = ACS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho);
 
-%% Technic VR volume ridge
 
-    function CS = ACS_patella_VolumeRidge(CS, U)
-        V_all = CS.V_all;
-        CenterVol = CS.CenterVol;
-        
-        Z = V_all*U;
-        X = -V_all(:,3);
-        Y = cross(Z,X);
-        
-        % %GIBOK
-        % CSs.VR.X = X;
-        % CSs.VR.Y = Y;
-        % CSs.VR.Z = Z;
-        % CSs.VR.Theta = -asin(U(1));
-        % CSs.VR.V = [X Y Z];
-        % CSs.VR.Origin = CenterVol';
-        
-        
-        % ISB standards
-        CS.VR.X = -X;
-        CS.VR.Y = Z;
-        CS.VR.Z = cross(-X, Z);
-        CS.VR.Theta = -asin(U(1));
-        CS.VR.V = [-X Z cross(-X, Z)];
-        CS.VR.Origin = CenterVol';
-        
-        quickPlotTriang(Patella, 'm',1)
-        quickPlotRefSystem(CS.VR)
-        
-    end
-
-    function CS = ACS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0)
-        
-        V_all = CS.V_all;
-        
-        % Uridge in the initial (CT/MRI) coordinate system
-        UridgeR0 = V_all*Uridge;
-        
-        % Construct RL ACS
-        Center3 = mean(LowestPoints_CS0);
-        Z3 = V_all*Uridge;
-        X3 = -V_all(:,3);
-        Y3 = normalizeV( cross(Z3,X3) );
-        X3 = cross(Y3,Z3);
-        
-        % % GIBOK
-        % CSs.RL.X = X3;
-        % CSs.RL.Uridge = Uridge;
-        % CSs.RL.UridgeR0 = UridgeR0;
-        % CSs.RL.Y = Y3;
-        % CSs.RL.Z = Z3;
-        % CSs.RL.V = [X3 Y3 Z3];
-        % CSs.RL.Origin = Center3;
-        
-        % ISB
-        CS.RL.X = -X3;
-        CS.RL.Uridge = Uridge;
-        CS.RL.UridgeR0 = UridgeR0;
-        CS.RL.Y = Z3;
-        CS.RL.Z = Y3;
-        CS.RL.V = [-X3 Z3 Y3];
-        CS.RL.Origin = Center3;
-        
-        
-        % quickPlotTriang(Patella, 'm')
-        quickPlotRefSystem(CS.RL)
-        
-    end
-
-    function [CS, ArtSurf] = ACS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0)
-        
-        V_all = CS.V_all;
-        CenterVol = CS.CenterVol;
-        
-        % Uridge in the initial (CT/MRI) coordinate system
-        UridgeR0 = V_all*Uridge;
-        
-        % Construct RL ACS
-        Z3 = V_all*Uridge;
-        X3 = -V_all(:,3);
-        Y3 = normalizeV( cross(Z3,X3) );
-        X3 = cross(Y3,Z3);
-        
-        % Technic PIAAS
-        % Identify articular surface and get principal axis
-        LengthRidge = range(LowestPoints_CS0*Z3);
-        PtRidgeDist = LowestPoints_CS0(LowestPoints_CS0*Z3==min(LowestPoints_CS0*Z3),:);
-        
-        % Select intial elements on the articular surface
-        Condition1 = abs(Patella.faceNormal*Z3)<0.23 ; %cos(pi/12);
-        Condition2 = Patella.faceNormal*X3>cos(pi/3);
-        Condition3 = Patella.incenter*Z3>PtRidgeDist*Z3-0.25*LengthRidge;
-        
-        IgoodElmts = find(Condition1&Condition2&Condition3);
-        
-        ArtSurf = TriReduceMesh(Patella,IgoodElmts);
-        ArtSurf0 = ArtSurf ;
-        ArtSurf = TriOpenMesh(Patella,ArtSurf, 2*CoeffMorpho);
-        ArtSurf = TriCloseMesh(Patella,ArtSurf, 4*CoeffMorpho);
-        ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
-        
-        % Fit a plane to the AS
-        [~,Nrml] = lsplane( ArtSurf.Points, X3 );
-        
-        % Update conditions with fitted plane orientation
-        ArtSurfDilated = TriDilateMesh(Patella, ArtSurf, 15*CoeffMorpho);
-        Condition1 = abs(ArtSurfDilated.faceNormal*Z3)<0.375;
-        Condition2 = ArtSurfDilated.faceNormal*Nrml>cos(3*pi/10);
-        Condition3 = ArtSurfDilated.incenter*Z3>PtRidgeDist*Z3+0.15*LengthRidge & ...
-            ArtSurfDilated.faceNormal*Nrml>0.5 ;
-        
-        IgoodElmts = unique([find(Condition1&Condition2);find(Condition3)]);
-        ArtSurf = TriReduceMesh(ArtSurfDilated,IgoodElmts);
-        
-        % Smooth found region with morphologic operations
-        ArtSurf = TriOpenMesh(Patella, ArtSurf, 3*CoeffMorpho);
-        ArtSurf = TriUnite(ArtSurf0, ArtSurf);
-        ArtSurf = TriCloseMesh(Patella, ArtSurf, 2*CoeffMorpho);
-        ArtSurf = TriConnectedPatch(ArtSurf, LowestPoints_CS0);
-        ArtSurf = TriCloseMesh(Patella, ArtSurf, 30*CoeffMorpho);
-        ArtSurf = TriOpenMesh(Patella, ArtSurf, 15*CoeffMorpho);
-        ArtSurf = TriErodeMesh(ArtSurf, 2*CoeffMorpho);
-        ArtSurf = TriCloseMesh(Patella, ArtSurf, 5*CoeffMorpho);
-        
-        
-        % Principal Inertia Matrix of the Articular Surface
-        [V_AS,~] = eig(TriCovMatrix(ArtSurf));
-        D4 = TriMesh2DProperties(ArtSurf);
-        
-        % Construct PIAAS ACS
-        Origin = D4.Center;
-        Z4 = V_AS(:,2);
-        Z4 = sign(UridgeR0'*Z4)*Z4;
-        
-        X4 = V_AS(:,1);
-        X4 = -sign( V_all(:,3)' * X4) * X4;
-        
-        Y4 = cross(Z4, X4);
-        
-        % % Write PIAAS ACS
-        % CSs.PIAAS.X = X4;
-        % CSs.PIAAS.Y = Y4;
-        % CSs.PIAAS.Z = Z4;
-        % CSs.PIAAS.V = V_AS;
-        
-        % ISB
-        CS.PIAAS.X = -X4;
-        CS.PIAAS.Y = Z4;
-        CS.PIAAS.Z = Y4;
-        CS.PIAAS.V =[-X4 Z4 Y4];
-        
-        CS.PIAAS.Origin = Origin;
-        CS.PIAAS.CenteronMesh = D4.onMeshCenter;
-        
-        quickPlotRefSystem(CS.PIAAS)
-    end
 
 %% Export Identified Objects
 if nargout > 1
