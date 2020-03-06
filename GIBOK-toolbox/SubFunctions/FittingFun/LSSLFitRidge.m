@@ -1,4 +1,4 @@
-function [ U, Uridge ,LowestPoints_End ] = LSSLFitRidge( TR,U,nbSlice,StartDist,EndDist)
+function [ U, Uridge ,LowestPoints_End ] = LSSLFitRidge( TR,U,nbSlice,StartDist,EndDist, debug_plot)
 %Least Square Straight Line Fit on Patellar Ridge
 %To obtain the direction of the ridge a Least Square Straight Line is
 %fitted on the lowest points on slices of normal U, and the normal U is
@@ -17,6 +17,9 @@ if nargin<4
     EndDist = StartDist; %Offset distance from last points
 end
 
+if varargin<6
+    debug_plot=0;
+end
 %% Code
 U0 = U;
 reslts = [0;0;0];
@@ -53,16 +56,17 @@ elseif nargout == 3
 end
 
 %% Plots
-% figure()
-% trisurf(TR,'facecolor','red','faceAlpha',0.5)
-% hold on
-% grid off
-% axis equal
-% pl3t(LowestPoints,'gs')
-% plotArrow( U, 1.5, mean(LowestPoints), 30, 1, 'k')
-% Uridge = sign(U0'*Vridge_all(:,3))*Vridge_all(:,3);
-% plotArrow( Uridge, 1.5, mean(LowestPoints), 50, 1, 'c')
-% hold off
-
+if debug_plot == 1
+    figure()
+    trisurf(TR,'facecolor','red','faceAlpha',0.5)
+    hold on
+    grid off
+    axis equal
+    pl3t(LowestPoints,'gs')
+    plotArrow( U, 1.5, mean(LowestPoints), 30, 1, 'k')
+    Uridge = sign(U0'*Vridge_all(:,3))*Vridge_all(:,3);
+    plotArrow( Uridge, 1.5, mean(LowestPoints), 50, 1, 'c')
+    hold off
+end
 end
 
