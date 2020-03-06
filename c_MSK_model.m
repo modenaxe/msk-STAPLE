@@ -121,8 +121,10 @@ osimModel.addJoint(subtalar_r);
 %---- PATELLA -----
 [ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 % PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
+%==================================================
 NEED TO DEFINE PATELLA PARENT ORIENT: Z from groove Y from femur
 NEED TO CHECK PATELLA CHILD ORIENT: ??
+%==================================================
 PatellaCS = assemblePatellofemoralParentOrientation(FemurCS, PatellaCS);
 % patellofemoral joint
 JointParams = getJointParams('patellofemoral_r', FemurCS, PatellaCS);

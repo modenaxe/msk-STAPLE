@@ -17,7 +17,7 @@ if nargin<4
     EndDist = StartDist; %Offset distance from last points
 end
 
-if varargin<6
+if nargin<6
     debug_plot=0;
 end
 %% Code
