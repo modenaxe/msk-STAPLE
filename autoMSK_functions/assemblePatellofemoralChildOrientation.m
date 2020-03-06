@@ -1,4 +1,4 @@
-function PatellaCS = assemblePatellofemoralParentOrientation(FemurCS, PatellaCS)
+function PatellaCS = assemblePatellofemoralChildOrientation(FemurCS, PatellaCS)
 % take Z from ankle joint (axis of rotation)
 Zpar = FemurCS.patellofemoral_r.V(:,3);
 % take vertical axis of the tibia
