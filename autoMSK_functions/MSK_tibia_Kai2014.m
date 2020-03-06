@@ -77,17 +77,20 @@ if just_tibia
     % Find the most distal point, it will be medial
     [~ , I_dist_fib] = min( Tibia.Points* -Z0 );
     MostDistalMedialPt = Tibia.Points(I_dist_fib,:);
-    U_tmp = MostDistalMedialPt - CenterVolTibDist;
+    % vector pointing laterally
+    U_tmp = MostDistalMedialPt - CenterVolTibDist';
 else %tibia and fibula
     warning('==========================')
     warning('THIS NEEDS PROPER TESTING')
     warning('==========================')
     % slice at the centroid of tibial distal
-    [ Curves , ~, ~ ] = TriPlanIntersect(DistTib, Z0 , -AltAtMax );
-    visualize
+    d = CenterVolTibDist*Z0;
+    [ Curves , ~, ~ ] = TriPlanIntersect(DistTib, Z0 , -d );
+    quickPlotTriang(DistTib, 'g', 1); hold on
+    plot3(Curves.Pts(:,1), Curves.Pts(:,2), Curves.Pts(:,3),'r-', 'LineWidth',4); hold on
     
     % throw error if more than 2 sections
-    if length(Curves)>2; error('There are more than two sections in tibia triangulation. Please check.'); end;
+    if length(Curves)>2; error('There are more than two sections in tibia triangulation. Please check.'); end
     % define the vector
     if Curves(1).Area>Curves(2).Area
         % vector from tibia section to fibular section
