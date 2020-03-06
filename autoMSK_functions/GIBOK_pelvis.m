@@ -118,6 +118,7 @@ CS.X = X;
 CS.Y = Y;
 CS.Z = Z;
 CS.V = [X', Y', Z'];
+
 % storing joint details
 CS.ground_pelvis.child_location    = PelvisOr*dim_fact;
 CS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);

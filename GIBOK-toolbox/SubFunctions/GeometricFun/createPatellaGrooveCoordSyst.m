@@ -20,15 +20,15 @@ Xend_sph = normalizeV( cross(Y, Z) );
 Zend_sph = normalizeV( cross(Xend_sph, Yend_sph) );
 
 % store axes in structure
-CSs.PatGr.Center1 = center1;
-CSs.PatGr.Center2 = center2;
-CSs.PatGr.Radius1 = radius1;
-CSs.PatGr.Radius2 = radius2;
-CSs.PatGr.Origin  = PaTGrooveCenter;
-CSs.PatGr.X       = Xend_sph;
-CSs.PatGr.Y       = Yend_sph;
-CSs.PatGr.Z       = Zend_sph;
-CSs.PatGr.V       = [Xend_sph Yend_sph Zend_sph];
+CSs.patellofemoral_r.Center1 = center1;
+CSs.patellofemoral_r.Center2 = center2;
+CSs.patellofemoral_r.Radius1 = radius1;
+CSs.patellofemoral_r.Radius2 = radius2;
+CSs.patellofemoral_r.Origin  = PaTGrooveCenter;
+CSs.patellofemoral_r.X       = Xend_sph;
+CSs.patellofemoral_r.Y       = Yend_sph;
+CSs.patellofemoral_r.Z       = Zend_sph;
+CSs.patellofemoral_r.V       = [Xend_sph Yend_sph Zend_sph];
 
 % % debug plots
 % grid off
