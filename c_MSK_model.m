@@ -20,7 +20,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 2;
+nd = 3;
 %--------------------------------
 
 % TODO need to personalize masses from volumes or regress eq
@@ -29,13 +29,8 @@ nd = 2;
 %TODO:set bounds on the coordinates of the CustomJoints.
 
 % adjust dimensional factors based on mm / m scales
-if in_mm == 1
-    dim_fact = 0.001;
-    bone_density = 0.000001420;%kg/mm3
-else
-    % assumed in metres
-    dim_fact = 1;
-    bone_density = 1420;%kg/m3
+if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
+else dim_fact = 1;     bone_density = 1420;%kg/m3 
 end
 
 % check folder existance
@@ -84,7 +79,7 @@ osimModel.addJoint(pelvis_ground_joint);
 FemurCS  = MSK_femur_ACS_Kai2014(geom_set.femur_r);
 FemurCSs = GIBOK_femur(geom_set.femur_r);
 % hip joint
-JointParams = getJointParams('hip_r', PelvisRS, FemurCS);
+JointParams = getJointParams('hip_r', PelvisRS, FemurCSs);
 % create the joint
 hip_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(hip_r);
@@ -95,7 +90,7 @@ osimModel.addJoint(hip_r);
 TibiaCS = MSK_tibia_Kai2014(geom_set.tibia_r);
 % TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
 % knee joint
-JointParams = getJointParams('knee_r', FemurCS, TibiaCS);
+JointParams = getJointParams('knee_r', FemurCSs, TibiaCS);
 % create the joint
 knee_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(knee_r);
@@ -121,30 +116,27 @@ osimModel.addJoint(subtalar_r);
 %---- PATELLA -----
 [ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
 % PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
-%==================================================
-NEED TO DEFINE PATELLA PARENT ORIENT: Z from groove Y from femur
-NEED TO CHECK PATELLA CHILD ORIENT: ??
-%==================================================
-PatellaCS = assemblePatellofemoralParentOrientation(FemurCS, PatellaCS);
+PatellaCS = assemblePatellofemoralParentOrientation(FemurCSs, PatellaCS);
 % patellofemoral joint
-JointParams = getJointParams('patellofemoral_r', FemurCS, PatellaCS);
+JointParams = getJointParams('patellofemoral_r', FemurCSs, PatellaCS);
 patfem_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(patfem_r);
 %-----------------
 
-% landmarking
-close all
-FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
-TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
-PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCS.VR, 'patella_r');
-CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
-
-% add markers to model
-addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
-addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
-addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
-addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm);
-addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
+% %---- LANDMARKING -----
+% close all
+% FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
+% TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+% PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCS, 'patella_r');
+% CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
+% 
+% % add markers to model
+% addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
+% addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
+% %-----------------
 
 % add patellofemoral constraint
 addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, 'r')
