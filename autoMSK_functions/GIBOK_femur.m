@@ -67,7 +67,7 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 [Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
-CSs = createPatellaGrooveCoordSyst(Groove_Lat, Groove_Med, CSs);
+CSs = MSK_patella_ACS_SpheresOnGroove(Groove_Lat, Groove_Med, CSs);
 
 % Fit two spheres on articular surfaces of posterior condyles
 CSs = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
