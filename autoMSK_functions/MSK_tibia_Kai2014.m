@@ -78,7 +78,7 @@ if just_tibia
     [~ , I_dist_fib] = min( Tibia.Points* -Z0 );
     MostDistalMedialPt = Tibia.Points(I_dist_fib,:);
     % vector pointing laterally
-    U_tmp = MostDistalMedialPt - CenterVolTibDist';
+    U_tmp = CenterVolTibDist'- MostDistalMedialPt;
 else %tibia and fibula
     warning('==========================')
     warning('THIS NEEDS PROPER TESTING')
