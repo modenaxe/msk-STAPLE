@@ -69,7 +69,7 @@ U = LSSLFitRidge( PatPIACS,U0,30);
 [ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge( PatPIACS,U,75);
 V = [U(2); -U(1); 0];
 
-%% Seperate the ridge region from the apex region
+%% Separate the ridge region from the apex region
 % Move the lowest point to CS updated with initial ridge orientation PIACSU
 LowestPoints_PIACSU = LowestPoints_PIACS*[U V [0;0;1]];
 
@@ -105,7 +105,7 @@ else
 end
 
 
-%% Update the ridge orienation with optimisation only on the ridge regioon
+%% Update the ridge orientation with optimisation only on the ridge regioon
 [ U, Uridge , LowestPoints_end ] = LSSLFitRidge( PatPIACS,U,75,StartDist, EndDist);
 U = Side*U;
 
