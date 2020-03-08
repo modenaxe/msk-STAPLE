@@ -1,10 +1,13 @@
-function CS = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS, in_mm)
+function CS = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS, debug_plot, in_mm)
 
 % REFERENCE SYSTEM
 % to be described for the two joints
 
+% default behaviour: do not plot
+if nargin<4; debug_plot = 0; end
+
 % check units
-if nargin<4;     in_mm = 1;  end
+if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % fit spheres to the two posterior condyles
@@ -38,7 +41,16 @@ CS.V_knee = [X Y_knee Z];
 CS.knee_r.parent_location = KneeCenter * dim_fact;
 CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
-% debug plot
-% quickPlotRefSystem(CS)
+if debug_plot
+    % debug plot
+    % quickPlotRefSystem(CS)
+    
+    % % debug plots
+    grid off
+    quickPlotTriang(postCondyle_Lat, 'b')
+    quickPlotTriang(postCondyle_Med, 'r')
+    plotSphere( center_lat, radius_lat , 'b')
+    plotSphere( center_med, radius_med , 'r')
+end
 
 end

@@ -1,4 +1,4 @@
-function CS = MSK_femur_ACS_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, in_mm, tolp, tolg)
+function CS = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, in_mm, tolp, tolg)
 
 % check units
 if nargin<4;     in_mm = 1;  end
@@ -11,7 +11,7 @@ if nargin < 6     ;     tolp = 0.001;    tolg = 0.001;  end
 PtsCondyle    = [Condyle_Lat.Points; Condyle_Med.Points];
 
 % initialise the least square search for cylinder with the sphere fitting
-CSSph = MSK_femur_ACS_SpheresOnCondyles(Condyle_Lat, Condyle_Med, CS);
+CSSph = CS_femur_SpheresOnCondyles(Condyle_Lat, Condyle_Med, CS);
 
 % initialise variables
 Axe0 = (CSSph.Center_Lat - CSSph.Center_Med)';
@@ -87,5 +87,11 @@ Y_knee = cross(Z, X);
 CS.V_knee = [X Y_knee Z];
 CS.knee_r.parent_location = KneeCenter * dim_fact;
 CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
+
+% % debug plots
+grid off
+quickPlotTriang(Condyle_Lat, 'b')
+quickPlotTriang(Condyle_Med, 'r')
+plotCylinder( Y2, rn, KneeCenter, CS.Cyl_Range*1.1, 1, 'g')
 
 end

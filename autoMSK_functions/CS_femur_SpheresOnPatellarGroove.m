@@ -1,4 +1,4 @@
-function CS = MSK_patella_ACS_SpheresOnGroove(Groove_Lat, Groove_Med, CS, in_mm)
+function CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS, in_mm)
 
 % check units
 if nargin<4;     in_mm = 1;  end
@@ -30,8 +30,10 @@ CS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
 CS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(CS.patellofemoral_r.V);
 
 % % debug plots
-% grid off
-% plotSphere( center1, radius1 , 'c')
-% plotSphere( center2, radius2 , 'c')
+grid off
+quickPlotTriang(Groove_Lat, 'b')
+quickPlotTriang(Groove_Med, 'r')
+plotSphere( center_lat, radius_lat , 'b')
+plotSphere( center_med, radius_med , 'r')
 
 end
