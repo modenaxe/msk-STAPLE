@@ -39,6 +39,7 @@ Face_MM_FH = TriReduceMesh(ProxFem,I_MM_FH);
 
 % STEP1: first sphere fit
 FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
+
 % Initial sphere fit
 [Centre, Radius, ErrorDist] = sphereFit(FemHead0.Points);
 
@@ -51,10 +52,6 @@ disp(['Radius: ', num2str(Radius)]);
 
 % TODO:  check the errors at various STEPS to evaluate if fitting is
 % improving or not!
-% 
-plot3(FemHead0.Points(:,1), FemHead0.Points(:,2), FemHead0.Points(:,3),'.g'); hold on
-title('First fit')
-
 
 % STEP2: dilate femoral head mesh and sphere fit again
 % IMPORTANT: TriDilateMesh "grows" the original mesh, does not create a
@@ -79,15 +76,15 @@ end
 % Theorical Normal of the face (from real fem centre to dilate one)
 CPts_PF_2D  = bsxfun(@minus, DilateFemHeadTri.incenter, CenterFH);
 normal_CPts_PF_2D = CPts_PF_2D./repmat(sqrt(sum(CPts_PF_2D.^2,2)),1,3);
-% % check normals visually
-P=DilateFemHeadTri.incenter;
-quiver3(P(:,1), P(:,2),P(:,3),...
-    normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
 
 % COND1: Keep points that display a less than 10deg difference between the actual
 % normals and the sphere simulated normals
 FemHead_normals_thresh = 0.975; % acosd(0.975) = 12.87;% deg
 Cond1 = sum((normal_CPts_PF_2D.*DilateFemHeadTri.faceNormal),2)>FemHead_normals_thresh;
+% % check normals visually
+% P=DilateFemHeadTri.incenter;
+% quiver3(P(:,1), P(:,2),P(:,3),...
+%     normal_CPts_PF_2D(:,1), normal_CPts_PF_2D(:,2), normal_CPts_PF_2D(:,3)); axis equal
 
 % COND2: Delete points far from sphere surface outside [90%*Radius 110%*Radius]
 Cond2 = abs(sqrt(sum(bsxfun(@minus,DilateFemHeadTri.incenter,CenterFH).^2,2))...
@@ -150,5 +147,10 @@ disp('-----------------')
 CSs.CenterFH0 = CenterFH0;
 CSs.CenterFH  = CenterFH;
 CSs.RadiusFH  =  Radius;
+
+% debug plots
+quickPlotTriang(ProxFem, [], 1); hold on
+quickPlotTriang(FemHead, 'g');
+plotSphere(CenterFH, Radius, 'b', 0.4);
 
 end
