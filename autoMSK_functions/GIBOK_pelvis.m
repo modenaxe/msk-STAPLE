@@ -15,12 +15,18 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ SCS, JCS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
+function [ CS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
+z
+if nargin<2
+    in_mm = 1;
+end
 
-% check units
-if nargin<2;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
-
+if in_mm == 1
+    dim_fact = 0.001;
+else
+    % assumed in metres
+    dim_fact = 1;
+end
 % guess of direction of axes on medical images (not always correct)
 % Z : pointing cranially
 % Y : pointing posteriorly
@@ -97,34 +103,26 @@ end
 
 % defining the ref system (global)
 PelvisOr = (RASIS+LASIS)'/2.0;
-Z = normalizeV(RASIS-LASIS);
+Z = (RASIS-LASIS)/norm(RASIS-LASIS);
 temp_X = ((RASIS+LASIS)/2.0) - ((RPSIS+LPSIS)/2.0);
 pseudo_X = temp_X/norm(temp_X);
-Y = normalizeV(cross(Z, pseudo_X));
-X = normalizeV(cross(Y, Z));
+Y = cross(Z, pseudo_X)/norm(cross(Z, pseudo_X));
+X = cross(Y, Z)/norm(cross(Y, Z));
 
-% segment reference system
-SCS.CenterVol = CenterVol;
-SCS.InertiaMatrix = InertiaMatrix;
+% reference system
+CS.CenterVol = CenterVol;
+CS.InertiaMatrix = InertiaMatrix;
 % ISB reference system
-SCS.Origin = PelvisOr;
-SCS.X = X;
-SCS.Y = Y;
-SCS.Z = Z;
-SCS.V = [X Y Z];
-
-% debug plot
-quickPlotTriang(Pelvis, [], 1); hold on
-quickPlotRefSystem(SCS)
-plotDot(RASIS, 'k', 7)
-plotDot(LASIS, 'k', 7)
-plotDot(LPSIS, 'r', 7)
-plotDot(RPSIS, 'r', 7)
+CS.Origin = PelvisOr;
+CS.X = X;
+CS.Y = Y;
+CS.Z = Z;
+CS.V = [X', Y', Z'];
 
 % storing joint details
-JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeZXYAngleSeq(SCS.V);
-JCS.hip_r.parent_orientation        = computeZXYAngleSeq(SCS.V);
+CS.ground_pelvis.child_location    = PelvisOr*dim_fact;
+CS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);
+CS.hip_r.parent_orientation        = computeZXYAngleSeq(CS.V);
 
 % for debugging purposes
 % PlotPelvis_ISB( CSs.ISB, Pelvis); hold on
@@ -143,7 +141,7 @@ JCS.hip_r.parent_orientation        = computeZXYAngleSeq(SCS.V);
 % PlotPelvis_ISB( PelvisISBRS, PelvisISB )
 
 %% Export identified objects of interest
-if nargout > 2
+if nargout > 1
     BoneLandmarks.RASIS     = RASIS; % in Pelvis ref 
     BoneLandmarks.LASIS     = LASIS; % in Pelvis ref 
     BoneLandmarks.RPSIS     = RPSIS; % in Pelvis ref 
