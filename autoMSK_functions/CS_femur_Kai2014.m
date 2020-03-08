@@ -18,7 +18,7 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function CS = MSK_femur_ACS_Kai2014(Femur, DistFem, in_mm)
+function CS = CS_femur_Kai2014(Femur, DistFem, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end
@@ -56,20 +56,6 @@ CS.CenterVol = CenterVol;
 
 % find femoral head
 [CS, MostProxPoint] = findFemoralHead_Kai2014(ProxFem, CS);
-
-% completing the inertia-based reference system
-% the most proximal point on the fem head is medial wrt to the inertial
-% axes. However, if is better to decouple the vector from the global
-% reference system to ensure robustness (JIA dataset gives problems
-% otherwise).
-medial_to_z = MostProxPoint-CenterVol';
-CS.Y0 = normalizeV(cross(cross(CS.Z0, medial_to_z'),CS.Z0));
-CS.X0 = cross(CS.Y0, CS.Z0);
-
-% debug plots
-plot3(MostProxPoint(1), MostProxPoint(2), MostProxPoint(3),'ro','LineWidth',4)
-CS.Origin  = CenterVol;
-quickPlotRefSystem(CS)
 
 % slicing the femoral condyles
 [CS, FC_Med_Pts1, FC_Lat_Pts2] = sliceFemoralCondyles(DistFem, CS);
