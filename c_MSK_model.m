@@ -67,16 +67,16 @@ end
 
 %---- PELVIS -----
 % solve reference system from geometry
-[PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
+[PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 % ground_pelvis joint
-JointParams = getJointParams('ground_pelvis', [], PelvisRS);
+JointParams = getJointParams('ground_pelvis', [], JCS);
 % create the joint
 pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(pelvis_ground_joint);
 %-----------------
 
 %---- FEMUR -----
-FemurCS  = MSK_femur_ACS_Kai2014(geom_set.femur_r);
+FemurCS  = CS_femur_Kai2014(geom_set.femur_r);
 FemurCSs = GIBOK_femur(geom_set.femur_r);
 % hip joint
 JointParams = getJointParams('hip_r', PelvisRS, FemurCSs);
