@@ -1,214 +1,155 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2019 Modenese L.                                          %
 %                                                                         %
-%    Author:   Luca Modenese, April 2018                                  % 
+%    Author:   Luca Modenese, April 2018                                  %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-% trying to create a knee joint
-% TODO: scale geometries
-% TODO: transform them to ascii for OpenSim visualization
+clearvars;  close all
 
-clearvars; close all
 % add useful scripts
 addpath(genpath('GIBOK-toolbox'));
-addpath('autoMSK_functions');
+addpath(genpath('autoMSK_functions'));
 
+% OpenSim libraries
+import org.opensim.modeling.*
+tic
 %--------------------------------
 % SETTINGS
 %--------------------------------
-bone_geom_folder = './test_geometries';
+bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
-test_case = 'LHDL';
 osim_folder = './opensim_models';
+in_mm = 1;
+nd = 3;
 %--------------------------------
+
+% TODO need to personalize masses from volumes or regress eq
+% e.g. [mass, CoM, Inertias] = Anthropometry(H, M, 'method')
+
+%TODO:set bounds on the coordinates of the CustomJoints.
+
+% adjust dimensional factors based on mm / m scales
+if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
+else dim_fact = 1;     bone_density = 1420;%kg/m3 
+end
 
 % check folder existance
 if ~isdir(osim_folder); mkdir(osim_folder); end
 
-% OpenSim libraries
-import org.opensim.modeling.*
+% add to osim model all bodies
+dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
+dataset = dataset_set{nd};
+tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
+visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
+body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
+triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
+visual_file_list = triGeom_file_list;
+type_mesh = '.vtp';
 
 % create the model
 osimModel = Model();
-
 % setting the model
-osimModel.setName([test_case,'_auto']);
-
+osimModel.setName([dataset,'_auto']);
 % set gravity
 osimModel.setGravity(Vec3(0, -9.8081, 0));
 
-% vector of zeros for convenience
-zeroVec3 = ArrayDouble.createVec3(0);
+for nb = 1:length(body_list)
+    % update variables
+    cur_body_name = body_list{nb};
+    cur_geom_file = fullfile(tri_dir, triGeom_file_list{nb});
+    cur_vis_file = fullfile(visual_dir, [visual_file_list{nb},type_mesh]);    
+    % load mesh
+    cur_geom = load_mesh(cur_geom_file);
+    % create and add the body
+    addTriGeomBody(osimModel, cur_body_name, cur_geom, bone_density, in_mm, cur_vis_file);
+    geom_set.(cur_body_name) = cur_geom;
+end
 
-% bodies
+%---- PELVIS -----
+% solve reference system from geometry
+[PelvisRS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
+% ground_pelvis joint
+JointParams = getJointParams('ground_pelvis', [], PelvisRS);
+% create the joint
+pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(pelvis_ground_joint);
+%-----------------
 
-% ground
-ground = osimModel.getGround();
-
-% osimModel.print('check_cleanModel.xml')
-offset_ground = addOffsetToFrame(osimModel, ground, 'ground_offset', zeroVec3, zeroVec3);
-% osimModel.print('check_offset.xml')
-% TODO need to personalize masses from volumes or regress eq 
-% e.g. 
-% [mass, CoM, Inertias] = Anthropometry(H, M, 'method')
-
-% defining bodies is "normal"
-pelvis = Body(); 
-pelvis.setName('pelvis'); 
-pelvis.setMass(10); 
-pelvis.setMassCenter(zeroVec3); 
-pelvis.attachGeometry(Mesh(fullfile(bone_geom_folder, 'pelvis_remeshed_10_m.stl' )));
-osimModel.addBody(pelvis);
-offset_pelvis = addOffsetToFrame(osimModel, pelvis, 'pelvis_offset', zeroVec3, zeroVec3);
-
-% the joint can be built between two PhysicalOffsetFrames (body, ground or
-% PhysicalFrame)
-joint = CustomJoint('test', ground, pelvis );
-osimModel.addJoint(joint);
-
-% [model, joint] = connectBodyWithJoint(osimModel, offset_ground, offset_pelvis, 'pelvis_ground', 'FreeJoint');
-% 
-
-updc = joint.upd_coordinates(0);
-updc.setName('mycoord_X');
-% updc.
-osimModel.finalizeConnections()
-osimModel.print('1_pelvis_model.osim');
-% joint parameters
-% load('LHDL_ACSsResults.mat'); 
-load(fullfile(ACs_folder, [test_case,'_ACSsResults.mat'])); 
-
-% ground_pelvis
-load(fullfile(ACs_folder,'PelvisRS'));
-% [XPelvAngle, YPelvAngle, ZPelvAngle] = FIXED_ROT_XYZ(PelvisRS.V , 'Glob2Loc');
-% pelvis_orientation = [ZPelvAngle, YPelvAngle, XPelvAngle];
-pelvis_location = PelvisRS.Origin/1000;
-
-%XYZ fixed frame: https://en.wikipedia.org/wiki/Euler_angles
-R1 = PelvisRS.V;
-beta = asin( R1(1,3));
-alpha = asin(-R1(2,3)/ cos(beta) );
-gamma = acos(R1(1,1)/ cos(beta) );
-disp([alpha beta gamma])
- %this goes in the osim file as <xyz_body_rotation>
-pelvis_orientation = [  alpha  beta  gamma]; 
-
-Rot  =R1
-beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-disp([alpha2 beta2 gamma2])
-pelvis_orientation = [  alpha2  beta2  gamma2];
-
-nj = 1;
-JointParams(nj).name                = 'ground_pelvis';
-JointParams(nj).parent              = 'ground';
-JointParams(nj).child               = 'pelvis';
-JointParams(nj).parent_location     = [0.0000	0.0000	0.0000];
-JointParams(nj).parent_orientation  = [0.0000	0.0000	0.0000];
-JointParams(nj).child_location      = pelvis_location;
-JointParams(nj).child_orientation   = pelvis_orientation;
-JointParams(nj).coordsNames         = {'pelvis_tilt','pelvis_list','pelvis_rotation', 'pelvis_tx','pelvis_ty', 'pelvis_tz'};
-JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
-JointParams(nj).rotationAxes        = 'zxy'; 
-
-% hip parameters
-% transforming to ISB ref system
-ISB2GB = [1  0  0
-          0  0 -1
-          0  1 0];
-GB2Glob = FemACSsResults.PCC.V;
-FX = GB2Glob*ISB2GB*[1 0 0]';
-FY = GB2Glob*ISB2GB*[0 1 0]';
-FZ = GB2Glob*ISB2GB*[0 0 1]';
-F.V = [FX, FY, FZ];
-
-% %XYZ fixed frame
-% R2 = F.V;%(FemACSsResults.PCC.V*ISB2GB)';
-%   beta = asin( R2(1,3));
-%  alpha = acos(R2(1,1)/ cos(beta) );
-%  gamma = asin(-R2(2,3)/ cos(beta) );
-%  %this goes in the osim file as <xyz_body_rotation>
-% femur_orientation = [  gamma  beta alpha ]; 
-
-Rot  = F.V;
-beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-disp([alpha2 beta2 gamma2])
-femur_orientation = [  alpha2  beta2  gamma2];
-
-% [XFemAngle, YFemAngle, ZFemAngle] = FIXED_ROT_XYZ(R2, 'Glob2Loc');
-% femur_orientation = [ZFemAngle, YFemAngle, XFemAngle];
-
-
-HJC_location = FemACSsResults.CenterFH/1000;
-
+%---- FEMUR -----
+FemurCS  = MSK_femur_ACS_Kai2014(geom_set.femur_r);
+FemurCSs = GIBOK_femur(geom_set.femur_r);
 % hip joint
-nj = nj + 1;
-JointParams(nj).name                = 'hip_r';
-JointParams(nj).parent              = 'pelvis';
-JointParams(nj).child               = 'femur_r';
-JointParams(nj).parent_location     = HJC_location;
-JointParams(nj).parent_orientation  = pelvis_orientation;
-JointParams(nj).child_location      = HJC_location;
-JointParams(nj).child_orientation   = femur_orientation;
-JointParams(nj).coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
-JointParams(nj).coordsTypes         = {'rotational', 'rotational', 'rotational'};
-JointParams(nj).rotationAxes        = 'zxy'; 
+JointParams = getJointParams('hip_r', PelvisRS, FemurCSs);
+% create the joint
+hip_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(hip_r);
+%-----------------
 
-% knee parameters
-knee_location_in_parent = FemACSsResults.PCC.Origin/1000;
-knee_child_location = (FemACSsResults.PCC.Origin-TibACSsResults.PIAASL.Origin)/1000;
-rotation_axes = 'zxy';
-% transforming to ISB ref system
-ISB2GB = [1  0  0
-          0  0 -1
-          0  1 0];
-GB2Glob = TibACSsResults.PIAASL.V;
-FX = GB2Glob*ISB2GB*[1 0 0]';
-FY = GB2Glob*ISB2GB*[0 1 0]';
-FZ = GB2Glob*ISB2GB*[0 0 1]';
-F.V = [FX, FY, FZ];
-Rot  = F.V;
-beta2  = atan2(Rot(1,3),                   sqrt(Rot(1,1)^2.0+Rot(1,2)^2.0));
-alpha2 = atan2(-Rot(2,3)/cos(beta),        Rot(3,3)/cos(beta));
-gamma2 = atan2(-Rot(1, 2)/cos(beta),       Rot(1,1)/cos(beta));
-disp([alpha2 beta2 gamma2])
-tibia_orientation = [  alpha2  beta2  gamma2];
+%---- TIBIA -----
+% defines the axis for the tibia
+TibiaCS = MSK_tibia_Kai2014(geom_set.tibia_r);
+% TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
+% knee joint
+JointParams = getJointParams('knee_r', FemurCSs, TibiaCS);
+% create the joint
+knee_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(knee_r);
+%-----------------
 
-% knee
-nj = nj + 1;
-JointParams(nj).name               = 'knee_r';
-JointParams(nj).parent             = 'femur_r';
-JointParams(nj).child              = 'tibia_r';
-JointParams(nj).parent_location    = knee_location_in_parent;
-JointParams(nj).parent_orientation = femur_orientation;
-JointParams(nj).child_location     = knee_location_in_parent;
-JointParams(nj).child_orientation  = tibia_orientation;
-JointParams(nj).coordsNames        = {'knee_angle_r'};
-JointParams(nj).coordsTypes        = {'rotational'};
-JointParams(nj).rotationAxes       = rotation_axes;
-% JointParams(nj).rotationAxes       = [0.0488	-0.0463	-0.9977];
+%---- TALUS/ANKLE -----
+TalusCS = GIBOK_talus(geom_set.talus_r);
+% ankle joint
+TibiaCS = assembleAnkleParentOrientation(TibiaCS, TalusCS);
+JointParams = getJointParams('ankle_r', TibiaCS, TalusCS);
+ankle_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(ankle_r);
+%-----------------
 
-updJointSet = createJointSet(JointParams, MSK_BodySet);
+%---- CALCANEUS/SUBTALAR -----
+CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
+% subtalar joint
+JointParams = getJointParams('subtalar_r', TalusCS, CalcaneusCS);
+subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(subtalar_r);
+%-----------------
 
-% BodySet
-BodySet_to_upd = osimModel.updBodySet;
-BodySet_to_upd.assign(MSK_BodySet);
-BodySet_to_upd.print('check_bodyset_v4.xml')
-osimModel.print('check1_model_v4.xml')
-% MISSING GROUND
+%---- PATELLA -----
+[ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
+% PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
+PatellaCS = assemblePatellofemoralParentOrientation(FemurCSs, PatellaCS);
+% patellofemoral joint
+JointParams = getJointParams('patellofemoral_r', FemurCSs, PatellaCS);
+patfem_r = createCustomJointFromStruct(osimModel, JointParams);
+osimModel.addJoint(patfem_r);
+%-----------------
 
-% JointSet
-JointSet_to_upd = osimModel.updJointSet;
-JointSet_to_upd.assign(updJointSet);
+% %---- LANDMARKING -----
+% close all
+% FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
+% TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+% PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCS, 'patella_r');
+% CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
+% 
+% % add markers to model
+% addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
+% addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'patella_r', PatellaRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
+% %-----------------
+
+% add patellofemoral constraint
+addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, 'r')
+
+% finalize
+osimModel.finalizeConnections();
+
+% print
+osimModel.print('5_auto_model.osim');
+% osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
 
 osimModel.disownAllComponents();
-
-if ~isdir(osim_folder); mkdir(osim_folder); end
-osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
-
+toc
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
 rmpath('autoMSK_functions');

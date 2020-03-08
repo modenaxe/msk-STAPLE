@@ -15,26 +15,44 @@
 %    Author:   Luca Modenese,  2019                                       %
 %    email:    l.modenese@mperial.ac.uk                                   % 
 % ----------------------------------------------------------------------- %
-function myCustomJoint = createCustomJointFromStruct(struct)
+function myCustomJoint = createCustomJointFromStruct(model, struct)
 
 
 % OpenSim libraries
 import org.opensim.modeling.*
 
-% create custom joint
-OSJoint = CustomJoint();
+% extract names
+jointName   = struct.name;
+parentName  = struct.parent;
+childName   = struct.child;
 
-%---------- SET JOINT REF SYST -----------------
-OSJoint = setJointRefSyst(OSJoint, struct);
-OSJoint.print('joint_check1.xml');
+% transform offsets in Vec3
+location_in_parent    = ArrayDouble.createVec3(struct.parent_location);
+orientation_in_parent = ArrayDouble.createVec3(struct.parent_orientation);
+location_in_child     = ArrayDouble.createVec3(struct.child_location);
+orientation_in_child  = ArrayDouble.createVec3(struct.child_orientation);
 
-%---------- CREATE COORDINATESET -----------------
-OSJoint = setJointCoords(OSJoint, struct);
-OSJoint.print('joint_check2.xml');
+% STEP1: get the Physical Frames to connect with the CustomJoint
+if strcmp(parentName, 'ground')
+    parent_frame = model.getGround();
+else
+    parent_frame = model.getBodySet.get(parentName);
+end
+child_frame = model.getBodySet.get(childName);
 
-%------------ UPDATE SPATIALTRANSFORM ------------------------
-OSJoint = setCustomJointSpatialTransform(OSJoint, struct);
-OSJoint.print('joint_check3.xml');
 
-myCustomJoint = OSJoint;
+% OSJoint = setCustomJointSpatialTransform(OSJoint, struct);
+jointSpatialTransf = createSpatialTransformFromStruct(struct);
+
+% create the f... joint m...f...!!
+myCustomJoint= CustomJoint(jointName,...
+             parent_frame,...
+             location_in_parent,...
+             orientation_in_parent,...
+             child_frame,...
+             location_in_child,...
+             orientation_in_child,...
+             jointSpatialTransf);
+
+% myCustomJoint = custom_joint;
 end

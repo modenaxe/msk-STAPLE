@@ -1,4 +1,4 @@
-function CSs = createFemurCoordSystCylinderOnCondyles(Condyle_1_end, Condyle_2_end, CSs, tolp, tolg)
+function CSs = createFemurCoordSystCylinderOnCondyles(Condyle_Lat, Condyle_Med, CSs, tolp, tolg)
 % REFERENCE SYSTEM
 % centred in the midpoint of the spheres
 % Z: upwards (Orig->HJC)
@@ -13,7 +13,7 @@ if nargin < 4
 end
 
 % get all points of triangulations
-PtsCondyle    = [Condyle_1_end.Points; Condyle_2_end.Points];
+PtsCondyle    = [Condyle_Lat.Points; Condyle_Med.Points];
 
 % initialise the least square search for cylinder
 
@@ -41,8 +41,8 @@ end
 Y2 =  normalizeV(an);
 
 % compute areas properties of condyles
-PptiesLat = TriMesh2DProperties(Condyle_1_end);
-PptiesMed = TriMesh2DProperties(Condyle_2_end);
+PptiesLat = TriMesh2DProperties(Condyle_Lat);
+PptiesMed = TriMesh2DProperties(Condyle_Med);
 
 % and extract computed centroid
 CenterPtsLat = PptiesLat.Center;
@@ -89,6 +89,7 @@ Xend = cross(Yend, Zmech);
 % assembling the output structure
 % store Y used in convex hull
 CSs.PCC.YCvxHull            = CSs.Y1;% [LM] is this necessary?
+
 % store cylinder data
 CSs.PCC.cyl_Y               = Y2; %normalised axis from lst
 CSs.PCC.cyl_Pt              = x0n;

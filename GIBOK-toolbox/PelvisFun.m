@@ -4,7 +4,7 @@
 %    Author:   Luca Modenese, April 2018                                  % 
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-function [ CSs, TrObjects ] = PelvisFun( Pelvis)
+function [ CSs, BoneLandmarks] = PelvisFun( Pelvis)
 
 % adds required functions
 addpath(genpath(strcat(pwd,'/SubFunctions')));
@@ -19,10 +19,10 @@ y_pelvis_in_global = [0 0 1];
 z_pelvis_in_global = [-1 0 0];
 
 % building the rot mat from global to pelvis ISB (roughly)
-RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
+% RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
 
 % Get eigen vectors V_all and volumetric center
-[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties( Pelvis );
+[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties(Pelvis);
 
 % store them for consistency with other bone functions
 CSs.CenterVol = CenterVol;
@@ -119,12 +119,10 @@ CSs.ISB.V = [X', Y', Z'];
 
 %% Export identified objects of interest
 if nargout > 1
-    TrObjects.Pelvis    = Pelvis;
-%     TrObjects.PelvisISB = PelvisPseudoISB;
-    TrObjects.RASIS     = RASIS; % in Pelvis ref 
-    TrObjects.LASIS     = LASIS; % in Pelvis ref 
-    TrObjects.RPSIS     = RPSIS; % in Pelvis ref 
-    TrObjects.LPSIS     = LPSIS; % in Pelvis ref 
+    BoneLandmarks.RASIS     = RASIS; % in Pelvis ref 
+    BoneLandmarks.LASIS     = LASIS; % in Pelvis ref 
+    BoneLandmarks.RPSIS     = RPSIS; % in Pelvis ref 
+    BoneLandmarks.LPSIS     = LPSIS; % in Pelvis ref 
 end
 
 end

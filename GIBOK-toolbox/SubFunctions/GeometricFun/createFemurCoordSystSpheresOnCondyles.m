@@ -1,4 +1,4 @@
-function CSs = createFemurCoordSystSpheresOnCondyles(Condyle_1_end, Condyle_2_end, CSs)
+function CS = createFemurCoordSystSpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS)
 % REFERENCE SYSTEM
 % centred in the midpoint of the spheres
 % Z: upwards (Orig->HJC)
@@ -6,30 +6,31 @@ function CSs = createFemurCoordSystSpheresOnCondyles(Condyle_1_end, Condyle_2_en
 % Y: cross of XZ
 
 % function fit_spheres(Condyle_1_end, Condyle_2_end)
-[center1,radius1] = sphereFit(Condyle_1_end.Points); %lat
-[center2,radius2] = sphereFit(Condyle_2_end.Points); %med
+[center_lat,radius_lat] = sphereFit(postCondyle_Lat.Points); %lat
+[center_med,radius_med] = sphereFit(postCondyle_Med.Points); %med
 
 % normalize and check axis direction
-Ysph =  normalizeV(center1-center2);
-Ysph = sign(Ysph'*CSs.Y0)*Ysph;
+Yml =  normalizeV(center_lat-center_med);
+Yml = sign(Yml'*CS.Y0)*Yml;
 
-KneeCenterSph = 0.5*(center1+center2);
+% knee center in the middle
+KneeCenterSph = 0.5*(center_lat+center_med);
 
 % compute axes
-Zend_sph =  normalizeV( CSs.CenterFH - KneeCenterSph );
-Xend_sph =  normalizeV( cross(Ysph, Zend_sph) );
-Yend_sph = cross(Zend_sph, Xend_sph);
+Zdp =  normalizeV( CS.CenterFH - KneeCenterSph );
+Xap =  normalizeV( cross(Yml, Zdp) );
+Yml = cross(Zdp, Xap);
 
 % store axes in structure
-CSs.PCS.Center1 = center1;
-CSs.PCS.Center2 = center2;
-CSs.PCS.Radius1 = radius1;
-CSs.PCS.Radius2 = radius2;
-CSs.PCS.Ysph    = Ysph;
-CSs.PCS.Origin  = KneeCenterSph;
-CSs.PCS.X       = Xend_sph;
-CSs.PCS.Y       = Yend_sph;
-CSs.PCS.Z       = Zend_sph;
-CSs.PCS.V       = [Xend_sph Yend_sph Zend_sph];
+CS.PCS.Center1 = center_lat;
+CS.PCS.Center2 = center_med;
+CS.PCS.Radius1 = radius_lat;
+CS.PCS.Radius2 = radius_med;
+CS.PCS.Ysph    = Yml;
+CS.PCS.Origin  = KneeCenterSph;
+CS.PCS.X       = Xap;
+CS.PCS.Y       = Yml;
+CS.PCS.Z       = Zdp;
+CS.PCS.V       = [Xap Yml Zdp];
 
 end

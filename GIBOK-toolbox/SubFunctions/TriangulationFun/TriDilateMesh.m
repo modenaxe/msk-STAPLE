@@ -12,8 +12,13 @@ function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 %   - TRout : the dilated triangulation
 
 
-% Identify the ID of the vertex on the TRSup corresponding to the vertex of the triangulation object
+% Round the number of elements to upper integer;
+nbElmts = ceil(nbElmts);
+
+% returns the rows of the intersection in the same order as they appear 
+% in the first vector given as input.
 [~, ia ,ic] = intersect(TRsup.Points, TRin.Points,'rows','stable');
+
 % Get the elements attached to the identified vertices
 ElmtsOK = TRsup.vertexAttachments(ia)';
 % Initially, ElmtsOk are the elements on TRsup that correspond to the geometry of the TRin

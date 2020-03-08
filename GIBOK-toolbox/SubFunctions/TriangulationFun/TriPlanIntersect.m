@@ -1,4 +1,4 @@
-function [ Curves , Area , InterfaceTri ] = TriPlanIntersect( Tr, n , d )
+function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d )
 %TriPlanIntersect:  Intersection between a 3D Triangulation object (Tr) 
 %                   and a 3D plan defined by normal vector n , d
 % Output :
@@ -44,7 +44,7 @@ Elmts_Status = sum(sign(NodesDist(Elmts)),2);
 IndexInterfaceTri = abs(Elmts_Status) < 3;
 
 if ~logical(mean(IndexInterfaceTri))
-    Area = 0;
+    TotArea = 0;
     InterfaceTri = [];
     Curves = struct();
     Curves(1).NodesID = [];
@@ -111,7 +111,7 @@ else
         end
     end
     
-    [PtsOut, ~ , indexn] =  uniquetol(PtsInter , eps('double') , 'ByRows',true);
+    [PtsOut, ~, indexn] = uniquetol(PtsInter, eps('double'), 'ByRows',true);
     
     Segments = indexn(Segments);
     
@@ -144,46 +144,55 @@ else
         i=i+1;
     end
     
-    Area = 0;
-    MatrixArea = zeros(length(Curves));
+    %% Compute the area of the cross section defined by the curve
+    
+    % Deal with cases where a cross section presents holes
+    % This cross section i
+    
+    % Get a matrix of curves inclusion -> CurvesInOut :
+    %   If the curve(i) is within the curve(j) then CurvesInOut(i,j) = 1
+    %   else  CurvesInOut(i,j) = 0
+    CurvesInOut = zeros(length(Curves));
     for i = 1 : length(Curves)
         Curves(i).NodesID(Curves(i).NodesID==0) = [];
         Curves(i).Pts = bsxfun(@minus, PtsOut(Curves(i).NodesID,:) , 10*antiRoundOff*n') ;
         % Replace the close curve in coordinate system where X, Y or Z is 0, in
-        % % order to use polyarea
+        % order to use polyarea
         [V,~]= eig(cov(Curves(i).Pts));
-        CloseCurveinRplanar = V'*Curves(i).Pts';
-        % First principal inertial vector is normal to plan
-        Area = Area + polyarea(CloseCurveinRplanar(2,:),CloseCurveinRplanar(3,:));
-        MatrixArea(i,i) = polyarea(CloseCurveinRplanar(2,:),CloseCurveinRplanar(3,:));
-    end
-    
-    for i = 1 : length(Curves)
+        CloseCurveinRplanar1 = V'*Curves(i).Pts';
+        
+        % Get the area of the section defined by the curve i.
+        %   /!\ Do not account for the area of potential holes in the
+        %   section described by curve i
+        Curves(i).Area = polyarea(CloseCurveinRplanar1(2,:), ...
+            CloseCurveinRplanar1(3,:));
+        
         for j =  1 : length(Curves)
             if i~=j
-                Curves(i).NodesID(Curves(i).NodesID==0) = [];
-                Curves(i).Pts = bsxfun(@minus, PtsOut(Curves(i).NodesID,:) , 10*antiRoundOff*n') ;
-                % Replace the close curve in coordinate system where X, Y or Z is 0, in
-                % % order to use polyarea
-                [V,~]= eig(cov(Curves(i).Pts));
-                CloseCurveinRplanar1 = V'*Curves(i).Pts';
-                
                 Curves(j).NodesID(Curves(j).NodesID==0) = [];
                 Curves(j).Pts = bsxfun(@minus, PtsOut(Curves(j).NodesID,:) , 10*antiRoundOff*n') ;
                 % Replace the close curve in coordinate system where X, Y or Z is 0, in
                 % order to use polyarea
                 CloseCurveinRplanar2 = V'*Curves(j).Pts';
                 
-                if inpolygon(CloseCurveinRplanar2(2,1),CloseCurveinRplanar2(3,1),...
-                        CloseCurveinRplanar1(2,:),CloseCurveinRplanar1(3,:))>0
-                    MatrixArea(i,j) = -2*polyarea(CloseCurveinRplanar2(2,:),CloseCurveinRplanar2(3,:));
+                % Check if the curve(i) is within the curve(j)
+                if inpolygon(CloseCurveinRplanar1(2,1),CloseCurveinRplanar1(3,1),...
+                        CloseCurveinRplanar2(2,:),CloseCurveinRplanar2(3,:))>0
+                    CurvesInOut(i,j) = 1;
                 end
             end
         end
     end
     
-    
-    Area = sum(sum(MatrixArea));
+    % if the curve(i) is within an even number of curves then its area must
+    % be added to the total area. If the curve(i) is within an odd number  
+    % of curves then its area must be substracted from the total area
+    TotArea = 0;
+    for i = 1 : length(Curves)
+        AddOrSubstract = 1 - 2*mod( sum(CurvesInOut(i,:)), 2);
+        TotArea = TotArea + AddOrSubstract*Curves(i).Area;
+    end
+
     
     
 end

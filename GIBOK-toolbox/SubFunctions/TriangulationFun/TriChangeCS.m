@@ -25,7 +25,7 @@ Pts_T = bsxfun(@minus , Tr.Points , T');
 % P_new_RF = ((RotNew2Old)' * (Pts_T)')'
 % in my case, when I want to use it for transforming in ISB ref syste
 % P_ISB = ((RotISB2Glob)' * (Pts_T)')'
-Pts_T_R = Pts_T*V; % Equivalent to (V\Pts_T')'
+Pts_T_R = Pts_T*V; % Equivalent to (V'*Pts_T')'
 
 %Construct the new triangulation:
 TrNewCS = triangulation(Tr.ConnectivityList , Pts_T_R);
