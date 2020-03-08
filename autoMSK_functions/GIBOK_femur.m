@@ -1,4 +1,4 @@
-function [ CSs, TrObjects ] = GIBOK_femur( Femur , ProxFem)
+function [ CSs, TrObjects ] = GIBOK_femur( Femur , DistFem)
 
 % TODO: use a projectOnTo.m for lines like: Pts_0_C1*X1>PtNotch*X1
 % TODO: I think there is a transformation back adn forth from VC that can
@@ -13,7 +13,8 @@ if ~exist('DistFem','var')
       [ProxFem, DistFem] = cutLongBoneMesh(Femur);
 else
     % join two parts in one triangulation
-    Femur = TriUnite(DistFem, ProxFem);
+    ProxFemur = Femur;
+    Femur = TriUnite(ProxFemur, DistFem);
 end
 
 % Get the mean edge length of the triangles composing the femur
@@ -67,16 +68,20 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 [Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
-CSs = MSK_patella_ACS_SpheresOnGroove(Groove_Lat, Groove_Med, CSs);
+quickPlotTriang(DistFem, [], 1); hold on
+CSs = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CSs);
 
 % Fit two spheres on articular surfaces of posterior condyles
-CSs = MSK_femur_ACS_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+quickPlotTriang(DistFem, [], 1); hold on
+CSs = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
 
 % Fit the posterior condyles with a cylinder
-CSs = MSK_femur_ACS_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+quickPlotTriang(DistFem, [], 1); hold on
+CSs = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
 
 % Fit the entire condyles with an ellipsoid
-CSs = MSK_femur_ACS_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
+quickPlotTriang(DistFem, [], 1); hold on
+CSs = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
 
 % Store triangulation objects for output if required
 if nargout>1
