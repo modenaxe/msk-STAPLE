@@ -12,17 +12,20 @@ disp('Computing Femoral Head Centre (Kai et al. 2014)...')
 [~ , I_Top_FH] = max( ProxFem.Points*CS.Z0 );
 MostProxPoint = ProxFem.Points(I_Top_FH,:);
 
-up = CS.Z0;
-% unused - consider removing
-%==================================================
-anterior_dir = normalizeV(cross(MostProxPoint, up));
-medial_dir = normalizeV(cross(anterior_dir, CS.Z0));
-front = cross(MostProxPoint, up);
-%==================================================
+% completing the inertia-based reference system
+% the most proximal point on the fem head is medial wrt to the inertial
+% axes. 
+medial_to_z = MostProxPoint-CS.CenterVol';
+CS.Y0 = normalizeV(cross(cross(CS.Z0, medial_to_z'),CS.Z0));
+CS.X0 = cross(CS.Y0, CS.Z0);
+CS.Origin  = CS.CenterVol;
 
-% debug plot
-quickPlotTriang(ProxFem, 'm')
-plot3(MostProxPoint(:,1), MostProxPoint(:,2), MostProxPoint(:,3),'g*', 'LineWidth', 3.0);
+% % unused - consider removing
+% %==================================================
+% anterior_dir = normalizeV(cross(MostProxPoint, up));
+% medial_dir = normalizeV(cross(anterior_dir, CS.Z0));
+% front = cross(MostProxPoint, up);
+% %==================================================
 
 % Slice the femoral head starting from the top
 Ok_FH_Pts = [];
@@ -41,13 +44,13 @@ while keep_slicing
     disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
     count = count+1;
     
-    % plot curves
-    c_set = ['r', 'b', 'm', 'b'];
-    if ~isempty(Curves)
-        for c = 1:Nbr_of_curves
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),c_set(c)); hold on; axis equal
-        end
-    end
+%     % plot curves
+%     c_set = ['r', 'b', 'm', 'b'];
+%     if ~isempty(Curves)
+%         for c = 1:Nbr_of_curves
+%             plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3),c_set(c)); hold on; axis equal
+%         end
+%     end
     
     % stop if there is one curve after Curves>2 have been processed
     if Nbr_of_curves == 1 && ~isempty(Ok_FH_Pts_med)
@@ -112,15 +115,18 @@ end
 % assemble the points from one and two curves
 fitPoints = [Ok_FH_Pts; Ok_FH_Pts_med];
 
-% check by plotting
-plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.');hold on
-
+% NB: exclusind this check did NOT alter the results in most cases and
+% offered more point for fitting
+%-----------------
+% keep only the points medial to MostProxPoint according to the reference
+% system X0-Y0-Z0
+ind_keep = (bsxfun(@minus, fitPoints, MostProxPoint)*CS.Y0) >0;
+fitPoints = fitPoints(ind_keep,:);
+%-----------------
 
 % fit sphere
-% [CenterFH, Radius] = sphereFit(Ok_FH_Pts);
 [CenterFH, Radius] = sphereFit(fitPoints);
 
-plotSphere(CenterFH, Radius, 'b', 0.3)
 % print
 disp('-----------------')
 disp('Final  Estimation')
@@ -131,5 +137,14 @@ disp('-----------------')
 
 CS.CenterFH_Kai = CenterFH ;
 CS.RadiusFH_Kai = Radius ;
+
+% debug plots
+quickPlotTriang(ProxFem, [], 1); hold on;
+plot3(MostProxPoint(1), MostProxPoint(2), MostProxPoint(3),'ro','LineWidth',4);
+plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.');hold on
+plotSphere(CenterFH, Radius, 'b', 0.4);
+% temp ref system
+plotDot(CS.CenterVol', 'k', 6);
+quickPlotRefSystem(CS)
 
 end
