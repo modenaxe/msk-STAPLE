@@ -6,7 +6,7 @@ if nargin>2 && ~isempty(new_figure)
     figure
 end
 
-if nargin==1 || (nargin==2 && isempty(face_color))
+if nargin==1 || (nargin>=2 && isempty(face_color))
     face_color = [0.65    0.65    0.6290];
 end
 
