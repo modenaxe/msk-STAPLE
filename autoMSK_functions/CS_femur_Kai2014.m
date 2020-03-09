@@ -18,7 +18,7 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function CS = CS_femur_Kai2014(Femur, DistFem, in_mm)
+function [CS, JCS] = CS_femur_Kai2014(Femur, DistFem, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end
@@ -55,41 +55,42 @@ CS.Z0 = Z0;
 CS.CenterVol = CenterVol;
 
 % find femoral head
-[CS, MostProxPoint] = findFemoralHead_Kai2014(ProxFem, CS);
+[CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS);
 
 % slicing the femoral condyles
-[CS, FC_Med_Pts1, FC_Lat_Pts2] = sliceFemoralCondyles(DistFem, CS);
-
-% fitting spheres to points from the sliced curves
-[center_med,radius_med] = sphereFit(FC_Med_Pts1);
-[center_lat,radius_lat] = sphereFit(FC_Lat_Pts2);
-
-% centre of the knee if the midpoint between spheres
-KneeCenter = 0.5*(center_med+center_lat);
-
-% store axes in structure
-CS.Center_Lat = center_lat;
-CS.Radius_Lat = radius_lat;
-CS.Center_Med = center_med;
-CS.Radius_Med = radius_med;
-CS.Origin     = KneeCenter;
+CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Z = normalizeV(center_lat-center_med);
-Y = normalizeV(CS.CenterFH_Kai- KneeCenter);
+Z = normalizeV(CS.Center_Lat-CS.Center_Med);
+Y = normalizeV(CS.CenterFH_Kai- CS.KneeCenter);
 X = cross(Y,Z);
+
+% define the segment CS
+CS.Origin = CenterVol;
+CS.X = X;
+CS.Y = Y;
+CS.Z = cross(X, Y);
+CS.V = [X Y Z];
 
 % define the hip reference system
 Zml_hip = cross(X, Y);
-CS.V_hip  = [X Y Zml_hip];
-CS.hip_r.child_location    = CS.CenterFH_Kai*dim_fact;
-CS.hip_r.child_orientation = computeZXYAngleSeq(CS.V_hip);
+JCS.hip_r.V  = [X Y Zml_hip];
+JCS.hip_r.child_location    = CS.CenterFH_Kai*dim_fact;
+JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
+JCS.hip_r.Origin = CS.CenterFH_Kai;
 
 % define the knee reference system
 Ydp_knee = cross(Z, X);
-CS.V_knee  = [X Ydp_knee Z];
-CS.knee_r.parent_location = KneeCenter*dim_fact;
-CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
+JCS.knee_r.V  = [X Ydp_knee Z];
+JCS.knee_r.parent_location = CS.KneeCenter*dim_fact;
+JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.Origin = CS.KneeCenter;
+
+% debug plot
+quickPlotTriang(Femur); hold on
+quickPlotRefSystem(CS);
+quickPlotRefSystem(JCS.hip_r);
+quickPlotRefSystem(JCS.knee_r);
 
 end
 
