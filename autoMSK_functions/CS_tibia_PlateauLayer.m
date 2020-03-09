@@ -1,4 +1,4 @@
-function CS = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CS)
+function CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS)
 
 
 % Compute the inertial axis of a slice of the tp plateau

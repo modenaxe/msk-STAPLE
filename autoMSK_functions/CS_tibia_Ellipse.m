@@ -1,7 +1,7 @@
 % fitting one ellipse to the articular surfaces identified on the proximal
 % tibia.
 %    TODO: copy description from paper
-function CS = MSK_tibia_ACS_Ellipse(EpiTibAS, CS)
+function CS = CS_tibia_Ellipse(EpiTibAS, CS)
 
 % fit a plane to the resulting tibial epiPhysis 
 [oLSP, Ztp] = lsplane(EpiTibAS.Points,CS.Z0);

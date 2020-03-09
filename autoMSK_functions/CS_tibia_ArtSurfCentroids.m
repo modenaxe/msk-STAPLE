@@ -1,5 +1,5 @@
 %Reference system built from the centroids of the articular surfaces
-function CS = MSK_tibia_ACS_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS)
+function CS = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS)
 
 % compute 2D prop  for articular surfaces
 [ TibArtLat_ppt ] = TriMesh2DProperties( EpiTibASLat );
