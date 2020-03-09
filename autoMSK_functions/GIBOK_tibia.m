@@ -1,11 +1,11 @@
-function [CSs, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
+function [CS, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % coordinate system structure to store results
-CSs = struct();
+CS = struct();
 
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
@@ -39,16 +39,16 @@ Z0 = V_all(:,1);
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
 
 % store approximate Z direction and centre of mass of triangulation
-CSs.Z0 = Z0;
-CSs.CenterVol = CenterVol;
-CSs.InertiaMatrix = InertiaMatrix;
-CSs.V_all = V_all;
+CS.Z0 = Z0;
+CS.CenterVol = CenterVol;
+CS.InertiaMatrix = InertiaMatrix;
+CS.V_all = V_all;
 
 % extract the tibia (used to compute the mechanical Z axis)
-CSs.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs);
+CS.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CS);
 
 % extract the distal tibia articular surface
-AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho);
+AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CS, CoeffMorpho);
 
 % Method to get ankle center : 
 %  1) Fit a LS plan to the distal tibia art surface, 
@@ -78,7 +78,7 @@ end
 
 % ankle centre
 Centre = PlanPolygonCentroid3D( Curve.Pts );
-CSs.AnkleCenter = Centre - plane_thick * nAAS';
+CS.AnkleCenter = Centre - plane_thick * nAAS';
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENCE FROM ORIGINAL TOOLBOX
@@ -91,28 +91,25 @@ ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
 [~,I] = max(DistTib.Points*ZAnkleSurf);
 
 % define a pseudo-medial axis
-warning('==========================')
-warning('THIS NEEDS PROPER TESTING')
-warning('==========================')
 quickPlotTriang(DistTib,'m',1); hold on
 if tibia_and_fibula == 1
     % Vector between ankle center and the most Distal point (MDMMPt)
     MDMM_Pt = DistTib.Points(I,:);
-    U_tmp = MDMM_Pt - CSs.AnkleCenter;
+    U_tmp = MDMM_Pt - CS.AnkleCenter;
     % debug
     plotDot(MDMM_Pt,'k',3)
 else
     % if fibula is there, the most distal point will be fibula tip. 
     % Adjusting for that case.
     MDLM_Pt = DistTib.Points(I,:);
-    U_tmp = CSs.AnkleCenter - MDLM_Pt;
+    U_tmp = CS.AnkleCenter - MDLM_Pt;
     % debug
     plotDot(MDLM_Pt,'k',3)
 end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
 Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
-CSs.Y0 = Y0;
+CS.Y0 = Y0;
 
 %% Proximal Tibia
 
@@ -129,10 +126,10 @@ EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
-[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CSs, CoeffMorpho, angle_thresh, curv_quartile);
+[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CS, CoeffMorpho, angle_thresh, curv_quartile);
 
 % remove the ridge and the central part of the surface
-EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oLSP, CoeffMorpho);
+EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
 
 % Smooth found ArtSurf
 EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15*CoeffMorpho);
@@ -141,7 +138,7 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 %==================
 % ITERATION 2 & 3 
 %==================
-[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs, CoeffMorpho);
+[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
 
 % builld the triangulation
 EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
@@ -155,12 +152,12 @@ quickPlotTriang(EpiTibASMed,'r')
 quickPlotTriang(EpiTibASLat,'b')
 
 % fit an ellipse to the articular surface
-% CSs = MSK_tibia_ACS_Ellipse(EpiTibAS, CSs);
+CS = CS_tibia_Ellipse(EpiTibAS, CS);
 
 % uses the centroid of the articular surfaces to define the Z axis
-% CSs = MSK_tibia_ACS_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CSs);
+CS = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS);
 
-CSs = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CSs);
+CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS);
 
 %% Inertia Results
 % Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
@@ -173,7 +170,7 @@ CSs = MSK_tibia_ACS_PlateauLayer(EpiTib, EpiTibAS, CSs);
 % CSs.Xinertia = Xi;
 % CSs.Minertia = [Xi Yi Z0];
 
-if nargout>1
+if debug_plot
     TrObjects = struct();
     TrObjects.Tibia = Tibia;
     TrObjects.ProxTib = ProxTib;
@@ -182,6 +179,7 @@ if nargout>1
     TrObjects.EpiTib = EpiTib;
     TrObjects.EpiTibASMed = EpiTibASMed;
     TrObjects.EpiTibASLat = EpiTibASLat;
+    PlotTibia( CS, TrObjects )
 end
 
 

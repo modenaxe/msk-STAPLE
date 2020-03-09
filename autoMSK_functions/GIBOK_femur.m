@@ -1,9 +1,5 @@
 function [ CSs, TrObjects ] = GIBOK_femur( Femur , DistFem)
 
-% TODO: use a projectOnTo.m for lines like: Pts_0_C1*X1>PtNotch*X1
-% TODO: I think there is a transformation back adn forth from VC that can
-% be eliminated
-
 % coordinate system structure to store results
 CSs = struct();
 
@@ -84,7 +80,7 @@ quickPlotTriang(DistFem, [], 1); hold on
 CSs = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
 
 % Store triangulation objects for output if required
-if nargout>1
+if debug_plot
     TrObjects = struct();
     % store triangulations
     TrObjects.Femur         = Femur; % full femur
@@ -97,6 +93,7 @@ if nargout>1
     TrObjects.EpiFemASMed   = postCondyle_Med;
     TrObjects.PatGrooveLat  = Groove_Lat;
     TrObjects.PatGrooveMed  = Groove_Med;
+    PlotFemur(CS, TrObjects )
 end
 
 end
