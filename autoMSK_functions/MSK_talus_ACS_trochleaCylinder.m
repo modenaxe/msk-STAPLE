@@ -129,9 +129,10 @@ if debug_plot
 %     plotArrow( Z1, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
     
     % orginal inertial + quad axes
-    plotArrow( X3, 1, x0n, 40, 1, 'r')
-    plotArrow( Y3, 1, x0n, 40*D(1,1)/D(2,2), 1, 'g')
-    plotArrow( Z3, 1, x0n, 40*D(1,1)/D(3,3), 1, 'b')
+    plotArrow( X3, 1, CenterVol, 40, 1, 'r')
+    plotArrow( Y3, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
+    plotArrow( Z3, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
+    plotDot( x0n', 'k', 2 )
     
     %Plot the  talar trochlea articular surface
     % trisurf(TlTrcAS0,'Facecolor','r','FaceAlpha',1,'edgecolor','none');

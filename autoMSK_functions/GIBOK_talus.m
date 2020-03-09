@@ -56,11 +56,11 @@ CS.Y0 = or*CS.Y0;
 
 % fit spheres to talonavicular and talocalcaneal
 % debug_plot = 1;
-subplot(1,2,1)
+subplot(1,2,1); title('Subtalar Joint Axis');
 [SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plot);
 
 % fit cylinder to talar trochlea
-subplot(1,2,2)
+subplot(1,2,2); title('Talocrural Joint Axis');
 TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, debug_plot);
 
 % store segment info in structure
