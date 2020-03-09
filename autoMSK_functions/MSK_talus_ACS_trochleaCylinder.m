@@ -48,17 +48,18 @@ TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2);
                             Radius_TlTrc_0, 0.001, 0.001);
 Y2 =  normalizeV( an );
 
-quickPlotTriang(Talus); hold on
-quickPlotTriang(TlTrcAS0, 'm')
-T.X=X0; T.Y=Y0; T.Z=Z0;T.Origin=CenterVol;
-quickPlotRefSystem(T)
+% % checking Z0
+% quickPlotTriang(Talus); hold on
+% quickPlotTriang(TlTrcAS0, 'm')
+% T.X=X0; T.Y=Y0; T.Z=Z0;T.Origin=CenterVol;
+% quickPlotRefSystem(T)
 
-% T1 is much more skewed
-figure
-quickPlotTriang(Talus); hold on
-quickPlotTriang(TlTrcAS0, 'g')
-T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
-quickPlotRefSystem(T)
+% % T1 is much more skewed
+% figure
+% quickPlotTriang(Talus); hold on
+% quickPlotTriang(TlTrcAS0, 'g')
+% T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
+% quickPlotRefSystem(T)
 
 % 5.4 Refine the articular surface 
 % Remove elements that are too for from from initial cylinder fit
@@ -104,7 +105,7 @@ TalocruralCS.V_ankle = [X3 Y3 Z3];
 
 if debug_plot
     % 5.5 Plot the results
-    figure()
+%     figure()
     trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.6,'edgecolor','none');
     hold on
     axis equal
@@ -140,6 +141,8 @@ if debug_plot
     plotCylinder( Y2, rn, x0n, 40, 0.4, 'r')
     plotArrow( Y2, 1, x0n, 40, 1, 'r')
     plotDot( x0n', 'r', 2 )
+    
+    axis off
 end
 
 end

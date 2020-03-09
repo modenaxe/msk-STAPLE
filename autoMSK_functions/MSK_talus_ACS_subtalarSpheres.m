@@ -104,7 +104,7 @@ SubtalarCS.V_subtalar = [SubtalarCS.X SubtalarCS.Y SubtalarCS.Z];
 if debug_plot
     % plot the results figure :
     %Visually check the Inertia Axis orientation relative to the Talus geometry
-    figure()
+%     figure()
     % Plot the whole talus, here Talus is a Matlab triangulation object
     trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.7,'edgecolor','none');
     hold on
