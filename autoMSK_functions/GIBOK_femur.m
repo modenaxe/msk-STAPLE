@@ -1,4 +1,4 @@
-function [ CSs, TrObjects ] = GIBOK_femur( Femur , DistFem)
+function [ CSs, TrObjects ] = GIBOK_femur(Femur, DistFem)
 
 % coordinate system structure to store results
 CSs = struct();
@@ -28,7 +28,6 @@ CoeffMorpho = 0.5 / meanEdgeLength ;
 %-------------------------------------
 % Z0: points upwards (inertial axis) 
 % Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
-% X0: used only in Kai2014
 %-------------------------------------
 
 % Get eigen vectors V_all of the Femur 3D geometry and volumetric center
@@ -67,17 +66,20 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 quickPlotTriang(DistFem, [], 1); hold on
 CSs = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CSs);
 
-% Fit two spheres on articular surfaces of posterior condyles
-quickPlotTriang(DistFem, [], 1); hold on
-CSs = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
-
-% Fit the posterior condyles with a cylinder
-quickPlotTriang(DistFem, [], 1); hold on
-CSs = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
-
-% Fit the entire condyles with an ellipsoid
-quickPlotTriang(DistFem, [], 1); hold on
-CSs = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
+% how to compute the joint axes
+switch method
+    case 'spheres'
+        % Fit two spheres on articular surfaces of posterior condyles
+        CSs = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+    case 'cylinder'
+        % Fit the posterior condyles with a cylinder
+        CSs = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+    case 'ellipsoids'
+        % Fit the entire condyles with an ellipsoid
+        CSs = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
+    otherwise
+        error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
+end
 
 % Store triangulation objects for output if required
 if debug_plot
