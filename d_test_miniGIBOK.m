@@ -41,7 +41,7 @@ end
 
 %---- FEMUR -----
 % FemurCS  = CS_femur_Kai2014(geom_set.femur_r);
-TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
+% TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
 
 
 %---- TIBIA -----

@@ -1,16 +1,22 @@
-function [ CSs, TrObjects ] = GIBOK_femur(Femur, DistFem)
+function [ CSs, TrObjects ] = GIBOK_femur(Femur, DistFem, fit_method)
 
 % coordinate system structure to store results
 CSs = struct();
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
-if ~exist('DistFem','var')
+if ~exist('DistFem','var') || isempty(DistFem)
       [ProxFem, DistFem] = cutLongBoneMesh(Femur);
 else
     % join two parts in one triangulation
     ProxFemur = Femur;
     Femur = TriUnite(ProxFemur, DistFem);
+end
+
+% default method is the cylinder fitting one as in Modenese et al. JBiomech
+% 2018
+if ~exist('method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
+    fit_method = 'cylinder';
 end
 
 % Get the mean edge length of the triangles composing the femur
@@ -67,7 +73,7 @@ quickPlotTriang(DistFem, [], 1); hold on
 CSs = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CSs);
 
 % how to compute the joint axes
-switch method
+switch fit_method
     case 'spheres'
         % Fit two spheres on articular surfaces of posterior condyles
         CSs = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
