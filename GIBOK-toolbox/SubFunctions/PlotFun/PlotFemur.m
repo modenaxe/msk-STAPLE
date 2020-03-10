@@ -3,16 +3,22 @@ function PlotFemur( CS, TrObjects )
 %   Detailed explanation goes here
 
 figure()
+
+if ~isfield(CS,'Y') && isfield(CS,'V')
+    CS.X = CS.V(:,1);
+    CS.Y = CS.V(:,2);
+    CS.Z = CS.V(:,3);
+end
 % Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
 trisurf(TrObjects.Femur,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
 hold on
 axis equal
 
 % handle lighting of objects
-light('Position',CS.Origin' + 500*CS.Y + 500*CS.X,'Style','local')
-light('Position',CS.Origin' + 500*CS.Y - 500*CS.X,'Style','local')
-light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
-light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
+light('Position',CS.Origin + 500*CS.Y + 500*CS.X,'Style','local')
+light('Position',CS.Origin + 500*CS.Y - 500*CS.X,'Style','local')
+light('Position',CS.Origin - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
+light('Position',CS.Origin - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
 lighting gouraud
 
 % Remove grid
@@ -37,10 +43,10 @@ trisurf(TrObjects.EpiFemASLat,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
 trisurf(TrObjects.EpiFemASMed,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
 
 % handle lighting of objects
-light('Position',CS.Origin' + 500*CS.Y + 500*CS.X,'Style','local')
-light('Position',CS.Origin' + 500*CS.Y - 500*CS.X,'Style','local')
-light('Position',CS.Origin' - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
-light('Position',CS.Origin' - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
+light('Position',CS.Origin + 500*CS.Y + 500*CS.X,'Style','local')
+light('Position',CS.Origin + 500*CS.Y - 500*CS.X,'Style','local')
+light('Position',CS.Origin - 500*CS.Y + 500*CS.X - 500*CS.Z,'Style','local')
+light('Position',CS.Origin - 500*CS.Y - 500*CS.X + 500*CS.Z,'Style','local')
 lighting gouraud
 
 % 
