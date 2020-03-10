@@ -1,4 +1,4 @@
-function CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS, in_mm)
+function [CS, JCS] = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS, in_mm)
 
 % check units
 if nargin<4;     in_mm = 1;  end
@@ -17,17 +17,17 @@ Y = normalizeV( CS.CenterFH - PaTGrooveCenter );
 X = cross(Y, Z);
 
 % store axes in structure
-CS.Center_Lat = center_lat;
-CS.Radius_Lat = radius_lat;
-CS.Center_Med = center_med;
-CS.Radius_Med = radius_med;
-CS.Origin     = PaTGrooveCenter;
+CS.patgroove_center_lat = center_lat;
+CS.patgroove_center_med = center_med;
+CS.patgroove_radius_lat = radius_lat;
+CS.patgroove_radius_med = radius_med;
+CS.patgroove_origin     = PaTGrooveCenter;
 
 % define patellofemoral axes
 Y_ptf = cross(Z, X);
-CS.patellofemoral_r.V = [X Y_ptf Z];
-CS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
-CS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(CS.patellofemoral_r.V);
+JCS.patellofemoral_r.V = [X Y_ptf Z];
+JCS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
+JCS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(JCS.patellofemoral_r.V);
 
 % % debug plots
 grid off

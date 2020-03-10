@@ -1,6 +1,4 @@
-function CS = CS_femur_EllipsoidsOnCondyles(Condyle_Lat,Condyle_Med, CS, in_mm)
-% REFERENCE SYSTEM
-% to be described for the two joints
+function [CS, JCS] = CS_femur_EllipsoidsOnCondyles(Condyle_Lat,Condyle_Med, CS, in_mm)
 
 % check units
 if nargin<4;     in_mm = 1;  end
@@ -20,17 +18,19 @@ X = cross(Y, Z);
 
 % define hip axes
 Zml_hip =  cross(X, Y);
-CS.V_hip = [X Y Zml_hip];
-CS.hip_r.child_location = CS.CenterFH * dim_fact;
-CS.hip_r.child_orientation = computeZXYAngleSeq(CS.V_hip);
+JCS.hip_r.V = [X Y Zml_hip];
+JCS.hip_r.child_location = CS.CenterFH * dim_fact;
+JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
+JCS.hip_r.Origin = CS.CenterFH;
 
 % define knee joint
 Y_knee = cross(Z, X);
-CS.V_knee = [X Y_knee Z];
-CS.knee_r.parent_location = KneeCenter * dim_fact;
-CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
+JCS.knee_r.V = [X Y_knee Z];
+JCS.knee_r.parent_location = KneeCenter * dim_fact;
+JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.Origin = KneeCenter;
 
-% % debug plots
+% debug plots
 grid off
 quickPlotTriang(Condyle_Lat, 'b')
 quickPlotTriang(Condyle_Med, 'r')

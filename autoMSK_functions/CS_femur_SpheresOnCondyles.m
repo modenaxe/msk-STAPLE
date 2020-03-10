@@ -1,4 +1,4 @@
-function CS = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS, debug_plot, in_mm)
+function [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS, debug_plot, in_mm)
 
 % REFERENCE SYSTEM
 % to be described for the two joints
@@ -18,11 +18,10 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 KneeCenter = 0.5*(center_lat+center_med);
 
 % store axes in structure
-CS.Center_Lat = center_lat;
-CS.Radius_Lat = radius_lat;
-CS.Center_Med = center_med;
-CS.Radius_Med = radius_med;
-CS.Origin     = KneeCenter;
+CS.sphere_center_lat = center_lat;
+CS.sphere_radius_lat = radius_lat;
+CS.sphere_center_med = center_med;
+CS.sphere_radius_med = radius_med;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(center_lat-center_med);
@@ -31,21 +30,19 @@ X = cross(Y,Z);
 
 % define hip joint
 Zml_hip = cross(X, Y);
-CS.V_hip = [X Y Zml_hip];
-CS.hip_r.child_location = CS.CenterFH * dim_fact;
-CS.hip_r.child_orientation = computeZXYAngleSeq(CS.V_hip);
+JCS.hip_r.V = [X Y Zml_hip];
+JCS.hip_r.child_location = CS.CenterFH * dim_fact;
+JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
+JCS.hip_r.Origin = CS.CenterFH;
 
 % define knee joint
 Y_knee = cross(Z, X);
-CS.V_knee = [X Y_knee Z];
-CS.knee_r.parent_location = KneeCenter * dim_fact;
-CS.knee_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
+JCS.knee_r.V = [X Y_knee Z];
+JCS.knee_r.parent_location    = KneeCenter * dim_fact;
+JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.Origin             = KneeCenter;
 
 if debug_plot
-    % debug plot
-    % quickPlotRefSystem(CS)
-    
-    % % debug plots
     grid off
     quickPlotTriang(postCondyle_Lat, 'b')
     quickPlotTriang(postCondyle_Med, 'r')
