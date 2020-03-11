@@ -1,6 +1,12 @@
-function [CS, JCS] = GIBOK_femur(Femur, DistFem, fit_method)
+function [CS, JCS] = GIBOK_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
 
-debug_plot = 1;
+% check units
+if nargin<5;     in_mm = 1;  end
+if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+% result plots on by default, debug off
+if nargin<4; result_plots = 1; end
+if nargin<6; debug_plots = 0; end
+
 % coordinate system structure to store results
 CS = struct();
 
@@ -16,7 +22,7 @@ end
 
 % default method is the cylinder fitting one as in Modenese et al. JBiomech
 % 2018
-if ~exist('method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
+if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
     fit_method = 'cylinder';
 end
 
@@ -51,7 +57,7 @@ CS.V_all = V_all;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
-[CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho);
+[CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
 
 % X0 points backwards
 CS.X0 = cross(CS.Y0, CS.Z0);
@@ -70,7 +76,6 @@ EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 [Groove_Med, Groove_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
-quickPlotTriang(DistFem, [], 1); hold on
 CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
 % how to compute the joint axes
@@ -92,30 +97,55 @@ end
 CS.Origin = CenterVol;
 CS.V = JCS.hip_r.V;
 
-quickPlotTriang(Femur);hold on;
-quickPlotRefSystem(CS);
-quickPlotRefSystem(JCS.hip_r);
-quickPlotRefSystem(JCS.knee_r);
-
-% Store triangulation objects for output if required
-% TODO: plot proximal femur as well
-if debug_plot
-    TrObjects = struct();
-    % store triangulations
-    TrObjects.Femur         = Femur; % full femur
-    TrObjects.ProxFem       = ProxFem; % proximal
-    TrObjects.DistFem       = DistFem; % distal
-    % store pieces used throughout the processing
-    TrObjects.FemHead       = FemHead;
-    TrObjects.EpiFem        = EpiFem;
-    TrObjects.EpiFemASLat   = postCondyle_Lat;
-    TrObjects.EpiFemASMed   = postCondyle_Med;
-    TrObjects.PatGrooveLat  = Groove_Lat;
-    TrObjects.PatGrooveMed  = Groove_Med;
+% result plot
+if result_plots == 1
+    figure;
+    alpha = 0.5;
+    subplot(2,2,[1,3]);
+    PlotTriangLight(Femur, CS, 0)
+    quickPlotRefSystem(CS);
+    quickPlotRefSystem(JCS.hip_r);
+    quickPlotRefSystem(JCS.knee_r);
+    % add articular surfaces
+    if strcmp(fit_method,'ellipsoids')
+        quickPlotTriang(fullCondyle_Lat, 'b')
+        quickPlotTriang(fullCondyle_Med, 'r')
+    else
+        quickPlotTriang(postCondyle_Lat, 'b')
+        quickPlotTriang(postCondyle_Med, 'r')
+    end
+    quickPlotTriang(FemHead, 'g')
     
-    % plot nicely with GIBOK function
-    PlotFemur(CS, TrObjects )
+    subplot(2,2,2); % femoral head
+    PlotTriangLight(ProxFem, CS, 0); hold on
+    quickPlotRefSystem(JCS.hip_r);
+    plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g', alpha);
+    
+    subplot(2,2,4);
+    PlotTriangLight(DistFem, CS, 0); hold on
+    quickPlotRefSystem(JCS.knee_r);
+    
+    switch fit_method
+        case 'spheres'
+            plotSphere(CS.sphere_center_lat, CS.sphere_radius_lat, 'b', alpha);
+            plotSphere(CS.sphere_center_med, CS.sphere_radius_med, 'r', alpha);
+        case 'cylinder'
+            plotCylinder( CS.Cyl_Y, CS.Cyl_Radius, CS.Cyl_Pt, CS.Cyl_Range*1.1, alpha, 'g')
+        case 'ellipsoids'
+            PlotEllipsoid(CS.ellips_centre_med, CS.ellips_radii_med, CS.ellips_evec_med, 'r', alpha)
+            PlotEllipsoid(CS.ellips_centre_lat, CS.ellips_radii_lat, CS.ellips_evec_lat, 'b', alpha)
+        otherwise
+            error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
+    end
+grid off
 end
+
+% % plot patellar fitting as well
+% PlotTriangLight(DistFem, CS, 1); hold on
+% quickPlotTriang(Groove_Lat, 'b')
+% quickPlotTriang(Groove_Med, 'r')
+% plotSphere(CS.patgroove_center_med,CS.patgroove_radius_med, 'r', alpha);
+% plotSphere(CS.patgroove_center_lat,CS.patgroove_radius_lat, 'b', alpha);
 
 end
 

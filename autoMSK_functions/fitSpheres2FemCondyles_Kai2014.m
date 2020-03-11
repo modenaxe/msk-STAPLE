@@ -2,7 +2,13 @@
 % slice starts with just one curve, until it slices two condyles
 % when there are two curves, the next time there is one is the end of
 % loop
-function CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS)
+function CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS, debug_plots)
+
+% main plots are in the main method function. 
+% these debug plots are to see the details of the method
+if nargin<3
+    debug_plots=0;
+end
 
 X0 = CS.X0;
 Z0 = CS.Z0;
@@ -21,8 +27,10 @@ d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
 % debug plot
-quickPlotTriang(DistFem, [], 1);
-plotDot(MostPostPoint,'g', 5.0);
+if debug_plots == 1
+    quickPlotTriang(DistFem, [], 1);
+    plotDot(MostPostPoint,'g', 5.0);
+end
 
 keep_slicing = 1;
 
@@ -99,13 +107,15 @@ while keep_slicing
     end
     
         % plot curves after break condition!
-    c_set = ['r', 'b','k'];
-    if ~isempty(Curves)
-        for c = 1:Nbr_of_curves
-            if c>3; col = 'k'; else;  col = c_set(c);  end
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3), col); hold on; axis equal
+        if debug_plots == 1
+            c_set = ['r', 'b','k'];
+            if ~isempty(Curves)
+                for c = 1:Nbr_of_curves
+                    if c>3; col = 'k'; else;  col = c_set(c);  end
+                    plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3), col); hold on; axis equal
+                end
+            end
         end
-    end
     
 end
 
@@ -124,7 +134,9 @@ CS.Radius_Med = radius_med;
 CS.KneeCenter = KneeCenter;
 
 % plot spheres
-plotSphere(center_med, radius_med, 'r', 0.4);
-plotSphere(center_lat, radius_lat, 'b', 0.4);
+if debug_plots == 1
+    plotSphere(center_med, radius_med, 'r', 0.4);
+    plotSphere(center_lat, radius_lat, 'b', 0.4);
+end
 
 end

@@ -1,11 +1,13 @@
-function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, in_mm, tolp, tolg)
+function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, in_mm, debug_plots, tolp, tolg)
 
 % check units
 if nargin<4;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+% debug plots off by default
+if nargin<5; debug_plots = 0; end
 
 % check tolerances (tolp: tol step length; tolg: tol test of gradient)
-if nargin < 6     ;     tolp = 0.001;    tolg = 0.001;  end
+if nargin < 6  ;     tolp = 0.001;    tolg = 0.001;  end
 
 % get all points of triangulations
 PtsCondyle    = [Condyle_Lat.Points; Condyle_Med.Points];
@@ -50,16 +52,16 @@ CS.Cyl_Radius          = rn;
 CS.Cyl_Range           = range(PtsCondyldeOnCylAxis*Y2);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Y = normalizeV(CS.CenterFH - KneeCenter); %mech axis of femur
+Y = normalizeV(CS.CenterFH_Renault - KneeCenter); %mech axis of femur
 Z = normalizeV(sign(Y2'*Z_dir)* Y2);% cylinder axis
 X = cross(Y, Z);
 
 % define hip joint
 Zml_hip = cross(X, Y);
 JCS.hip_r.V = [X Y Zml_hip];
-JCS.hip_r.child_location = CS.CenterFH * dim_fact;
+JCS.hip_r.child_location = CS.CenterFH_Renault * dim_fact;
 JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
-JCS.hip_r.Origin = CS.CenterFH;
+JCS.hip_r.Origin = CS.CenterFH_Renault;
 
 % define knee joint
 Y_knee = cross(Z, X);
@@ -69,9 +71,10 @@ JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = KneeCenter;
 
 % % debug plots
-grid off
-quickPlotTriang(Condyle_Lat, 'b')
-quickPlotTriang(Condyle_Med, 'r')
-plotCylinder( Y2, rn, KneeCenter, CS.Cyl_Range*1.1, 1, 'g')
+if debug_plots == 1
+    quickPlotTriang(Condyle_Lat, 'b')
+    quickPlotTriang(Condyle_Med, 'r')
+    plotCylinder( Y2, rn, KneeCenter, CS.Cyl_Range*1.1, 1, 'g')
+end
 
 end

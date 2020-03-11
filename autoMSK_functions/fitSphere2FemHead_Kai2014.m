@@ -1,7 +1,12 @@
-function [CS, MostProxPoint] = fitSphere2FemHead_Kai2014(ProxFem, CS)
+function [CS, MostProxPoint] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots)
 
-% TODO: remove CS and output just fitting results could be an issue for GIBOK
+% main plots are in the main method function. 
+% these debug plots are to see the details of the method
+if nargin<3
+    debug_plots=0;
+end
 
+% parameters used to identify artefact sections.
 sect_pts_limit = 15;
 
 % plane normal must be negative (GIBOK)
@@ -127,6 +132,7 @@ fitPoints = fitPoints(ind_keep,:);
 % fit sphere
 [CenterFH, Radius, ErrorDist] = sphereFit(fitPoints);
 sph_RMSE = mean(abs(ErrorDist));
+
 % print
 disp('-----------------')
 disp('Final  Estimation')
@@ -136,16 +142,19 @@ disp(['Radius:   ', num2str(Radius)]);
 disp(['Mean Res: ', num2str(sph_RMSE)])
 disp('-----------------')
 
+% body reference system
 CS.CenterFH_Kai = CenterFH ;
 CS.RadiusFH_Kai = Radius ;
 
-% debug plots
-quickPlotTriang(ProxFem, [], 1); hold on;
-plot3(MostProxPoint(1), MostProxPoint(2), MostProxPoint(3),'ro','LineWidth',4);
-plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.');hold on
-plotSphere(CenterFH, Radius, 'b', 0.4);
-% temp ref system
-plotDot(CS.CenterVol', 'k', 6);
-quickPlotRefSystem(CS)
+if debug_plots == 1
+    quickPlotTriang(ProxFem, [], 1); hold on;
+    
+    plot3(fitPoints(:,1), fitPoints(:,2), fitPoints(:,3),'g.');hold on
+    plotSphere(CenterFH, Radius, 'b', 0.4);
+    % temp ref system
+    plotDot(MostProxPoint, 'r',4);
+    plotDot(CS.CenterVol', 'k', 6);
+    quickPlotRefSystem(CS)
+end
 
 end

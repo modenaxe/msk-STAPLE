@@ -18,6 +18,6 @@ x = data(1:n,:)+M(1);
 y = data(n+1:2*n,:)+M(2); 
 z = data(2*n+1:end,:)+M(3);
 % plot
-surf(x, y, z, 'Facecolor', color, 'FaceAlpha', alpha);
+surf(x, y, z, 'Facecolor', color,'EdgeColor','none', 'FaceAlpha', alpha);
 
 end

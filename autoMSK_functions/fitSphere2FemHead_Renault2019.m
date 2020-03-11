@@ -1,5 +1,6 @@
-function [CSs, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CSs, CoeffMorpho)
+function [CSs, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CSs, CoeffMorpho, debug_plots)
     
+if nargin < 4; debug_plots = 0; end
 % from CSs structures we need:
 % - CSs.CenterVol
 % - CSs.Z0
@@ -42,13 +43,15 @@ FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
 
 % Initial sphere fit
 [Centre, Radius, ErrorDist] = sphereFit(FemHead0.Points);
+sph_RMSE = mean(abs(ErrorDist));
 
 disp('----------------')
 disp('First Estimation')
 disp('----------------')
 disp(['Centre: ', num2str(Centre)]);
 disp(['Radius: ', num2str(Radius)]);
-% RMSE = sqrt(mean(ErrorDist.^2.0));
+disp(['Mean Res: ', num2str(sph_RMSE)])
+disp('-----------------')
 
 % TODO:  check the errors at various STEPS to evaluate if fitting is
 % improving or not!
@@ -58,15 +61,17 @@ disp(['Radius: ', num2str(Radius)]);
 % larger one!
 FemHead_dil_coeff = 1.5;
 [ DilateFemHeadTri] = TriDilateMesh( ProxFem ,FemHead0 , round(FemHead_dil_coeff*Radius*CoeffMorpho));
-[CenterFH,RadiusDil] = sphereFit(DilateFemHeadTri.Points);
-CenterFH0 = CenterFH;
+[CenterFH, RadiusDil, ErrorDistCond] = sphereFit(DilateFemHeadTri.Points);
+sph_RMSECond = mean(abs(ErrorDistCond));
+% CenterFH0 = CenterFH;
 
 disp('----------------')
 disp('Cond  Estimation')
 disp('----------------')
 disp(['Centre: ', num2str(CenterFH)]);
 disp(['Radius: ', num2str(RadiusDil)]);
-
+disp(['Mean Res: ', num2str(sph_RMSECond)])
+disp('-----------------')
 
 % check
 if ~RadiusDil>Radius
@@ -128,29 +133,27 @@ if single_cond ==1
 end
 FemHead = TriOpenMesh(ProxFem ,FemHead,3*CoeffMorpho);
 
-% final femoral head used for fitting
-quickPlotTriang(FemHead, 'r')
-
-
 % Fit the last Sphere
 [CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);
+sph_RMSEFinal = mean(abs(ErrorDistFinal));
 
 disp('-----------------')
 disp('Final  Estimation')
 disp('-----------------')
 disp(['Centre: ', num2str(CenterFH)]);
 disp(['Radius: ', num2str(Radius)]);
+disp(['Mean Res: ', num2str(sph_RMSEFinal)])
 disp('-----------------')
-%RMSE_final = sqrt(mean(ErrorDistFinal.^2.0));
 
 % Write to the results struct
-CSs.CenterFH0 = CenterFH0;
-CSs.CenterFH  = CenterFH;
-CSs.RadiusFH  =  Radius;
+% CSs.CenterFH0 = CenterFH0;
+CSs.CenterFH_Renault  = CenterFH;
+CSs.RadiusFH_Renault  =  Radius;
 
 % debug plots
-quickPlotTriang(ProxFem, [], 1); hold on
-quickPlotTriang(FemHead, 'g');
-plotSphere(CenterFH, Radius, 'b', 0.4);
-
+if debug_plots == 1
+    quickPlotTriang(ProxFem, [], 1); hold on
+    quickPlotTriang(FemHead, 'g');
+    plotSphere(CenterFH, Radius, 'b', 0.4);
+end
 end

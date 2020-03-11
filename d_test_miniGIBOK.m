@@ -18,7 +18,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 3;
+nd = 2;
 %--------------------------------
 
 % add to osim model all bodies
@@ -40,13 +40,17 @@ end
 % [PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 
 %---- FEMUR -----
-% FemurCS  = CS_femur_Kai2014(geom_set.femur_r);
-% TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
+FemurCS  = CS_femur_Kai2014(geom_set.femur_r);
+FemurCSs = GIBOK_femur(geom_set.femur_r);
+FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+% 
 
 
 %---- TIBIA -----
 % defines the axis for the tibia
-FemurCSs = GIBOK_femur(geom_set.femur_r);
+% TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
 % TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
 %-----------------
 

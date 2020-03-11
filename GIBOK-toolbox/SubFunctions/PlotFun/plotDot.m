@@ -10,7 +10,8 @@ if nargin <3
     r=1.75;
 end
 
-if size(centers,2)>size(centers,1) && size(centers,1)==3
+% [LM] the check was not working I fixed it
+if size(centers,1)>size(centers,2) && size(centers,1)==3
     centers = centers';
 end
 

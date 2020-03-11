@@ -1,10 +1,10 @@
-function CS = GIBOK_talus(Talus, in_mm, debug_plot)
+function CS = GIBOK_talus(Talus, in_mm, debug_plots)
 
 % check units
 if nargin<2;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % debug plot default
-if nargin<3;  debug_plot =1;  end
+if nargin<3;  debug_plots =1;  end
 
 % debug plot for fit quadrilater
 fit_debug_plot = 0;
@@ -57,11 +57,11 @@ CS.Y0 = or*CS.Y0;
 % fit spheres to talonavicular and talocalcaneal
 % debug_plot = 1;
 subplot(1,2,1); title('Subtalar Joint Axis');
-[SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plot);
+[SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plots);
 
 % fit cylinder to talar trochlea
 subplot(1,2,2); title('Talocrural Joint Axis');
-TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, debug_plot);
+TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, debug_plots);
 
 % store segment info in structure
 CS.Origin       = CS.CenterVol;

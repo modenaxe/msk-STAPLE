@@ -18,19 +18,21 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function [CS, JCS] = CS_femur_Kai2014(Femur, DistFem, in_mm)
+function [CS, JCS] = CS_femur_Kai2014(Femur, DistFem, result_plots, in_mm, debug_plots)
 
 % check units
-if nargin<3;     in_mm = 1;  end
+if nargin<4;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+% result plots on by default, debug off
+if nargin<3; result_plots = 1; end
+if nargin<5; debug_plots = 0; end
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
-if ~exist('DistFem','var')
+if ~exist('DistFem','var') || isempty(DistFem)
       V_all = pca(Femur.Points);
       [ProxFem, DistFem] = cutLongBoneMesh(Femur);
       [ ~, CenterVol] = TriInertiaPpties(Femur);
-      
 else
     % join two parts in one triangulation
     ProxFem = Femur;
@@ -55,10 +57,10 @@ CS.Z0 = Z0;
 CS.CenterVol = CenterVol;
 
 % find femoral head
-[CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS);
+[CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots);
 
 % slicing the femoral condyles
-CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS);
+CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS, debug_plots);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(CS.Center_Lat-CS.Center_Med);
@@ -86,11 +88,26 @@ JCS.knee_r.parent_location = CS.KneeCenter*dim_fact;
 JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = CS.KneeCenter;
 
-% debug plot
-quickPlotTriang(Femur); hold on
-quickPlotRefSystem(CS);
-quickPlotRefSystem(JCS.hip_r);
-quickPlotRefSystem(JCS.knee_r);
+% result plot
+if result_plots == 1
+    alpha = 0.5;
+    subplot(2,2,[1,3]);
+    PlotTriangLight(Femur, CS, 0)
+    quickPlotRefSystem(CS);
+    quickPlotRefSystem(JCS.hip_r);
+    quickPlotRefSystem(JCS.knee_r);
+    
+    subplot(2,2,2); % femoral head
+    PlotTriangLight(ProxFem, CS, 0); hold on
+    quickPlotRefSystem(JCS.hip_r);
+    plotSphere(CS.CenterFH_Kai, CS.RadiusFH_Kai, 'g', alpha);
+    
+    subplot(2,2,4);
+    PlotTriangLight(DistFem, CS, 0); hold on
+    quickPlotRefSystem(JCS.knee_r);
+    plotSphere(CS.Center_Med, CS.Radius_Med, 'r', alpha);
+    plotSphere(CS.Center_Lat, CS.Radius_Lat, 'b', alpha);
+end
 
 end
 
