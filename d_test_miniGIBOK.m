@@ -47,7 +47,7 @@ end
 %---- TIBIA -----
 % defines the axis for the tibia
 FemurCSs = GIBOK_femur(geom_set.femur_r);
-TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
+% TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
 %-----------------
 
 %---- TALUS/ANKLE -----

@@ -1,7 +1,8 @@
-function [ CSs, TrObjects ] = GIBOK_femur(Femur, DistFem, fit_method)
+function [CS, JCS] = GIBOK_femur(Femur, DistFem, fit_method)
 
+debug_plot = 1;
 % coordinate system structure to store results
-CSs = struct();
+CS = struct();
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
@@ -44,50 +45,60 @@ Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 
 % store approximate Z direction and centre of mass of triangulation
-CSs.Z0 = Z0;
-CSs.CenterVol = CenterVol;
-CSs.V_all = V_all;
+CS.Z0 = Z0;
+CS.CenterVol = CenterVol;
+CS.V_all = V_all;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
-[CSs, FemHead] = findFemoralHead(ProxFem, CSs, CoeffMorpho);
+[CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho);
 
 % X0 points backwards
-CSs.X0 = cross(CSs.Y0, CSs.Z0);
+CS.X0 = cross(CS.Y0, CS.Z0);
 
 % Isolates the epiphysis
 EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'full_condyles');
+[fullCondyle_Med, fullCondyle_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med, postCondyle_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs,  CoeffMorpho, 'post_condyles');
+[postCondyle_Med, postCondyle_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
-[Groove_Med, Groove_Lat, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, 'pat_groove');
+[Groove_Med, Groove_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
 quickPlotTriang(DistFem, [], 1); hold on
-CSs = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CSs);
+CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
 % how to compute the joint axes
 switch fit_method
     case 'spheres'
         % Fit two spheres on articular surfaces of posterior condyles
-        CSs = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+        [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS);
     case 'cylinder'
         % Fit the posterior condyles with a cylinder
-        CSs = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CSs);
+        [CS, JCS] = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CS);
     case 'ellipsoids'
         % Fit the entire condyles with an ellipsoid
-        CSs = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CSs);
+        [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CS);
     otherwise
         error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
 end
 
+% define segment ref system
+CS.Origin = CenterVol;
+CS.V = JCS.hip_r.V;
+
+quickPlotTriang(Femur);hold on;
+quickPlotRefSystem(CS);
+quickPlotRefSystem(JCS.hip_r);
+quickPlotRefSystem(JCS.knee_r);
+
 % Store triangulation objects for output if required
+% TODO: plot proximal femur as well
 if debug_plot
     TrObjects = struct();
     % store triangulations
@@ -101,6 +112,8 @@ if debug_plot
     TrObjects.EpiFemASMed   = postCondyle_Med;
     TrObjects.PatGrooveLat  = Groove_Lat;
     TrObjects.PatGrooveMed  = Groove_Med;
+    
+    % plot nicely with GIBOK function
     PlotFemur(CS, TrObjects )
 end
 

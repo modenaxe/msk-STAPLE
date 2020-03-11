@@ -125,14 +125,15 @@ fitPoints = fitPoints(ind_keep,:);
 %-----------------
 
 % fit sphere
-[CenterFH, Radius] = sphereFit(fitPoints);
-
+[CenterFH, Radius, ErrorDist] = sphereFit(fitPoints);
+sph_RMSE = mean(abs(ErrorDist));
 % print
 disp('-----------------')
 disp('Final  Estimation')
 disp('-----------------')
-disp(['Centre: ', num2str(CenterFH)]);
-disp(['Radius: ', num2str(Radius)]);
+disp(['Centre:   ', num2str(CenterFH)]);
+disp(['Radius:   ', num2str(Radius)]);
+disp(['Mean Res: ', num2str(sph_RMSE)])
 disp('-----------------')
 
 CS.CenterFH_Kai = CenterFH ;
