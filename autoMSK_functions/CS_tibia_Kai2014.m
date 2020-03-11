@@ -1,8 +1,9 @@
 
-function CS = CS_tibia_Kai2014(Tibia, DistTib, debug_plot)
+function CS = CS_tibia_Kai2014(Tibia, DistTib, result_plots)
 
-% check plots
-if nargin<3;     debug_plot = 1;  end
+% check plots (no debug plots as there are few elements to display)
+if nargin<3;     result_plots = 1;  end
+
 
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
@@ -39,14 +40,6 @@ if N_curves>2
     error('This should not be the case (only tibia and possibly fibula should be there).')
 end
 
-% plot max section to check
-if debug_plot
-    quickPlotTriang(Tibia,[], 1); hold on
-    for nn = 1:N_curves
-        plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',3); hold on
-    end
-end
-
 % Move the outline curve points in the inertial ref system, so the vertical
 % component (:,1) is on a plane
 PtsCurves = vertcat(maxAreaSection.Pts)*V_all;
@@ -68,6 +61,7 @@ YElpsMax = V_all*[  0 ;
 [ ~, CenterVolTibDist] = TriInertiaPpties( DistTib );
 d = CenterVolTibDist'*Z0;
 [ DistCurves , ~, ~ ] = TriPlanIntersect(DistTib, Z0 , -d );
+
 % check the number of curves on that slice
 N_DistCurves = length(DistCurves);
 just_tibia = 1;
@@ -132,9 +126,13 @@ JCS.knee_r.child_orientation = computeZXYAngleSeq(JCS.knee_r.V);
 % apart from the reference system -> NB: Z axis to switch with talus Z
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
-if debug_plot
+% plot reference systems
+if result_plots == 1
+    PlotTriangLight(Tibia, CS, 1);
     quickPlotRefSystem(CS);
-    quickPlotRefSystem(JCS.knee_r)
+    quickPlotRefSystem(JCS.knee_r);
+    % plot largest section
+    plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
 end
 
 end

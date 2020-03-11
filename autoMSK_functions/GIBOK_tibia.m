@@ -1,8 +1,11 @@
-function [CS, TrObjects] = GIBOK_tibia(Tibia, DistTib, in_mm)
+function [CS, TrObjects] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
 
 % check units
-if nargin<3;     in_mm = 1;  end
+if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+% result plots on by default, debug off
+if nargin<4; result_plots = 1; end
+if nargin<6; debug_plots = 0; end
 
 % coordinate system structure to store results
 CS = struct();
@@ -151,14 +154,18 @@ quickPlotTriang(EpiTib,'y',1);hold on
 quickPlotTriang(EpiTibASMed,'r')
 quickPlotTriang(EpiTibASLat,'b')
 
-% fit an ellipse to the articular surface
-CS = CS_tibia_Ellipse(EpiTibAS, CS);
-
-% uses the centroid of the articular surfaces to define the Z axis
-CS = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS);
-
-CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS);
-
+switch fit_method
+    case 'ellipse'
+        % fit an ellipse to the articular surface
+        CS = CS_tibia_Ellipse(EpiTibAS, CS);
+    case 'centroids'
+        % uses the centroid of the articular surfaces to define the Z axis
+        CS = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS);
+    case 'plateau'
+        CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS);
+    otherwise
+        error('GIBOK_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
+end
 %% Inertia Results
 % Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
 % Xi = cross(Yi,Z0);
