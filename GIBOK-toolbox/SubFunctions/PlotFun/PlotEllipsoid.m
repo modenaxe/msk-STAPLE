@@ -1,4 +1,9 @@
-% Author: Luca Modenese
+%-------------------------------------------------------------------------%
+% Copyright (c) 2019 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese, April 2018                                  % 
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 % based on https://www.mathworks.com/matlabcentral/answers/19716-what-is-the-function-to-plot-a-rotating-3-d-ellipsoid
 function PlotEllipsoid(centre, radii, evecs, color, alpha)
 
