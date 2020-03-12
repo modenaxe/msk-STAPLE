@@ -19,7 +19,7 @@ CS.ElpsPts       = EllipsePts;
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = sign(Yelps'*CS.Y0)*Yelps;
 Y = normalizeV(KneeCenter-CS.AnkleCenter); % mechanical axis
-X = cross(Z, Y);
+X = cross(Y, Z);
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);

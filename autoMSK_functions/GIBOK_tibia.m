@@ -79,9 +79,14 @@ elseif N_curves>2
     error('This should not be the case (only tibia and fibula should be there.')
 end
 
-% ankle centre
+% ankle centre (considers only tibia)
 Centre = PlanPolygonCentroid3D( Curve.Pts );
 CS.AnkleCenter = Centre - plane_thick * nAAS';
+% check ankle centre section
+if debug_plots == 1
+    plot3(Curve.Pts(:,1), Curve.Pts(:,2), Curve.Pts(:,3)); hold on; axis equal
+    plot3(CS.AnkleCenter(1),CS.AnkleCenter(2),CS.AnkleCenter(3),'o')
+end
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENCE FROM ORIGINAL TOOLBOX
@@ -98,23 +103,23 @@ if debug_plots==1
     quickPlotTriang(DistTib,'m',1); hold on
 end
 
+% Y0 needs to be correct in direction (pointing laterally here and for GIBOK)
+% most distal point
+MD_Pt = DistTib.Points(I,:);
+% vector from most-distal point ro ankle centre.
+U_tmp = CS.AnkleCenter-MD_Pt;
+col_plot = 'r';
+% ASSUMPTION: most distal point will be on tibia (medial) if there is no
+% fibula, otherwise it will be lateral, and the vector needs to be
+% reversed.
 if tibia_and_fibula == 1
-    % Vector between ankle center and the most Distal point (MDMMPt)
-    MDMM_Pt = DistTib.Points(I,:);
-    U_tmp = MDMM_Pt - CS.AnkleCenter;
-    % debug
-    if debug_plots == 1
-        plotDot(MDMM_Pt,'k',3)
-    end
-else
-    % if fibula is there, the most distal point will be fibula tip. 
-    % Adjusting for that case.
-    MDLM_Pt = DistTib.Points(I,:);
-    U_tmp = CS.AnkleCenter - MDLM_Pt;
-    % debug
-    if debug_plots == 1
-        plotDot(MDLM_Pt,'k',3)
-    end
+    U_tmp = -U_tmp;
+    col_plot = 'b';
+end
+
+% debug plot for most distal point
+if debug_plots == 1
+    plotDot(MD_Pt,'k',3)
 end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
@@ -122,7 +127,6 @@ Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  );
 CS.Y0 = Y0;
 
 %% Proximal Tibia
-
 % isolate tibia proximal epiphysis 
 EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 
@@ -137,18 +141,19 @@ angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
 [EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CS, CoeffMorpho, angle_thresh, curv_quartile);
+
 % debug plots
 if debug_plots == 1
-    quickPlotTriang(EpiTibAS);hold on
+    quickPlotTriang(EpiTibAS, [], 1);hold on
     title('STEP1: Full proximal Articular Surface')
 end
 
 % remove the ridge and the central part of the surface
-EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
+EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
 
 % debug plots
 if debug_plots == 1
-    quickPlotTriang(EpiTibAS);hold on
+    quickPlotTriang(EpiTibAS, [], 1);hold on
     title('STEP2: Full proximal Articular Surface (central ridge removed)')
 end
 
@@ -165,6 +170,12 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 % EpiTibAS3 is the final triang of the articular surfaces
 EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
 
+% debug plots
+if debug_plots == 1
+    quickPlotTriang(EpiTibAS3, [], 1);hold on
+    title('STEP3: Final Articular Surface (refined)')
+end
+
 % compute joint coord system
 switch fit_method
     case 'ellipse'
@@ -180,12 +191,17 @@ switch fit_method
 end
 
 % define segment ref system
+CS.V = JCS.knee_r.V;
 CS.Origin = CenterVol;
-CS.Y = 
-CS.X
-CS.Z
+
+% CS.Y = 
+% CS.X
+% CS.Z
 
 if result_plots == 1
+    
+    figure
+
     % plot entire tibia 
     subplot(2,2,[1,3])
     PlotTriangLight(Tibia, CS, 0);
@@ -220,11 +236,7 @@ if result_plots == 1
     quickPlotTriang(AnkleArtSurf, 'g');
     plotDot(CS.AnkleCenter, 'g', 4);
 %     plotDot(CS.CenterAnkleInside, 'y', 4);
-    if tibia_and_fibula == 1
-        plotDot(MDMM_Pt,'r',3)
-    else
-        plotDot(MDLM_Pt,'b',3)
-    end
+    plotDot(MD_Pt,col_plot,3); % color changes dep on tibia/fib presence
 
 end
 

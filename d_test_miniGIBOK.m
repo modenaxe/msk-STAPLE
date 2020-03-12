@@ -47,8 +47,6 @@ end
 % FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
 % FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 
-
-
 %---- TIBIA -----
 % defines the axis for the tibia
 % TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);

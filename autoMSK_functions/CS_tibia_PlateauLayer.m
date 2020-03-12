@@ -70,7 +70,7 @@ CS.Xtibplat = Xtp;
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(KneeCenter - CS.CenterAnkleInside);
 Z = normalizeV(Ytp);
-X = cross(Z, Y);
+X = cross(Y, Z);
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
