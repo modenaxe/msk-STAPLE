@@ -1,5 +1,4 @@
-function CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS)
-
+function [CS, JCS] = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS)
 
 % Compute the inertial axis of a slice of the tp plateau
 % 10% below and the 5% above : Fill it with equally spaced points to
@@ -64,12 +63,9 @@ idx = kmeans(TPLayerPts,2);
 KneeCenter = 0.5*( CenterMed + CenterLat);
 
 % Store body info
-CS.Origin   = KneeCenter;
 CS.Ztibplat = Ztp;
 CS.Ytibplat = Ytp;
 CS.Xtibplat = Xtp;
-% CS.Centroid_med  = TibArtMed_ppt.Center;
-% CS.Centroid_lat  = TibArtLat_ppt.Center;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(KneeCenter - CS.CenterAnkleInside);
@@ -78,14 +74,15 @@ X = cross(Z, Y);
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
-CS.V_knee = [X Ydp_knee Z];
-CS.knee_r.child_orientation = computeZXYAngleSeq(CS.V_knee);
+JCS.knee_r.V = [X Ydp_knee Z];
+JCS.knee_r.child_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.Origin   = KneeCenter;
 % the knee axis is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;
 
 % the talocrural joint is also defined by the talus fitting.
 % apart from the reference system -> NB: Z axis to switch with talus Z
-CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
+JCS.ankle_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
 
 end
 

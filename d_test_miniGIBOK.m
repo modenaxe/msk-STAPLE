@@ -51,8 +51,10 @@ end
 
 %---- TIBIA -----
 % defines the axis for the tibia
-TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
-TibiaCSs = GIBOK_tibia(geom_set.tibia_r);
+% TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
+TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 %-----------------
 
 %---- TALUS/ANKLE -----

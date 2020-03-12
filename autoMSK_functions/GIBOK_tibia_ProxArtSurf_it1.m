@@ -2,6 +2,9 @@ function EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CSs, Ztp , oL
 
 Z0 = CSs.Z0;
 Y0 = CSs.Y0;
+% decide if to plot intermediate step. Left manual switch as function is
+% deeply nested.
+debug_plots = 0;
 
 % using an ellipse fit keep only the part of the artic surf where the
 % femoral condyle touch
@@ -14,9 +17,6 @@ ELP1.Xel = sign(Xel'*Y0)*Xel ;
 ELP1.Yel = sign(Yel'*Y0)*Yel ;
 ELP1.ellipsePts = ellipsePts;
 
-% debug
-quickPlotTriang(EpiTibAS);hold on
-
 % remove area between ridges
 EpiTibCenterRidgeMed = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'medial');
 EpiTibCenterRidgeLat = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , 'lateral');
@@ -27,8 +27,10 @@ if ~isempty(EpiTibCenterRidgeMed) || ~isempty(EpiTibCenterRidgeLat)
     % Remove between ridge points from identified AS points
     EpiTibAS = TriDifferenceMesh(EpiTibAS , EpiTibCenterRidge);
     % debug
-    quickPlotTriang(EpiTibAS);hold on
-    quickPlotTriang(EpiTibCenterRidge,'r')
+    if debug_plots == 1
+        quickPlotTriang(EpiTibAS);hold on
+        quickPlotTriang(EpiTibCenterRidge,'r')
+    end
 end
 
 
@@ -38,9 +40,10 @@ MedPtsInit = mean(ellipsePts) + 2/3*ELP1.b*ELP1.Yel';
 LatPtsInit = mean(ellipsePts) - 2/3*ELP1.b*ELP1.Yel';
 
 % not on the surface
-plot3(MedPtsInit(1), MedPtsInit(2), MedPtsInit(3),'ro','LineWidth',3); hold on
-plot3(LatPtsInit(1), LatPtsInit(2), LatPtsInit(3),'bo','LineWidth',3); hold on
-
+if debug_plots == 1
+    plot3(MedPtsInit(1), MedPtsInit(2), MedPtsInit(3),'ro','LineWidth',3); hold on
+    plot3(LatPtsInit(1), LatPtsInit(2), LatPtsInit(3),'bo','LineWidth',3); hold on
+end
 MedPtsInit = [  MedPtsInit; 
                 MedPtsInit - 1/3*ELP1.a*ELP1.Xel';  
                 MedPtsInit + 1/3*ELP1.a*ELP1.Xel'];
@@ -48,7 +51,5 @@ LatPtsInit = [  LatPtsInit;
                 LatPtsInit - 1/3*ELP1.a*ELP1.Xel'; 
                 LatPtsInit + 1/3*ELP1.a*ELP1.Xel'];
 EpiTibAS = TriConnectedPatch(EpiTibAS , [MedPtsInit ; LatPtsInit] );
-
-quickPlotTriang(EpiTibAS, 'g', 1);hold on
 
 end

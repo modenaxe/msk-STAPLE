@@ -12,7 +12,7 @@ CS = struct();
 
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
-if ~exist('DistTib','var')
+if ~exist('DistTib','var') || isempty(DistTib)
      % Only one mesh, this is a long bone that should be cutted in two
      % parts
       [ProxTib, DistTib] = cutLongBoneMesh(Tibia);
@@ -94,20 +94,27 @@ ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
 [~,I] = max(DistTib.Points*ZAnkleSurf);
 
 % define a pseudo-medial axis
-quickPlotTriang(DistTib,'m',1); hold on
+if debug_plots==1
+    quickPlotTriang(DistTib,'m',1); hold on
+end
+
 if tibia_and_fibula == 1
     % Vector between ankle center and the most Distal point (MDMMPt)
     MDMM_Pt = DistTib.Points(I,:);
     U_tmp = MDMM_Pt - CS.AnkleCenter;
     % debug
-    plotDot(MDMM_Pt,'k',3)
+    if debug_plots == 1
+        plotDot(MDMM_Pt,'k',3)
+    end
 else
     % if fibula is there, the most distal point will be fibula tip. 
     % Adjusting for that case.
     MDLM_Pt = DistTib.Points(I,:);
     U_tmp = CS.AnkleCenter - MDLM_Pt;
     % debug
-    plotDot(MDLM_Pt,'k',3)
+    if debug_plots == 1
+        plotDot(MDLM_Pt,'k',3)
+    end
 end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
@@ -130,9 +137,20 @@ angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
 [EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CS, CoeffMorpho, angle_thresh, curv_quartile);
+% debug plots
+if debug_plots == 1
+    quickPlotTriang(EpiTibAS);hold on
+    title('STEP1: Full proximal Articular Surface')
+end
 
 % remove the ridge and the central part of the surface
 EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
+
+% debug plots
+if debug_plots == 1
+    quickPlotTriang(EpiTibAS);hold on
+    title('STEP2: Full proximal Articular Surface (central ridge removed)')
+end
 
 % Smooth found ArtSurf
 EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15*CoeffMorpho);
@@ -144,28 +162,73 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 [EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
 
 % builld the triangulation
+% EpiTibAS3 is the final triang of the articular surfaces
 EpiTibAS3 = TriUnite(EpiTibASMed, EpiTibASLat);
 
-% NOTE: EpiTibAS3 is the final mesh from the functions
-EpiTibAS = EpiTibAS3;
-
-% quick final check
-quickPlotTriang(EpiTib,'y',1);hold on
-quickPlotTriang(EpiTibASMed,'r')
-quickPlotTriang(EpiTibASLat,'b')
-
+% compute joint coord system
 switch fit_method
     case 'ellipse'
         % fit an ellipse to the articular surface
-        CS = CS_tibia_Ellipse(EpiTibAS, CS);
+        [CS, JCS] = CS_tibia_Ellipse(EpiTibAS3, CS);
     case 'centroids'
         % uses the centroid of the articular surfaces to define the Z axis
-        CS = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS);
+        [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS);
     case 'plateau'
-        CS = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS);
+        [CS, JCS] = CS_tibia_PlateauLayer(EpiTib, EpiTibAS3, CS);
     otherwise
         error('GIBOK_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
 end
+
+% define segment ref system
+CS.Origin = CenterVol;
+CS.Y = 
+CS.X
+CS.Z
+
+if result_plots == 1
+    % plot entire tibia 
+    subplot(2,2,[1,3])
+    PlotTriangLight(Tibia, CS, 0);
+    quickPlotRefSystem(JCS.knee_r)
+    quickPlotTriang(EpiTibASMed,'r');
+    quickPlotTriang(EpiTibASLat,'b');
+    quickPlotTriang(AnkleArtSurf, 'g');
+
+    % plot proximal tibia
+    subplot(2,2,2)
+    alpha_AS = 0.3;
+    PlotTriangLight(ProxTib, CS, 0);
+    switch fit_method
+        case 'ellipse'
+            quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
+            quickPlotRefSystem(JCS.knee_r)
+        case 'centroids'
+            quickPlotTriang(EpiTibASMed,'r', 0, alpha_AS );
+            quickPlotTriang(EpiTibASLat,'b',0, alpha_AS);
+            plotDot(CS.Centroid_AS_lat, 'b', 4);
+            plotDot(CS.Centroid_AS_med, 'r', 4);
+            plotCylinder((CS.Centroid_AS_lat-CS.Centroid_AS_med)', 3, (CS.Centroid_AS_lat+CS.Centroid_AS_med)/2,...
+                1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
+        case 'plateau'
+            quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
+            quickPlotRefSystem(JCS.knee_r)
+    end
+
+    % plot distal tibia
+    subplot(2,2,4)
+    PlotTriangLight(DistTib, CS, 0);
+    quickPlotTriang(AnkleArtSurf, 'g');
+    plotDot(CS.AnkleCenter, 'g', 4);
+%     plotDot(CS.CenterAnkleInside, 'y', 4);
+    if tibia_and_fibula == 1
+        plotDot(MDMM_Pt,'r',3)
+    else
+        plotDot(MDLM_Pt,'b',3)
+    end
+
+end
+
+
 %% Inertia Results
 % Yi = V_all(:,2); Yi = sign(Yi'*Y0)*Yi;
 % Xi = cross(Yi,Z0);
@@ -176,19 +239,6 @@ end
 % CSs.Yinertia = Yi;
 % CSs.Xinertia = Xi;
 % CSs.Minertia = [Xi Yi Z0];
-
-if debug_plot
-    TrObjects = struct();
-    TrObjects.Tibia = Tibia;
-    TrObjects.ProxTib = ProxTib;
-    TrObjects.DistTib = DistTib;
-    TrObjects.AnkleArtSurf = AnkleArtSurf;
-    TrObjects.EpiTib = EpiTib;
-    TrObjects.EpiTibASMed = EpiTibASMed;
-    TrObjects.EpiTibASLat = EpiTibASLat;
-    PlotTibia( CS, TrObjects )
-end
-
 
 end
 

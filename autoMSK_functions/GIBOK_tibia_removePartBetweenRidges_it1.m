@@ -1,4 +1,4 @@
-function EpiTibCenterRidge = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTibAS, CSs, CoeffMorpho, ELP1, Ztp , is_medial)
+function EpiTibCenterRidge = GIBOK_tibia_removePartBetweenRidges_it1(ProxTib, EpiTib, CSs, CoeffMorpho, ELP1, Ztp , is_medial)
 
 Z0 = CSs.Z0;
 
@@ -50,7 +50,7 @@ nm = coeff*Yel;
 dm = -mean(ellipsePts)*nm;
 
 % Identify the point contained between this plan and ellipse middle plan
-NodesOnCenterID = find(sign(EpiTibAS.Points*np+dp) + sign(EpiTibAS.Points*nm+dm)>0.1);
+NodesOnCenterID = find(sign(EpiTib.Points*np+dp) + sign(EpiTib.Points*nm+dm)>0.1);
 
 if isempty(NodesOnCenterID)
     warning(['No areas near the ridge to remove on the ', is_medial, ' side of knee'])
@@ -58,11 +58,11 @@ if isempty(NodesOnCenterID)
     return
 end
     
-EpiTibCenterRidge = TriReduceMesh( EpiTibAS, [] , NodesOnCenterID );
+EpiTibCenterRidge = TriReduceMesh( EpiTib, [] , NodesOnCenterID );
 
 % as in original GIBOK
 if strcmp(is_medial, 'lateral')
-    EpiTibCenterRidge = TriDilateMesh(EpiTibAS, EpiTibCenterRidge,5*CoeffMorpho);
+    EpiTibCenterRidge = TriDilateMesh(EpiTib, EpiTibCenterRidge,5*CoeffMorpho);
 end
 
 end
