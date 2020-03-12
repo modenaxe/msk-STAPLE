@@ -1,4 +1,4 @@
-function [SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plot)
+function [SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, result_plots)
 
 % structure to store ref system info
 SubtalarCS = struct;
@@ -99,26 +99,13 @@ SubtalarCS.Origin = Center_TlCcn;
 SubtalarCS.Z = CS.X1;
 SubtalarCS.Y = CS.Z1;
 SubtalarCS.X = CS.Y1;
+SubtalarCS.Origin = CS.CenterVol;
 SubtalarCS.V_subtalar = [SubtalarCS.X SubtalarCS.Y SubtalarCS.Z];
 
-if debug_plot
+if result_plots
     % plot the results figure :
     %Visually check the Inertia Axis orientation relative to the Talus geometry
-%     figure()
-    % Plot the whole talus, here Talus is a Matlab triangulation object
-    trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.7,'edgecolor','none');
-    hold on
-    axis equal
-    
-    % handle lighting of objects
-    light('Position',CS.CenterVol' + 500*CS.Y0' + 500*CS.X0','Style','local')
-    light('Position',CS.CenterVol' + 500*CS.Y0' - 500*CS.X0','Style','local')
-    light('Position',CS.CenterVol' - 500*CS.Y0' + 500*CS.X0' - 500*CS.Z0','Style','local')
-    light('Position',CS.CenterVol' - 500*CS.Y0' - 500*CS.X0' + 500*CS.Z0','Style','local')
-    lighting gouraud
-    
-    % Remove grid
-    grid off
+    PlotTriangLight(Talus, SubtalarCS, 0, 0.7);
     
     %Plot the inertia Axis & Volumic center
     plotDot( CS.CenterVol', 'k', 2 )
@@ -127,12 +114,12 @@ if debug_plot
     plotArrow( CS.Z0, 1, CS.CenterVol, 40*CS.D(1,1)/CS.D(3,3), 1, 'b')
     
     %Plot the Tl Nvc part
-    trisurf(TlNvc_AS,'Facecolor','m','FaceAlpha',1,'edgecolor','none');
+    trisurf(TlNvc_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
     plotSphere( Center_TlNvc, Radius_TlNvc , 'm' , 0.3)
     plotDot( Center_TlNvc, 'm', 2 )
     
     %Plot the Tl Ccn part
-    trisurf(TlCcnAS1,'Facecolor','c','FaceAlpha',1,'edgecolor','none');
+    trisurf(TlCcnAS1,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
     plotSphere( Center_TlCcn, Radius_TlCcn , 'c' , 0.3)
     plotDot( Center_TlCcn, 'c', 2 )
     

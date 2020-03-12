@@ -1,4 +1,6 @@
-function TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, debug_plot)
+function TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, result_plots)
+
+debug_plots = 0;
 
 TalocruralCS = struct;
 
@@ -48,19 +50,23 @@ TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2);
                             Radius_TlTrc_0, 0.001, 0.001);
 Y2 =  normalizeV( an );
 
-% % checking Z0
-% quickPlotTriang(Talus); hold on
-% quickPlotTriang(TlTrcAS0, 'm')
-% T.X=X0; T.Y=Y0; T.Z=Z0;T.Origin=CenterVol;
-% quickPlotRefSystem(T)
+% checking Z0
+if debug_plots == 1
+    figure
+    quickPlotTriang(Talus); hold on
+    quickPlotTriang(TlTrcAS0, 'm')
+    T.X=X0; T.Y=Y0; T.Z=Z0;T.Origin=CenterVol;
+    quickPlotRefSystem(T)
+end
 
-% % T1 is much more skewed
-% figure
-% quickPlotTriang(Talus); hold on
-% quickPlotTriang(TlTrcAS0, 'g')
-% T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
-% quickPlotRefSystem(T)
-
+% T1 is much more skewed
+if debug_plots == 1
+    figure
+    quickPlotTriang(Talus); hold on
+    quickPlotTriang(TlTrcAS0, 'g')
+    T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
+    quickPlotRefSystem(T)
+end
 % 5.4 Refine the articular surface 
 % Remove elements that are too for from from initial cylinder fit
 %   more than 5% of radius inside or more than 10% outside
@@ -90,7 +96,6 @@ Z3 = normalizeV(sign(-Y1'*Y2)*Y2);
 Y3 = normalizeV(cross(Z3, X0));
 X3 = cross(Y3, Z3);
 
-
 % store ankle info
 TalocruralCS.cyl_rad    = rn;
 TalocruralCS.cyl_centre = x0n;
@@ -103,36 +108,15 @@ TalocruralCS.Y = Y3;
 TalocruralCS.Z = Z3;
 TalocruralCS.V_ankle = [X3 Y3 Z3];
 
-if debug_plot
+if result_plots == 1
     % 5.5 Plot the results
-%     figure()
-    trisurf(Talus,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',.6,'edgecolor','none');
-    hold on
-    axis equal
-    
-    % handle lighting of objects
-    light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
-    light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
-    light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
-    light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
-    lighting gouraud
-    
-    % Remove grid
-    grid off
-    
-    %Plot the Axis & Volumic center
-    
-    % axis based on subtalar estimation
-%     plotDot( CenterVol', 'k', 2 )
-%     plotArrow( X1, 1, CenterVol, 40, 1, 'r')
-%     plotArrow( Y1, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
-%     plotArrow( Z1, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
-    
-    % orginal inertial + quad axes
+    PlotTriangLight(Talus, TalocruralCS, 0, 0.6);
+
+    %Plot ref system Axis & Volumic center
     plotArrow( X3, 1, CenterVol, 40, 1, 'r')
     plotArrow( Y3, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
     plotArrow( Z3, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
-    plotDot( x0n', 'k', 2 )
+    plotDot( CenterVol, 'k', 2 )
     
     %Plot the  talar trochlea articular surface
     % trisurf(TlTrcAS0,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
@@ -140,7 +124,7 @@ if debug_plot
     
     %Plot the Cylinder and its axis
     plotCylinder( Y2, rn, x0n, 40, 0.4, 'r')
-    plotArrow( Y2, 1, x0n, 40, 1, 'r')
+    plotArrow( Y2, 1, x0n, 40, 1, 'k')
     plotDot( x0n', 'r', 2 )
     
     axis off

@@ -75,8 +75,8 @@ if N_curves==2
     tibia_and_fibula=1;
     disp('Tibia and Fibula are detected in the triangulation.')
 elseif N_curves>2
-    warning(['There are ', num2str(N_curves), ' section areas.']);
-    error('This should not be the case (only tibia and fibula should be there.')
+    warndlg(['Tibia has ', num2str(N_curves), ' section areas .']);
+%     error('This should not be the case (only tibia and fibula should be there.')
 end
 
 % ankle centre (considers only tibia)
@@ -118,9 +118,7 @@ if tibia_and_fibula == 1
 end
 
 % debug plot for most distal point
-if debug_plots == 1
-    plotDot(MD_Pt,'k',3)
-end
+if debug_plots == 1;   plotDot(MD_Pt,'k',3) ; end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
 Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
@@ -194,9 +192,9 @@ end
 CS.V = JCS.knee_r.V;
 CS.Origin = CenterVol;
 
-% CS.Y = 
-% CS.X
-% CS.Z
+% CS.Y = mech axis
+% CS.X = perp to plane YZ
+% CS.Z = XY
 
 if result_plots == 1
     

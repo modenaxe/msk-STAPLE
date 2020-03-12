@@ -28,7 +28,8 @@ CS.X0 = V_all(:,1);
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
 slice_step = 0.3;
 cut_offset = 0.3;
-[Areas, Alt] = TriSliceObjAlongAxis(Talus, CS.X0, slice_step, cut_offset, 1);
+debug_plot_slice = 0;
+[Areas, Alt] = TriSliceObjAlongAxis(Talus, CS.X0, slice_step, cut_offset, debug_plot_slice);
 
 % Plot the curves CSA = f(Alt), Alt : Altitude of the section along X0
 % figure()

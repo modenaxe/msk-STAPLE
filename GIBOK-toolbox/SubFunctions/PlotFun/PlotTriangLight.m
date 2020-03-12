@@ -1,4 +1,4 @@
-function PlotTriangLight(Triang, CS, new_plot)
+function PlotTriangLight(Triang, CS, new_plot, alpha)
 
 if nargin<3
     figure()
@@ -11,7 +11,7 @@ if nargin<2
 end
 
 % Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
-trisurf(Triang,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
+trisurf(Triang,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',alpha,'edgecolor','none');
 hold on
 axis equal
 

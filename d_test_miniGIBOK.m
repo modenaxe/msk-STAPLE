@@ -18,7 +18,7 @@ bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
 osim_folder = './opensim_models';
 in_mm = 1;
-nd = 1;
+nd = 3;
 %--------------------------------
 
 % add to osim model all bodies
@@ -50,9 +50,9 @@ end
 %---- TIBIA -----
 % defines the axis for the tibia
 % TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
-TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
+% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 %-----------------
 
 %---- TALUS/ANKLE -----

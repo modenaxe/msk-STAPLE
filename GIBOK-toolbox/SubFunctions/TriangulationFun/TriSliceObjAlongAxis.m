@@ -18,7 +18,8 @@ Alt = min_coord:step:max_coord;
 Areas=[];
 
 if debug_plot
-    quickPlotTriang(TriObj,'m');
+    quickPlotTriang(TriObj,'m', 1, 1);
+    title('Slicing Triangulation')
 end
 
 it = 1;
@@ -28,7 +29,7 @@ for d = -Alt
     if debug_plot
         N_Curves = length(Curves);
         for nn = 1:N_Curves
-            plot3(Curves(nn).Pts(:,1), Curves(nn).Pts(:,2), Curves(nn).Pts(:,3),'k-', 'LineWidth',2); hold on
+            plot3(Curves(nn).Pts(:,1), Curves(nn).Pts(:,2), Curves(nn).Pts(:,3),'k-', 'LineWidth',1); hold on
         end
     end
 end
