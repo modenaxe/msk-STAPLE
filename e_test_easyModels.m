@@ -93,7 +93,7 @@ addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);
 % finalize connections
 osimModel.finalizeConnections();
 % print
-osimModel.print(fullfile(osim_folder, [dataset, '.osim']));
+osimModel.print(fullfile(osim_folder, [str2num(nd), dataset, '.osim']));
 osimModel.disownAllComponents();
 clear JCS
 end
