@@ -1,4 +1,4 @@
-function [CS, TrObjects] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
+function [CS, JCS] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
 
 % check units
 if nargin<5;     in_mm = 1;  end
@@ -69,15 +69,24 @@ Curves           = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAA
 % this gets the larger area (allows tibia to be in the geometry)
 [Curve, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);
 
-% checks how many objects have been sliced
-tibia_and_fibula=0;
-if N_curves==2
-    tibia_and_fibula=1;
-    disp('Tibia and Fibula are detected in the triangulation.')
-elseif N_curves>2
-    warndlg(['Tibia has ', num2str(N_curves), ' section areas .']);
-%     error('This should not be the case (only tibia and fibula should be there.')
+if debug_plots == 1
+    quickPlotTriang(DistTib,[],1)
+    for nnn = 1:N_curves
+        plot3(Curves(nnn).Pts(:,1), Curves(nnn).Pts(:,2), Curves(nnn).Pts(:,3)); hold on; axis equal
+    end
+    axis equal
 end
+
+% % checks how many objects have been sliced
+% tibia_and_fibula=0;
+% if N_curves==2
+%     tibia_and_fibula=1;
+%     disp('Tibia and Fibula are detected in the triangulation.')
+% elseif N_curves>2
+%     tibia_and_fibula=1;
+%     warndlg(['Tibia has ', num2str(N_curves), ' section areas .']);
+% %     error('This should not be the case (only tibia and fibula should be there.')
+% end
 
 % ankle centre (considers only tibia)
 Centre = PlanPolygonCentroid3D( Curve.Pts );
@@ -92,37 +101,39 @@ end
 % DIFFERENCE FROM ORIGINAL TOOLBOX
 % NB: in GIBOK AnkleArtSurfProperties is calculated from the AnkleArtSurf
 % BEFORE the last iteration and filters
-AnkleArtSurfProperties = TriMesh2DProperties(AnkleArtSurf);
+% AnkleArtSurfProperties = TriMesh2DProperties(AnkleArtSurf);
+% 
+% % Most Distal point of the medial malleolus (MDMMPt)
+% ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
+% [~,I] = max(DistTib.Points*ZAnkleSurf);
+% 
+% % define a pseudo-medial axis
+% if debug_plots==1
+%     quickPlotTriang(DistTib,'m',1); hold on
+% end
+% 
+% % Y0 needs to be correct in direction (pointing laterally here and for GIBOK)
+% % most distal point
+% MD_Pt = DistTib.Points(I,:);
+% % vector from most-distal point ro ankle centre.
+% U_tmp = CS.AnkleCenter-MD_Pt;
+% col_plot = 'r';
+% % ASSUMPTION: most distal point will be on tibia (medial) if there is no
+% % fibula, otherwise it will be lateral, and the vector needs to be
+% % reversed.
+% if tibia_and_fibula == 1
+%     U_tmp = -U_tmp;
+%     col_plot = 'b';
+% end
 
-% Most Distal point of the medial malleolus (MDMMPt)
-ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
-[~,I] = max(DistTib.Points*ZAnkleSurf);
-
-% define a pseudo-medial axis
-if debug_plots==1
-    quickPlotTriang(DistTib,'m',1); hold on
-end
-
-% Y0 needs to be correct in direction (pointing laterally here and for GIBOK)
-% most distal point
-MD_Pt = DistTib.Points(I,:);
-% vector from most-distal point ro ankle centre.
-U_tmp = CS.AnkleCenter-MD_Pt;
-col_plot = 'r';
-% ASSUMPTION: most distal point will be on tibia (medial) if there is no
-% fibula, otherwise it will be lateral, and the vector needs to be
-% reversed.
-if tibia_and_fibula == 1
-    U_tmp = -U_tmp;
-    col_plot = 'b';
-end
+[U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0);
+if just_tibia; plot_col = 'r'; else; plot_col = 'b';  end
 
 % debug plot for most distal point
-if debug_plots == 1;   plotDot(MD_Pt,'k',3) ; end
+if debug_plots == 1;   plotDot(MostDistalMedialPt,'k',3) ; end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
-Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
-CS.Y0 = Y0;
+CS.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
 
 %% Proximal Tibia
 % isolate tibia proximal epiphysis 
@@ -162,6 +173,7 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 %==================
 % ITERATION 2 & 3 
 %==================
+CS.Y0_GIBOK  = CS.Y0*-1;
 [EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
 
 % builld the triangulation
@@ -210,12 +222,13 @@ if result_plots == 1
 
     % plot proximal tibia
     subplot(2,2,2)
-    alpha_AS = 0.3;
+    alpha_AS = 1;
     PlotTriangLight(ProxTib, CS, 0);
     switch fit_method
         case 'ellipse'
             quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
             quickPlotRefSystem(JCS.knee_r)
+            title('GIBOK Tibia - Ellipse fitting')
         case 'centroids'
             quickPlotTriang(EpiTibASMed,'r', 0, alpha_AS );
             quickPlotTriang(EpiTibASLat,'b',0, alpha_AS);
@@ -223,9 +236,11 @@ if result_plots == 1
             plotDot(CS.Centroid_AS_med, 'r', 4);
             plotCylinder((CS.Centroid_AS_lat-CS.Centroid_AS_med)', 3, (CS.Centroid_AS_lat+CS.Centroid_AS_med)/2,...
                 1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
+            title('GIBOK Tibia - Centroids')
         case 'plateau'
             quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
             quickPlotRefSystem(JCS.knee_r)
+            title('GIBOK Tibia - Plateau')
     end
 
     % plot distal tibia
@@ -234,7 +249,7 @@ if result_plots == 1
     quickPlotTriang(AnkleArtSurf, 'g');
     plotDot(CS.AnkleCenter, 'g', 4);
 %     plotDot(CS.CenterAnkleInside, 'y', 4);
-    plotDot(MD_Pt,col_plot,3); % color changes dep on tibia/fib presence
+    plotDot(MostDistalMedialPt,plot_col,3); % should be always medial
 
 end
 
