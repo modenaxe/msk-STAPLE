@@ -36,14 +36,14 @@ for nb = 1:length(body_list)
 end
 
 %---- PELVIS -----
-% [PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
+[PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 
 % %---- FEMUR -----
-% [FemurCS, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
-% [FemurCSs, JCS2] = GIBOK_femur(geom_set.femur_r);
-% [FemurCSs, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-% [FemurCSs, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-% [FemurCSs, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+[FemurCS, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
+[FemurCSs, JCS2] = GIBOK_femur(geom_set.femur_r);
+[FemurCSs, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+[FemurCSs, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+[FemurCSs, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 
 %---- TIBIA -----
 [TibiaCS, JCS6] = CS_tibia_Kai2014(geom_set.tibia_r);

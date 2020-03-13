@@ -15,7 +15,7 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ SCS, JCS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
+function [ CS, JCS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
 
 % check units
 if nargin<2;     in_mm = 1;  end
@@ -104,45 +104,32 @@ Y = normalizeV(cross(Z, pseudo_X));
 X = normalizeV(cross(Y, Z));
 
 % segment reference system
-SCS.CenterVol = CenterVol;
-SCS.InertiaMatrix = InertiaMatrix;
+CS.CenterVol = CenterVol;
+CS.InertiaMatrix = InertiaMatrix;
 % ISB reference system
-SCS.Origin = PelvisOr;
-SCS.X = X;
-SCS.Y = Y;
-SCS.Z = Z;
-SCS.V = [X Y Z];
+CS.Origin = CenterVol;
+% CS.X = X; CS.Y = Y; CS.Z = Z;
+CS.V = [X Y Z];
+
+% storing joint details
+JCS.ground_pelvis.V = CS.V;
+JCS.ground_pelvis.Origin = PelvisOr;
+JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
+JCS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);
+
+% define hip_r parent
+JCS.hip_r.parent_orientation        = computeZXYAngleSeq(CS.V);
 
 % debug plot
-quickPlotTriang(Pelvis, [], 1); hold on
-quickPlotRefSystem(SCS)
+PlotTriangLight(Pelvis, CS, 1); hold on
+quickPlotRefSystem(CS)
+quickPlotRefSystem(JCS.ground_pelvis);
 plotDot(RASIS, 'k', 7)
 plotDot(LASIS, 'k', 7)
 plotDot(LPSIS, 'r', 7)
 plotDot(RPSIS, 'r', 7)
 
-% storing joint details
-JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeZXYAngleSeq(SCS.V);
-JCS.hip_r.parent_orientation        = computeZXYAngleSeq(SCS.V);
-
-% for debugging purposes
-% PlotPelvis_ISB( CSs.ISB, Pelvis); hold on
-% plot3(RASIS(1), RASIS(2), RASIS(3),'o')
-% plot3(RPSIS(1), RPSIS(2), RPSIS(3),'o')
-% plot3(LASIS(1), LASIS(2), LASIS(3),'o')
-% plot3(LPSIS(1), LPSIS(2), LPSIS(3),'o')
-
-% defining the ref system (ISB) - TO VERIFY THAT THE TRANSFORMATION WORKED
-% EXPECTED: PelvisISB will be aligned with PelvisISBRS (global ISB axes)
-% figure
-% PelvisISBRS.Origin = [0 0 0]';
-% PelvisISBRS.X = [1 0 0];
-% PelvisISBRS.Y = [0 1 0];
-% PelvisISBRS.Z = [0 0 1];
-% PlotPelvis_ISB( PelvisISBRS, PelvisISB )
-
-%% Export identified objects of interest
+% Export bone landmarks
 if nargout > 2
     BoneLandmarks.RASIS     = RASIS; % in Pelvis ref 
     BoneLandmarks.LASIS     = LASIS; % in Pelvis ref 
