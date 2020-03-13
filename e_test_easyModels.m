@@ -17,13 +17,17 @@ import org.opensim.modeling.*
 %--------------------------------
 bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
-osim_folder = './opensim_models';
+osim_folder = '.';
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
 in_mm = 1;
-nd = 3;
+nd = 1;
 %--------------------------------
+
+for nd = 1:3
+% AIM IS TO HAVE A FUNCTION LIKE THIS
+% osimModel = createOsimModelFromBoneGeometries(geom_set);
 
 % adjust dimensional factors based on mm / m scales
 if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
@@ -62,6 +66,7 @@ end
 % [FemurCS, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
 % [FemurCS, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
 % [FemurCS, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+
 %---- TIBIA -----
 [TibiaCS, JCS.tibia_r] = CS_tibia_Kai2014(geom_set.tibia_r);
 % [TibiaCS, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
@@ -75,10 +80,11 @@ JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
 createLowerLimbJoints(osimModel, JCS)
 %-----------------
 
-% %---- LANDMARKING -----
+
+%---- LANDMARKING -----
 FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,     'femur_r');
 TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
-CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS, 'calcn_r');
+CalcnBL    = LandmarkGeom(geom_set.calcn_r  , JCS.calcn_r, 'calcn_r');
 % add markers to model
 addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
 addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
@@ -89,9 +95,10 @@ addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);
 % finalize connections
 osimModel.finalizeConnections();
 % print
-osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
+osimModel.print(fullfile(osim_folder, [dataset, '.osim']));
 osimModel.disownAllComponents();
-
+clear JCS
+end
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
 rmpath('autoMSK_functions');

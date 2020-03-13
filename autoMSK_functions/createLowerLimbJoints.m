@@ -1,3 +1,9 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese, March 2020                                  %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 function createLowerLimbJoints(osimModel, JCS)
 
 % ground_pelvis joint
@@ -27,7 +33,7 @@ subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 
 % patella joint
-if isfield(JCS, 'patella_r')
+if isfield(JCS, 'patella_r') && isfield(JCS, 'femur_r')
     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.femur_r, JCS.patella_r);
     JointParams = getJointParams('patellofemoral_r', JCS.femur_r, JCS.patella_r);
     patfem_r = createCustomJointFromStruct(osimModel, JointParams);

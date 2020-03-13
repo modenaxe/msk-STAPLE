@@ -76,7 +76,8 @@ CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1)); % constant anyway
                                  FittedEllipse.Y0_in]);
 
 % identify lateral direction
-[U_tmp, MostDistalMedialPt, ~] = tibia_identify_lateral_direction(DistTib, Z0);
+[U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0);
+if just_tibia == 1; m_col = 'r'; else; m_col = 'b'; end
 
 % making Y0/U_temp normal to Z0 (still points laterally)
 Y0_temp = normalizeV(U_tmp' - (U_tmp*Z0)*Z0); 
@@ -120,7 +121,7 @@ if result_plots == 1
     quickPlotRefSystem(JCS.knee_r);
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
-    plotDot(MostDistalMedialPt, 'r', 4);
+    plotDot(MostDistalMedialPt, m_col, 4);
     title('Tibia - Kai et al. 2014')
 end
 
