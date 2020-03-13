@@ -17,12 +17,12 @@ import org.opensim.modeling.*
 %--------------------------------
 bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
-osim_folder = './opensim_models';
+osim_folder = '';
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
 in_mm = 1;
-nd = 3;
+nd = 2;
 %--------------------------------
 
 % adjust dimensional factors based on mm / m scales
@@ -76,20 +76,20 @@ createLowerLimbJoints(osimModel, JCS)
 %-----------------
 
 % %---- LANDMARKING -----
-FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,     'femur_r');
-TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
-CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS, 'calcn_r');
-% add markers to model
-addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
-addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
-addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
-addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
+% FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,     'femur_r');
+% TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+% CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS, 'calcn_r');
+% % add markers to model
+% addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);
+% addMarkersFromStruct(osimModel, 'femur_r',   FemurRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'tibia_r',   TibiaRBL, in_mm);
+% addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);                           
 %-----------------
 
 % finalize connections
 osimModel.finalizeConnections();
 % print
-osimModel.print(fullfile(osim_folder, [test_case, '.osim']));
+osimModel.print(fullfile(osim_folder, [dataset, '.osim']));
 osimModel.disownAllComponents();
 
 % remove paths
