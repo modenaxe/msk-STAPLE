@@ -4,14 +4,14 @@ function Landmarks = LandmarkGeom(TriObj, CS, bone_name)
 LandmarkStruct = getLandmarkStructForBone(bone_name);
 
 % change reference system
-TriObj_in_CS = TriChangeCS(TriObj, CS.V, CS.Origin');
+TriObj_in_CS = TriChangeCS(TriObj, CS.V, CS.Origin);
 
 % debug plots
 CSs = CS;
 CSs.Origin = [0 0 0];
-CSs.X = [1 0 0]';CSs.Y=[0 1 0]'; CSs.Z = [0 0 1]';
+CSs.V = eye(3);
 % close all
-quickPlotTriang(TriObj_in_CS, 'm', 1); hold on
+PlotTriangLight(TriObj_in_CS, CSs, 1); hold on
 quickPlotRefSystem(CSs);
 
 

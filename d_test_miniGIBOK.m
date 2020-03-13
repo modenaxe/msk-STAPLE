@@ -36,49 +36,46 @@ for nb = 1:length(body_list)
 end
 
 %---- PELVIS -----
-[PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
-
-% %---- FEMUR -----
-[FemurCS, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
-[FemurCSs, JCS2] = GIBOK_femur(geom_set.femur_r);
-[FemurCSs, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-[FemurCSs, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-[FemurCSs, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
-
+[PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
+%---- FEMUR -----
+[FemurCS, JCS.femur]  = CS_femur_Kai2014(geom_set.femur_r);
+% [FemurCS, JCS2] = GIBOK_femur(geom_set.femur_r);
+% [FemurCS, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+% [FemurCS, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+% [FemurCS, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 %---- TIBIA -----
-[TibiaCS, JCS6] = CS_tibia_Kai2014(geom_set.tibia_r);
-[TibiaCSs, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-[TibiaCSs, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-[TibiaCSs, JCS9] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
-
+[TibiaCS, JCS.tibia] = CS_tibia_Kai2014(geom_set.tibia_r);
+% [TibiaCS, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+% [TibiaCS, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+% [TibiaCS, JCS9] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 %---- TALUS/ANKLE -----
-[TalusCS, JCS10] = GIBOK_talus(geom_set.talus_r);
-
+[TalusCS, JCS.talus] = GIBOK_talus(geom_set.talus_r);
 %---- CALCANEUS/SUBTALAR -----
 CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
 
 % subtalar joint
-JointParams = getJointParams('subtalar_r', TalusCS, CalcaneusCS);
+JointParams = getJointParams('subtalar_r', JCS10, CalcaneusCS);
 subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
 osimModel.addJoint(subtalar_r);
 %-----------------
 
-%---- PATELLA -----
-[ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
-% PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
-PatellaCS = assemblePatellofemoralParentOrientation(FemurCSs, PatellaCS);
-% patellofemoral joint
-JointParams = getJointParams('patellofemoral_r', FemurCSs, PatellaCS);
-patfem_r = createCustomJointFromStruct(osimModel, JointParams);
-osimModel.addJoint(patfem_r);
-%-----------------
+% %---- PATELLA -----
+% [ PatellaCS, TrObjects ] = GIBOK_patella(geom_set.patella_r);
+% % PatellaRS = MSK_patella_Rainbow2013(geom_set.patella_r);
+% PatellaCS = assemblePatellofemoralParentOrientation(FemurCSs, PatellaCS);
+% % patellofemoral joint
+% JointParams = getJointParams('patellofemoral_r', FemurCSs, PatellaCS);
+% patfem_r = createCustomJointFromStruct(osimModel, JointParams);
+% osimModel.addJoint(patfem_r);
+% %-----------------
 
 % %---- LANDMARKING -----
 % close all
-% FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
-% TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,      'femur_r');
+TibiaRBL   = LandmarkGeom(geom_set.tibia_r  , TibiaCS,     'tibia_r');
+CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
 % PatellaRBL = LandmarkGeom(geom_set.patella_r, PatellaCS, 'patella_r');
-% CalcnBL    = LandmarkGeom(geom_set.calcn_r  , CalcaneusCS,  'calcn_r');
+
 % 
 % % add markers to model
 % addMarkersFromStruct(osimModel, 'pelvis' ,   PelvisBL, in_mm);

@@ -3,7 +3,7 @@ function [CS, JCS] = CS_tibia_Kai2014(Tibia, DistTib, result_plots, debug_plots)
 
 % default behaviour of results/debug plots
 if nargin<3;     result_plots = 1;  end
-if nargin<4;     result_plots = 0;  end
+if nargin<4;     debug_plots = 0;  end
 
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
