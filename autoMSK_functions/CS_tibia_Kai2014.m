@@ -1,13 +1,13 @@
 
-function CS = CS_tibia_Kai2014(Tibia, DistTib, result_plots)
+function [CS, JCS] = CS_tibia_Kai2014(Tibia, DistTib, result_plots, debug_plots)
 
-% check plots (no debug plots as there are few elements to display)
+% default behaviour of results/debug plots
 if nargin<3;     result_plots = 1;  end
-
+if nargin<4;     result_plots = 0;  end
 
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
-if ~exist('DistTib','var')
+if ~exist('DistTib','var') || isempty(DistTib)
     % Only one mesh, this is a long bone that should be cutted in two
     % parts
     V_all = pca(Tibia.Points);
@@ -47,57 +47,44 @@ PtsCurves = vertcat(maxAreaSection.Pts)*V_all;
 % Fit a planar ellipse to the outline of the tibia section
 FittedEllipse = fit_ellipse(PtsCurves(:,2), PtsCurves(:,3));
 
-% back to medical images reference system
+% depending on the largest axes, YElpsMax is assigned.
+% vector shapes justified by the rotation matrix used in fit_ellipse
+% R       = [ cos_phi sin_phi; 
+%             -sin_phi cos_phi ];
+if FittedEllipse.a>FittedEllipse.b
+    % horizontal ellipse
+    YElpsMax = V_all*[ 0; cos(FittedEllipse.phi); -sin(FittedEllipse.phi)];
+else
+    % vertical ellipse - get
+    YElpsMax = V_all*[ 0; sin(FittedEllipse.phi); cos(FittedEllipse.phi)];
+end
+
+% check ellipse fitting
+if debug_plots == 1
+    figure
+    ax1 = axes();
+    plot(ax1, PtsCurves(:,2), PtsCurves(:,3)); hold on; axis equal
+    FittedEllipse = fit_ellipse(PtsCurves(:,2), PtsCurves(:,3), ax1);
+    plot([0 50], [0, 0], 'r', 'LineWidth', 4)
+    plot([0 0], [0, 50], 'g', 'LineWidth', 4)
+    xlabel('X'); ylabel('Y')
+end
+
+% centre of ellipse back to medical images reference system
 CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1)); % constant anyway
                                  FittedEllipse.X0_in;
                                  FittedEllipse.Y0_in]);
 
-% project the ellipse back to reference system
-YElpsMax = V_all*[  0 ;
-                   cos(FittedEllipse.phi);
-                   sin(FittedEllipse.phi)]; % [LM: GIBOK had a -sin() (?) probable BUG]
+% identify lateral direction
+[U_tmp, MostDistalMedialPt, ~] = tibia_identify_lateral_direction(DistTib, Z0);
 
-% slice at centroid of distal tibia
-[ ~, CenterVolTibDist] = TriInertiaPpties( DistTib );
-d = CenterVolTibDist'*Z0;
-[ DistCurves , ~, ~ ] = TriPlanIntersect(DistTib, Z0 , -d );
-
-% check the number of curves on that slice
-N_DistCurves = length(DistCurves);
-just_tibia = 1;
-if N_DistCurves == 2
-    disp('Tibia and fibula have been detected.')
-    just_tibia = 0;
-elseif N_DistCurves>2
-    warning(['There are ', num2str(N_DistCurves), ' section areas.']);
-    error('This should not be the case (only tibia and possibly fibula should be there.')
-end
-
-% compute a vector pointing laterally (Z_ISB)
-if just_tibia
-    % Find the most distal point, it will be medial
-    [~ , I_dist_fib] = min( Tibia.Points* -Z0 );
-    MostDistalMedialPt = Tibia.Points(I_dist_fib,:);
-    % vector pointing laterally
-    U_tmp = CenterVolTibDist'- MostDistalMedialPt;
-else
-    %tibia and fibula
-    % check which area is larger(Tibia)
-    if DistCurves(1).Area>DistCurves(2).Area
-        % vector from tibia section to fibular section
-        U_tmp = mean(DistCurves(2).Pts) - mean(DistCurves(1).Pts);
-    else
-        U_tmp = -1 * (mean(DistCurves(2).Pts) - mean(DistCurves(1).Pts));
-    end
-end
-
-% making U_temp normal to Z0 (still points laterally)
+% making Y0/U_temp normal to Z0 (still points laterally)
 Y0_temp = normalizeV(U_tmp' - (U_tmp*Z0)*Z0); 
 
 % here the assumption is that Y0 has correct m-l orientation               
 YElpsMax = sign(Y0_temp'*YElpsMax)*YElpsMax;
 
-% EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
+EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(Z0);
@@ -106,12 +93,12 @@ X = cross(Y, Z);
 
 % segment reference system
 CS.Origin        = CenterVol;
-% CS.CenterKnee  = CenterEllipse;
 % CS.ElpsMaxPtVect = YElpsMax;
-% CS.ElpsPts       = EllipsePts;
+CS.ElpsPts       = EllipsePts;
 CS.X = X;
 CS.Y = Y;
 CS.Z = Z;
+CS.V = [X Y Z];
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
@@ -133,6 +120,8 @@ if result_plots == 1
     quickPlotRefSystem(JCS.knee_r);
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
+    plotDot(MostDistalMedialPt, 'r', 4);
+    title('Tibia - Kai et al. 2014')
 end
 
 end
