@@ -36,32 +36,27 @@ for nb = 1:length(body_list)
 end
 
 %---- PELVIS -----
-% solve reference system from geometry
 % [PelvisRS, JCS, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 
 % %---- FEMUR -----
-% % testing all options
-% FemurCS  = CS_femur_Kai2014(geom_set.femur_r);
-% FemurCSs = GIBOK_femur(geom_set.femur_r);
-% FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-% FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-% FemurCSs = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+% [FemurCS, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
+% [FemurCSs, JCS2] = GIBOK_femur(geom_set.femur_r);
+% [FemurCSs, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+% [FemurCSs, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+% [FemurCSs, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 
 %---- TIBIA -----
-% defines the axis for the tibia
-% TibiaCS = CS_tibia_Kai2014(geom_set.tibia_r);
-% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-% TibiaCSs = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
-%-----------------
+[TibiaCS, JCS6] = CS_tibia_Kai2014(geom_set.tibia_r);
+[TibiaCSs, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+[TibiaCSs, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+[TibiaCSs, JCS9] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 
 %---- TALUS/ANKLE -----
-TalusCS = GIBOK_talus(geom_set.talus_r);
-% ankle joint
-%-----------------
+[TalusCS, JCS10] = GIBOK_talus(geom_set.talus_r);
 
 %---- CALCANEUS/SUBTALAR -----
 CalcaneusCS = GIBOK_calcn(geom_set.calcn_r);
+
 % subtalar joint
 JointParams = getJointParams('subtalar_r', TalusCS, CalcaneusCS);
 subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
@@ -98,7 +93,6 @@ addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, 'r')
 
 % finalize
 osimModel.finalizeConnections();
-
 % print
 osimModel.print('5_auto_model.osim');
 % osimModel.print(fullfile(osim_folder, [test_case, '.osim']));

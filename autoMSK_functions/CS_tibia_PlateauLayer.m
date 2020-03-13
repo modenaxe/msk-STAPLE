@@ -50,7 +50,8 @@ TPLayerPts(j+1:end,:) = [];
 
 % inertial axes of the tibial plateau layer
 [V,~] = eig(cov(TPLayerPts));
-Xtp = V(:,2); Ytp = V(:,3);
+Xtp = V(:,2); 
+Ytp = V(:,3);
 Xtp = sign(Xtp'*CS.Y0)*Xtp;
 Ytp = sign(Ytp'*CS.Y0)*Ytp;
 

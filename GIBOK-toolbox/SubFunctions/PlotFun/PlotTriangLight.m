@@ -10,6 +10,10 @@ if nargin<2
     CS = [];
 end
 
+if nargin<4
+    alpha = 0.7;
+end
+
 % Plot the whole tibia, here TrObjects.Femur is a Matlab triangulation object
 trisurf(Triang,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',alpha,'edgecolor','none');
 hold on

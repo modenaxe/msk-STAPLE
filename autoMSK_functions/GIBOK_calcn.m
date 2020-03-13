@@ -1,27 +1,27 @@
 %% Initial Set up 
-function [CSs, TrObjects] = GIBOK_calcn(Calcn)
+function CS = GIBOK_calcn(Calcn, in_mm, result_plots, debug_plots)
 
-TrObjects=[];
+% check units
+if nargin<2;     in_mm = 1;  end
+if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
-% Foot define here all the bone distal to the ankle joint except from the
-% Talus. Phalanges are not mandatory and their presence or absence
-% should not impact the results.
-Foot = Calcn;
+% results/debug plot default
+if nargin<3;  result_plots =1;  end
+if nargin<4;  debug_plots = 0;  end
 
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties( Foot );
+[ V_all, CenterVol ] = TriInertiaPpties( Calcn );
 X0 = V_all(:,1);
 
 % Get least square plane normal vector of the foot
-[~,Z0] = lsplane(Foot.Points);
+[~,Z0] = lsplane(Calcn.Points);
 Y0 = normalizeV(cross(Z0,X0));
 Z0 = cross(X0,Y0);
 
-
 %% Convex hull approach with prior deleting of the phalanges
-[x, y, z] = deal(Foot.Points(:,1), Foot.Points(:,2), Foot.Points(:,3));
-[ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Foot.Points);
+[x, y, z] = deal(Calcn.Points(:,1), Calcn.Points(:,2), Calcn.Points(:,3));
+[ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Calcn.Points);
 % plot convex hull
 % trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
 
@@ -98,18 +98,25 @@ metaCandidatePoints = CandidatePoints(notHeelPtsID,:);
 %       of the triangles
 IdxMeta1 = knnsearch(clusterCentroids, metatarsPt1) ;
 PtsMeta1 = metaCandidatePoints(clusterIdx == IdxMeta1, :);
-% pl3t(PtsMeta1,'mo')
+if debug_plots == 1
+    quickPlotTriang(Calcn);
+    pl3t(PtsMeta1,'mo');
+end
 
 IdxMeta2 = knnsearch(clusterCentroids, metatarsPt2) ;
 PtsMeta2 = metaCandidatePoints(clusterIdx == IdxMeta2, :);
-% pl3t(PtsMeta2,'go')
+if debug_plots == 1
+    pl3t(PtsMeta2,'go');
+end
 
-% figure(2)
-% pl3t(metaCandidatePoints(clusterIdx==1,:),'b.')
-% hold on
-% axis equal
-% pl3t(metaCandidatePoints(clusterIdx==2,:),'r.')
-
+if debug_plots == 1
+    figure(2)
+    quickPlotTriang(Calcn);
+    pl3t(metaCandidatePoints(clusterIdx==1,:),'b.')
+    hold on
+    axis equal
+    pl3t(metaCandidatePoints(clusterIdx==2,:),'r.')
+end
 
 %   4.  Get the the points as the furthest one from the ones from the
 %       triangles
@@ -119,6 +126,7 @@ PtMeta1_Final = PtsMeta1(Idx1(end),:) ;
 Idx2 = knnsearch(PtsMeta2,metatarsPt2,'K',length(PtsMeta2)) ;
 PtMeta2_Final = PtsMeta2(Idx2(end),:) ;
 
+% newTriangle approximates the foot sole
 newTriangle = [PtMeta1_Final; PtMeta2_Final; heelPt];
 newTriangleNrml = cross(  (PtMeta2_Final-PtMeta1_Final), ...
                             (PtMeta1_Final-heelPt));
@@ -127,7 +135,7 @@ newTriangleNrml = sign(newTriangleNrml'*triangleNrml)*newTriangleNrml;
 
 
 %   5.  Keep the proximal vertices of the triangle as the calcaneus tip
-
+% [from previous versions]
 
 %   6. Identify the medial side of the foot
 Z2 = newTriangleNrml;
@@ -166,43 +174,28 @@ Z3 = Z2;
 Y3 = cross(Z3, X3);
 
 %   7. Final coordinate system and bony landmarks
-CSs.X = X3; % Distal proximal
-CSs.Y = Z3; % Lateral to medial
-CSs.Z = Y3; % Ventral to dorsal
-CSs.V = [X3, Z3, Y3];
-CSs.Origin = heelPt;
-CSs.MedDistalMeta = PtMetaMed;
-CSs.LatDistalMeta = PtMetaLat;
-CSs.HeelTip = heelPt;
+CS.X = X3; % Distal proximal
+CS.Y = Z3; % Lateral to medial
+CS.Z = -Y3; % Ventral to dorsal
+CS.V = [X3, Z3, -Y3];
+CS.Origin = heelPt';
+CS.MedDistalMeta = PtMetaMed;
+CS.LatDistalMeta = PtMetaLat;
+CS.HeelTip = heelPt;
 
-figure(3)
-quickPlotTriang(Foot)
-% Plot the whole foot, here Foot is a Matlab triangulation object
-trisurf(Foot,'Facecolor',[0.65    0.65    0.6290],'FaceAlpha',1,'edgecolor','none');
-hold on
-axis equal
+if result_plots == 1
+    figure;
+    % plot the calcn triangulation
+    PlotTriangLight(Calcn, CS, 0)
+    % Plot the inertia Axis & Volumic center
+    quickPlotRefSystem(CS)
+    % plot the bone landmarks
+    plotDot(heelPt,'k',3)
+    plotDot(PtMetaLat,'b',3)
+    plotDot(PtMetaMed,'r',3)
+    % Plot the sole plane
+    [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
+    trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
+end
 
-% handle lighting of objects
-light('Position',CenterVol' + 500*Y0' + 500*X0','Style','local')
-light('Position',CenterVol' + 500*Y0' - 500*X0','Style','local')
-light('Position',CenterVol' - 500*Y0' + 500*X0' - 500*Z0','Style','local')
-light('Position',CenterVol' - 500*Y0' - 500*X0' + 500*Z0','Style','local')
-lighting gouraud
-
-% Remove grid
-grid off
-
-%Plot the inertia Axis & Volumic center
-plotDot(heelPt,'k',3)
-plotDot(PtMetaLat,'b',3)
-plotDot(PtMetaMed,'r',3)
-
-% plot vectors
-plotArrow( X3, 1, heelPt, 100, 1, 'r')
-plotArrow( Y3, 1, heelPt, 50, 1, 'g')
-plotArrow( Z3, 1, heelPt, FootISHeigth, 1, 'b')
-
-% Plot the sole plane
-[x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
-trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
 end

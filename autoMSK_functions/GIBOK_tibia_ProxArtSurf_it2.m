@@ -1,7 +1,7 @@
 function [EpiTibASMed, EpiTibASLat, EpiTibAS_it2] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CSs, CoeffMorpho)
 
 Z0 = CSs.Z0;
-Y0 = CSs.Y0;
+Y0 = CSs.Y0_GIBOK;
     
 % Update the AS and the fitted LS plane
 [oLSP,Ztp] = lsplane(EpiTibAS.Points, Z0);

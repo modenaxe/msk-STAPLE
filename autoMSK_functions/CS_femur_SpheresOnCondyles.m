@@ -25,7 +25,7 @@ CS.sphere_radius_med = radius_med;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(center_lat-center_med);
-Y = normalizeV(KneeCenter - CS.CenterFH_Renault);
+Y = normalizeV( CS.CenterFH_Renault- KneeCenter);
 X = cross(Y,Z);
 
 % define hip joint

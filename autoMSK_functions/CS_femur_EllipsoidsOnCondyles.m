@@ -22,7 +22,7 @@ CS.ellips_evec_lat = evecs_lat;
 KneeCenter = 0.5*(center_med+center_lat)';
 
 % Starting axes: X is orthog to Y and Z, which are not mutually perpend
-Z =  normalizeV(center_med-center_lat);
+Z =  normalizeV(center_lat-center_med); % points laterally
 Y =  normalizeV(CS.CenterFH_Renault - KneeCenter);
 X = cross(Y, Z);
 

@@ -1,10 +1,16 @@
-function CS = GIBOK_talus(Talus, in_mm, debug_plots)
+function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots)
+
+% NOTE: CS contains multiple sets of axes:
+% * X0-Y0-Z0 : talus axes
+% * X1-Y1-Z1 : subtalar joint axes
+% * X2-Y2-Z2 : talocrural joint axes
 
 % check units
 if nargin<2;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+
 % debug plot default
-if nargin<3;  debug_plots =1;  end
+if nargin<3;  result_plots =1;  end
 
 % debug plot for fit quadrilater
 fit_debug_plot = 0;
@@ -22,7 +28,6 @@ fit_debug_plot = 0;
 % inferior-superior direction intial guess (Z0). Y0 is made perpendicular
 % to X0 and Z0.
 CS.X0 = V_all(:,1); 
-
 [CS.Z0,CS.Y0] = fitQuadriTalus(Talus, V_all, fit_debug_plot);
 
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
@@ -57,24 +62,82 @@ CS.Y0 = or*CS.Y0;
 
 % fit spheres to talonavicular and talocalcaneal
 % debug_plot = 1;
-subplot(1,2,1); title('Subtalar Joint Axis');
-[SubtalarCS, CS] = MSK_talus_ACS_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, debug_plots);
+[CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start);
 
 % fit cylinder to talar trochlea
-subplot(1,2,2); title('Talocrural Joint Axis');
-TalocruralCS = MSK_talus_ACS_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, debug_plots);
+[CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start);
 
-% store segment info in structure
+% segment reference system
+% NOTE: CS contains multiple sets of axes:
+% * X0-Y0-Z0 : talus axes
+% * X1-Y1-Z1 : subtalar joint axes
+% * X2-Y2-Z2 : talocrural joint axes
 CS.Origin       = CS.CenterVol;
-CS.subtalar_r   = SubtalarCS;
-CS.talocrural_r = TalocruralCS;
+CS.V = [CS.X0, CS.Z0, -CS.Y0];
 
 % define ankle joint
-CS.ankle_r.child_location = TalocruralCS.Origin * dim_fact;
-CS.ankle_r.child_orientation = computeZXYAngleSeq(TalocruralCS.V_ankle);
+JCS.ankle_r.V = CS.V_ankle_r;
+JCS.ankle_r.child_location = CS.ankle_cyl_centre * dim_fact;
+JCS.ankle_r.child_orientation = computeZXYAngleSeq(JCS.ankle_r.V);
+JCS.ankle_r.Origin = CS.ankle_cyl_centre;
 
 % define subtalar joint
-CS.subtalar_r.parent_location = SubtalarCS.Origin * dim_fact;
-CS.subtalar_r.parent_orientation = computeZXYAngleSeq(SubtalarCS.V_subtalar);
- 
+JCS.subtalar_r.V = CS.V_subtalar_r;
+JCS.subtalar_r.parent_location = CS.talocalc_centre * dim_fact;
+JCS.subtalar_r.parent_orientation = computeZXYAngleSeq(JCS.subtalar_r.V);
+JCS.subtalar_r.Origin = CS.talocalc_centre;
+
+if result_plots == 1
+    figure 
+    % plot talus and ref systems
+    subplot(2,2,[1,3]);
+    PlotTriangLight(Talus, CS, 0, 0.7);
+    quickPlotRefSystem(CS);
+    quickPlotRefSystem(JCS.ankle_r, 30);
+    quickPlotRefSystem(JCS.subtalar_r, 30);
+    
+    subplot(2,2,2); 
+    %Visually check the Inertia Axis orientation relative to the Talus geometry
+    PlotTriangLight(Talus, CS, 0, 0.7);
+    %Plot the inertia Axis & Volumic center
+%     plotDot( CS.CenterVol', 'k', 2 )
+%     plotArrow( CS.X0, 1, CS.CenterVol, 40, 1, 'r')
+%     plotArrow( CS.Y0, 1, CS.CenterVol, 40*CS.D(1,1)/CS.D(2,2), 1, 'g')
+%     plotArrow( CS.Z0, 1, CS.CenterVol, 40*CS.D(1,1)/CS.D(3,3), 1, 'b')
+    
+    %Plot the Tl Nvc part
+    trisurf(Talonavic_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+    plotSphere(CS.talonav_centre, CS.talonav_radius , 'm' , 0.3)
+    plotDot(CS.talonav_centre, 'm', 2 )
+    %Plot the Tl Ccn part
+    trisurf(Talocalcn_AS,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
+    plotSphere(CS.talocalc_centre, CS.talocalc_radius , 'c' , 0.3)
+    plotDot(CS.talocalc_centre, 'c', 2 )
+    %Plot the axis
+    plotCylinder( CS.subtalar_axis, 0.75, CS.subtalar_axis_centre, CS.subtalar_axis_length, 1, 'k')
+    title('Subtalar Joint Axis');
+%     axis off
+%--------------------------------
+    subplot(2,2,4); 
+    % plot talocrural fitting results
+    PlotTriangLight(Talus, CS, 0, 0.6);
+
+    %Plot ref system Axis & Volumic center
+%     plotArrow( CS.X2, 1, CenterVol, 40, 1, 'r')
+%     plotArrow( CS.Y2, 1, CenterVol, 40*D(1,1)/D(2,2), 1, 'g')
+%     plotArrow( CS.Z2, 1, CenterVol, 40*D(1,1)/D(3,3), 1, 'b')
+%     plotDot( CS.CenterVol, 'k', 2 )
+    
+    %Plot the  talar trochlea articular surface
+    % trisurf(TlTrcAS0,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+    trisurf(TalTrochAS,'Facecolor','g','FaceAlpha',1,'edgecolor','none');
+    
+    %Plot the Cylinder and its axis
+    plotCylinder( CS.ankle_cyl_axis, CS.ankle_cyl_radius, CS.ankle_cyl_centre, 40, 0.4, 'r')
+    plotArrow( CS.ankle_cyl_axis, 1, CS.ankle_cyl_centre, 40, 1, 'k')
+    plotDot( CS.ankle_cyl_centre', 'r', 2 )
+    title('Talocrural Joint Axis');
+%     axis off
+end
+
 end
