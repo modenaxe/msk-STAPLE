@@ -17,12 +17,11 @@ import org.opensim.modeling.*
 %--------------------------------
 bone_geom_folder = 'test_geometries';
 ACs_folder = './ACs';
-osim_folder = '.';
+osim_folder = '';
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6'};
 body_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r', 'patella_r'};
 triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r','patella_r'};
 in_mm = 1;
-nd = 1;
 %--------------------------------
 
 for nd = 1:3
@@ -79,7 +78,6 @@ JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
 % subtalar joint
 createLowerLimbJoints(osimModel, JCS)
 %-----------------
-
 
 %---- LANDMARKING -----
 FemurRBL   = LandmarkGeom(geom_set.femur_r  , FemurCS,     'femur_r');
