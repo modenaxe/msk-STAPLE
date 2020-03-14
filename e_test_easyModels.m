@@ -61,15 +61,15 @@ end
 [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
 %---- FEMUR -----
 [FemurCS, JCS.femur_r]  = CS_femur_Kai2014(geom_set.femur_r);
-[FemurCS, JCS2] = GIBOK_femur(geom_set.femur_r);
-[FemurCS, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-[FemurCS, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-[FemurCS, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+% [FemurCS, JCS2] = GIBOK_femur(geom_set.femur_r);
+% [FemurCS, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+% [FemurCS, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+% [FemurCS, JCS5] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 %---- TIBIA -----
 [TibiaCS, JCS.tibia_r] = CS_tibia_Kai2014(geom_set.tibia_r);
-[TibiaCS, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-[TibiaCS, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-[TibiaCS, JCS9] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
+% [TibiaCS, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+% [TibiaCS, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+% [TibiaCS, JCS9] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 %---- TALUS/ANKLE -----
 [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
 %---- CALCANEUS/SUBTALAR -----
@@ -91,6 +91,8 @@ addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);
 
 % finalize connections
 osimModel.finalizeConnections();
+osimModel.setUseVisualizer(true);
+osimModel.initSystem()
 % print
 osimModel.print(fullfile(osim_folder, [str2num(nd), dataset, '.osim']));
 osimModel.disownAllComponents();
