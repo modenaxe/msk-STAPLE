@@ -46,6 +46,8 @@ if debug_plots == 1
     grid on
 end
 
+% [LM] when this test fails the diretion of X is inverted and talus is not
+% analysed correctly
 % Orientation of bone along the y axis
 or_test_a = fitresult.a1 < fitresult.a2 ;
 or_test_b = fitresult.b1 < fitresult.b2 ;

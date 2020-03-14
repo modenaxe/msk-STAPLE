@@ -27,18 +27,17 @@ if nargin<4;     debug_plots = 0; end
 % to X0 and Z0.
 CS.X0 = V_all(:,1); 
 [CS.Z0,CS.Y0] = fitQuadriTalus(Talus, V_all, debug_plots);
+if debug_plots == 1
+    figure;     quickPlotTriang(Talus)
+    CS.Origin = CS.CenterVol;     quickPlotRefSystem(CS)
+    CS.Origin = []; % reset
+end
 
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
 slice_step = 0.3;
 cut_offset = 0.3;
 debug_plot_slice = 0;
 [Areas, Alt] = TriSliceObjAlongAxis(Talus, CS.X0, slice_step, cut_offset, debug_plot_slice);
-
-% Plot the curves CSA = f(Alt), Alt : Altitude of the section along X0
-if debug_plots == 1
- figure()
- plot(Alt,Areas,'-*')
-end
 
 % Given the shape of the curve we can fit a bi-gaussian curve to identify
 % the two maxima of the Area = f(Alt) curve
@@ -55,14 +54,13 @@ end
 %   with the tibia can start
 
 [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = ...
-                                                    FitCSATalus(Alt, Areas);
+                                                    FitCSATalus(Alt, Areas, debug_plots);
 % Change X0 orientation if necessary ( or = +/- 1 )
 CS.X0 = or*CS.X0;
 CS.Y0 = or*CS.Y0;    
 if debug_plots == 1
-    quickPlotTriang(Talus)
-    CS.Origin = CS.CenterVol;
-    quickPlotRefSystem(CS)
+    figure;     quickPlotTriang(Talus)
+    CS.Origin = CS.CenterVol;     quickPlotRefSystem(CS)
     CS.Origin = []; % reset
 end
 % fit spheres to talonavicular and talocalcaneal
