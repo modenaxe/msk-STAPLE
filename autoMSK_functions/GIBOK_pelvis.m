@@ -15,7 +15,7 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, BoneLandmarks] = GIBOK_pelvis(Pelvis, in_mm)
+function [ CS, JCS, PelvisBL] = GIBOK_pelvis(Pelvis, in_mm)
 
 % check units
 if nargin<2;     in_mm = 1;  end
@@ -126,15 +126,15 @@ quickPlotRefSystem(CS)
 quickPlotRefSystem(JCS.ground_pelvis);
 plotDot(RASIS, 'k', 7)
 plotDot(LASIS, 'k', 7)
-plotDot(LPSIS, 'r', 7)
-plotDot(RPSIS, 'r', 7)
+plotDot(LPSIS, 'k', 7)
+plotDot(RPSIS, 'k', 7)
 
 % Export bone landmarks
 if nargout > 2
-    BoneLandmarks.RASIS     = RASIS; % in Pelvis ref 
-    BoneLandmarks.LASIS     = LASIS; % in Pelvis ref 
-    BoneLandmarks.RPSIS     = RPSIS; % in Pelvis ref 
-    BoneLandmarks.LPSIS     = LPSIS; % in Pelvis ref 
+    PelvisBL.RASIS     = RASIS; % in Pelvis ref 
+    PelvisBL.LASIS     = LASIS; % in Pelvis ref 
+    PelvisBL.RPSIS     = RPSIS; % in Pelvis ref 
+    PelvisBL.LPSIS     = LPSIS; % in Pelvis ref 
 end
 
 end

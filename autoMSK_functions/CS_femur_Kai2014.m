@@ -18,7 +18,7 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function [CS, JCS] = CS_femur_Kai2014(Femur, DistFem, result_plots, in_mm, debug_plots)
+function [CS, JCS, FemurBL_r] = CS_femur_Kai2014(Femur, DistFem, result_plots, in_mm, debug_plots)
 
 % check units
 if nargin<4;     in_mm = 1;  end
@@ -88,6 +88,9 @@ JCS.knee_r.parent_location = CS.KneeCenter*dim_fact;
 JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = CS.KneeCenter;
 
+% landmark bone according to CS (only Origin and CS.V are used)
+FemurBL_r   = LandmarkGeom(Femur, CS, 'femur_r');
+
 % result plot
 if result_plots == 1
     alpha = 0.5;
@@ -96,6 +99,12 @@ if result_plots == 1
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.hip_r);
     quickPlotRefSystem(JCS.knee_r);
+    % plot markers
+    BLfields = fields(FemurBL_r);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(FemurBL_r.(cur_name), 'k', 7)
+    end
     
     subplot(2,2,2); % femoral head
     PlotTriangLight(ProxFem, CS, 0); hold on

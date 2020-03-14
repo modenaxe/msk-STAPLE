@@ -1,4 +1,4 @@
-function [CS, JCS] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
+function [CS, JCS, TibiaBL_r] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
 
 % check units
 if nargin<5;     in_mm = 1;  end
@@ -77,17 +77,6 @@ if debug_plots == 1
     axis equal
 end
 
-% % checks how many objects have been sliced
-% tibia_and_fibula=0;
-% if N_curves==2
-%     tibia_and_fibula=1;
-%     disp('Tibia and Fibula are detected in the triangulation.')
-% elseif N_curves>2
-%     tibia_and_fibula=1;
-%     warndlg(['Tibia has ', num2str(N_curves), ' section areas .']);
-% %     error('This should not be the case (only tibia and fibula should be there.')
-% end
-
 % ankle centre (considers only tibia)
 Centre = PlanPolygonCentroid3D( Curve.Pts );
 CS.AnkleCenter = Centre - plane_thick * nAAS';
@@ -98,34 +87,11 @@ if debug_plots == 1
 end
 
 %% Find a pseudo medioLateral Axis
-% DIFFERENCE FROM ORIGINAL TOOLBOX
+% DIFFERENT FROM ORIGINAL TOOLBOX
 % NB: in GIBOK AnkleArtSurfProperties is calculated from the AnkleArtSurf
 % BEFORE the last iteration and filters
-% AnkleArtSurfProperties = TriMesh2DProperties(AnkleArtSurf);
-% 
-% % Most Distal point of the medial malleolus (MDMMPt)
-% ZAnkleSurf = AnkleArtSurfProperties.meanNormal;
-% [~,I] = max(DistTib.Points*ZAnkleSurf);
-% 
-% % define a pseudo-medial axis
-% if debug_plots==1
-%     quickPlotTriang(DistTib,'m',1); hold on
-% end
-% 
-% % Y0 needs to be correct in direction (pointing laterally here and for GIBOK)
-% % most distal point
-% MD_Pt = DistTib.Points(I,:);
-% % vector from most-distal point ro ankle centre.
-% U_tmp = CS.AnkleCenter-MD_Pt;
-% col_plot = 'r';
-% % ASSUMPTION: most distal point will be on tibia (medial) if there is no
-% % fibula, otherwise it will be lateral, and the vector needs to be
-% % reversed.
-% if tibia_and_fibula == 1
-%     U_tmp = -U_tmp;
-%     col_plot = 'b';
-% end
 
+% identify lateral direction
 [U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0);
 if just_tibia; plot_col = 'r'; else; plot_col = 'b';  end
 
@@ -208,10 +174,16 @@ CS.Origin = CenterVol;
 % CS.X = perp to plane YZ
 % CS.Z = XY
 
+% landmark bone according to CS (only Origin and CS.V are used)
+TibiaBL_r   = LandmarkGeom(Tibia, CS, 'tibia_r');
+if just_tibia == 0
+    TibiaBL_r.RLM = MostDistalMedialPt;
+end
+label_switch = 1;
+
 if result_plots == 1
     
     figure
-
     % plot entire tibia 
     subplot(2,2,[1,3])
     PlotTriangLight(Tibia, CS, 0);
@@ -219,6 +191,20 @@ if result_plots == 1
     quickPlotTriang(EpiTibASMed,'r');
     quickPlotTriang(EpiTibASLat,'b');
     quickPlotTriang(AnkleArtSurf, 'g');
+    % plot markers
+    BLfields = fields(TibiaBL_r);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(TibiaBL_r.(cur_name), 'k', 7)
+        if label_switch==1
+            text(TibiaBL_r.(cur_name)(1),...
+                TibiaBL_r.(cur_name)(2),...
+                TibiaBL_r.(cur_name)(3),...
+                ['  ',cur_name],...
+                'VerticalAlignment', 'Baseline',...
+                'FontSize',8);
+        end
+    end
 
     % plot proximal tibia
     subplot(2,2,2)

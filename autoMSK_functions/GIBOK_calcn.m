@@ -1,5 +1,5 @@
 %% Initial Set up 
-function CS = GIBOK_calcn(Calcn, in_mm, result_plots, debug_plots)
+function [CS, JCS, CalcnBL_r] = GIBOK_calcn(Calcn, in_mm, result_plots, debug_plots)
 
 % check units
 if nargin<2;     in_mm = 1;  end
@@ -178,10 +178,25 @@ CS.X = X3; % Distal proximal
 CS.Y = Z3; % Lateral to medial
 CS.Z = -Y3; % Ventral to dorsal
 CS.V = [X3, Z3, -Y3];
-CS.Origin = heelPt';
-CS.MedDistalMeta = PtMetaMed;
-CS.LatDistalMeta = PtMetaLat;
-CS.HeelTip = heelPt;
+CS.Origin = CenterVol;
+
+
+% calcn does not have a real joint, but JCS structure is created for
+% consistency
+JCS = CS;
+JCS.Origin = heelPt';
+
+% landmark bone according to CS (only Origin and CS.V are used)
+CalcnBL_r    = LandmarkGeom(Calcn, CS, 'calcn_r');
+CalcnBL_r.R1MGROUND = PtMetaMed;
+CalcnBL_r.R5MGROUND = PtMetaLat;
+CalcnBL_r.RHEEGROUND = heelPt;
+if norm(CalcnBL_r.R5M-CalcnBL_r.R5MGROUND)>10
+    disp('Dubious identification of R5M')
+    CalcnBL_r.R5MPROX = CalcnBL_r.R5M;
+    CalcnBL_r.R5M = CalcnBL_r.R5MGROUND;
+end
+label_switch = 1;
 
 if result_plots == 1
     figure;
@@ -190,12 +205,27 @@ if result_plots == 1
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(CS)
     % plot the bone landmarks
-    plotDot(heelPt,'k',3)
-    plotDot(PtMetaLat,'b',3)
-    plotDot(PtMetaMed,'r',3)
+%     plotDot(heelPt,'g',3)
+%     plotDot(PtMetaLat,'b',3)
+%     plotDot(PtMetaMed,'r',3)
     % Plot the sole plane
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
+    
+    % plot markers
+    BLfields = fields(CalcnBL_r);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(CalcnBL_r.(cur_name), 'k', 3)  
+        if label_switch==1
+            text(CalcnBL_r.(cur_name)(1),...
+                CalcnBL_r.(cur_name)(2),...
+                CalcnBL_r.(cur_name)(3),...
+                cur_name,...
+                'VerticalAlignment', 'Baseline',...
+                'FontSize',8);
+        end
+    end
 end
 
 end

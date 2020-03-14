@@ -1,4 +1,4 @@
-function [CS, JCS] = GIBOK_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
+function [CS, JCS, FemurBL_r] = GIBOK_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
 
 % check units
 if nargin<5;     in_mm = 1;  end
@@ -97,6 +97,9 @@ end
 CS.Origin = CenterVol;
 CS.V = JCS.hip_r.V;
 
+% landmark bone according to CS (only Origin and CS.V are used)
+FemurBL_r   = LandmarkGeom(Femur  , CS,     'femur_r');
+
 % result plot
 if result_plots == 1
     figure;
@@ -115,6 +118,12 @@ if result_plots == 1
         quickPlotTriang(postCondyle_Med, 'r')
     end
     quickPlotTriang(FemHead, 'g')
+    % plot markers
+    BLfields = fields(FemurBL_r);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(FemurBL_r.(cur_name), 'k', 7)
+    end
     
     subplot(2,2,2); % femoral head
     PlotTriangLight(ProxFem, CS, 0); hold on

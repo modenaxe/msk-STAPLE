@@ -1,4 +1,4 @@
-function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(Alt, Area)
+function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(Alt, Area, debug_plots)
 %  Create a fit.
 %
 %  Data for 'untitled fit 1' fit:
@@ -14,7 +14,9 @@ function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(
 %   alt_TlTib_start, gives the altitude along X0 at wich articular surface
 %   with the tibia can start
 %
-
+if nargin<3
+    debug_plots =0 ;
+end
 %% Discard data from the borders
 Alt(Area<0.2*max(Area))=[];
 Area(Area<0.2*max(Area))=[];
@@ -34,13 +36,15 @@ opts.Lower = [0.1*max(Area) -Inf 0 0.1*max(Area) -Inf 0];
 [fitresult, gof] = fit( xData, yData, ft, opts );
 
 % % Plot fit with data.
-% figure( 'Name', 'untitled fit 1' );
-% h = plot( fitresult, xData, yData );
-% legend( h, 'Area vs. Alt', 'untitled fit 1', 'Location', 'NorthEast' );
-% % Label axes
-% xlabel Alt
-% ylabel Area
-% grid on
+if debug_plots == 1
+    figure( 'Name', 'untitled fit 1' );
+    h = plot( fitresult, xData, yData );
+    legend( h, 'Area vs. Alt', 'untitled fit 1', 'Location', 'NorthEast' );
+    % Label axes
+    xlabel Alt
+    ylabel Area
+    grid on
+end
 
 % Orientation of bone along the y axis
 or_test_a = fitresult.a1 < fitresult.a2 ;

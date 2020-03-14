@@ -1,4 +1,4 @@
-function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots)
+function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots, debug_plots)
 
 % NOTE: CS contains multiple sets of axes:
 % * X0-Y0-Z0 : talus axes
@@ -9,11 +9,9 @@ function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots)
 if nargin<2;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
-% debug plot default
+% result and debg plot default
 if nargin<3;  result_plots =1;  end
-
-% debug plot for fit quadrilater
-fit_debug_plot = 0;
+if nargin<4;     debug_plots = 0; end
 
 %% 1. Indentify the inertia axis of the Talus
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
@@ -28,7 +26,7 @@ fit_debug_plot = 0;
 % inferior-superior direction intial guess (Z0). Y0 is made perpendicular
 % to X0 and Z0.
 CS.X0 = V_all(:,1); 
-[CS.Z0,CS.Y0] = fitQuadriTalus(Talus, V_all, fit_debug_plot);
+[CS.Z0,CS.Y0] = fitQuadriTalus(Talus, V_all, debug_plots);
 
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
 slice_step = 0.3;
@@ -37,8 +35,10 @@ debug_plot_slice = 0;
 [Areas, Alt] = TriSliceObjAlongAxis(Talus, CS.X0, slice_step, cut_offset, debug_plot_slice);
 
 % Plot the curves CSA = f(Alt), Alt : Altitude of the section along X0
-% figure()
-% plot(Alt,Area,'-*')
+if debug_plots == 1
+ figure()
+ plot(Alt,Areas,'-*')
+end
 
 % Given the shape of the curve we can fit a bi-gaussian curve to identify
 % the two maxima of the Area = f(Alt) curve
@@ -58,8 +58,13 @@ debug_plot_slice = 0;
                                                     FitCSATalus(Alt, Areas);
 % Change X0 orientation if necessary ( or = +/- 1 )
 CS.X0 = or*CS.X0;
-CS.Y0 = or*CS.Y0;                    
-
+CS.Y0 = or*CS.Y0;    
+if debug_plots == 1
+    quickPlotTriang(Talus)
+    CS.Origin = CS.CenterVol;
+    quickPlotRefSystem(CS)
+    CS.Origin = []; % reset
+end
 % fit spheres to talonavicular and talocalcaneal
 % debug_plot = 1;
 [CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start);
