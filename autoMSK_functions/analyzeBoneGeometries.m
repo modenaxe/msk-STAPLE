@@ -6,10 +6,14 @@ if nargin<3; method_tibia = ''; in_mm = 1; end
 if nargin<4; in_mm = 1; end
 
 % ---- PELVIS -----
-if isfield(geom_set,'pelvis')
+if isfield(geom_set,'pelvis') 
     [CS.pelvis, JCS.pelvis, BL.pelvis]  = GIBOK_pelvis(geom_set.pelvis, in_mm);
-%     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
+    %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
+elseif isfield(geom_set,'pelvis_no_sacrum')
+    [CS.pelvis, JCS.pelvis, BL.pelvis]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum, in_mm);
+    %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 end
+
 
 % ---- FEMUR -----
 if isfield(geom_set,'femur_r')
