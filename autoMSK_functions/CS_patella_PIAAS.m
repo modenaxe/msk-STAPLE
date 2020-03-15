@@ -2,7 +2,7 @@
 
 
 
-function [CS, ArtSurf] = ACS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho, in_mm)
+function [CS, ArtSurf] = CS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho, in_mm)
 
 % check units
 if nargin<6;     in_mm = 1;  end

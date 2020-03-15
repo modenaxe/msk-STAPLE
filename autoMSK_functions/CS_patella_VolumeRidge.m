@@ -1,4 +1,4 @@
-function CS = ACS_patella_VolumeRidge(CS, U, in_mm)
+function CS = CS_patella_VolumeRidge(CS, U, in_mm)
 
 % check units
 if nargin<3;     in_mm = 1;  end

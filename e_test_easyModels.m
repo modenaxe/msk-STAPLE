@@ -24,6 +24,11 @@ triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'
 in_mm = 1;
 %--------------------------------
 
+% adjust dimensional factors based on mm / m scales
+if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
+else; dim_fact = 1;     bone_density = 1420;%kg/m3
+end
+
 for nd = 1:3
 % AIM IS TO HAVE A FUNCTION LIKE THIS
 % osimModel = createOsimModelFromBoneGeometries(geom_set);

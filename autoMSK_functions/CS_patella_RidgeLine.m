@@ -1,6 +1,6 @@
 
 
-function CS = ACS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0, in_mm)
+function CS = CS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0, in_mm)
 
 % check units
 if nargin<4;     in_mm = 1;  end

@@ -96,10 +96,8 @@ X = cross(Y, Z);
 CS.Origin        = CenterVol;
 % CS.ElpsMaxPtVect = YElpsMax;
 CS.ElpsPts       = EllipsePts;
-CS.X = X;
-CS.Y = Y;
-CS.Z = Z;
-CS.V = [X Y Z];
+Z_cs = cross(X, Y);
+CS.V = [X Y Z_cs];
 
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
