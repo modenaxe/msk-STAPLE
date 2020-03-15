@@ -28,11 +28,6 @@ for nd = 1:3
 % AIM IS TO HAVE A FUNCTION LIKE THIS
 % osimModel = createOsimModelFromBoneGeometries(geom_set);
 
-% adjust dimensional factors based on mm / m scales
-if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
-else; dim_fact = 1;     bone_density = 1420;%kg/m3 
-end
-
 dataset = dataset_set{nd};
 tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
 visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
@@ -91,8 +86,7 @@ addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm);
 
 % finalize connections
 osimModel.finalizeConnections();
-osimModel.setUseVisualizer(true);
-osimModel.initSystem()
+
 % print
 osimModel.print(fullfile(osim_folder, [str2num(nd), dataset, '.osim']));
 osimModel.disownAllComponents();

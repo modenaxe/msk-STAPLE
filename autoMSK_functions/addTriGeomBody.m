@@ -30,11 +30,12 @@ osim_body    =  Body( body_name,...
 osimModel.addBody(osim_body);
 
 % add visualization mesh
-if nargin>3
+if nargin==6
     vis_geom = Mesh(vis_mesh_file);
     vis_geom.set_scale_factors(Vec3(dim_fact));
     osim_body.attachGeometry(vis_geom);
 else
+%     stlwrite(triGeom)
     error('Please specify a valid mesh file')
     % return?
     % write stlwrite the Triangulation to a selected folder
