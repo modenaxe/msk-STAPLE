@@ -58,7 +58,7 @@ for nd = 1:5
     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
     
     %---- TIBIA -----
-    [TibiaCS0, JCS0] = Miranda2010_buildtCS(geom_set.tibia_r);
+    [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
     [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
     [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');

@@ -38,7 +38,7 @@ end
 if isfield(geom_set,'tibia_r')
     switch method_tibia
         case 'Miranda' % same as Kai but using inertia
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtCS(geom_set.tibia_r);
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
         case 'Kai'
             [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = CS_tibia_Kai2014(geom_set.tibia_r);
         case 'GTib-plateau'
