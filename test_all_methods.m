@@ -8,7 +8,7 @@ clearvars;  close all
 
 % add useful scripts
 addpath(genpath('GIBOK-toolbox'));
-addpath(genpath('autoMSK_functions'));
+addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 import org.opensim.modeling.*
 
@@ -45,26 +45,28 @@ for nd = 1:5
         geom_set.(cur_body_name) = cur_geom;
     end
     
+    [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
+    
     %---- PELVIS -----
 %     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
     %---- FEMUR -----
-    fACS = Miranda2010_buildfACS(geom_set.femur_r);
-%     [FemurCS1, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
-%     [FemurCS, JCS2] = GIBOK_femur(geom_set.femur_r);
+    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+    [FemurCS1, JCS1]  = CS_femur_Kai2014(geom_set.femur_r);
+    [FemurCS, JCS2] = GIBOK_femur(geom_set.femur_r);
 %     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
 %     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
 %     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
     
     %---- TIBIA -----
-%     tACS = Miranda2010_buildtCS(geom_set.tibia_r);
-%     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
-%     [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+    [TibiaCS0, JCS0] = Miranda2010_buildtCS(geom_set.tibia_r);
+    [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
+    [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
 %     [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
 %     [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
     %---- TALUS/ANKLE -----
-%     [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+    [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
     %---- CALCANEUS/SUBTALAR -----
-%     JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
+    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
     %-----------------
     clear JCS
 %     close all
