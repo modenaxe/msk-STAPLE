@@ -2,7 +2,8 @@
 *.stl
 *.igs
 *.msh
-.vtk
+*.vtk
+*.iv
 
 # MAF files
 .msf
