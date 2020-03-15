@@ -93,6 +93,7 @@ FemurBL_r   = LandmarkGeom(Femur, CS, 'femur_r');
 
 % result plot
 if result_plots == 1
+    figure
     alpha = 0.5;
     subplot(2,2,[1,3]);
     PlotTriangLight(Femur, CS, 0)
