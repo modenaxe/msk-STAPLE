@@ -15,10 +15,11 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = GIBOK_pelvis(Pelvis, in_mm)
+function [ CS, JCS, PelvisBL] = GIBOK_pelvis(Pelvis, result_plots,in_mm)
 
+if nargin<2; result_plots=1; end;
 % check units
-if nargin<2;     in_mm = 1;  end
+if nargin<3;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % guess of direction of axes on medical images (not always correct)
@@ -121,20 +122,20 @@ JCS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);
 JCS.hip_r.parent_orientation        = computeZXYAngleSeq(CS.V);
 
 % debug plot
-PlotTriangLight(Pelvis, CS, 1); hold on
-quickPlotRefSystem(CS)
-quickPlotRefSystem(JCS.ground_pelvis);
-plotDot(RASIS, 'k', 7)
-plotDot(LASIS, 'k', 7)
-plotDot(LPSIS, 'k', 7)
-plotDot(RPSIS, 'k', 7)
+if result_plots == 1
+    PlotTriangLight(Pelvis, CS, 1); hold on
+    quickPlotRefSystem(CS)
+    quickPlotRefSystem(JCS.ground_pelvis);
+    plotDot(RASIS, 'k', 7)
+    plotDot(LASIS, 'k', 7)
+    plotDot(LPSIS, 'k', 7)
+    plotDot(RPSIS, 'k', 7)
+end
 
 % Export bone landmarks
-if nargout > 2
-    PelvisBL.RASIS     = RASIS; % in Pelvis ref 
-    PelvisBL.LASIS     = LASIS; % in Pelvis ref 
-    PelvisBL.RPSIS     = RPSIS; % in Pelvis ref 
-    PelvisBL.LPSIS     = LPSIS; % in Pelvis ref 
-end
+PelvisBL.RASIS     = RASIS; % in Pelvis ref
+PelvisBL.LASIS     = LASIS; % in Pelvis ref
+PelvisBL.RPSIS     = RPSIS; % in Pelvis ref
+PelvisBL.LPSIS     = LPSIS; % in Pelvis ref
 
 end
