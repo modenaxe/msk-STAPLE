@@ -38,6 +38,7 @@ tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
 visual_dir = fullfile(bone_geom_folder,dataset,'vtp');
 visual_file_list = triGeom_file_list;
 type_mesh = '.vtp';
+
 % create the model
 osimModel = Model();
 % setting the model
