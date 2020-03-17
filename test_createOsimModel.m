@@ -3,6 +3,7 @@ tic
 % add useful scripts
 addpath(genpath('GIBOK-toolbox'));
 addpath('autoMSK_functions');
+addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6', 'TLEM2_CT', 'TLEM2_MRI'};
@@ -41,7 +42,9 @@ osimModel.finalizeConnections();
 osimModel.setName([dataset_set{n_d},'_auto']);
 osimModel.print('test.osim');
 osimModel.disownAllComponents();
-toc
+
+disp(['Model generated in ', num2str(toc)]);
+
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
 rmpath('autoMSK_functions');
