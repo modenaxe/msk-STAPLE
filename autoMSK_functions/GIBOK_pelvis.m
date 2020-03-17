@@ -31,11 +31,14 @@ x_pelvis_in_global = [0 -1 0];
 y_pelvis_in_global = [0 0 1];
 z_pelvis_in_global = [-1 0 0];
 
+
 % building the rot mat from global to pelvis ISB (roughly)
 % RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
 
 % Get eigen vectors V_all and volumetric center
-[eigVctrs, CenterVol, InertiaMatrix ] =  TriInertiaPpties(Pelvis);
+[eigVctrs, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
+
+% [ PelvisInertia, ~ , ~ ] = TriChangeCS( Pelvis);
 
 % clarifying that this rotation goes inertial to global
 RInert2Glob = eigVctrs;
