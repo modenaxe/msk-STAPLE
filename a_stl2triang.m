@@ -19,20 +19,23 @@ addpath(genpath('./GIBOK-toolbox'))
 % stl_folder = './test_geometries/TLEM2_MRI';
 % stl_folder = './test_geometries/LHDL_CT_iso';
 % stl_folder = './test_geometries/JIA_CSm6';
-stl_folder = './test_geometries/P0_MRI_smooth';
+% stl_folder = './test_geometries/P0_MRI_smooth';
+% stl_folder = './test_geometries/GU';
+dataset_folder = './test_geometries/VAKHUM_S6_CT';
 % folder where to store the resulting triangulations
 triang_folder = '';
 %---------------------------------------------------
 
 % if triang_folder unspecified, then it is set to stl_folder plus '_tri'
 if isempty(triang_folder) || strcmp(triang_folder,'')
-    triang_folder = [stl_folder, '_tri'];
+    triang_folder = [dataset_folder, filesep, 'tri'];
 end
 
 % check if triang folder exists, if it doesn't create it
 if ~isdir(triang_folder);    mkdir(triang_folder);  end
 
 % getting list of stl files from the specified folder
+stl_folder = fullfile(dataset_folder, 'stl');
 list_of_stl = dir([stl_folder, filesep, '*.stl']);
 
 % number of trials N
