@@ -27,7 +27,7 @@ TrianglesArea =1/2*cross(diff(Pts),-bsxfun(@minus,Pts(1:end-1,:),Center0))*n;
 Centroid = sum(TrianglesCentroid.*repmat(TrianglesArea,1,3))/sum(TrianglesArea);
 
 if nargout>1
-    Area = sum(TrianglesArea);
+    Area = abs(sum(TrianglesArea));
 end
 
 

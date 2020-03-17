@@ -1,6 +1,6 @@
 function [TrProx, TrDist] = cutLongBoneMesh(TrLB, varargin)
-%CUTLONGBONEMESH Separate the Mesh of long bone io two parts, a proximal 
-% and a distal one.
+%CUTLONGBONEMESH Separate the Mesh of long bone in two parts:
+%   a proximal and a distal one.
 % WARNING : Assumption about the CT coordinate system :
 %               Zct is approximately distal to proximal
 
