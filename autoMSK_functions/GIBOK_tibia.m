@@ -13,9 +13,11 @@ CS = struct();
 % if this is an entire tibia then cut it in two parts
 % but keep track of all geometries
 if ~exist('DistTib','var') || isempty(DistTib)
-     % Only one mesh, this is a long bone that should be cutted in two
-     % parts
-      [ProxTib, DistTib] = cutLongBoneMesh(Tibia);
+    % Only one mesh, this is a long bone that should be cutted in two
+    % parts
+    [ U_DistToProx ] = tibia_get_correct_first_CS(Tibia, debug_plots);
+    [ProxTib, DistTib] = cutLongBoneMesh(Tibia, U_DistToProx);
+
 else
     ProxTib = Tibia;
     % join two parts in one triangulation
@@ -61,10 +63,10 @@ AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CS, CoeffMorpho);
 %-----------
 % parameters
 %-----------
-plane_thick = 5 * dim_fact; 
+plane_thick = 0.005 / dim_fact; 
 %-----------
 [oLSP_AAS, nAAS] = lsplane(AnkleArtSurf.Points, Z0);
-Curves           = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
+Curves = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 
 % this gets the larger area (allows tibia to be in the geometry)
 [Curve, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);

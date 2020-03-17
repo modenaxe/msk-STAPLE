@@ -13,7 +13,8 @@ CS = struct();
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
 if ~exist('DistFem','var') || isempty(DistFem)
-      [ProxFem, DistFem] = cutLongBoneMesh(Femur);
+    [ U_DistToProx ] = femur_get_correct_first_CS( Femur, debug_plots );
+    [ProxFem, DistFem] = cutLongBoneMesh(Femur, U_DistToProx);
 else
     % join two parts in one triangulation
     ProxFemur = Femur;

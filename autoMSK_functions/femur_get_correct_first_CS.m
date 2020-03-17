@@ -12,7 +12,7 @@ function [ Z0 ] = femur_get_correct_first_CS( Femur, debug_plots )
 % relatively symmetrical relative to the diaphysis axis, while the one from
 % the proximal epiphysis is not because of the femoral head.
 % So if you deform the femur along the second principal inertial deirection
-% which is relatively medial to lateral, the centroid of the distal 
+% which is relatively medial to lateral, the centroid of the distal
 % epiphysis should be closer to the first principal inertia axis than the
 % one from the proximal epiphysis.
 % -------------------------------------------------------------------------
@@ -46,7 +46,8 @@ Pts_deformed = (Pts*V_all)*[1 0 0; 0 2 0; 0 0 1]*V_all';
 Femur = triangulation(Femur.ConnectivityList,bsxfun(@plus,Pts_deformed,CenterVol'));
 
 % Get both epiphysis of the femur (10% of the length at both ends)
-[TrEpi1, TrEpi2] = cutLongBoneMesh(Femur, 0.10);
+% Tricks : Here we use Z0 as the initial direction for
+[TrEpi1, TrEpi2] = cutLongBoneMesh(Femur, Z0, 0.10);
 
 %% Get the central 60% of the bone -> The femur diaphysis
 LengthBone = max(Femur.Points*Z0) - min(Femur.Points*Z0);
@@ -66,7 +67,7 @@ FemurDiaphysis = TriFillPlanarHoles( TrTmp2 );
 [ V_all, CenterVol_dia ] = TriInertiaPpties( FemurDiaphysis );
 Z0_dia = V_all(:,1);
 
-%% Get the distance of the centroids of each epihyisis part to 
+%% Get the distance of the centroids of each epihyisis part to
 %  the diaphysis axis
 [ ~, CenterEpi1 ] = TriInertiaPpties( TrEpi1 );
 [ ~, CenterEpi2 ] = TriInertiaPpties( TrEpi2 );
@@ -87,10 +88,10 @@ end
 Z0 = sign(U_DistToProx'*Z0)*Z0;
 
 % Warning flag for unclear results
-if abs(distToDiaphAxis1 - distToDiaphAxis2)/(distToDiaphAxis1 + distToDiaphAxis2) < 0.20;
+if abs(distToDiaphAxis1 - distToDiaphAxis2)/(distToDiaphAxis1 + distToDiaphAxis2) < 0.20
     warning("The distance to the femur diaphysis axis for the " + ...
-    "femur epihysis where not very different. Orientation of Z0," + ...
-    "distal to proximal axis, of the femur could be incorrect.")
+        "femur epihysis where not very different. Orientation of Z0," + ...
+        "distal to proximal axis, of the femur could be incorrect.")
 end
 
 
@@ -100,7 +101,7 @@ if debug_plots
     hold on
     pl3t(CenterEpi2,'b*')
     pl3tVectors(CenterVol_dia, Z0_dia, 200);
-     pl3tVectors(CenterVol_dia, -Z0_dia, 200);
+    pl3tVectors(CenterVol_dia, -Z0_dia, 200);
     pl3tVectors(CenterVol, Z0, 300);
     pl3tVectors(CenterVol, -Y0, 50);
     pl3tVectors(CenterVol, Y0, 50);
