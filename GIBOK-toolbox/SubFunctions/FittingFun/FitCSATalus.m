@@ -15,11 +15,14 @@ function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(
 %   with the tibia can start
 %
 if nargin<3
-    debug_plots =0 ;
+    debug_plots = 0 ;
 end
 %% Discard data from the borders
+Length = range(Alt);
 Alt(Area<0.2*max(Area))=[];
 Area(Area<0.2*max(Area))=[];
+
+
 
 %% Fit: 'untitled fit 1'.
 [xData, yData] = prepareCurveData( Alt, Area );
@@ -28,8 +31,14 @@ Area(Area<0.2*max(Area))=[];
 ft = fittype( 'gauss2' );
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
+
 % Ensure that the fit is the sum of two gaussian with positive scale factor
 opts.Lower = [0.1*max(Area) -Inf 0 0.1*max(Area) -Inf 0];
+
+% Make sure that the fit doesn't yield gaussians too flat by setting the
+% upper boundary of sigma parameters to 20% of the talus length along
+% the axis
+opts.Upper = [10*max(Area) +Inf 0.20*Length 10*max(Area) +Inf 0.20*Length];
 
 
 % Fit model to data.
