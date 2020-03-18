@@ -5,12 +5,17 @@ function [ BL, RotISB2Glob, CenterVol, InertiaMatrix, D] = pelvis_get_correct_fi
 %           debug_plots : A boolean to display plots useful for debugging
 %
 % Output :
-%           Z0 : A unit vector giving the distal to proximal direction
+%   BL              A structure containing the pelvis bone landmarks
+%   RotISB2Glob     A rotation matrix containing properly oriented initial
+%                   guess of the X, Y and Z axis of the pelvis ISB CS
+%   CenterVol       Volumetric center of the pelvis
+%
 % -------------------------------------------------------------------------
 %                           General Idea
 % The largest cross section along the principal inertia axis is located at
 % the tibial plateau. From that information it's easy to determine the
-% distal to proximal direction.
+% distal to proximal direction. Then the largest triangle of the pelvis
+% convex hull is the one connecting the LASIS RASIS and SYMP.
 % -------------------------------------------------------------------------
 
 %% inputs checks
@@ -74,19 +79,8 @@ else
 end
 
 
-%% Get the frontal direction by isolating the pubis part of the pelvis
-
-% Other way get the normal of the largest triangle of the convex hull after
-% having filtered the 
-% Find the largest triangle of Convex Hull
-
-% % % Project the convex hull along the previously found direction
-% % YZ1 = [Y0,Z0];
-% % ProjX0 = YZ1*inv(YZ1'*YZ1)*YZ1'; % Orthogonal projection matrix
-% % 
-% % PelvisConvHull_PTS_Proj = (ProjX0*PelvisConvHull.Points')';
-% % PelvisConvHull_Proj = triangulation(PelvisConvHull.ConnectivityList,...
-% %                                                 PelvisConvHull_PTS_Proj);
+%% Get the Post-Ant direction by finding the largest triangle of the pelvis
+% convex hull
 
 % Find the largest triangle on the projected Convex Hull
 [ PelvisConvHull_Ppties ] = TriMesh2DProperties( PelvisConvHull );
