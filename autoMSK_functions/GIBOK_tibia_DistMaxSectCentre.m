@@ -1,21 +1,16 @@
-function CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CSs)
-
-Z0 = CSs.Z0;
-
-% slice dist tibia an get larger area
-slice_step = 0.3;
-offset = 1;
-[~, ~, ~, ~, maxAlt] = TriSliceObjAlongAxis(DistTib, Z0, slice_step, offset);
+function CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, maxAltDist, Z0)
 
 % section where the are is maximum 
-Curves = TriPlanIntersect( DistTib, Z0 , -maxAlt );
+Curves = TriPlanIntersect( DistTib, Z0 , maxAltDist );
 
+% slice at maxArea
 [Curve, N_curves] = GIBOK_getLargerPlanarSect(Curves);
-
-CenterAnkleInside = PlanPolygonCentroid3D(Curve.Pts);
 
 if N_curves>2
     error(['There are ', num2str(length(Curves)), ' section areas.']);
+else
+    % compute centroid of largest curve
+    CenterAnkleInside = PlanPolygonCentroid3D(Curve.Pts);
 end
 
 end

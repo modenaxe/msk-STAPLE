@@ -22,24 +22,32 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
 end
 
-% Get the mean edge length of the triangles composing the tibia
-% This is necessary because the functions were originally developed for
-% triangulation with constant mean edge lengths of 0.5 mm
-PptiesTibia = TriMesh2DProperties( Tibia );
-
-% Assume triangles are equilaterals
-meanEdgeLength = sqrt( 4/sqrt(3) * PptiesTibia.TotalArea / Tibia.size(1) );
-
-% Get the coefficient for morphology operations
-CoeffMorpho = 0.5 / meanEdgeLength ;
+% compute coefficient for morphology operations
+CoeffMorpho = computeTriCoeffMorpho(Tibia);
 
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Tibia );
 
-% Initial estimate of the Inf-Sup axis Z0 - Check that the distal tibia
-% is 'below': the proximal tibia, invert Z0 direction otherwise;
+% Initial estimate of the Inf-Sup axis Z0
 Z0 = V_all(:,1);
+
+% Check that the distal tibia is 'below': the proximal tibia, 
+% correct naming otherwise
+slice_step = 1; offset = 1;
+[~, ~, maxAreaProx, ~, maxAltProx] = TriSliceObjAlongAxis(ProxTib, Z0, slice_step, offset, 0);
+[~, ~, maxAreaDist, ~, maxAltDist] = TriSliceObjAlongAxis(DistTib, Z0, slice_step, offset, 0);
+% invert prox and dist if wrongly identified
+if maxAreaProx < maxAreaDist
+    % invert prox and distal tibial parts
+    temp = ProxTib;     ProxTib = DistTib;     DistTib = temp;
+    % invert max area
+    maxAltDist = maxAltProx;
+end
 Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
+if debug_plots == 1
+    quickPlotTriang(ProxTib);
+    quickPlotTriang(DistTib);
+end
 
 % store approximate Z direction and centre of mass of triangulation
 CS.Z0 = Z0;
@@ -47,8 +55,8 @@ CS.CenterVol = CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
 CS.V_all = V_all;
 
-% extract the tibia (used to compute the mechanical Z axis)
-CS.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CS);
+% extract the centre ankle (used to compute the mechanical Z axis)
+CS.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, maxAltDist, Z0);
 
 % extract the distal tibia articular surface
 AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CS, CoeffMorpho);
