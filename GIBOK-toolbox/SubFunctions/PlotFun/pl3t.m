@@ -7,11 +7,15 @@ function [  ] = pl3t( P, varargin)
 numInputs = length(varargin);
 
 if min(size(P))==1
-        X=P(1);
-        Y=P(2);
-        Z=P(3);
+    X=P(1);
+    Y=P(2);
+    Z=P(3);
 else
     if size(P,1)>3
+        X=P(:,1);
+        Y=P(:,2);
+        Z=P(:,3);
+    elseif size(P,1) == 2 && size(P,2) == 3
         X=P(:,1);
         Y=P(:,2);
         Z=P(:,3);

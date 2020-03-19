@@ -26,7 +26,14 @@ end
     
     IndexTrsfrm = zeros(length(TR.Points),1);
     IndexTrsfrm(NodesKept) = 1 : length(NodesKept);
+
+    ElmtKeptNewNodeId = IndexTrsfrm(ElmtsNodesIDKept);
     
-    TRout = triangulation(IndexTrsfrm(ElmtsNodesIDKept),PointsKept);
+    % Deal with case with only one element kept
+    if size(IndexTrsfrm(ElmtsNodesIDKept),2) ~= 3
+        ElmtKeptNewNodeId = ElmtKeptNewNodeId';
+    end
+    
+    TRout = triangulation(ElmtKeptNewNodeId,PointsKept);
 end
 

@@ -8,7 +8,11 @@ function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debu
 %   TotArea:        Total area of the cross section accounting for holes
 %   InterfaceTri:   sparse Matrix with n1 x n2 dimension where n1 and n2 are
 %                   number of faces in surfaces
-
+% 
+% -------------------------------------------------------------------------
+% ONLY TESTED : on closed triangulation resulting in close intersection
+% curve
+% -------------------------------------------------------------------------
 
 %% Check Arguments in
 if nargin < 3
@@ -17,73 +21,122 @@ elseif nargin == 3
     debug_plots = 0;
 end
 
-%% Get a bounding box of the triangulation Tr at the plan level
 Pts = Tr.Points;
-[ Pts_Proj ] = ProjectOnPlan( Pts , n , d );
+n = [n(1); n(2); n(3)];
+n=n/norm(n);
+% If d is a point on the plane and not the d parameter of the plane equation
+if length(d)>2
+    Op = [d(1) d(2) d(3)];
+    if size(d,2)==1
+        d = -d'*n;
+    elseif size(d,1)==1
+        d = -d*n;
+    else
+        error('Third input must be an altitude or a point on plane')
+    end
+else
+    % Get a point on the plane
+    [~,n_principal_dir] = max(abs(n));
+    Pts1 = Pts(1,:);
+    Op = Pts1;
+    Pts1(n_principal_dir) = 0;
+    Op(n_principal_dir) = (-Pts1*n-d)/n(n_principal_dir);
+end
 
-% Get a random vector to construct a CS in the plane
-while 1
-    Utmp = normalizeV(randn(3,1));
-    if Utmp'*n < 0.5
-        break
+%% Find the intersected elements (triagles
+% Get Points (vertices) list as being over or under the plan
+Pts_OverUnder = (Pts*n + d > 0) - (Pts*n + d < 0);
+
+if sum(Pts_OverUnder==0)>0
+    warnings("Points were found lying exactly on the intersecting" +...
+        " plan, this case might not be correctly handled")
+end
+
+% Get the facets,elements/triangles/ intersecting the plan
+Elmts = Tr.ConnectivityList;
+Elmts_IntersectScore = sum(Pts_OverUnder(Elmts),2);
+Elmts_Intersecting =  Elmts(abs(Elmts_IntersectScore)<3,:);
+
+%% Check the existence of an interaction
+if isempty(Elmts_Intersecting)
+    TotArea = 0;
+    InterfaceTri = [];
+    Curves = struct();
+    Curves(1).NodesID = [];
+    Curves(1).Pts = [];
+    Curves(1).Area = 0;
+    Curves(1).Hole = 0;
+    Curves(1).Text = 'No Intersection';
+    warning("No intersection found between the plane and the triangulation")
+    return
+end
+
+%% Find the Intersecting Edges among the intersected elements
+% Get an edge list from intersecting elmts
+Nb_InterSectElmts = size(Elmts_Intersecting,1);
+Edges = zeros(3*Nb_InterSectElmts, 2);
+
+i = 1:Nb_InterSectElmts;
+Edges(3*i-2,:) = Elmts_Intersecting(i,1:2);
+Edges(3*i-1,:) = Elmts_Intersecting(i,2:3);
+Edges(3*i,:) = Elmts_Intersecting(i,[3,1]);
+
+
+% Identify the edges crossing the plane
+% They will have an edge status of 0
+Edges_Status = sum(Pts_OverUnder(Edges),2);
+
+I_Edges_Intersecting = find(Edges_Status ==0);
+
+%% Find the edge plane intersecting points
+% start and end points of each edges
+P0 = Pts(Edges(I_Edges_Intersecting,1),:);
+P1 = Pts(Edges(I_Edges_Intersecting,2),:);
+
+% Vector of the edge
+u = P1-P0;
+% Get vectors from point on plane (Op) to edge ends
+v = bsxfun(@minus, P0, Op);
+
+EdgesLength = u*n;
+EdgesUnderPlaneLength = -v*n;
+
+ratio = EdgesUnderPlaneLength ./ EdgesLength;
+% Get Intersectiong Points Coordinates
+PtsInter = P0 + u.*ratio;
+
+%% Make sure the shared edges have the same intersection Points
+% Build an edge correspondance table
+EdgeCorrepondance = zeros(3*Nb_InterSectElmts,1);
+EdgeNbOccurences = zeros(3*Nb_InterSectElmts,1);
+for i=I_Edges_Intersecting'
+    j = find(Edges(:,2) == Edges(i,1) & Edges(:,1) == Edges(i,2));
+    EdgeNbOccurences(i) = EdgeNbOccurences(i) + 1;
+    EdgeNbOccurences(j) = EdgeNbOccurences(j) + 1;
+    if EdgeNbOccurences(i) == 2
+        EdgeCorrepondance(i) = j;
+    elseif EdgeNbOccurences(i) == 1
+        EdgeCorrepondance(i) = i;
+    else
+        warning("Intersecting edge appear in 3 triangles, not good")
     end
 end
 
-% Construct the plan CS
-V = normalizeV( cross(n, Utmp) );
-U = cross(V, n);
-ProjCS = [U, V, n];
-
-% Pts_Proj should be moved to the plan CS to get bounding rectangle and
-% then moved back to the current imaging CS
-Pts_ProjinCS = Pts_Proj*ProjCS;
-altProjCS = mean(Pts_ProjinCS(:,3));
-
-% Corner of the 2D bounding box in the plan CS
-Pt1 = [min(Pts_ProjinCS(:,1))-20 min(Pts_ProjinCS(:,2))-20 altProjCS];
-Pt2 = [max(Pts_ProjinCS(:,1))+20 min(Pts_ProjinCS(:,2))-20 altProjCS];
-Pt3 = [max(Pts_ProjinCS(:,1))+20 max(Pts_ProjinCS(:,2))+20 altProjCS];
-Pt4 = [min(Pts_ProjinCS(:,1))-20 max(Pts_ProjinCS(:,2))+20 altProjCS];
-
-% Move the 2D bounding box in original CS
-boxPts_inProjCS = [Pt1 ; Pt2 ; Pt3 ; Pt4];
-boxPts = boxPts_inProjCS*ProjCS';
-
-%% Convert the bounding box to a triangulation structure
-faces = [1 2 3; 3 4 1];
-Square.faces = faces;
-Square.vertices = boxPts;
-% Get a proper triangulation object for debug plotting
-TrSquare = triangulation(faces, boxPts);
-
-% Convert the Tr object to a triangulation structure as expected by next
-% the SurfaceIntersection function
-Tr1.faces = Tr.ConnectivityList;
-Tr1.vertices = Tr.Points;
-
-%% Feed the triangulation and plane to the Surface intersection function
-% Copyright (c) 2014, Jaroslaw Tuszynski
-% All rights reserved.
-% ALGORITHM:
-% Based on Triangle/triangle intersection test routine by Tomas Möller, 1997.
-%  See article "A Fast Triangle-Triangle Intersection Test",
-%  Journal of Graphics Tools, 2(2), 1997
-%  http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf
-%  http://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/code/opttritri.txt
-[InterfaceTri, intSurface] = SurfaceIntersection(Tr1, Square);
-
-% Extract the information on the intersection curve.
-Segments = intSurface.edges;
-PtsInter = intSurface.vertices;
+% Get edge intersection point
+Edge_IntersectionPtsIndex = zeros(3*Nb_InterSectElmts,1);
+Edge_IntersectionPtsIndex(I_Edges_Intersecting) = 1:length(I_Edges_Intersecting);
+% Don't use intersection point duplicate: only one intersection point per
+% edge
+Edge_IntersectionPtsIndex(I_Edges_Intersecting) = ...
+    Edge_IntersectionPtsIndex(EdgeCorrepondance(I_Edges_Intersecting));
 
 
-% Check for interaction
-if isempty(Segments)
-    warning("No intersection found between the plane and the triangulation")
-    Curves = struct();
-    TotArea = 0;
-    return
-end
+%% Get the segments intersecting each triangle
+% The segments are: [Intersecting Point 1 ID , Intersecting Point 2 ID]
+Segments = Edge_IntersectionPtsIndex(Edge_IntersectionPtsIndex>0);
+Segments = reshape(Segments, 2, [])';
+
+
 
 %% Separate the edges to curves structure containing close curves
 j=1;
@@ -178,9 +231,17 @@ for i = 1 : length(Curves)
 end
 
 
+%% Nargout
+if nargout == 3
+    I_X = find(abs(Elmts_IntersectScore)<3);
+    InterfaceTri = TriReduceMesh(Tr, I_X);
+end
 
 %% Debug plots
 if debug_plots
+    I_X = find(abs(Elmts_IntersectScore)<3);
+    InterfaceTri = TriReduceMesh(Tr, I_X);
+    
     [V_all, CenterVol] = TriInertiaPpties(Tr);
     hold on
     axis equal
@@ -189,8 +250,8 @@ if debug_plots
     pl3tVectors(CenterVol, V_all(:,3), 175);
     trisurf(Tr,'facealpha',0.6,'facecolor','b',...
         'edgecolor','none');
-    trisurf(TrSquare,'facealpha',0.4,'facecolor','r',...
-        'edgecolor',[.5 .5 .5], 'edgealpha', 0.8);
+    trisurf(InterfaceTri,'facealpha',0.7,'facecolor','r',...
+        'edgecolor',[.5 .5 .5], 'edgealpha', 0.7);
     for j = 1:length(Curves)
         pl3t(Curves(j).Pts,'k-.')
     end
