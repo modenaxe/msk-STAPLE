@@ -47,6 +47,8 @@ while ~isempty(Segments)
     while ~isempty(Nk)
         Curves(i).NodesID(j) = Nk;
         [Is,Js] = ind2sub(size(Segments),find(Segments(:) == Curves(i).NodesID(j)));
+        Is(2:end) = [];
+        Js(2:end) = [];
         Nk = Segments(Is,round(Js+2*(1.5-Js)));
         if ~isempty(Nk)
             Curves(i).FB(end+1,:) = Segments(Is,:);
