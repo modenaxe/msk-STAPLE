@@ -1,4 +1,4 @@
-function [eigVctrs, CenterVol, InertiaMatrix, D ] = TriInertiaPpties( Tr )
+function [eigVctrs, CenterVol, InertiaMatrix, D, mass ] = TriInertiaPpties( Tr )
 %Get inertia of polyhedra of triangular faces
 
 if ~isempty(Tr.freeBoundary)
