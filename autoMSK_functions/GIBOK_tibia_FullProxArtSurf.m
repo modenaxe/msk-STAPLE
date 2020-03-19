@@ -34,6 +34,13 @@ b = ellipsePpties.b;
 Xel = sign(Xel'*Y0)*Xel;
 Yel = sign(Y0'*Yel)*Yel;
 
+% Remove Nodes that are two close too the central part of the
+Ec = mean(ellipsePts); % ellipse center
+EcPts = bsxfun(@minus, EpiTibAS.Points, Ec);
+ASWidth = range(EcPts*Yel);
+Nodes_Kept = find( abs(EcPts*Yel) > 0.025*ASWidth);
+EpiTibAS = TriReduceMesh(EpiTibAS, [], Nodes_Kept);
+
 % Compute seed points to get a patch of AS on each condyle
 MedPtsInit = mean(ellipsePts) + 2/3*b*Yel';
 MedPtsInit = [  MedPtsInit; 

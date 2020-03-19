@@ -13,8 +13,8 @@ debug_plots = 0;
 [ Xel, Yel, ellipsePts, ellipsePpties] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
 ELP1.a = ellipsePpties.a;
 ELP1.b = ellipsePpties.b;
-ELP1.Xel = sign(Xel'*Y0)*Xel ;
-ELP1.Yel = sign(Yel'*Y0)*Yel ;
+ELP1.Xel = -sign(Xel'*Y0)*Xel ; % Post to Ant
+ELP1.Yel = -sign(Yel'*Y0)*Yel ; % Lat to Med
 ELP1.ellipsePts = ellipsePts;
 
 % remove area between ridges
