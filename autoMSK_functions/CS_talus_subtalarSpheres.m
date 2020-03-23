@@ -1,4 +1,4 @@
-function [CS, TlCcnAS1, TlNvc_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start)
+function [CS, TlCcnAS1, TlNvc_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, CoeffMorpho)
 
 
 alt_TlNvc_end = max(Talus.incenter*CS.X0);
@@ -65,7 +65,7 @@ TlCcnASNodesOK1 =  find(k2 > quantile(k2,0.33) &...
 
 TlCcnAS1 = TriReduceMesh(Talus, [], TlCcnASNodesOK1);
 TlCcnAS1 = TriKeepLargestPatch( TlCcnAS1 ) ;
-TlCcnAS1 = TriCloseMesh(Talus,TlCcnAS1,2);
+TlCcnAS1 = TriCloseMesh(Talus,TlCcnAS1,2 * CoeffMorpho);
 
 % % Add surface to previous plot
 % trisurf(TlCcnAS1,'Facecolor','c','FaceAlpha',1,'edgecolor','none');

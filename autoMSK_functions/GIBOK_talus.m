@@ -63,12 +63,16 @@ if debug_plots == 1
     CS.Origin = CS.CenterVol;     quickPlotRefSystem(CS)
     CS.Origin = []; % reset
 end
+
+% compute scaling factor for filters
+CoeffMorpho = computeTriCoeffMorpho(Talus);
+
 % fit spheres to talonavicular and talocalcaneal
 % debug_plot = 1;
-[CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start);
+[CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start,CoeffMorpho);
 
 % fit cylinder to talar trochlea
-[CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start);
+[CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, CoeffMorpho);
 
 % segment reference system
 % NOTE: CS contains multiple sets of axes:

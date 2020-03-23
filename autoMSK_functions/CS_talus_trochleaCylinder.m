@@ -1,4 +1,4 @@
-function [CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start)
+function [CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, CoeffMorpho)
 
 debug_plots = 0;
 
@@ -33,12 +33,12 @@ TlTrcASNodesOK = unique([TlTrcASNodesOK0;TlTrcASNodesOK1],'rows');
 TlTrcAS0 = TriReduceMesh(Talus,[],double(TlTrcASNodesOK));
 
 % Keep largest connected region and smooth results
-TlTrcAS0 = TriCloseMesh(Talus,TlTrcAS0,1);
+TlTrcAS0 = TriCloseMesh(Talus,TlTrcAS0,1*CoeffMorpho);
 TlTrcAS0 = TriKeepLargestPatch( TlTrcAS0 );
-TlTrcAS0 = TriErodeMesh(TlTrcAS0,2);
+TlTrcAS0 = TriErodeMesh(TlTrcAS0,2*CoeffMorpho);
 TlTrcAS0 = TriKeepLargestPatch( TlTrcAS0 );
-TlTrcAS0 = TriCloseMesh(Talus,TlTrcAS0,3);
-TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2);
+TlTrcAS0 = TriCloseMesh(Talus,TlTrcAS0,3*CoeffMorpho);
+TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2*CoeffMorpho);
 
 % 5.3 Get the first cylinder 
 % Fit a sphere to a get an initial guess at the radius and a point on the
