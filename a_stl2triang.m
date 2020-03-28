@@ -21,7 +21,9 @@ addpath(genpath('./GIBOK-toolbox'))
 % stl_folder = './test_geometries/JIA_CSm6';
 % stl_folder = './test_geometries/P0_MRI_smooth';
 % stl_folder = './test_geometries/GU';
+% stl_folder = './test_geometries/TLEM2
 dataset_folder = './test_geometries/VAKHUM_S6_CT';
+dataset_folder = './test_geometries/TLEM2';
 % folder where to store the resulting triangulations
 triang_folder = '';
 %---------------------------------------------------

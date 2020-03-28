@@ -7,9 +7,10 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6', 'TLEM2_CT', 'TLEM2_MRI'};
+dataset_set = {'TLEM2'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-n_d = 4;
+n_d = 1;
 %--------------------------------------
 
 % setup folders
