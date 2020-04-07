@@ -10,7 +10,7 @@ dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6', 'TLEM2_CT', 'TLEM2_MRI','VAKHUM_
 % dataset_set = {'TLEM2'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-n_d = 1;
+n_d = 3;
 %--------------------------------------
 
 % setup folders
@@ -53,5 +53,3 @@ rmpath(genpath('GIBOK-toolbox'));
 rmpath('autoMSK_functions');
 
 
-
-JCS.pelvis.ground_pelvis.V * (JCS.femur_r.hip_r.Origin' - JCS.pelvis.ground_pelvis.Origin)
