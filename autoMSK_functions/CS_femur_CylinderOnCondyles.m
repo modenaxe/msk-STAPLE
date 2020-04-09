@@ -60,14 +60,14 @@ X = cross(Y, Z);
 Zml_hip = cross(X, Y);
 JCS.hip_r.V = [X Y Zml_hip];
 JCS.hip_r.child_location = CS.CenterFH_Renault * dim_fact;
-JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
+JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
 JCS.hip_r.Origin = CS.CenterFH_Renault;
 
 % define knee joint
 Y_knee = cross(Z, X);
 JCS.knee_r.V = [X Y_knee Z];
 JCS.knee_r.parent_location = KneeCenter * dim_fact;
-JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = KneeCenter;
 
 % % debug plots

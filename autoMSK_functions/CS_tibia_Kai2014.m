@@ -104,7 +104,7 @@ CS.V = [X Y Z_cs];
 Ydp_knee  = cross(Z, X);
 JCS.knee_r.Origin = CenterEllipse;
 JCS.knee_r.V = [X Ydp_knee Z];
-JCS.knee_r.child_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 
 % the knee axis is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;

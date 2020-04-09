@@ -79,14 +79,14 @@ CS.V = [X Y Z];
 Zml_hip = cross(X, Y);
 JCS.hip_r.V  = [X Y Zml_hip];
 JCS.hip_r.child_location    = CS.CenterFH_Kai*dim_fact;
-JCS.hip_r.child_orientation = computeZXYAngleSeq(JCS.hip_r.V);
+JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
 JCS.hip_r.Origin = CS.CenterFH_Kai;
 
 % define the knee reference system
 Ydp_knee = cross(Z, X);
 JCS.knee_r.V  = [X Ydp_knee Z];
 JCS.knee_r.parent_location = CS.KneeCenter*dim_fact;
-JCS.knee_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = CS.KneeCenter;
 
 % landmark bone according to CS (only Origin and CS.V are used)

@@ -29,7 +29,7 @@ CS.patgroove_origin     = PaTGrooveCenter;
 Y_ptf = cross(Z, X);
 JCS.patellofemoral_r.V = [X Y_ptf Z];
 JCS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
-JCS.patellofemoral_r.parent_orientation = computeZXYAngleSeq(JCS.patellofemoral_r.V);
+JCS.patellofemoral_r.parent_orientation = computeXYZAngleSeq(JCS.patellofemoral_r.V);
 
 % debug plots
 if debug_plots == 1

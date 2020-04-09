@@ -20,13 +20,13 @@ X = cross(Y, Z);
 % define the knee reference system
 Ydp_knee  = cross(Z, X);
 JCS.knee_r.V = [X Ydp_knee Z];
-JCS.knee_r.child_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin        = KneeCenter;
 % the knee axis is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;
 
 % the talocrural joint is also defined by the talus fitting.
 % apart from the reference system -> NB: Z axis to switch with talus Z
-JCS.ankle_r.parent_orientation = computeZXYAngleSeq(JCS.knee_r.V);
+JCS.ankle_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 
 end

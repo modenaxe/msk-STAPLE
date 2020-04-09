@@ -9,8 +9,24 @@ TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
 ElmtsTlNvc = find(Talus.incenter*CS.X0 > (alt_TlNvc_start+0.25*TlNvc_length));
 TlNvc_AS = TriReduceMesh( Talus, ElmtsTlNvc );
 
-% 2.3 Fit a initial sphere on the TlNvc AS
-[Center_TlNvc, Radius_TlNvc,~] = sphereFit(TlNvc_AS.Points) ;
+% refine articular area
+% the area is very large (larger than AS) unless just the -Z points are considered
+% Translate the point by T
+Pts_T = bsxfun(@minus , TlNvc_AS.Points , CS.CenterVol');
+V = [CS.X0 CS.Y0 CS.Z0];
+Pts_T_R = Pts_T * V;
+ID_Pts_keep = find(Pts_T_R(:,3)<0);
+TlNvc_AS_refined = bsxfun(@plus ,Pts_T_R(ID_Pts_keep, :) * V' , CS.CenterVol');
+% 2.3 Fit sphere to the refine surface
+[Center_TlNvc, Radius_TlNvc,~] = sphereFit(TlNvc_AS_refined);
+
+% get an articular surface for the identified points (NB, some points will
+% be eliminated to ensure triangulation, so fitting TlNvc_AS.Points will
+% give SLIGHTLY different results).
+TlNvc_AS = TriReduceMesh( TlNvc_AS, [], ID_Pts_keep );
+% stlWrite('talo_nav_AS.stl', TlNvc_AS.ConnectivityList, TlNvc_AS.Points)
+% [Center_TlNvc, Radius_TlNvc,~] = sphereFit(TlNvc_AS.Points) ;
+
 
 %% 3. Identification of the talocalcaneal sphere
 % Assumptions :
@@ -72,7 +88,7 @@ TlCcnAS1 = TriCloseMesh(Talus,TlCcnAS1,2 * CoeffMorpho);
 
 % 3.3 Fit a sphere to approximate AS
 [Center_TlCcn, Radius_TlCcn, ErrorDist] = sphereFit(TlCcnAS1.incenter) ;
-
+% stlWrite('AS2.stl', TlCcnAS1.ConnectivityList, TlCcnAS1.Points)
 
 %% 4. Compute the "subtalar-axis"
 u_SubtalarAxis = normalizeV(Center_TlNvc-Center_TlCcn);
