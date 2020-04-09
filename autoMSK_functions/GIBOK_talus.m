@@ -85,13 +85,13 @@ CS.V = [CS.X0, CS.Z0, -CS.Y0];
 % define ankle joint
 JCS.ankle_r.V = CS.V_ankle_r;
 JCS.ankle_r.child_location = CS.ankle_cyl_centre * dim_fact;
-JCS.ankle_r.child_orientation = computeZXYAngleSeq(JCS.ankle_r.V);
+JCS.ankle_r.child_orientation = computeXYZAngleSeq(JCS.ankle_r.V);
 JCS.ankle_r.Origin = CS.ankle_cyl_centre;
 
 % define subtalar joint
 JCS.subtalar_r.V = CS.V_subtalar_r;
 JCS.subtalar_r.parent_location = CS.talocalc_centre * dim_fact;
-JCS.subtalar_r.parent_orientation = computeZXYAngleSeq(JCS.subtalar_r.V);
+JCS.subtalar_r.parent_orientation = computeXYZAngleSeq(JCS.subtalar_r.V);
 JCS.subtalar_r.Origin = CS.talocalc_centre;
 
 if result_plots == 1

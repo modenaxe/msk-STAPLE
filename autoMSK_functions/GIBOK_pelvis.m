@@ -136,10 +136,10 @@ CS.V = [X Y Z];
 JCS.ground_pelvis.V = CS.V;
 JCS.ground_pelvis.Origin = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeZXYAngleSeq(CS.V);
+JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 
 % define hip_r parent
-JCS.hip_r.parent_orientation        = computeZXYAngleSeq(CS.V);
+JCS.hip_r.parent_orientation        = computeXYZAngleSeq(CS.V);
 
 % debug plot
 if result_plots == 1
