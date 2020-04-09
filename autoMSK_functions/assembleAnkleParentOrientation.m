@@ -7,6 +7,6 @@ Ytemp = TibiaCS.knee_r.V(:,2);
 Ypar = normalizeV(Ytemp - Zpar* dot(Zpar,Ytemp)/norm(Zpar));
 Xpar  = normalizeV(cross(Ytemp, Zpar));
 TibiaCS.ankle_r.V = [Xpar Ypar Zpar];
-TibiaCS.ankle_r.parent_orientation = computeZXYAngleSeq(TibiaCS.ankle_r.V);
+TibiaCS.ankle_r.parent_orientation = computeXYZAngleSeq(TibiaCS.ankle_r.V);
 % disp(TibiaCS.ankle_r.parent_orientation)
 end
