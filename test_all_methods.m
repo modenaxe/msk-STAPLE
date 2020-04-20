@@ -29,7 +29,7 @@ if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
 else; dim_fact = 1;     bone_density = 1420;%kg/m3
 end
 
-for nd =8;%1:6
+for nd =2;%1:6
     % looking for triangulation folder
     dataset = dataset_set{nd};
     tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
