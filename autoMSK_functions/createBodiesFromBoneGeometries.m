@@ -1,3 +1,13 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
+% This script should be run after a dataset of stl geometries has been
+% refined and has the purposes of reducing the size of files for storage
+% and distribution, e.g. in GitHub.
+% ----------------------------------------------------------------------- %
 function osimModel = createBodiesFromBoneGeometries(geom_set, vis_geom_folder, vis_geom_format, bone_density, in_mm)
 
 % add OpenSim libraries

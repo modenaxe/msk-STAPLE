@@ -1,3 +1,49 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2019 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
+% This script should be run after a dataset of stl geometries has been
+% refined and has the purposes of reducing the size of files for storage
+% and distribution, e.g. in GitHub.
+% ----------------------------------------------------------------------- %
+% Scripts that takes a set of triangulated geometries as input and computes
+% the joint parameters for the lower limb joints based on those geometries.
+% -----------------
+% IMPORTANT NOTES |
+%--------------------------------------------------------------------------
+% 1) This function does not produce a complete set of joint parameters but
+% only those available through geometrical analyses, that are:
+%       * from pelvis: ground_pelvis_child
+%       * from femur : hip_child  // knee_parent
+%       * from tibia : knee_child** 
+%       * from talus : ankle_child // subtalar parent
+% other functions then complete the information required to generate a MSK
+% model, e.g. use ankle child location and ankle axis to define an ankle
+% parent reference system etc.
+% ** note that the tibia geometry was not used to define the knee child 
+% anatomical coord system in previous approaches, e.g. Modenese et al. JB 2018 
+% 2) Bony landmarks are identified on all bones
+% 3) Body-fixed Cartesian coordinate system are defined but not employed in
+% the construction of the models.
+% -------------
+% DESIGN NOTE |
+%--------------------------------------------------------------------------
+% I thought about the structure of the JCS output structure variable.
+% Currently it is:
+%                   JCS.body_name.joint_name.parameter
+% and could have been:
+%                   JCS.joint_name.parameter
+% I think the first option is better and will allow for better structures to
+% save all model info in one structure, e.g.
+%       Model.BodyName.(all_CS_fields)
+%       Model.BodyName.(all_joints)
+%       Model.BodyName.(all_BL)
+% so that everything that has been processed here is immediately available
+%--------------------------------------------------------------------------
+
+
 function [JCS, BL, CS] = analyzeBoneGeometries(geom_set, method_fem, method_tibia, in_mm)
 
 % setting defaults
