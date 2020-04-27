@@ -6,11 +6,10 @@ addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
-auto_models_folder = './validation/automatic_models';
+auto_models_folder = './validation/opensim_models';
 dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_MRI', 'TLEM2_CT'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-% n_d = 1;
 %--------------------------------------
 
 % create model folder if required
@@ -48,8 +47,9 @@ addBoneLandmarksAsMarkers(osimModel, BL);
 osimModel.finalizeConnections();
 
 % print
+osimModel.set_credits('Luca Modenese - Toolbox to generate MSK models automatically.')
 osimModel.setName([dataset_set{n_d},'_auto']);
-osimModel.print(fullfile(auto_models_folder, [model_name, '_auto.osim']));
+osimModel.print(fullfile(auto_models_folder, ['auto_',model_name, '.osim']));
 osimModel.disownAllComponents();
 
 disp(['Model generated in ', num2str(toc)]);
