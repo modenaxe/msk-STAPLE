@@ -6,12 +6,17 @@ addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
-dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6', 'TLEM2_CT'};
+auto_models_folder = './validation/automatic_models';
+dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_MRI', 'TLEM2_CT'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-n_d = 1;
+% n_d = 1;
 %--------------------------------------
 
+% create model folder if required
+if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
+
+for n_d = 1:4
 % setup folders
 model_name = dataset_set{n_d};
 main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
@@ -19,6 +24,7 @@ tri_folder = fullfile(main_ds_folder,'stl');
 vis_geom_folder=fullfile(main_ds_folder,'vtp');
 
 tic
+
 for nb = 1:numel(body_list)
     cur_body_name = body_list{nb};
     cur_geom_file = fullfile(tri_folder, cur_body_name);
@@ -43,10 +49,12 @@ osimModel.finalizeConnections();
 
 % print
 osimModel.setName([dataset_set{n_d},'_auto']);
-osimModel.print([num2str(n_d),'_',model_name, '_auto.osim']);
+osimModel.print(fullfile(auto_models_folder, [model_name, '_auto.osim']));
 osimModel.disownAllComponents();
 
 disp(['Model generated in ', num2str(toc)]);
+
+end
 
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
