@@ -27,7 +27,7 @@ method = 'auto2020';
 % create model folder if required
 if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
-for n_d = 4
+for n_d = 1
     % setup folders
     model_name = dataset_set{n_d};
     main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
@@ -43,10 +43,10 @@ for n_d = 4
     
     %---- PELVIS -----
     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum);
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = CS_pelvis_Kai2014(geom_set.pelvis);
+    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
     
     %---- FEMUR -----
-%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
@@ -66,9 +66,10 @@ for n_d = 4
     JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
     %-----------------
     clear JCS
-        close all
+    close all
 end
 
 % remove paths
 rmpath(genpath('GIBOK-toolbox'));
+rmpath(genpath('FemPatTibACS/KneeACS/Tools'));
 rmpath('autoMSK_functions');
