@@ -1,0 +1,17 @@
+PROCESSED DATASETS AND TIME TO GENERATE MODELS
+
+1) 'LHDL_CT'
+STL geometries imported in 8.2543 s
+Model generated in 17.9675
+
+2) 'P0_MRI'
+STL geometries imported in 2.3703 s
+Model generated in 8.1509
+
+3) 'JIA_CSm6'
+STL geometries imported in 13.9728 s
+Model generated in 26.5861
+
+4) 'TLEM2_CT'
+STL geometries imported in 17.7663 s
+Model generated in 27.0828
