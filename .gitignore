@@ -15,8 +15,11 @@
 __*
 /_old
 test_geometries/
-docs/
-PatellaACS
+validation/*.xlsx
+validation/opensim_models/*_Geometries/
+validation/*_manual_*/
+validation/TLEM2_Carbone*/
+
 
 *.zip
 
