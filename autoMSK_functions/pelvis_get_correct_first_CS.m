@@ -1,7 +1,8 @@
 function [ BL, RotISB2Glob, CenterVol, InertiaMatrix, D] = pelvis_get_correct_first_CS(Pelvis, debug_plots)
-% Function to test putting back together a correct orientation of the femur
+% Function to test putting back together a correct orientation of the
+% pelvis
 % Inputs :
-%           Pelvis : A triangulation of a complete femur
+%           Pelvis : A triangulation of a complete pelvis
 %           debug_plots : A boolean to display plots useful for debugging
 %
 % Output :
@@ -67,16 +68,16 @@ for d = -Alt
     Centroids(it, : ) = centroid_temp/Area(it);
 end
 
-[~, i_maxArea] = max(Area);
-
-if i_maxArea > 0.55*it
-    Y0 = Y0;
-elseif i_maxArea < 0.45*it
-    Y0 = -Y0;
-else
-    warning("Identification of the initial distal to proximal axis of "+...
-    "the tibia went wrong. Check the tibia geometry")
-end
+% % @JB I think this comes from some other script
+% [~, i_maxArea] = max(Area);
+% if i_maxArea > 0.55*it
+%     Y0 = Y0;
+% elseif i_maxArea < 0.45*it
+%     Y0 = -Y0;
+% else
+%     warning("Identification of the initial distal to proximal axis of "+...
+%     "the tibia went wrong. Check the tibia geometry")
+% end
 
 
 %% Get the Post-Ant direction by finding the largest triangle of the pelvis
