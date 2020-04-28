@@ -1,3 +1,9 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese, April 2018                                  %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 clear; clc; close all
 tic
 % add useful scripts

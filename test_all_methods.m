@@ -1,62 +1,57 @@
 %-------------------------------------------------------------------------%
-% Copyright (c) 2019 Modenese L.                                          %
+% Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
 %    Author:   Luca Modenese, April 2018                                  %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-clearvars;  close all
-
+% 
+%          SCRIPT USED TO TEST THAT ALL METHODS ARE WORKING
+%
+% ----------------------------------------------------------------------- %
+clear; clc; close all
+tic
 % add useful scripts
 addpath(genpath('GIBOK-toolbox'));
 addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
-import org.opensim.modeling.*
 
-%--------------------------------
-% SETTINGS
-%--------------------------------
-bone_geom_folder = 'test_geometries';
-ACs_folder = './ACs';
-osim_folder = '';
-dataset_set = {'LHDL_CT', 'P0_MRI', 'JIA_CSm6', 'TLEM2_CT', 'TLEM2_MRI','VAKHUM_S6_CT', 'TLEM2','GC4'};
-body_list = {'pelvis','femur_r','tibia_r', 'talus_r', 'calcn_r','patella_r'};
-triGeom_file_list = {'pelvis_no_sacrum','femur_r','tibia_r', 'talus_r','calcn_r','patella_r'};
+%--------------------------------------
+auto_models_folder = './validation/opensim_models';
+dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-%--------------------------------
+% method = 'Modenese2018';%
+method = 'auto2020';
+%--------------------------------------
 
-% adjust dimensional factors based on mm / m scales
-if in_mm == 1;     dim_fact = 0.001;     bone_density = 0.000001420;%kg/mm3
-else; dim_fact = 1;     bone_density = 1420;%kg/m3
-end
+% create model folder if required
+if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
-for nd =2;%1:6
-    % looking for triangulation folder
-    dataset = dataset_set{nd};
-    tri_dir    = fullfile(bone_geom_folder,dataset,'tri');
-    
-    for nb = 1:length(body_list)
-        % update variables
+for n_d = 4
+    % setup folders
+    model_name = dataset_set{n_d};
+    main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
+    % tri_folder = fullfile(main_ds_folder,'stl');
+    tri_folder = fullfile(main_ds_folder,'tri');
+    vis_geom_folder=fullfile(main_ds_folder,'vtp');
+    for nb = 1:numel(body_list)
         cur_body_name = body_list{nb};
-        cur_geom_file = fullfile(tri_dir, triGeom_file_list{nb});
-        % load mesh
-        if exist([cur_geom_file,'.mat'],'file')~=2; disp([cur_body_name,' geometry not available.']);continue; end
-        cur_geom = load_mesh(cur_geom_file);
-        % create the triangulation-variable
-        geom_set.(cur_body_name) = cur_geom;
+        cur_geom_file = fullfile(tri_folder, cur_body_name);
+        geom_set.(cur_body_name) = load_mesh(cur_geom_file);
     end
-    
-%     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
+    %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis);
+    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = CS_pelvis_Kai2014(geom_set.pelvis);
     
     %---- FEMUR -----
-    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
-%     
+    %
     %---- TIBIA -----
     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
@@ -65,13 +60,13 @@ for nd =2;%1:6
     [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
     
     %---- TALUS/ANKLE -----
-     [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+    [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
     
     %---- CALCANEUS/SUBTALAR -----
-   JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
+    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
     %-----------------
     clear JCS
-%     close all
+        close all
 end
 
 % remove paths
