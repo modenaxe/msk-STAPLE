@@ -15,11 +15,12 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = GIBOK_pelvis(Pelvis, result_plots,in_mm)
+function [ CS, JCS, PelvisBL] = GIBOK_pelvis(Pelvis, result_plots, debug_plots, label_switch, in_mm)
 
 if nargin<2; result_plots=1; end
-% check units
-if nargin<3;     in_mm = 1;  end
+if nargin<3;     debug_plots = 0;  end
+if nargin<4;     label_switch = 1;  end
+if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % guess of direction of axes on medical images (not always correct)
@@ -29,74 +30,13 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % translating this direction in ISB reference system:
 % -------------------------------------------------------------------------
 % Modification of initial guess of CS direction [JB]
-[BL, RotISB2Glob, CenterVol, InertiaMatrix ] = pelvis_get_correct_first_CS(Pelvis);
-% x_pelvis_in_global = Xpig';
-% y_pelvis_in_global = Ypig';
-% z_pelvis_in_global = Zpig';
-% 
-% x_pelvis_in_global = [0 -1 0];
-% y_pelvis_in_global = [0 0 1];
-% z_pelvis_in_global = [-1 0 0];
-% 
-% % building the rot mat from global to pelvis ISB (roughly)
-% % RGlob2Pelvis = [x_pelvis_in_global; y_pelvis_in_global; z_pelvis_in_global];
-% 
-% % Get eigen vectors V_all and volumetric center
-% [eigVctrs, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
-% 
-% % [ PelvisInertia, ~ , ~ ] = TriChangeCS( Pelvis);
-% 
-% % clarifying that this rotation goes inertial to global
-% RInert2Glob = eigVctrs;
-% 
-% % aligning pelvis ref system to ISB one provided
-% [~, ind_x_pelvis] = max(abs(RInert2Glob'*x_pelvis_in_global'));
-% [~, ind_y_pelvis] = max(abs(RInert2Glob'*y_pelvis_in_global'));
-% [~, ind_z_pelvis] = max(abs(RInert2Glob'*z_pelvis_in_global'));
-% 
-% % signs of axes for the largest component
-% sign_x_pelvis = sign(RInert2Glob'*x_pelvis_in_global');
-% sign_y_pelvis = sign(RInert2Glob'*y_pelvis_in_global');
-% sign_z_pelvis = sign(RInert2Glob'*z_pelvis_in_global');
-% sign_x_pelvis = sign_x_pelvis(ind_x_pelvis);
-% sign_y_pelvis = sign_y_pelvis(ind_y_pelvis);
-% sign_z_pelvis = sign_z_pelvis(ind_z_pelvis);
-% 
-% RotISB2Glob = [sign_x_pelvis*eigVctrs(:, ind_x_pelvis),...  
-%                sign_y_pelvis*eigVctrs(:, ind_y_pelvis),...
-%                sign_z_pelvis*eigVctrs(:, ind_z_pelvis)];
-%            
-% % RInert2ISB = RInert2Glob*RotISB2Glob';
-% %
-% % -------------------------------------------------------------------------
-% 
-% % generating a triangulated pelvis with coordinate system ISB (see comment
-% % in function). Pseudo because there are still possible errors (see check
-% % below).
-% [ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotISB2Glob, CenterVol);
-% 
-% % In ISB reference system, points at the right have positive z coordinates
-% % max z should be ASIS
-% R_side_ind = PelvisPseudoISB.Points(:,3)>0;
-% [~, RASIS_ind] = max(PelvisPseudoISB.Points(:,1).*R_side_ind);
-% [~, LASIS_ind] = max(PelvisPseudoISB.Points(:,1).*~R_side_ind);
-% [~, RPSIS_ind] = min(PelvisPseudoISB.Points(:,1).*R_side_ind);
-% [~, LPSIS_ind] = min(PelvisPseudoISB.Points(:,1).*~R_side_ind);
-% 
-% % extract points on bone
-% RASIS = [Pelvis.Points(RASIS_ind,1),Pelvis.Points(RASIS_ind,2), Pelvis.Points(RASIS_ind,3)];
-% LASIS = [Pelvis.Points(LASIS_ind,1),Pelvis.Points(LASIS_ind,2), Pelvis.Points(LASIS_ind,3)];
-% RPSIS = [Pelvis.Points(RPSIS_ind,1),Pelvis.Points(RPSIS_ind,2), Pelvis.Points(RPSIS_ind,3)];
-% LPSIS = [Pelvis.Points(LPSIS_ind,1),Pelvis.Points(LPSIS_ind,2), Pelvis.Points(LPSIS_ind,3)];
-% 
-% %
-% % -------------------------------------------------------------------------
-% extract points on bone in CT/MRI Reference Frame
-RASIS = BL.RASIS;
-LASIS = BL.LASIS;
-RPSIS = BL.RPSIS;
-LPSIS = BL.LPSIS;
+[PelvisBL, ~, CenterVol, InertiaMatrix ] = pelvis_get_correct_first_CS(Pelvis);
 
+% extract points on bone in CT/MRI Reference Frame
+RASIS = PelvisBL.RASIS;
+LASIS = PelvisBL.LASIS;
+RPSIS = PelvisBL.RPSIS;
+LPSIS = PelvisBL.LPSIS;
 
 % check if bone landmarks are correctly identified or axes were incorrect
 if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
@@ -141,21 +81,29 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 % define hip_r parent
 JCS.hip_r.parent_orientation        = computeXYZAngleSeq(CS.V);
 
+% Export bone landmarks
+% PelvisBL points are defined from the initialization function, see above
+
 % debug plot
 if result_plots == 1
     PlotTriangLight(Pelvis, CS, 1); hold on
     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
-    plotDot(RASIS, 'k', 7)
-    plotDot(LASIS, 'k', 7)
-    plotDot(LPSIS, 'k', 7)
-    plotDot(RPSIS, 'k', 7)
+    
+    % plot markers
+    BLfields = fields(PelvisBL);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(PelvisBL.(cur_name), 'k', 7)
+        if label_switch==1
+            text(PelvisBL.(cur_name)(1),...
+                PelvisBL.(cur_name)(2),...
+                PelvisBL.(cur_name)(3),...
+                ['  ',cur_name],...
+                'VerticalAlignment', 'Baseline',...
+                'FontSize',8);
+        end
+    end
 end
-
-% Export bone landmarks
-PelvisBL.RASIS     = RASIS; % in Pelvis ref
-PelvisBL.LASIS     = LASIS; % in Pelvis ref
-PelvisBL.RPSIS     = RPSIS; % in Pelvis ref
-PelvisBL.LPSIS     = LPSIS; % in Pelvis ref
 
 end
