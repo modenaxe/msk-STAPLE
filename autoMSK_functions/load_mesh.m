@@ -30,14 +30,14 @@ if ischar(a_tri_mesh_file)
         kwd = 'STL';
         % if matlab file just open it
     elseif strcmp(ext,'.mat')
-        load(a_tri_mesh_file);
+        geom = load(a_tri_mesh_file);
         str_name = fields(geom);
         tri_geom = geom.(str_name{1});
         kwd = 'MATLAB';
         % if does not have extension try to open as MATLAB file
     elseif isempty(ext)
         try
-            load(a_tri_mesh_file);
+            geom = load(a_tri_mesh_file);
             str_name = fields(geom);
             tri_geom = geom.(str_name{1});
             kwd = 'MATLAB';
