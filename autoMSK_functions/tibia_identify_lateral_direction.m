@@ -1,4 +1,10 @@
-    function [U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0)
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
+function [U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0)
 % slice at centroid of distal tibia
 [ ~, CenterVolTibDist] = TriInertiaPpties( DistTib );
 d = CenterVolTibDist'*Z0;

@@ -16,6 +16,8 @@ if max(size(TrSplitted))==2
     else
         ProxTibNoFib = TrSplitted(2).Tr;
     end
+elseif max(size(TrSplitted))==1
+    ProxTibNoFib = ProxTib;
 elseif max(size(TrSplitted))>2
     warndlg({['Proximal Tibia in ',funcNameForWarning,' consists of >2 triangulations. Please check!'],...
         'Proceeding with current geometry...'});

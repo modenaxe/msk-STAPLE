@@ -21,7 +21,7 @@ results_plots = 1;
 
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
-for nb = 1:numel(bone_set)
+for nb = 2%1:numel(bone_set)
     cur_bone = bone_set{nb};
     
     for n_d = 1:numel(dataset_set)    
@@ -52,7 +52,7 @@ for nb = 1:numel(bone_set)
                 [CS3, JCS3] = GIBOK_femur(bone_triang, [], 'spheres', results_plots);
                 [CS4, JCS4] = GIBOK_femur(bone_triang, [], 'ellipsoids', results_plots);
                 [CS5, JCS5] = GIBOK_femur(bone_triang, [], 'cylinder', results_plots);
-                table_head = {'KneeJointCentre_femur_mm', 'Dist_v', 'Dist_norm_mm' 'KneeJointAxis_femur', 'Ang_diff_deg'};
+                table_head = {'KneeJointCentre_femur_dist_v_mm', 'Dist_norm_mm' 'KneeJointAxis_femur', 'Ang_diff_deg'};
                 methods_list = {'Miranda2010','Kai2014','GIBOK-Sphere','GIBOK-Ellipsoids','GIBOK-Cylinder'};
             case 'tibia_r'
                 try
@@ -65,7 +65,7 @@ for nb = 1:numel(bone_set)
                 [CS3, JCS3] = GIBOK_tibia(bone_triang, [], 'plateau', results_plots);
                 [CS4, JCS4] = GIBOK_tibia(bone_triang, [], 'ellipse', results_plots);
                 [CS5, JCS5] = GIBOK_tibia(bone_triang, [], 'centroids', results_plots);
-                table_head = {'KneeJointCentre_tibia_mm', 'Dist_v', 'Dist_norm_mm' 'KneeJointAxis_tibia', 'Ang_diff_deg'};
+                table_head = {'KneeJointCentre_tibia_v_mm', 'Dist_norm_mm' 'KneeJointAxis_tibia', 'Ang_diff_deg'};
                 methods_list = {'Miranda2010','Kai2014','GIBOK-Plateau','GIBOK-Ellipse','GIBOK-Centroids'};
 %             case 'patella_r'
 %                 [CS1, JCS1] = Rainbow2013_buildtACS(bone_triang);
@@ -89,11 +89,14 @@ for nb = 1:numel(bone_set)
                                 JCS4.knee_r.V(:,3)';
                                 JCS5.knee_r.V(:,3)'];
         
+
         % compute angular deviations
         switch cur_bone
             case 'femur_r'
+                % cylinder fit chosen as reference - easy to chance
                 ref_JCS = JCS5;
             case 'tibia_r'
+                % Kai2013 chosen as reference - easy to chance
                 ref_JCS = JCS2;
         end
         % compute metrics (distance vectors in ref femur/tibia coord frame)
@@ -101,17 +104,27 @@ for nb = 1:numel(bone_set)
         orig_dist = sqrt(sum(orig_diff.^2, 2));
         ang_diff = acosd(sqrt(joint_axis*ref_JCS.knee_r.V(:,3)));
         
-        % TODO express distances in femoral ref frame
+        % second option
+        row_ind = n_d:numel(dataset_set):numel(methods_list)*numel(dataset_set);
+        orig_diff_opt2(row_ind,:) = orig_diff;
+        orig_dist_opt2(row_ind,:) = orig_dist;
+        ang_diff_opt2(row_ind,:) = ang_diff;
         
-        
-        % table with results
-        res_table = table(joint_centres, orig_diff, orig_dist, joint_axis, ang_diff, ...
+        % table with results (one per method)
+        res_table = table(orig_diff, orig_dist, joint_axis, ang_diff, ...
                           'VariableNames',table_head);
         res_table.Properties.RowNames = methods_list;
-        
-%         writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
+        writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
         
         clear JCS1 JCS2 JCS3 JCS4 JCS5
+        
+        close all
     end
+        %
+        res_table2 = table(orig_diff_opt2, orig_dist_opt2, ang_diff_opt2, ...
+                          'VariableNames',table_head([1,2,4]));
+        writetable(res_table2,fullfile(results_folder, [cur_bone,'_summary_of_method.xlsx']));
+        
+        clear orig_diff_opt2 orig_dist_opt2 ang_diff_opt2
 end
 
