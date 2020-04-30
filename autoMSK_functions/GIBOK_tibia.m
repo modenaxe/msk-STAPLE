@@ -24,16 +24,8 @@ else
     Tibia = TriUnite(DistTib, ProxTib);
 end
 
-% Get the mean edge length of the triangles composing the tibia
-% This is necessary because the functions were originally developed for
-% triangulation with constant mean edge lengths of 0.5 mm
-PptiesTibia = TriMesh2DProperties( Tibia );
-
-% Assume triangles are equilaterals
-meanEdgeLength = sqrt( 4/sqrt(3) * PptiesTibia.TotalArea / Tibia.size(1) );
-
-% Get the coefficient for morphology operations
-CoeffMorpho = 0.5 / meanEdgeLength ;
+% Compute the coefficient for morphology operations
+CoeffMorpho = computeTriCoeffMorpho(Tibia);
 
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Tibia );
@@ -68,8 +60,8 @@ plane_thick = 0.005 / dim_fact;
 [oLSP_AAS, nAAS] = lsplane(AnkleArtSurf.Points, Z0);
 Curves = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 
-% this gets the larger area (allows tibia to be in the geometry)
-[Curve, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);
+% this gets the larger area (allows fibula to be in the geometry)
+[TibiaDistSection, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);
 
 if debug_plots == 1
     quickPlotTriang(DistTib,[],1)
@@ -80,11 +72,11 @@ if debug_plots == 1
 end
 
 % ankle centre (considers only tibia)
-Centre = PlanPolygonCentroid3D( Curve.Pts );
+Centre = PlanPolygonCentroid3D( TibiaDistSection.Pts );
 CS.AnkleCenter = Centre - plane_thick * nAAS';
 % check ankle centre section
 if debug_plots == 1
-    plot3(Curve.Pts(:,1), Curve.Pts(:,2), Curve.Pts(:,3)); hold on; axis equal
+    plot3(TibiaDistSection.Pts(:,1), TibiaDistSection.Pts(:,2), TibiaDistSection.Pts(:,3)); hold on; axis equal
     plot3(CS.AnkleCenter(1),CS.AnkleCenter(2),CS.AnkleCenter(3),'o')
 end
 
@@ -104,6 +96,9 @@ if debug_plots == 1;   plotDot(MostDistalMedialPt,'k',3) ; end
 CS.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
 
 %% Proximal Tibia
+% remove fibula from prox tibia
+ProxTib = removeFibulaFromProxTibia(ProxTib, 'GIBOK_tibia.m');
+
 % isolate tibia proximal epiphysis 
 EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 
@@ -139,7 +134,7 @@ EpiTibAS = TriOpenMesh(EpiTib,EpiTibAS, 15*CoeffMorpho);
 EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 
 %==================
-% ITERATION 2 & 3 
+% ITERATION 2 ( & 3 )
 %==================
 CS.Y0_GIBOK  = CS.Y0*-1;
 [EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
