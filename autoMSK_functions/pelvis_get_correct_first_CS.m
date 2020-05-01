@@ -27,7 +27,7 @@ end
 % inertial axes
 [V_all, CenterVol, ~, D ] =  TriInertiaPpties(Pelvis);
 
-% smaller moment of inertia is prox/dist axis
+% smaller moment of inertia is prox/dist axis, not sure about direction yet
 Z0 = V_all(:,1);
 
 %% Get convexHull
@@ -49,18 +49,28 @@ PelvisConvHull = triangulation(Kold2new(K), Pts);
 LargestTriangle.Pts = PelvisConvHull.Points(...
                                 PelvisConvHull.ConnectivityList(I,:) , :);
 LargestTriangle = triangulation([1 2 3], LargestTriangle.Pts);
-% vector pointing forward is X
-[~, ind_X] = max(V_all'*LargestTriangle.faceNormal');
-X0 = V_all(:,ind_X);
 
+% vector pointing forward is X
+[~, ind_X] = max(abs(V_all'*LargestTriangle.faceNormal'));
+X0 = V_all(:,ind_X);
 % Reorient X0 to be posterior to anterior
-X0 = sign(LargestTriangle.faceNormal*X0)*X0;
+anterior_v = LargestTriangle.incenter-CenterVol';
+X0 = sign(anterior_v*X0)*X0;
 
 % Y0 is just normal to X0 and Y0
+Y0_temp = normalizeV(cross(Z0, X0));
+[~, ind_medLat] = max(abs(Y0_temp));
+[~, ind_P1] = max(Pts(:,ind_medLat));
+[~, ind_P2] = min(Pts(:,ind_medLat));
+P3 = (Pts(ind_P1,:)+Pts(ind_P2,:))/2;
+upw = P3-CenterVol';
+Z0 = normalizeV(sign(upw*Z0)*Z0);
+
+% recompute Y0
 Y0 = normalizeV(cross(Z0, X0));
 
+
 %% Get the final initial CS
-Z0 = cross(X0, Y0);
 RotPseudoISB2Glob = [X0, Y0, Z0];
 
 %% Debug Plots
