@@ -53,22 +53,32 @@ LargestTriangle = triangulation([1 2 3], LargestTriangle.Pts);
 % vector pointing forward is X
 [~, ind_X] = max(abs(V_all'*LargestTriangle.faceNormal'));
 X0 = V_all(:,ind_X);
+
 % Reorient X0 to be posterior to anterior
 anterior_v = LargestTriangle.incenter-CenterVol';
 X0 = sign(anterior_v*X0)*X0;
 
-% Y0 is just normal to X0 and Y0
+% Y0 is just normal to X0 and Y0 (direction non inportant for now)
 Y0_temp = normalizeV(cross(Z0, X0));
-[~, ind_medLat] = max(abs(Y0_temp));
-[~, ind_P1] = max(Pts(:,ind_medLat));
-[~, ind_P2] = min(Pts(:,ind_medLat));
-P3 = (Pts(ind_P1,:)+Pts(ind_P2,:))/2;
-upw = P3-CenterVol';
-Z0 = normalizeV(sign(upw*Z0)*Z0);
+[ PelvisInertia, ~ , ~ ] = TriChangeCS(Pelvis, [X0, Y0_temp, Z0]', CenterVol);
+% [~, ind_medLat] = max(abs(Y0_temp));
+[~, ind_P1] = max(PelvisInertia.Points(:,2));
+[~, ind_P2] = min(PelvisInertia.Points(:,2));
+
+% these are the most external points in the iliac wings
+P1 = Pelvis.Points(ind_P1,:);
+P2 = Pelvis.Points(ind_P2,:);
+% midpoint
+P3 = (P1+P2)/2;
+
+%upward vector
+upw = normalizeV(P3-CenterVol');
+% vector pointing upward is Z
+[~, ind_Z] = max(abs(V_all'*upw));
+Z0 = V_all(:,ind_Z);
 
 % recompute Y0
 Y0 = normalizeV(cross(Z0, X0));
-
 
 %% Get the final initial CS
 RotPseudoISB2Glob = [X0, Y0, Z0];
@@ -87,6 +97,9 @@ if debug_plots
         'edgecolor',[.3 .3 .3], 'edgealpha', 0.2);
     trisurf(LargestTriangle,'facealpha',0.8,'facecolor','r',...
         'edgecolor','k');
+    plotDot(P1, 'k', 7);
+    plotDot(P2, 'k', 7);
+    plotDot(P3, 'k', 7);
     % handle lighting of objects
     light('Position',CenterVol + 500*V_all(:,2) + 500*V_all(:,3),'Style','local')
     light('Position',CenterVol + 500*V_all(:,2) -  500*V_all(:,3),'Style','local')
