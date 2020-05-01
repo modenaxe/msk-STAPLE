@@ -30,13 +30,41 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % translating this direction in ISB reference system:
 % -------------------------------------------------------------------------
 % Modification of initial guess of CS direction [JB]
-[PelvisBL, ~, CenterVol, InertiaMatrix ] = pelvis_get_correct_first_CS(Pelvis);
+[RotPseudoISB2Glob, LargestTriangle] = pelvis_get_correct_first_CS(Pelvis, debug_plots);
 
-% extract points on bone in CT/MRI Reference Frame
-RASIS = PelvisBL.RASIS;
-LASIS = PelvisBL.LASIS;
-RPSIS = PelvisBL.RPSIS;
-LPSIS = PelvisBL.LPSIS;
+% inertial axes
+[V_all, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
+
+% get the bony landmarks
+% Along an axis oriented superiorly and a bit on the right we find
+% projected on this axis succesively RASIS, LASIS then SYMP
+U_SupSupRight = normalizeV(4*RotPseudoISB2Glob(:,2)+RotPseudoISB2Glob(:,3));
+[~,I] = sort(LargestTriangle.Points*U_SupSupRight);
+SYMP = LargestTriangle.Points(I(1), : );
+LASIS = LargestTriangle.Points(I(2), : );
+RASIS = LargestTriangle.Points(I(3), : );
+
+%% Get the RPSIS and LPSIS raw BoneLandmarks (BL)
+[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotPseudoISB2Glob, CenterVol);
+
+% Get the Posterior, Superior, Right eigth of the pelvis
+Nodes_RPSIS = find( PelvisPseudoISB.Points(:,1) < 0 & ...
+    PelvisPseudoISB.Points(:,2) > 0 & ...
+    PelvisPseudoISB.Points(:,3) > 0 ) ;
+Pelvis_RPSIS = TriReduceMesh(Pelvis, [], Nodes_RPSIS);
+% Find the most posterior points in this eigth
+[~,Imin] = min(Pelvis_RPSIS.Points*RotPseudoISB2Glob(:,1));
+RPSIS = Pelvis_RPSIS.Points(Imin,:);
+
+% Get the Posterior, Superior, Left eigth of the pelvis
+Nodes_LPSIS = find( PelvisPseudoISB.Points(:,1) < 0 & ...
+    PelvisPseudoISB.Points(:,2) > 0 & ...
+    PelvisPseudoISB.Points(:,3) < 0 ) ;
+Pelvis_LPSIS = TriReduceMesh(Pelvis, [], Nodes_LPSIS);
+% Find the most posterior points in this eigth
+[~,Imin] = min(Pelvis_LPSIS.Points*RotPseudoISB2Glob(:,1));
+LPSIS = Pelvis_LPSIS.Points(Imin,:);
+
 
 % check if bone landmarks are correctly identified or axes were incorrect
 if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
@@ -56,21 +84,14 @@ if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
     RPSIS = RPSIS_temp;
 end
 
-% defining the ref system (global)
-PelvisOr = (RASIS+LASIS)'/2.0;
-Z = normalizeV(RASIS-LASIS);
-temp_X = ((RASIS+LASIS)/2.0) - ((RPSIS+LPSIS)/2.0);
-pseudo_X = temp_X/norm(temp_X);
-Y = normalizeV(cross(Z, pseudo_X));
-X = normalizeV(cross(Y, Z));
-
 % segment reference system
 CS.CenterVol = CenterVol;
+CS.Origin = CS.CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
+
 % ISB reference system
-CS.Origin = CenterVol;
-% CS.X = X; CS.Y = Y; CS.Z = Z;
-CS.V = [X Y Z];
+PelvisOr = (RASIS+LASIS)'/2.0;
+CS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % storing joint details
 JCS.ground_pelvis.V = CS.V;
@@ -82,14 +103,18 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 JCS.hip_r.parent_orientation        = computeXYZAngleSeq(CS.V);
 
 % Export bone landmarks
-% PelvisBL points are defined from the initialization function, see above
+PelvisBL.RASIS     = RASIS; 
+PelvisBL.LASIS     = LASIS; 
+PelvisBL.RPSIS     = RPSIS; 
+PelvisBL.LPSIS     = LPSIS; 
 
 % debug plot
 if result_plots == 1
     PlotTriangLight(Pelvis, CS, 1); hold on
     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
-    
+    trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
+        'edgecolor','k');
     % plot markers
     BLfields = fields(PelvisBL);
     for nL = 1:numel(BLfields)
