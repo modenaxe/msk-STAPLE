@@ -28,6 +28,7 @@ end
 [V_all, CenterVol, ~, D ] =  TriInertiaPpties(Pelvis);
 
 % smaller moment of inertia is prox/dist axis, not sure about direction yet
+% Z0_GIBOC
 Z0 = V_all(:,1);
 
 %% Get convexHull
@@ -54,7 +55,7 @@ LargestTriangle = triangulation([1 2 3], LargestTriangle.Pts);
 [~, ind_X] = max(abs(V_all'*LargestTriangle.faceNormal'));
 X0 = V_all(:,ind_X);
 
-% Reorient X0 to be posterior to anterior
+% Reorient X0 to point posterior to anterior
 anterior_v = LargestTriangle.incenter-CenterVol';
 X0 = sign(anterior_v*X0)*X0;
 
@@ -68,35 +69,37 @@ Y0_temp = normalizeV(cross(Z0, X0));
 % these are the most external points in the iliac wings
 P1 = Pelvis.Points(ind_P1,:);
 P2 = Pelvis.Points(ind_P2,:);
-% midpoint
-P3 = (P1+P2)/2;
+P3 = (P1+P2)/2;% midpoint
 
 %upward vector
 upw = normalizeV(P3-CenterVol');
 % vector pointing upward is Z
 [~, ind_Z] = max(abs(V_all'*upw));
 Z0 = V_all(:,ind_Z);
+Z0 = sign(upw'*Z0)*Z0;
 
-% recompute Y0
-Y0 = normalizeV(cross(Z0, X0));
+% Until now I have used GIBOC convention, now I build the ISB one!
+% X0 = X0_ISB, Z0 = Y_ISB
+RotPseudoISB2Glob = [X0,  Z0, cross(X0, Z0)];
 
-%% Get the final initial CS
-RotPseudoISB2Glob = [X0, Y0, Z0];
 
 %% Debug Plots
 if debug_plots
     figure()
     hold on
     axis equal
-    pl3tVectors(CenterVol, X0, 125);
-    pl3tVectors(CenterVol, Y0, 175);
-    pl3tVectors(CenterVol, Z0, 250);
+    temp.V = RotPseudoISB2Glob;
+temp.Origin = P3;
+%     pl3tVectors(CenterVol, X0, 125);
+%     pl3tVectors(CenterVol, Y0, 175);
+%     pl3tVectors(CenterVol, Z0, 250);
     trisurf(Pelvis,'facealpha',0.5,'facecolor','b',...
         'edgecolor','none');
     trisurf(PelvisConvHull,'facealpha',0.2,'facecolor','c',...
         'edgecolor',[.3 .3 .3], 'edgealpha', 0.2);
     trisurf(LargestTriangle,'facealpha',0.8,'facecolor','r',...
         'edgecolor','k');
+    quickPlotRefSystem(temp)
     plotDot(P1, 'k', 7);
     plotDot(P2, 'k', 7);
     plotDot(P3, 'k', 7);
