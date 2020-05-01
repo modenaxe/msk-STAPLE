@@ -25,10 +25,10 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % Initial guess of CS direction [JB]
 % RISB2Glob_guess: principal inertial axes named as ISB (guess)
-[ ~, RISB2Glob_guess] = pelvis_get_correct_first_CS(Pelvis);
+RISB2Glob_guess = pelvis_get_correct_first_CS(Pelvis);
 
 % Get eigen vectors V_all and volumetric center
-[eigVctrs, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
+[~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
 
 %------------------------------------
 % TODO: develop other way of identifying the axes direction.
@@ -40,21 +40,9 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % x_pelvis_in_global = eigVctrs(:,v(2));
 %------------------------------------
 
-% clarifying that this rotation goes inertial to global
-RInert2Glob = eigVctrs;
-
-% aligning pelvis ref system to ISB one provided
-[~, ind_v] = max(abs(RInert2Glob'*RISB2Glob_guess), [], 1);
-
-% signs of axes for the largest component
-sign_v = sign(RInert2Glob'*RISB2Glob_guess);
-
-% rotation matrix from glob -> inertial axes named as ISB (guess)
-RotISB2Glob = eigVctrs(:,ind_v).*[sign_v(ind_v(1), 1),  sign_v(ind_v(2), 2), sign_v(ind_v(3), 3)];
-
 % generating a triangulated pelvis with axes directed as they would be in a
 % ISB reference system (Y upwards, X frontal etc)
-[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotISB2Glob, CenterVol);
+[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RISB2Glob_guess, CenterVol);
 
 % In ISB reference system: right side if z>0, upwards if Y>0
 R_side_ind = PelvisPseudoISB.Points(:,3)>0;
@@ -64,9 +52,11 @@ R_side_ind = PelvisPseudoISB.Points(:,3)>0;
 [min_dist_H, ~] = min(PelvisPseudoISB.Points(:,2)); % most dist
 [~, max_WD_R_ind] = max(PelvisPseudoISB.Points(:,3));
 [~, max_WD_L_ind] = min(PelvisPseudoISB.Points(:,3));
+
 % simplification: taking the height of the largest section as midpoint of
 % furthest points in the +Z and -Z
 max_WD_H = (PelvisPseudoISB.Points(max_WD_R_ind,2)+PelvisPseudoISB.Points(max_WD_L_ind,2))/2;
+
 % height of dividing plane as described by Kai et al. 
 H_div_plane = (max_WD_H+min_dist_H)/2;
 
@@ -127,20 +117,15 @@ end
 
 % defining the ref system (global)
 PelvisOr = (RASIS+LASIS)'/2.0;
-Z = normalizeV(RASIS-LASIS);
-temp_X = ((RASIS+LASIS)/2.0) - ((RPSIS+LPSIS)/2.0);
-pseudo_X = temp_X/norm(temp_X);
-Y = normalizeV(cross(Z, pseudo_X));
-X = normalizeV(cross(Y, Z));
+CS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % segment reference system
 CS.CenterVol = CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
 CS.Origin = CenterVol;
-CS.V = [X Y Z];
 
 % storing joint details
-JCS.ground_pelvis.V                 = [X Y Z];
+JCS.ground_pelvis.V                 = CS.V;
 JCS.ground_pelvis.Origin            = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
 JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
