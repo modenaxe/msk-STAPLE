@@ -99,6 +99,24 @@ if isfield(geom_set,'tibia_r')
 %     addMarkersFromStruct(osimModel, 'tibia_r', BL.tibia_r, in_mm);
 end
 
+
+%---- PATELLA -----
+if isfield(geom_set,'patella_r')
+    switch method_patella
+        case 'Rainbow'
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
+        case 'GPat-vol-ridge'
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
+        case 'GPat-ridge'
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
+        case 'GPat-ACS'
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
+        otherwise
+            error('choose coorect patellar algorithm');
+    end
+                
+end
+    
 %---- TALUS/ANKLE -----
 if isfield(geom_set,'talus_r')
     [CS.talus_r, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
