@@ -18,7 +18,7 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 %--------------------------------------
 auto_models_folder = './validation/opensim_models';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
-body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
+body_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r','talus_r', 'calcn_r'};
 in_mm = 1;
 % method = 'Modenese2018';%
 method = 'auto2020';
@@ -27,7 +27,7 @@ method = 'auto2020';
 % create model folder if required
 if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
-for n_d = 1
+for n_d = 1:4
     % setup folders
     model_name = dataset_set{n_d};
     main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
@@ -42,31 +42,37 @@ for n_d = 1
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum);
-    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,1);
+%     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
     
-    %---- FEMUR -----
-    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
-    [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
-    [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-    [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-    [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
-    %
-    %---- TIBIA -----
-    [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
-    [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
-    [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-    [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-    [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
-    
-    %---- TALUS/ANKLE -----
-    [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
-    
-    %---- CALCANEUS/SUBTALAR -----
-    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
+%     %---- FEMUR -----
+%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+%     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
+%     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+%     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+%     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+%     %
+%     %---- TIBIA -----
+%     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
+%     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
+%     [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+%     [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+%     [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
+
+%---- PATELLA -----
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
+
+%     %---- TALUS/ANKLE -----
+%     [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+%     
+%     %---- CALCANEUS/SUBTALAR -----
+%     JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
     %-----------------
     clear JCS
-    close all
+%     close all
 end
 
 % remove paths
