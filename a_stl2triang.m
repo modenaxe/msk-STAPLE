@@ -19,12 +19,12 @@ addpath(genpath('./GIBOK-toolbox'))
 % stl_folder = './test_geometries/TLEM2_MRI';
 % stl_folder = './test_geometries/LHDL_CT_iso';
 % stl_folder = './test_geometries/JIA_CSm6';
-% stl_folder = './test_geometries/P0_MRI_smooth';
+dataset_folder = './test_geometries/P0_MRI';
 % stl_folder = './test_geometries/GU';
 % stl_folder = './test_geometries/TLEM2
-dataset_folder = './test_geometries/VAKHUM_S6_CT';
-dataset_folder = './test_geometries/TLEM2';
-dataset_folder = './test_geometries/GC4';
+% dataset_folder = './test_geometries/VAKHUM_S6_CT';
+% dataset_folder = './test_geometries/TLEM2';
+% dataset_folder = './test_geometries/GC4';
 % folder where to store the resulting triangulations
 triang_folder = '';
 %---------------------------------------------------
@@ -53,7 +53,7 @@ for n = 1:N_stl
     end
     
     % read in stl file
-    curr_stl_name = list_of_stl(n).name;
+    curr_stl_name = 'tibia_r.stl';%list_of_stl(n).name;
     [~, name, ext] = fileparts(curr_stl_name);
     disp('-------------------')
     disp(['GEOMETRY ', curr_stl_name, ' (', num2str(n),'/',num2str(N_stl),')'])
