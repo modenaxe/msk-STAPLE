@@ -2,7 +2,7 @@
 
 
 
-function [CS, ArtSurf] = CS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho, in_mm)
+function [CS, JCS, ArtSurf] = CS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho, in_mm)
 
 % check units
 if nargin<6;     in_mm = 1;  end
@@ -82,14 +82,13 @@ Y4 = cross(Z4, X4);
 % CSs.PIAAS.Z = Z4;
 % CSs.PIAAS.V = V_AS;
 
-% ISB
-CS.patellofemoral_r.X = -X4;
-CS.patellofemoral_r.Y = Z4;
-CS.patellofemoral_r.Z = Y4;
-CS.patellofemoral_r.V =[-X4 Z4 Y4];
+% ISB oriented axis
+JCS.patellofemoral_r.V =[-X4 Z4 Y4];
+JCS.patellofemoral_r.Origin = Origin*dim_fact;
+JCS.patellofemoral_r.CenterOnMesh = D4.onMeshCenter*dim_fact;
 
-CS.patellofemoral_r.Origin = Origin*dim_fact;
-CS.patellofemoral_r.CenterOnMesh = D4.onMeshCenter*dim_fact;
+if debug_plots
+    quickPlotRefSystem(CS.patellofemoral_r)
+end
 
-quickPlotRefSystem(CS.patellofemoral_r)
 end

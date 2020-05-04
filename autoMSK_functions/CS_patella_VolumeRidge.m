@@ -1,35 +1,30 @@
-function CS = CS_patella_VolumeRidge(CS, U, in_mm)
+function [CS, JCS] = CS_patella_VolumeRidge(CS, U, in_mm, debug_plots)
 
 % check units
 if nargin<3;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+if nargin<4; debug_plots = 0; end
 
-% Technic VR volume ridge
-V_all = CS.V_all;
-CenterVol = CS.CenterVol;
+% % Technic VR volume ridge
+% % GIBOK
+% Z = CS.V_all*U;
+% X = -CS.V_all(:,3);
+% Y = cross(Z,X);
 
-Z = V_all*U;
-X = -V_all(:,3);
-Y = cross(Z,X);
+% body
+CS.V = [-X, Z, cross(-X, Z)];
+CS.Origin = CS.CenterVol;
 
-% %GIBOK
-% CSs.VR.X = X;
-% CSs.VR.Y = Y;
-% CSs.VR.Z = Z;
-% CSs.VR.Theta = -asin(U(1));
-% CSs.VR.V = [X Y Z];
-% CSs.VR.Origin = CenterVol';
-
-
-% ISB standards
-CS.patellofemoral_r.X = -X;
-CS.patellofemoral_r.Y = Z;
-CS.patellofemoral_r.Z = cross(-X, Z);
-CS.patellofemoral_r.Theta = -asin(U(1));
-CS.patellofemoral_r.V = [-X Z cross(-X, Z)];
-CS.patellofemoral_r.Origin = CenterVol'*dim_fact;
+% patellofemoral joint
+JCS.patellofemoral_r.Theta = -asin(U(1));
+JCS.patellofemoral_r.V = CS.V;
+JCS.patellofemoral_r.Origin = CS.CenterVol'*dim_fact;
+% JCS.patellofemoral_r.child_location = 
+% JCS.patellofemoral_r.child_orientation = 
 
 % quickPlotTriang(Patella, 'm',1)
-quickPlotRefSystem(CS.patellofemoral_r)
+if debug_plots
+    quickPlotRefSystem(CS)
+end
 
 end

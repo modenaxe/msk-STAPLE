@@ -1,21 +1,17 @@
 % modified by LM in 2020
-function [ CS, TrObjects ] = GIBOK_patella( Patella, in_mm )
+function [ CS, JCS, PatellaBL_r] = GIBOK_patella( Patella, algorithm, result_plots, in_mm, debug_plots)
 
 % check units
-if nargin<2;     in_mm = 1;  end
+if nargin<3;     result_plots = 1;  end
+if nargin<4;     in_mm = 1;  end
+if nargin<5;     debug_plots = 0;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % structure to store CS
 CS = struct();
 
-% Computing CoeffMorpho is necessary because the functions were originally developped for
-% triangulation with constant mean edge lengths of 0.5 mm
-% Get the mean edge length of the triangles composing the patella
-PptiesPatella = TriMesh2DProperties( Patella );
-% Assume triangles are equilaterals
-meanEdgeLength = sqrt( 4/sqrt(3) * PptiesPatella.TotalArea / Patella.size(1) );
-% Get the coefficient for morphology operations
-CoeffMorpho = 0.5 / meanEdgeLength ;
+% Compute the coefficient for morphology operations
+CoeffMorpho = computeTriCoeffMorpho(Patella);
 
 % Get eigen vectors V_all of the Tibia 3D geometry and volumetric center
 [ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( Patella );
@@ -24,7 +20,7 @@ CoeffMorpho = 0.5 / meanEdgeLength ;
 CS.CenterVol = CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
 
-%%  Identify the ant-post axis (GIBOK Z axis) based on 'circulatity'
+%%  Identify the ant-post axis (GIBOK Z axis) based on 'circularity'
 % Test for circularity, because on one face the surface is spherical and on the arular surface it's
 % more like a Hyperbolic Paraboloid, the countour od the cross section have
 % different circularity.
@@ -120,27 +116,32 @@ LowestPoints_CS0 = bsxfun(@plus,LowestPoints_end*V_all',CenterVol');
 
 % LS line fit on the ridge and ridge midpoint
 Uridge = sign(U'*Uridge)*Uridge;
-
 quickPlotTriang(Patella, 'm')
 
-% volume ridge approach
-CS = ACS_patella_VolumeRidge(CS, U);
-
-% ridge line approach (ridge Least Square line fit)
-CS = ACS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0);
-
-% principal axes of inertia of the articular surface
-[CS, ArtSurf] = ACS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho);
-
-
-
-%% Export Identified Objects
-if nargout > 1
-    TrObjects.Patella = Patella;
-    TrObjects.PatArtSurf = ArtSurf;
-    TrObjects.RidgePts_Separated = LowestPoints_CS0;
-    TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS*V_all',CenterVol');
+switch algorithm
+    case 'volume-ridge'
+        % volume ridge approach
+        [CS, JCS] = CS_patella_VolumeRidge(CS, U);
+    case 'ridge-line'
+        % ridge line approach (ridge Least Square line fit)
+        [CS, JCS] = CS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0);
+    case 'artic-surf'
+        % principal axes of inertia of the articular surface
+        [CS, JCS, PatArtSurf] = CS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho);
+    otherwise
+        error('Please specify an algorithm for processing the patella among ''volume-ridge'', ''ridge-line'' and ''artic-surf''')
 end
+
+% landmark bone according to CS (only Origin and CS.V are used)
+PatellaBL_r   = LandmarkGeom(Patella, CS, 'femur_r');
+
+% %% Export Identified Objects
+% if nargout > 1
+%     TrObjects.Patella = Patella;
+%     TrObjects.PatArtSurf = ArtSurf;
+%     TrObjects.RidgePts_Separated = LowestPoints_CS0;
+%     TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS*V_all',CenterVol');
+% end
 
 
 end
