@@ -1,4 +1,4 @@
-function [RotPseudoISB2Glob, LargestTriangle] = pelvis_get_correct_first_CS(Pelvis, debug_plots)
+function [RotPseudoISB2Glob, LargestTriangle, BL] = pelvis_get_correct_first_CS(Pelvis, debug_plots)
 % Function to test putting back together a correct orientation of the
 % pelvis
 % Inputs :
@@ -67,6 +67,7 @@ Y0_temp = normalizeV(cross(Z0, X0));
 [~, ind_P2] = min(PelvisInertia.Points(:,2));
 
 % these are the most external points in the iliac wings
+% these are iliac crest tubercles (ICT)
 P1 = Pelvis.Points(ind_P1,:);
 P2 = Pelvis.Points(ind_P2,:);
 P3 = (P1+P2)/2;% midpoint
@@ -82,6 +83,9 @@ Z0 = sign(upw'*Z0)*Z0;
 % X0 = X0_ISB, Z0 = Y_ISB
 RotPseudoISB2Glob = [X0,  Z0, cross(X0, Z0)];
 
+% export markers
+BL.ICT1 = P1;
+BL.ICT2 = P2;
 
 %% Debug Plots
 if debug_plots
@@ -89,7 +93,7 @@ if debug_plots
     hold on
     axis equal
     temp.V = RotPseudoISB2Glob;
-temp.Origin = P3;
+    temp.Origin = P3;
 %     pl3tVectors(CenterVol, X0, 125);
 %     pl3tVectors(CenterVol, Y0, 175);
 %     pl3tVectors(CenterVol, Z0, 250);
