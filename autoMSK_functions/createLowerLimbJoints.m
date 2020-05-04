@@ -59,6 +59,8 @@ if isfield(JCS, 'patella_r') && isfield(JCS, 'femur_r')
     JointParams = getJointParams('patellofemoral_r', JCS.femur_r, JCS.patella_r);
     patfem_r = createCustomJointFromStruct(osimModel, JointParams);
     osimModel.addJoint(patfem_r);
+%     addPatFemJointCoordCouplerConstraint(osimModel, side)
+%     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
 end
 
 end

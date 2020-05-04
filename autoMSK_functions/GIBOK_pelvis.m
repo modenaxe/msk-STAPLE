@@ -96,7 +96,6 @@ CS.InertiaMatrix = InertiaMatrix;
 PelvisOr = (RASIS+LASIS)'/2.0;
 CS.V = RotPseudoISB2Glob;
 
-
 % storing joint details
 JCS.ground_pelvis.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 JCS.ground_pelvis.Origin = PelvisOr;
