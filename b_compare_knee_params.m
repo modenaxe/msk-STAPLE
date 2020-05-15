@@ -15,13 +15,13 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 results_folder = 'results_ACS_estimations';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 in_mm = 1;
-bone_set = {'femur_r', 'tibia_r'};
+bone_set = { 'femur_r', 'tibia_r'};
 results_plots = 1;
 %----------
 
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
-for nb = 2%1:numel(bone_set)
+for nb = 1:numel(bone_set)
     cur_bone = bone_set{nb};
     
     for n_d = 1:numel(dataset_set)    
@@ -41,6 +41,9 @@ for nb = 2%1:numel(bone_set)
         CoeffMorpho = computeTriCoeffMorpho(bone_triang);
         
         switch cur_bone
+%             case 'pelvis'
+%                 [CS1, JCS1] = GIBOK_pelvis(Pelvis, result_plots, debug_plots);
+%                 [CS2, JCS2] = CS_tibia_Kai2014(Pelvis, result_plots, debug_plots);
             case 'femur_r'
                 try
                     [CS1, JCS1] = Miranda2010_buildfACS(bone_triang);
@@ -92,6 +95,8 @@ for nb = 2%1:numel(bone_set)
 
         % compute angular deviations
         switch cur_bone
+%             case 'pelvis'
+%                 ref_JCS = JCS2;
             case 'femur_r'
                 % cylinder fit chosen as reference - easy to chance
                 ref_JCS = JCS5;
@@ -102,7 +107,7 @@ for nb = 2%1:numel(bone_set)
         % compute metrics (distance vectors in ref femur/tibia coord frame)
         orig_diff = (ref_JCS.knee_r.V'*(joint_centres - ref_JCS.knee_r.Origin)')';
         orig_dist = sqrt(sum(orig_diff.^2, 2));
-        ang_diff = acosd(sqrt(joint_axis*ref_JCS.knee_r.V(:,3)));
+        ang_diff = acosd(joint_axis*ref_JCS.knee_r.V(:,3)));
         
         % second option
         row_ind = n_d:numel(dataset_set):numel(methods_list)*numel(dataset_set);
