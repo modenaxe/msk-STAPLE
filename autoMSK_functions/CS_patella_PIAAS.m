@@ -73,7 +73,6 @@ Z4 = sign(UridgeR0'*Z4)*Z4;
 
 X4 = V_AS(:,1);
 X4 = -sign( V_all(:,3)' * X4) * X4;
-
 Y4 = cross(Z4, X4);
 
 % % Write PIAAS ACS
@@ -87,8 +86,8 @@ JCS.patellofemoral_r.V =[-X4 Z4 Y4];
 JCS.patellofemoral_r.Origin = Origin*dim_fact;
 JCS.patellofemoral_r.CenterOnMesh = D4.onMeshCenter*dim_fact;
 
-if debug_plots
-    quickPlotRefSystem(CS.patellofemoral_r)
-end
+% if debug_plots
+%     quickPlotRefSystem(CS.patellofemoral_r)
+% end
 
 end

@@ -11,8 +11,10 @@ if nargin<4; debug_plots = 0; end
 % X = -CS.V_all(:,3);
 % Y = cross(Z,X);
 
-% body
-CS.V = [-X, Z, cross(-X, Z)];
+% body (ISB direction of axes)
+X = CS.V_all(:,3);
+Y = CS.V_all*U;
+CS.V = [X, Y, cross(X, Y)];
 CS.Origin = CS.CenterVol;
 
 % patellofemoral joint
