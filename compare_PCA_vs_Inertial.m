@@ -15,20 +15,21 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 results_folder = 'results_ACS_estimations';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 in_mm = 1;
-cur_bone = 'tibia_r';
+cur_bone_set = {'femur_r','tibia_r'};
 results_plots = 1;
 %----------
 
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
 
-    
+cur_bone = 'femur_r';
 for n_d = 1:numel(dataset_set)
     
     % setup folders
     cur_dataset = dataset_set{n_d};
     main_ds_folder =  ['test_geometries',filesep,cur_dataset];
     cur_geom_file = fullfile(main_ds_folder,'tri', cur_bone);
+    cur_bone_name = strrep(cur_bone,'_',' ');
     
     % load the femur and split it on prox and dist
     cur_tibia = load_mesh(cur_geom_file);
@@ -36,9 +37,9 @@ for n_d = 1:numel(dataset_set)
     unitedTibia = TriUnite(DistTibia, ProxTibia);
     
     figure('Name',['comparison of options-',cur_dataset])
-    subplot(1,3,1);     quickPlotTriang(cur_tibia); title('full tibia')
-    subplot(1,3,2);     quickPlotTriang(ProxTibia); title('proximal tibia')
-    subplot(1,3,3);     quickPlotTriang(unitedTibia); title('proximal+distal tibia')
+    subplot(1,3,1);     quickPlotTriang(cur_tibia); title(['full ',cur_bone_name])
+    subplot(1,3,2);     quickPlotTriang(ProxTibia); title(['proximal ',cur_bone_name])
+    subplot(1,3,3);     quickPlotTriang(unitedTibia); title(['proximal+distal ',cur_bone_name])
     
     % full tibia
     V_all_PCA = pca(cur_tibia.Points);
@@ -62,7 +63,7 @@ angle_PCA_Inertia_united(:, angle_PCA_Inertia_united>90) = 180 - angle_PCA_Inert
 % table of results: angular difference between PCA and Inertial long axes
 % on the tibia
 PCA_vs_Inert_table = table(angle_PCA_Inertia', angle_PCA_Inertia_partial', angle_PCA_Inertia_united',...
-                     'VariableNames',{'full tibia', 'proximal tibia', 'proximal and distal tibia'},...
+                     'VariableNames',{['full ',cur_bone_name], ['proximal ',cur_bone_name], ['proximal and distal ',cur_bone_name]},...
                      'RowNames', {'LHDL-CT', 'TLEM-CT', 'ICL-MRI', 'JIA-MRI'});
                  
 disp(PCA_vs_Inert_table)
