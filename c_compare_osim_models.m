@@ -6,10 +6,11 @@
 % ----------------------------------------------------------------------- %
 clearvars;  close all
 
+addpath('autoMSK_functions/validation_funcs');
 model_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 % modelling_method = 'Modenese2018P';
 modelling_method = 'Modenese2018';
-osim_model_folder = './opensim_models';
+osim_model_folder = ['validation',filesep,'opensim_models'];
 results_folder = './validation';
 
 N_datasets = numel(model_set);
@@ -68,3 +69,4 @@ for nt = 1:N_datasets
 end
 
 
+rmpath('autoMSK_functions/validation_funcs');
