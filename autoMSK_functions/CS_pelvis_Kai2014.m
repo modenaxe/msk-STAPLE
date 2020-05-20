@@ -19,13 +19,13 @@ function [ CS, JCS, PelvisBL] = CS_pelvis_Kai2014(Pelvis, result_plots, debug_pl
 
 if nargin<2; result_plots=1; end
 if nargin<3;     debug_plots = 0;  end
-if nargin<4;     label_switch = 1;  end
+if nargin<4;     label_switch = 0;  end
 if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % Initial guess of CS direction [JB]
 % RISB2Glob_guess: principal inertial axes named as ISB (guess)
-RISB2Glob_guess = pelvis_get_correct_first_CS(Pelvis);
+[RISB2Glob_guess, LargestTriangle] = pelvis_get_correct_first_CS(Pelvis);
 
 % Get eigen vectors V_all and volumetric center
 [~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
@@ -143,9 +143,12 @@ PelvisBL.LPS       = LPS;
 
 % debug plot
 if result_plots == 1
-    PlotTriangLight(Pelvis, CS, 1); hold on
-    quickPlotRefSystem(CS)
+    figure('Name','Pelvis')
+    PlotTriangLight(Pelvis, CS, 0); hold on
+%     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
+    trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
+        'edgecolor','k');
     % plot markers
     BLfields = fields(PelvisBL);
     for nL = 1:numel(BLfields)
