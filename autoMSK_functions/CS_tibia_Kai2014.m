@@ -22,15 +22,15 @@ else
 end
 
 % checks on vertical direction
-Z0 = V_all(:,1);
-Z0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Z0)*Z0;
+Y0 = V_all(:,1);
+Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
 
 % Slices 1 mm apart as in Kai et al. 2014
 slices_thick = 1;
-[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Z0, slices_thick);
+[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Y0, slices_thick);
 
 % slice at max area
-[ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Z0 , -AltAtMax );
+[ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Y0 , -AltAtMax );
 
 % keep just the largest outline (tibia section)
 [maxAreaSection, N_curves] = GIBOK_getLargerPlanarSect(Curves);
@@ -54,11 +54,14 @@ FittedEllipse = fit_ellipse(PtsCurves(:,2), PtsCurves(:,3));
 %             -sin_phi cos_phi ];
 if FittedEllipse.a>FittedEllipse.b
     % horizontal ellipse
-    YElpsMax = V_all*[ 0; cos(FittedEllipse.phi); -sin(FittedEllipse.phi)];
+    ZElpsMax = V_all*[ 0; cos(FittedEllipse.phi); -sin(FittedEllipse.phi)];
 else
     % vertical ellipse - get
-    YElpsMax = V_all*[ 0; sin(FittedEllipse.phi); cos(FittedEllipse.phi)];
+    ZElpsMax = V_all*[ 0; sin(FittedEllipse.phi); cos(FittedEllipse.phi)];
 end
+
+% note that ZElpsMax and Y0 are perpendicular
+% dot(ZElpsMax, Y0)
 
 % check ellipse fitting
 if debug_plots == 1
@@ -77,20 +80,20 @@ CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1)); % constant anyway
                                  FittedEllipse.Y0_in]);
 
 % identify lateral direction
-[U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0);
+[U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Y0);
 if just_tibia == 1; m_col = 'r'; else; m_col = 'b'; end
 
 % making Y0/U_temp normal to Z0 (still points laterally)
-Y0_temp = normalizeV(U_tmp' - (U_tmp*Z0)*Z0); 
+Z0_temp = normalizeV(U_tmp' - (U_tmp*Y0)*Y0); 
 
 % here the assumption is that Y0 has correct m-l orientation               
-YElpsMax = sign(Y0_temp'*YElpsMax)*YElpsMax;
+ZElpsMax = sign(Z0_temp'*ZElpsMax)*ZElpsMax;
 
 EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Y = normalizeV(Z0);
-Z = normalizeV(YElpsMax);
+Y = normalizeV(Y0);
+Z = normalizeV(ZElpsMax);
 X = normalizeV(cross(Y, Z));
 
 % segment reference system
@@ -103,7 +106,11 @@ CS.V = [X Y Z_cs];
 % define the knee reference system
 Ydp_knee  = normalizeV(cross(Z, X));
 JCS.knee_r.Origin = CenterEllipse;
-JCS.knee_r.V = [X Ydp_knee Z];
+JCS.knee_r.V = [X Ydp_knee Z]; 
+
+% NOTE THAT CS.V and JCS.knee_r.V are the same, so the distinction is here
+% purely formal. This is because all axes are perpendicular.
+
 JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 
 % the knee axis is defined by the femoral fitting
