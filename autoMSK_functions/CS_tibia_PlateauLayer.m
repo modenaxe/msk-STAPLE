@@ -29,8 +29,9 @@ for alt = -Alt_TP
     [ Curves , ~ , ~ ] = TriPlanIntersect( EpiTib, Ztp , alt );
     N_curves = length(Curves);
     for c=1:N_curves
-        % I think JB needs to check here if the algorithm is robust to the
+        % [LM] I think JB needs to check here if the algorithm is robust to the
         % presence of fibula
+        % [LM] fibula is now removed xternally
         Pts_Tmp = Curves(c).Pts*[Xel Yel Ztp];
         xmg = min(Pts_Tmp(:,1)) -0.1 : PointSpace : max(Pts_Tmp(:,1)) +0.1 ;
         ymg = min(Pts_Tmp(:,2)) -0.1 : PointSpace : max(Pts_Tmp(:,2)) +0.1;
