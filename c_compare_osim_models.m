@@ -32,6 +32,7 @@ for n_d = 1:N_datasets
         % compute joint centre offsets in mm (identical for child and
         % parent)
         jc_offset(n, :) = (auto.(cur_joint_name).child(1:3,4) - manual.(cur_joint_name).child(1:3,4))*1000;
+        jc_offset_norm(n,1) = norm(jc_offset(n, :));
         % compute angular offsets for child reference systems
         ang_offset_child(n,:) = acosd(diag(auto.(cur_joint_name).child(1:3,1:3)'*manual.(cur_joint_name).child(1:3,1:3)));
         % compute angular offsets for parent reference systems
@@ -41,11 +42,11 @@ for n_d = 1:N_datasets
     
     %------------- COMPLETE EVALUATION ------------------------------------
     % build a table to visualise all differences in all joint parameters
-    cur_res_table = table(  jc_offset, ang_offset_parent, ang_offset_child,...
-                                'VariableNames',{'JC-Offset_mm', 'Angular_offset_parent_JCS (XYZ)','Angular_offset_child_JCS (XYZ)'});
+    cur_res_table = table(  jc_offset, jc_offset_norm, ang_offset_parent, ang_offset_child,...
+                                'VariableNames',{'JC-Offset_mm', 'JC-Offset-Norm_mm','Angular_offset_parent_JCS (XYZ)','Angular_offset_child_JCS (XYZ)'});
     cur_res_table.Properties.RowNames = {'pelvis_ground' 'hip_r' 'knee_r' 'ankle_r' 'subtalar_r'};
     cur_res_table.Properties.Description = cur_model;
-    cur_res_table.Properties.VariableUnits = {'mm', 'deg', 'deg'};
+    cur_res_table.Properties.VariableUnits = {'mm', 'mm','deg', 'deg'};
     
     % store structure of results
     validation_tables(n_d) = {cur_res_table};
@@ -54,7 +55,7 @@ for n_d = 1:N_datasets
     writetable(cur_res_table, [results_folder,filesep,'validation_results_',cur_model,'.xlsx']);
     
     % clear variables
-    clear jc_offset ang_offset_child ang_offset_parent cur_res_table
+    clear jc_offset ang_offset_child ang_offset_parent cur_res_table jc_offset_norm
 end
 
 clc
