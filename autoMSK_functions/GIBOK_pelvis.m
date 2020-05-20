@@ -94,10 +94,11 @@ CS.InertiaMatrix = InertiaMatrix;
 
 % ISB reference system
 PelvisOr = (RASIS+LASIS)'/2.0;
-CS.V = RotPseudoISB2Glob;
+% CS.V = RotPseudoISB2Glob;
+CS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % storing joint details
-JCS.ground_pelvis.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
+JCS.ground_pelvis.V = CS.V;
 JCS.ground_pelvis.Origin = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
 JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
@@ -111,6 +112,7 @@ PelvisBL.LASIS     = LASIS;
 PelvisBL.RPSIS     = RPSIS; 
 PelvisBL.LPSIS     = LPSIS; 
 PelvisBL.SYMP      = SYMP;
+
 % debug plot
 if result_plots == 1
     PlotTriangLight(Pelvis, CS, 1); hold on
