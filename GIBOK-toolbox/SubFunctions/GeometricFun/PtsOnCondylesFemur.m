@@ -68,13 +68,13 @@ I_kept = OUT_Elps & IN_CH & ~EXT_Posterior;
 PtsCondyle_end = Pts_Epiphysis(I_kept,:);
 PtsKeptID = find(I_kept);
 
-% %% plotting
-% % line calc
-% ver_line        = [ [Elps.X0 Elps.X0]; Elps.Y0+Elps.b*[-1 1] ];
-% horz_line       = [ Elps.X0+Elps.a*[-1 1]; [Elps.Y0 Elps.Y0] ];
-% new_ver_line    = R*ver_line;
-% new_horz_line   = R*horz_line;
-% 
+%% plotting
+% line calc
+ver_line        = [ [Elps.X0 Elps.X0]; Elps.Y0+Elps.b*[-1 1] ];
+horz_line       = [ Elps.X0+Elps.a*[-1 1]; [Elps.Y0 Elps.Y0] ];
+new_ver_line    = R*ver_line;
+new_horz_line   = R*horz_line;
+
 % figure()
 % plot(Pts_Epiphysis(:,3),Pts_Epiphysis(:,1),'g.')
 % hold on

@@ -1,5 +1,6 @@
 function [IdCdlPts, U_Axes, med_lat_ind] = processFemoralEpiPhysis(EpiFem, CSs, Inertia_Vects, edge_threshold, axes_dev_thresh)
 
+debug_plots = 0;
 % default axes_dev_thresh = 0.75;
 % default edge_threshold = 0.5;
 
@@ -33,8 +34,10 @@ disp(['Processing ', num2str(N_saved_edges/N_edges*100), '% of edges in convex h
 IdCdlPts = IdxPointsPair(Ikept,:);
  
 % % [LM] debugging plot - see the kept points
-% plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*'); hold on
-% plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*')
+if debug_plots
+    plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*'); hold on
+    plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*')
+end
 
 % Axes vector of points pairs
 Axes = EpiFem.Points(IdCdlPts(:,1),:)-EpiFem.Points(IdCdlPts(:,2),:);
