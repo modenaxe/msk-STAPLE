@@ -1,6 +1,6 @@
 function TibiaCS = assembleAnkleParentOrientation(TibiaCS, TalusCS)
 % take Z from ankle joint (axis of rotation)
-Zpar  = TalusCS.ankle_r.V(:,3);
+Zpar  = normalizeV(TalusCS.ankle_r.V(:,3));
 % take vertical axis of the tibia
 Ytemp = TibiaCS.knee_r.V(:,2);
 % Y and Z orthogonal
