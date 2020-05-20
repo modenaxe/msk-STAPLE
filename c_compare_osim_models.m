@@ -9,14 +9,16 @@ clearvars;  close all
 model_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 % modelling_method = 'Modenese2018P';
 modelling_method = 'Modenese2018';
+osim_model_folder = './opensim_models';
+results_folder = './validation';
 
 N_datasets = numel(model_set);
 for n_d = 1:N_datasets
     cur_model = model_set{n_d};
     
     % create joint structures for easy comparison
-    auto = createJointParamsMatStructFromOsimModel(['opensim_models/manual_',cur_model,'.osim']);
-    manual = createJointParamsMatStructFromOsimModel(['opensim_models/',modelling_method,'_',cur_model,'.osim']);
+    auto = createJointParamsMatStructFromOsimModel([osim_model_folder,filesep,'manual_',cur_model,'.osim']);
+    manual = createJointParamsMatStructFromOsimModel([osim_model_folder,filesep,modelling_method,'_',cur_model,'.osim']);
     
     % check if identical ground ref syst (essential - meaning model built in
     % same reference frame)
@@ -49,7 +51,7 @@ for n_d = 1:N_datasets
     validation_tables(n_d) = {cur_res_table};
     
     % write results on xlsx file
-%     writetable(cur_res_table, ['valid_results_',cur_model,'.xlsx']);
+    writetable(cur_res_table, [results_folder,filesep,'valid_results_',cur_model,'.xlsx']);
     
     % clear variables
     clear jc_offset ang_offset_child ang_offset_parent cur_res_table

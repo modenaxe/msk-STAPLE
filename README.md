@@ -28,6 +28,11 @@ Requires:
 Test geometries are available for developers (DO NOT REDISTRIBUTE!) at [this link](https://www.dropbox.com/sh/wk4izo66qxbxp3h/AABAcyxpHkfWy1v5AjJ7QOIYa?dl=0).
 You can simply copy them in the "test_geometries" directory and adapt the scripts.
 
+# Further Development
+* Segment mass properties and degrees of freedom of the joint models can easily be customised. 
+* The sagittal profile of femoral condyles is available and could be used to personalized knee joint models like Yamaguchi's knee in combination with the automated slope estimation presented by Amirtharaj et al. (2018).
+
+
 # TO DO
 - [ ] Streamline MSK workflow
 - [ ] fit patellar groove as in [Sancisi et al](https://www.dropbox.com/s/diajesc737ujdsd/SancisiJMR11.pdf?dl=0) and [Da Luz et al](https://www.dropbox.com/s/ah4di27b0hhsrhi/Brito%20da%20Luz-2017-Feasibility%20of%20using%20MRIs%20to.pdf?dl=0)
