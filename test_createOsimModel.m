@@ -16,7 +16,7 @@ auto_models_folder = './validation/opensim_models';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
-method = 'Modenese2018P';%
+method = 'Modenese2018';
 % method = 'auto2020';
 %--------------------------------------
 
@@ -59,7 +59,7 @@ for n_d = 1:4
     osimModel.set_credits('Luca Modenese, Jean-Baptist Renault - Toolbox to generate MSK models automatically.')
     osimModel.setName([dataset_set{n_d},'_auto']);
     osimModel.print(fullfile(auto_models_folder, [method,'_',model_name, '.osim']));
-    osimModel.print(fullfile([method,'_',model_name, '.osim']));
+%     osimModel.print(fullfile([method,'_',model_name, '.osim']));
     osimModel.disownAllComponents();
     
     disp(['Model generated in ', num2str(toc)]);

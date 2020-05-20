@@ -8,7 +8,6 @@ clearvars;  close all
 
 addpath('autoMSK_functions/validation_funcs');
 model_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
-% modelling_method = 'Modenese2018P';
 modelling_method = 'Modenese2018';
 osim_model_folder = ['validation',filesep,'opensim_models'];
 results_folder = './validation';
@@ -52,7 +51,7 @@ for n_d = 1:N_datasets
     validation_tables(n_d) = {cur_res_table};
     
     % write results on xlsx file
-    writetable(cur_res_table, [results_folder,filesep,'valid_results_',cur_model,'.xlsx']);
+    writetable(cur_res_table, [results_folder,filesep,'validation_results_',cur_model,'.xlsx']);
     
     % clear variables
     clear jc_offset ang_offset_child ang_offset_parent cur_res_table
@@ -67,6 +66,5 @@ for nt = 1:N_datasets
     disp( '--------------------')
     disp(validation_tables{nt})
 end
-
 
 rmpath('autoMSK_functions/validation_funcs');
