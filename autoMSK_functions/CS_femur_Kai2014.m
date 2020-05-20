@@ -66,7 +66,7 @@ CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS, debug_plots);
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(CS.Center_Lat-CS.Center_Med);
 Y = normalizeV(CS.CenterFH_Kai- CS.KneeCenter);
-X = cross(Y,Z);
+X = normalizeV(cross(Y,Z));
 
 % define the segment CS
 CS.Origin = CenterVol;
