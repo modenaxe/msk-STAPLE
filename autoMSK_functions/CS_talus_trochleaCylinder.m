@@ -89,7 +89,7 @@ ankleAxis =  normalizeV(an);
 % align Y2 with -Y1, which is Z (points laterally) for ISB (see debug plot)
 CS.Z2 = normalizeV(sign(-Y1'*ankleAxis)*ankleAxis);
 CS.Y2 = normalizeV(cross(CS.Z2, X0));
-CS.X2 = cross(CS.Y2, CS.Z2);
+CS.X2 = normalizeV(cross(CS.Y2, CS.Z2));
 
 % store ankle info (NB: only CS.V is needed for plotting and joints)
 CS.V_ankle_r        = [CS.X2 CS.Y2 CS.Z2];

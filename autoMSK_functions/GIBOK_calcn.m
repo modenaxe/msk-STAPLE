@@ -170,8 +170,8 @@ PtMetaMed = PtsMeta1and2_Final(IMed,:) ;
 
 % 7. rebuild reference system so that X points at midpoint of Metas [LM]
 X3 = normalizeV(0.5* (PtMetaMed + PtMetaLat) - heelPt);
-Z3 = Z2;
-Y3 = cross(Z3, X3);
+Z3 = normalizeV(Z2);
+Y3 = normalizeV(cross(Z3, X3));
 
 %   7. Final coordinate system and bony landmarks
 CS.X = X3; % Distal proximal

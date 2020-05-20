@@ -91,17 +91,17 @@ EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) Fi
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(Z0);
 Z = normalizeV(YElpsMax);
-X = cross(Y, Z);
+X = normalizeV(cross(Y, Z));
 
 % segment reference system
 CS.Origin        = CenterVol;
 % CS.ElpsMaxPtVect = YElpsMax;
 CS.ElpsPts       = EllipsePts;
-Z_cs = cross(X, Y);
+Z_cs = normalizeV(cross(X, Y));
 CS.V = [X Y Z_cs];
 
 % define the knee reference system
-Ydp_knee  = cross(Z, X);
+Ydp_knee  = normalizeV(cross(Z, X));
 JCS.knee_r.Origin = CenterEllipse;
 JCS.knee_r.V = [X Ydp_knee Z];
 JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);

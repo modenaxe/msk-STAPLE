@@ -72,18 +72,18 @@ X = cross(Y,Z);
 CS.Origin = CenterVol;
 CS.X = X;
 CS.Y = Y;
-CS.Z = cross(X, Y);
+CS.Z = normalizeV(cross(X, Y));
 CS.V = [X Y Z];
 
 % define the hip reference system
-Zml_hip = cross(X, Y);
+Zml_hip = normalizeV(cross(X, Y));
 JCS.hip_r.V  = [X Y Zml_hip];
 JCS.hip_r.child_location    = CS.CenterFH_Kai*dim_fact;
 JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
 JCS.hip_r.Origin = CS.CenterFH_Kai;
 
 % define the knee reference system
-Ydp_knee = cross(Z, X);
+Ydp_knee = normalizeV(cross(Z, X));
 JCS.knee_r.V  = [X Ydp_knee Z];
 JCS.knee_r.parent_location = CS.KneeCenter*dim_fact;
 JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);

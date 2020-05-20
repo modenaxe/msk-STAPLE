@@ -17,12 +17,12 @@ CS.ElpsMaxPtVect = Yelps;
 CS.ElpsPts       = EllipsePts;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Z = sign(Yelps'*CS.Y0)*Yelps;
+Z = normalizeV(sign(Yelps'*CS.Y0)*Yelps);
 Y = normalizeV(KneeCenter-CS.AnkleCenter); % mechanical axis
-X = cross(Y, Z);
+X = normalizeV(cross(Y, Z));
 
 % define the knee reference system
-Ydp_knee  = cross(Z, X);
+Ydp_knee  = normalizeV(cross(Z, X));
 JCS.knee_r.V = [X Ydp_knee Z];
 JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin        = KneeCenter;

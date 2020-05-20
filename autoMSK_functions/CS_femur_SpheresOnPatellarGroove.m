@@ -16,7 +16,7 @@ PaTGrooveCenter = 0.5*(center_lat+center_med);
 % Starting axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(center_lat-center_med);
 Y = normalizeV( CS.CenterFH_Renault - PaTGrooveCenter );
-X = cross(Y, Z);
+X = normalizeV(cross(Y, Z));
 
 % store axes in structure
 CS.patgroove_center_lat = center_lat;
@@ -26,7 +26,7 @@ CS.patgroove_radius_med = radius_med;
 CS.patgroove_origin     = PaTGrooveCenter;
 
 % define patellofemoral axes
-Y_ptf = cross(Z, X);
+Y_ptf = normalizeV(cross(Z, X));
 JCS.patellofemoral_r.V = [X Y_ptf Z];
 JCS.patellofemoral_r.parent_location    = PaTGrooveCenter * dim_fact;
 JCS.patellofemoral_r.parent_orientation = computeXYZAngleSeq(JCS.patellofemoral_r.V);

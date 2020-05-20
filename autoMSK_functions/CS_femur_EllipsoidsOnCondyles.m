@@ -22,19 +22,19 @@ CS.ellips_evec_lat = evecs_lat;
 KneeCenter = 0.5*(center_med+center_lat)';
 
 % Starting axes: X is orthog to Y and Z, which are not mutually perpend
-Z =  normalizeV(center_lat-center_med); % points laterally
-Y =  normalizeV(CS.CenterFH_Renault - KneeCenter);
-X = cross(Y, Z);
+Z = normalizeV(center_lat-center_med); % points laterally
+Y = normalizeV(CS.CenterFH_Renault - KneeCenter);
+X = normalizeV(cross(Y, Z));
 
 % define hip axes
-Zml_hip =  cross(X, Y);
+Zml_hip = normalizeV(cross(X, Y));
 JCS.hip_r.V = [X Y Zml_hip];
 JCS.hip_r.child_location = CS.CenterFH_Renault * dim_fact;
 JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
 JCS.hip_r.Origin = CS.CenterFH_Renault;
 
 % define knee joint
-Y_knee = cross(Z, X);
+Y_knee = normalizeV(cross(Z, X));
 JCS.knee_r.V = [X Y_knee Z];
 JCS.knee_r.parent_location = KneeCenter * dim_fact;
 JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);

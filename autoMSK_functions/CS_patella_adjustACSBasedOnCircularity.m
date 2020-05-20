@@ -32,9 +32,9 @@ Circularity3rdOffSettedQuart = Circularity(Alt>quantile(Alt,0.7) & Alt<quantile(
 % invert AP axis direction :
 if mean(Circularity1stOffSettedQuart)<mean(Circularity3rdOffSettedQuart)
     disp('Based on circularity analysis invert AP axis');
-    V_all(:,3) = - V_all(:,3);
-    V_all(:,2) = cross(V_all(:,3),V_all(:,1));
-    V_all(:,1) = cross(V_all(:,2),V_all(:,3));
+    V_all(:,3) = -normalizeV(V_all(:,3));
+    V_all(:,2) =  normalizeV(cross(V_all(:,3),V_all(:,1)));
+    V_all(:,1) =  normalizeV(cross(V_all(:,2),V_all(:,3)));
 end
 
 end

@@ -98,7 +98,7 @@ u_SubtalarAxis = normalizeV(Center_TlNvc-Center_TlCcn);
 % these axes (IN GIBOK CONVENTIONS) are used by throcheaCylinder
 CS.X1 = u_SubtalarAxis; % approx anter-post
 CS.Z1 = normalizeV(cross(CS.X1,CS.Y0));
-CS.Y1 = cross(CS.Z1,CS.X1);
+CS.Y1 = normalizeV(cross(CS.Z1,CS.X1));
 
 % store info about talo-navicular artic surf
 CS.V_subtalar_r = [CS.Y1 CS.Z1 CS.X1];

@@ -15,10 +15,10 @@ CS.Centroid_AS_lat  = TibArtLat_ppt.Center;
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(KneeCenter-CS.AnkleCenter); % mechanical axis
 Z = normalizeV(TibArtLat_ppt.Center-TibArtMed_ppt.Center); % pointing laterally
-X = cross(Y, Z);
+X = normalizeV(cross(Y, Z));
 
 % define the knee reference system
-Ydp_knee  = cross(Z, X);
+Ydp_knee = normalizeV(cross(Z, X));
 JCS.knee_r.V = [X Ydp_knee Z];
 JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin        = KneeCenter;
