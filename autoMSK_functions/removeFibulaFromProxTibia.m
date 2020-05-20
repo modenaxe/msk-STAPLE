@@ -13,9 +13,14 @@ function ProxTibNoFib = removeFibulaFromProxTibia(ProxTib, funcNameForWarning)
 if max(size(TrSplitted))==2
     if TrSplitted(1).Vol>TrSplitted(2).Vol
         ProxTibNoFib = TrSplitted(1).Tr;
+        % alternative
+        %     ProxTibNoFib = TriReduceMesh(ProxTib, TrSplitted(1).elements)   ;
     else
         ProxTibNoFib = TrSplitted(2).Tr;
+        % alternative
+        % ProxTibNoFib = TriReduceMesh(ProxTib, TrSplitted(2).elements)  ;
     end
+    
 elseif max(size(TrSplitted))==1
     ProxTibNoFib = ProxTib;
 elseif max(size(TrSplitted))>2
