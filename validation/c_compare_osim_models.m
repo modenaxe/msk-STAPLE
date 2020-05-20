@@ -7,6 +7,7 @@
 clearvars;  close all
 
 model_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+% modelling_method = 'Modenese2018P';
 modelling_method = 'Modenese2018';
 
 N_datasets = numel(model_set);
@@ -48,7 +49,7 @@ for n_d = 1:N_datasets
     validation_tables(n_d) = {cur_res_table};
     
     % write results on xlsx file
-    writetable(cur_res_table, ['valid_results_',cur_model,'.xlsx']);
+%     writetable(cur_res_table, ['valid_results_',cur_model,'.xlsx']);
     
     % clear variables
     clear jc_offset ang_offset_child ang_offset_parent cur_res_table
@@ -58,7 +59,9 @@ clc
 % display all tables of results
 for nt = 1:N_datasets
     cur_model = model_set{nt};
-    disp(['DATASET: ', cur_model])
+    disp( '--------------------')
+    disp([' DATASET: ', cur_model])
+    disp( '--------------------')
     disp(validation_tables{nt})
 end
 

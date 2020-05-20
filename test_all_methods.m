@@ -42,28 +42,29 @@ for n_d = 1:4
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,1);
-%     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
+    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+%     axis off
     
 %     %---- FEMUR -----
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
 %     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
 %     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
 %     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-%     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+    [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
-%     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
+    [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
 %     [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
 %     [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
 %     [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
 
 %---- PATELLA -----
 % [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
 
 %     %---- TALUS/ANKLE -----
 %     [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
