@@ -66,7 +66,9 @@ for nb = 1:numel(bone_set)
         res_table = table(orig_diff, orig_dist, joint_axis, ang_diff, ...
             'VariableNames',table_head);
         res_table.Properties.RowNames = methods_list;
-        writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
+        
+        % write indidual tables
+%         writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
         
         clear JCS1 JCS2 JCS3 JCS4 JCS5
         

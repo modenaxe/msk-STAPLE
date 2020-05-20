@@ -16,14 +16,13 @@ results_folder = 'results_ACS_estimations';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
 in_mm = 1;
 bone_set = { 'femur_r', 'tibia_r'};
-results_plots = 1;
+results_plots = 0;
 %----------
 
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
-for nb = 1:numel(bone_set)
+for nb = 1:2
     cur_bone = bone_set{nb};
-    
     for n_d = 1:numel(dataset_set)    
         % setup folders
         cur_dataset = dataset_set{n_d};
@@ -103,12 +102,12 @@ for nb = 1:numel(bone_set)
         ang_diff_opt2(row_ind,:) = ang_diff;
         
         % table with results (one per method)
-        res_table = table(orig_diff, orig_dist, joint_axis, ang_diff, ...
-                          'VariableNames',table_head);
-        res_table.Properties.RowNames = methods_list;
-        writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
+%         res_table = table(orig_diff, orig_dist, joint_axis, ang_diff, ...
+%                           'VariableNames',table_head);
+%         res_table.Properties.RowNames = methods_list;
+%         writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
         
-        clear JCS1 JCS2 JCS3 JCS4 JCS5 ref_JCS ang_diff orig_dist orig_diff
+        clear JCS1 JCS2 JCS3 JCS4 JCS5 ref_JCS ang_diff orig_dist orig_diff bone_triang
         
         close all
     end
