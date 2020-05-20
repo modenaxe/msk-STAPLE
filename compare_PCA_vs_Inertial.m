@@ -22,7 +22,7 @@ results_plots = 1;
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
 
-cur_bone = 'femur_r';
+cur_bone = 'tibia_r';
 for n_d = 1:numel(dataset_set)
     
     % setup folders
@@ -47,10 +47,12 @@ for n_d = 1:numel(dataset_set)
     angle_PCA_Inertia(n_d)     = acosd(dot(V_all_PCA(:,3), V_all_Inertia(:,3)));
     
     % partial tibia
+    V_all_PCA = pca(ProxTibia.Points);
     V_all_Inertia_ProxTibia = TriInertiaPpties( ProxTibia );
     angle_PCA_Inertia_partial(n_d)     = acosd(dot(V_all_PCA(:,3), V_all_Inertia_ProxTibia(:,3)));
     
     %united tibia
+    V_all_PCA = pca(unitedTibia.Points);
     V_all_Inertia_unitedTibia = TriInertiaPpties( unitedTibia );
     angle_PCA_Inertia_united(n_d)     = acosd(dot(V_all_PCA(:,3), V_all_Inertia_unitedTibia(:,3)));
 end
