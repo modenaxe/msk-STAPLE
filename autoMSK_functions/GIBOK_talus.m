@@ -95,11 +95,11 @@ JCS.subtalar_r.parent_orientation = computeXYZAngleSeq(JCS.subtalar_r.V);
 JCS.subtalar_r.Origin = CS.talocalc_centre;
 
 if result_plots == 1
-    figure 
+    figure('Name', 'talus_r')
     % plot talus and ref systems
     subplot(2,2,[1,3]);
     PlotTriangLight(Talus, CS, 0, 0.7);
-    quickPlotRefSystem(CS);
+%     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.ankle_r, 30);
     quickPlotRefSystem(JCS.subtalar_r, 30);
     

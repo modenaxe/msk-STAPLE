@@ -180,7 +180,7 @@ label_switch = 1;
 
 if result_plots == 1
     
-    figure
+    figure('Name', 'tibia_r');
     % plot entire tibia 
     subplot(2,2,[1,3])
     PlotTriangLight(Tibia, CS, 0);

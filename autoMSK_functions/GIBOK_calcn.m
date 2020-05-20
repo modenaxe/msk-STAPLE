@@ -199,7 +199,7 @@ end
 label_switch = 1;
 
 if result_plots == 1
-    figure;
+    figure('Name', 'foot_r')';
     % plot the calcn triangulation
     PlotTriangLight(Calcn, CS, 0)
     % Plot the inertia Axis & Volumic center

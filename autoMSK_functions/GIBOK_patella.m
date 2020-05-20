@@ -24,42 +24,7 @@ CS.InertiaMatrix = InertiaMatrix;
 % Test for circularity, because on one face the surface is spherical and on the arular surface it's
 % more like a Hyperbolic Paraboloid, the countour od the cross section have
 % different circularity.
-
-nAP = V_all(:,3);% initial guess of Antero-Posterior axis
-
-% First 0.5 mm in Start and End are not accounted for, for stability.
-Alt = linspace( min(Patella.Points*nAP)+0.5 ,max(Patella.Points*nAP)-0.5, 100);
-Area=[];
-Circularity=[];
-for d = -Alt
-    [ Curves , Area(end+1), ~ ] = TriPlanIntersect( Patella, nAP , d );
-    PtsTmp=[];
-    for i = 1 : length(Curves)
-        PtsTmp (end+1:end+length(Curves(i).Pts),:) = Curves(i).Pts;
-        if isempty(PtsTmp)
-            warning('Slicing of patella in A-P direction did not produce any section');
-        end
-    end
-    % compute the circularity (criteria ? Coefficient of Variation)
-    dist2center = sqrt(sum(bsxfun(@minus,PtsTmp,mean(PtsTmp)).^2,2));
-    Circularity(end+1) = std(dist2center)/mean(dist2center);
-end
-
-% Get the circularity at both first last quarter of the patella
-Circularity1stOffSettedQuart = Circularity(Alt<quantile(Alt,0.3) & Alt>quantile(Alt,0.05));
-Circularity3rdOffSettedQuart = Circularity(Alt>quantile(Alt,0.7) & Alt<quantile(Alt,0.95));
-
-% Check that the circularity is higher in the anterior part otherwise
-% invert AP axis direction :
-if mean(Circularity1stOffSettedQuart)<mean(Circularity3rdOffSettedQuart)
-    disp('Based on circularity analysis invert AP axis');
-    V_all(:,3) = - V_all(:,3);
-    V_all(:,2) = cross(V_all(:,3),V_all(:,1));
-    V_all(:,1) = cross(V_all(:,2),V_all(:,3));
-end
-
-% save updated V_all in structure
-CS.V_all = V_all;
+CS.V_all = CS_patella_adjustACSBasedOnCircularity(Patella, V_all);
 
 %% Move the Patella from CS0 to the Principal Inertia Axis CS
 PatPIACS = TriChangeCS( Patella, V_all, CenterVol );
@@ -133,7 +98,7 @@ switch algorithm
 end
 
 % landmark bone according to CS (only Origin and CS.V are used)
-PatellaBL_r   = LandmarkGeom(Patella, CS, 'femur_r');
+PatellaBL_r   = LandmarkGeom(Patella, CS, 'patella_r');
 
 % %% Export Identified Objects
 % if nargout > 1
@@ -143,5 +108,25 @@ PatellaBL_r   = LandmarkGeom(Patella, CS, 'femur_r');
 %     TrObjects.RidgePts_All = bsxfun(@plus,LowestPoints_PIACS*V_all',CenterVol');
 % end
 
+% result plot
+if result_plots == 1
+    figure;
+    alpha = 0.5;
+%     subplot(2,2,[1,3]);
+    PlotTriangLight(Patella, CS, 0)
+    quickPlotRefSystem(CS);
+    plot3(LowestPoints_CS0(:,1), LowestPoints_CS0(:,2), LowestPoints_CS0(:,3),'k.')
+%     quickPlotRefSystem(JCS.patellofemoral_r);
+    % add articular surfaces
+    if strcmp(algorithm,'artic-surf')
+        quickPlotTriang(PatArtSurf, 'b')
+    end
+    % plot markers
+    BLfields = fields(PatellaBL_r);
+    for nL = 1:numel(BLfields)
+        cur_name = BLfields{nL};
+        plotDot(PatellaBL_r.(cur_name), 'k', 2)
+    end
+end
 
 end

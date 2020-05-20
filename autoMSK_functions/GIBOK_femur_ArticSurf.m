@@ -1,5 +1,6 @@
 function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOK_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface)
 
+debug_plots = 0;
 V_all = CSs.V_all;
 Z0 = CSs.Z0;
 
@@ -47,13 +48,15 @@ PtsCondylesMed = EpiFem.Points(IdCdlPts(:,med_lat_ind(1)),:);
 PtsCondylesLat = EpiFem.Points(IdCdlPts(:,med_lat_ind(2)),:);
 
 % % debugging plots: plotting the lines between the points identified
-% plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');hold on
-% plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
-% N=size(PtsCondylesLat,1)*2;
-% xP(1:2:N,:) = PtsCondylesLat; xP(2:2:N,:) = PtsCondylesMed;
-% for n= 1:N-1
-%     plot3(xP(n:n+1,1), xP(n:n+1,2), xP(n:n+1,3), 'k-', 'LineWidth', 2)
-% end
+if debug_plots
+    plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');hold on
+    plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
+    N=size(PtsCondylesLat,1)*2;
+    xP(1:2:N,:) = PtsCondylesLat; xP(2:2:N,:) = PtsCondylesMed;
+    for n= 1:N-1
+        plot3(xP(n:n+1,1), xP(n:n+1,2), xP(n:n+1,3), 'k-', 'LineWidth', 2)
+    end
+end
 
 %% New temporary coordinate system (new ML axis guess)
 % The reference system:
@@ -87,9 +90,10 @@ PtMedTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesMed, U)
 PtLatTopCondyle = getFemoralCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U);
 
 % % [LM] plotting for debugging
-% plot3(PtMedTopCondyle(:,1), PtMedTopCondyle(:,2), PtMedTopCondyle(:,3),'go');
-% plot3(PtLatTopCondyle(:,1), PtLatTopCondyle(:,2), PtLatTopCondyle(:,3),'go');
-
+if debug_plots
+    plot3(PtMedTopCondyle(:,1), PtMedTopCondyle(:,2), PtMedTopCondyle(:,3),'go');
+    plot3(PtLatTopCondyle(:,1), PtLatTopCondyle(:,2), PtLatTopCondyle(:,3),'go');
+end
 %% Separate medial and lateral condyles points
 % The middle point of all edges connecting the condyles is
 % located distally :
@@ -107,7 +111,7 @@ Pts_0_C1                = Pts_Proj_CLat*VC';
 Pts_0_C2                = Pts_Proj_CMed*VC';
 %============================
 
-% divides the epiphesis in med and lat based on where they stand wrt the
+% divides the epiphysis in med and lat based on where they stand wrt the
 % midpoint identified above
 C1_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)<0,:);
 C2_Pts_DF_2D_RC = Epiphysis_Pts_DF_2D_RC(Epiphysis_Pts_DF_2D_RC(:,2)-Pt_AxisOnSurf_proj(2)>0,:);
@@ -118,6 +122,23 @@ ArticularSurface_Lat = PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC ,...
                         CutAngle_Lat, InSetRatio, ellip_dilat_fact)*VC';
 ArticularSurface_Med = PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC,...
     CutAngle_Med, InSetRatio, ellip_dilat_fact)*VC';
+
+% if strcmp(art_surface, 'pat_groove')
+%     % same as posterior
+%     CutAngle_Lat = 110;
+%     CutAngle_Med = 110;
+%     InSetRatio = 0.9;
+%     ellip_dilat_fact = 0.4;
+%     ArticularSurface_Ant_Med = PtsOnCondylesFemur( Pts_Proj_CMed , C2_Pts_DF_2D_RC,...
+%         CutAngle_Med, InSetRatio, ellip_dilat_fact)*VC';
+%     ArticularSurface_Ant_Lat = PtsOnCondylesFemur( Pts_Proj_CLat , C1_Pts_DF_2D_RC,...
+%         CutAngle_Lat, InSetRatio, ellip_dilat_fact)*VC';
+%     
+%     quickPlotTriang(EpiFem); hold on
+%     plot3(ArticularSurface_Med(:,1), ArticularSurface_Med(:,2),ArticularSurface_Med(:,3),'r.')
+%     plot3(ArticularSurface_Ant(:,1), ArticularSurface_Ant(:,2),ArticularSurface_Ant(:,3),'r.')
+%     plot3(Pts_Proj_CMed(:,1), Pts_Proj_CMed(:,2),Pts_Proj_CMed(:,3),'g.')
+% end
 
 % locate notch using updated estimation of X1
 MidPtPosterCondyleIt2 = mean([ArticularSurface_Lat; ArticularSurface_Med]);
