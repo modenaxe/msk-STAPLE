@@ -27,7 +27,7 @@ method = 'auto2020';
 % create model folder if required
 if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
-for n_d = 4
+for n_d = 2
     % setup folders
     model_name = dataset_set{n_d};
     main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
@@ -42,8 +42,8 @@ for n_d = 4
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
-%     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
+    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
 %     axis off
     
 %     %---- FEMUR -----

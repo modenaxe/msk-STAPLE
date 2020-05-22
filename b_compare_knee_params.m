@@ -21,9 +21,9 @@ results_plots = 0;
 
 if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
-for nb = 1:2
+for nb = 2
     cur_bone = bone_set{nb};
-    for n_d = 1:numel(dataset_set)    
+    for n_d = 1:3%numel(dataset_set)    
         % setup folders
         cur_dataset = dataset_set{n_d};
         main_ds_folder =  ['test_geometries',filesep,cur_dataset];
@@ -88,7 +88,7 @@ for nb = 1:2
         orig_dist = sqrt(sum(orig_diff.^2, 2));
          
         for naxis = 1:3
-                    joint_axis = [JCS1.knee_r.V(:,naxis)';
+                    joint_axis =[JCS1.knee_r.V(:,naxis)';
                                 JCS2.knee_r.V(:,naxis)';
                                 JCS3.knee_r.V(:,naxis)';
                                 JCS4.knee_r.V(:,naxis)';
@@ -107,6 +107,7 @@ for nb = 1:2
 %         res_table.Properties.RowNames = methods_list;
 %         writetable(res_table,fullfile(results_folder, [cur_bone,'_', cur_dataset,'.xlsx']));
         
+
         clear JCS1 JCS2 JCS3 JCS4 JCS5 ref_JCS ang_diff orig_dist orig_diff bone_triang
         
         close all
