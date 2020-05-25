@@ -1,5 +1,14 @@
-function CSs = Miranda2010_femur(DistFem)
+function CSs = Miranda2010_femur(Femur)
 
+
+L_ratio = 0.40;
+[ U_DistToProx ] = femur_get_correct_first_CS( Femur );
+[ProxFem, DistFem] = cutLongBoneMesh(Femur, U_DistToProx, L_ratio);
+[ ~, CS.CenterVol] = TriInertiaPpties(Femur);
+if nargin<2
+    pname = '.';
+    fm = 'temp_fem.iv';
+end
 
 % TODO: double check against manuscript
 % https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2866785/
@@ -161,7 +170,7 @@ Center0 = mean(PCsFem.Points)' - 2*npcs;
 CylPtsSS = PCsFem.Points(1:3:end,:)
 
 % Fit the 1st cylinder
-[x0n, an, rn, d] = lscylinder(CylPtsSS, Center0, Axe0, Radius0,, 0.001, 0.001);
+[x0n, an, rn, d] = lscylinder(CylPtsSS, Center0, Axe0, Radius0, 0.001, 0.001);
 
 plotCylinder( an, rn, x0n, 15, 1, 'b')
 
@@ -186,7 +195,7 @@ Axe1 = normalizeV(an);
 Radius1 = rn;
 Center1 = X0n;
 % Get a subset of the points for speed
-CylPtsSS = PCsFem.Points(1:3:end,:)
+CylPtsSS = PCsFem.Points(1:3:end,:);
 
 % Fit the 2nd cylinder
 [x0n, an, rn, d] = lscylinder(CylPtsSS, Center1, Axe1, Radius1, 0.001, 0.001);
