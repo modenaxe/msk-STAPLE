@@ -1,13 +1,13 @@
 %% Initial Set up 
-function [CS, JCS, CalcnBL_r] = GIBOK_calcn(Calcn, in_mm, result_plots, debug_plots)
+function [CS, JCS, CalcnBL_r] = GIBOK_calcn(Calcn, result_plots, debug_plots, in_mm)
 
 % check units
-if nargin<2;     in_mm = 1;  end
+if nargin<4;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % results/debug plot default
-if nargin<3;  result_plots =1;  end
-if nargin<4;  debug_plots = 0;  end
+if nargin<2;  result_plots =1;  end
+if nargin<3;  debug_plots = 0;  end
 
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
@@ -22,8 +22,11 @@ Z0 = cross(X0,Y0);
 %% Convex hull approach with prior deleting of the phalanges
 [x, y, z] = deal(Calcn.Points(:,1), Calcn.Points(:,2), Calcn.Points(:,3));
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Calcn.Points);
+
 % plot convex hull
-% trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
+if debug_plots == 1
+    trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
+end
 
 % Convert the convexHull to triangulation object
 Foot2_CH = triangulation(K,x,y,z);
@@ -198,16 +201,26 @@ if norm(CalcnBL_r.R5M-CalcnBL_r.R5MGROUND)>10
 end
 label_switch = 1;
 
+if paper_figure == 1
+    figure
+    quickPlotTriang(Calcn)
+    trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
+    [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
+    trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.8,'edgecolor','k');
+    axis off
+end
+
 if result_plots == 1
-    figure('Name', 'foot_r')';
+    figure('Name', 'foot_r');
     % plot the calcn triangulation
     PlotTriangLight(Calcn, CS, 0)
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(CS)
     % plot the bone landmarks
-%     plotDot(heelPt,'g',3)
-%     plotDot(PtMetaLat,'b',3)
-%     plotDot(PtMetaMed,'r',3)
+    %     plotDot(heelPt,'g',3)
+    %     plotDot(PtMetaLat,'b',3)
+    %     plotDot(PtMetaMed,'r',3)
+    
     % Plot the sole plane
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
