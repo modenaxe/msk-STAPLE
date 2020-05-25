@@ -10,7 +10,7 @@
 % ----------------------------------------------------------------------- %
 
 clear; clc
-addpath(genpath('./GIBOK-toolbox'))
+addpath(genpath('./GIBOC-toolbox'))
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
 % dataset_folder = './test_geometries/VAKHUM_S6_CT';
@@ -67,4 +67,4 @@ end
 disp('-------------------')
 disp('DONE')
 % remove paths
-rmpath(genpath('./GIBOK-toolbox'));
+rmpath(genpath('./GIBOC-toolbox'));

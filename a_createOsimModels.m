@@ -7,7 +7,7 @@
 clear; clc; close all
 tic
 % add useful scripts
-addpath(genpath('GIBOK-toolbox'));
+addpath(genpath('GIBOC-toolbox'));
 addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
@@ -67,7 +67,7 @@ for n_d = 1:4
 end
 
 % remove paths
-rmpath(genpath('GIBOK-toolbox'));
+rmpath(genpath('GIBOC-toolbox'));
 rmpath('autoMSK_functions');
 
 

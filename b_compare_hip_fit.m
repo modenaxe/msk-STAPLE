@@ -5,7 +5,7 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('GIBOK-toolbox'));
+addpath(genpath('GIBOC-toolbox'));
 addpath('autoMSK_functions');
 
 % settings

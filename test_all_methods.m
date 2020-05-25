@@ -12,7 +12,7 @@
 clear; clc; close all
 tic
 % add useful scripts
-addpath(genpath('GIBOK-toolbox'));
+addpath(genpath('GIBOC-toolbox'));
 addpath('autoMSK_functions');
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
