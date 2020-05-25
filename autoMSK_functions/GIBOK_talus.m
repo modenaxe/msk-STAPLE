@@ -94,6 +94,16 @@ JCS.subtalar_r.parent_location = CS.talocalc_centre * dim_fact;
 JCS.subtalar_r.parent_orientation = computeXYZAngleSeq(JCS.subtalar_r.V);
 JCS.subtalar_r.Origin = CS.talocalc_centre;
 
+% figure quality (bone+articular surfaces)
+if paper_figure == 1
+    figure()
+    PlotTriangLight(Talus, CS, 0, 1);
+    trisurf(Talonavic_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
+    trisurf(Talocalcn_AS,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
+    trisurf(TalTrochAS,'Facecolor','g','FaceAlpha',1,'edgecolor','none');
+    axis off
+end
+
 if result_plots == 1
     figure('Name', 'talus_r')
     % plot talus and ref systems
