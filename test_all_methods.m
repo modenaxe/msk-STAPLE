@@ -1,3 +1,4 @@
+
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
@@ -27,7 +28,7 @@ method = 'auto2020';
 % create model folder if required
 if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
-for n_d = 2
+for n_d = 1
     % setup folders
     model_name = dataset_set{n_d};
     main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
@@ -42,19 +43,20 @@ for n_d = 2
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
-    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
+%     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
 %     axis off
     
 %     %---- FEMUR -----
-%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+    [CS] = Miranda2010_femur(geom_set.femur_r);
 %     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
 %     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
 %     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
 %     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
-    [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
+%     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
 %     [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
 %     [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
 %     [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
@@ -67,10 +69,10 @@ for n_d = 2
 % [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
 
 %     %---- TALUS/ANKLE -----
-    [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+%     [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
 %     
 %     %---- CALCANEUS/SUBTALAR -----
-    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r);
+    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r, 0, 1);
     %-----------------
     clear JCS
 %     close all

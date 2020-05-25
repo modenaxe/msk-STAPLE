@@ -9,15 +9,16 @@ addpath(genpath(strcat(pwd,'/SubFunctions')));
 % [Foot] = ReadMesh('../test_geometries/LHDL_CT/calcn_r.stl');
 
 cwd = 'C:\Users\jbapt\Documents\Research\auto-msk-model\test_geometries';
+cwd = 'F:\MATLAB\auto-msk-model-git\test_geometries';
 % load( strcat(cwd, '\TLEM2_MRI_tri\calcn_l.mat') )
 % load( strcat(cwd, '\TLEM2_MRI_tri\calcn_r.mat') )
 % load( strcat(cwd, '\TLEM2_CT_tri\calcn_l.mat') )
 % load( strcat(cwd, '\TLEM2_CT_tri\calcn_r.mat') )
 % load( strcat(cwd, '\P0_MRI_tri\calcn_r.mat') )
 % load( strcat(cwd, '\LHDL_CT_tri\calcn_l.mat') )
-load( strcat(cwd, '\LHDL_CT_tri\calcn_r.mat') )
+load( strcat(cwd, '\LHDL_CT\tri\calcn_r.mat') )
 
-Foot = curr_triang;
+Foot = triang_geom;%curr_triang;
 % Foot = ReadMesh(strcat(cwd,'\JIA_CSm6\calcn_r.stl'));
 
 % Need to account for cases where the foot is subidivided into multiple 
