@@ -1,5 +1,5 @@
 % write new geometries
-function writeProcessedBoneGeom(geom_set, CS, geometry_folder, stl_format)
+function writeTransformedBoneGeom(geom_set, CS, geometry_folder, stl_format)
 if nargin<4; stl_format='binary';end
 geom_names = fields(geom_set);
 body_names = fields(CS);
