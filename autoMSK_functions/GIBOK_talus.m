@@ -95,6 +95,7 @@ JCS.subtalar_r.parent_orientation = computeXYZAngleSeq(JCS.subtalar_r.V);
 JCS.subtalar_r.Origin = CS.talocalc_centre;
 
 % figure quality (bone+articular surfaces)
+paper_figure = 0;
 if paper_figure == 1
     figure()
     PlotTriangLight(Talus, CS, 0, 1);
