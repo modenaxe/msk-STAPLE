@@ -13,7 +13,7 @@ clear; clc; close all
 tic
 % add useful scripts
 addpath(genpath('GIBOC-toolbox'));
-addpath('autoMSK_functions');
+addpath(genpath('autoMSK_functions'));
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
@@ -43,17 +43,17 @@ for n_d = 1
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
+    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
 %     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
 %     axis off
     
 %     %---- FEMUR -----
-    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
-    [CS] = Miranda2010_femur(geom_set.femur_r);
+%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+%     [CS] = Miranda2010_femur(geom_set.femur_r);
 %     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
 %     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
 %     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-%     [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+    [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
