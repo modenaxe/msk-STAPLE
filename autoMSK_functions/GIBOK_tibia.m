@@ -211,7 +211,7 @@ if result_plots == 1
         case 'ellipse'
             quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
             quickPlotRefSystem(JCS.knee_r)
-            title('GIBOK Tibia - Ellipse fitting')
+%             title('GIBOC Tibia - Ellipse fitting')
         case 'centroids'
             quickPlotTriang(EpiTibASMed,'r', 0, alpha_AS );
             quickPlotTriang(EpiTibASLat,'b',0, alpha_AS);
@@ -219,11 +219,11 @@ if result_plots == 1
             plotDot(CS.Centroid_AS_med, 'r', 4);
             plotCylinder((CS.Centroid_AS_lat-CS.Centroid_AS_med)', 3, (CS.Centroid_AS_lat+CS.Centroid_AS_med)/2,...
                 1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
-            title('GIBOK Tibia - Centroids')
+%             title('GIBOC Tibia - Centroids')
         case 'plateau'
             quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
             quickPlotRefSystem(JCS.knee_r)
-            title('GIBOK Tibia - Plateau')
+%             title('GIBOC Tibia - Plateau')
     end
 
     % plot distal tibia

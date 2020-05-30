@@ -201,6 +201,7 @@ if norm(CalcnBL_r.R5M-CalcnBL_r.R5MGROUND)>10
 end
 label_switch = 1;
 
+paper_figure = 0;
 if paper_figure == 1
     figure
     quickPlotTriang(Calcn)
