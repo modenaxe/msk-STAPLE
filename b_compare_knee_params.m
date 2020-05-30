@@ -6,7 +6,7 @@
 % ----------------------------------------------------------------------- %
 clear; clc; close all
 addpath(genpath('GIBOC-toolbox'));
-addpath('autoMSK_functions');
+addpath(genpath('autoMSK_functions'));
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %----------
@@ -23,7 +23,7 @@ if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
 for nb = 2
     cur_bone = bone_set{nb};
-    for n_d = 1:3%numel(dataset_set)    
+    for n_d = 1:numel(dataset_set)    
         % setup folders
         cur_dataset = dataset_set{n_d};
         main_ds_folder =  ['test_geometries',filesep,cur_dataset];
@@ -81,7 +81,9 @@ for nb = 2
                 ref_JCS = JCS5;
             case 'tibia_r'
                 % Kai2013 chosen as reference - easy to change
-                ref_JCS = JCS2;
+%                 ref_JCS = JCS2;
+                [CS, ref_JCS] = CRACK_tibia(bone_triang, [], results_plots);
+                
         end
         % compute metrics (distance vectors in ref femur/tibia coord frame)
         orig_diff = (ref_JCS.knee_r.V'*(joint_centres - ref_JCS.knee_r.Origin)')';
