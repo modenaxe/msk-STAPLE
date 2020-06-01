@@ -23,7 +23,7 @@ if ~isfolder(results_folder); mkdir(results_folder); end
 nf = 1;
 
 cur_bone = 'tibia_r';
-for n_d = 4%1:3%numel(dataset_set)
+for n_d = 1:4%numel(dataset_set)
     
     % setup folders
     cur_dataset = dataset_set{n_d};
@@ -46,12 +46,12 @@ for n_d = 4%1:3%numel(dataset_set)
     CoeffMorpho = computeTriCoeffMorpho(bone_triang);
     
     
-    try
-        [CS1, JCS1] = Miranda2010_buildtACS(bone_triang);
-    catch
+%     try
+% %         [CS1, JCS1] = Miranda2010_buildtACS(bone_triang);
+%     catch
         JCS1.knee_r.Origin = nan(1,3);
         JCS1.knee_r.V = nan(3,3);
-    end
+%     end
     [CS2, JCS2] = CS_tibia_Kai2014(bone_triang, [], results_plots);
     [CS3, JCS3] = GIBOK_tibia(bone_triang, [], 'plateau', results_plots);
     [CS4, JCS4] = GIBOK_tibia(bone_triang, [], 'ellipse', results_plots);
