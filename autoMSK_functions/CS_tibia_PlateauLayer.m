@@ -70,16 +70,24 @@ CS.Ytibplat = Ytp;
 CS.Xtibplat = Xtp;
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
-Y = normalizeV(KneeCenter - CS.CenterAnkleInside);
+Y = normalizeV(KneeCenter - CS.CenterAnkleInside); % mechanical axis
 Z = normalizeV(Ytp);
 X = normalizeV(cross(Y, Z));
 
 % define the knee reference system
-Ydp_knee  = normalizeV(cross(Z, X));
-JCS.knee_r.V = [X Ydp_knee Z];
+% this was my first guess - keep the medio-lateral direction as identified
+% by the algorithm. I don't think it's a good idea, because you lose the
+% mechanical axis, while you can still keep the frontal plane.
+% % Ydp_knee  = normalizeV(cross(Z, X));
+% % JCS.knee_r.V = [X Ydp_knee Z];
+Zml_knee  = normalizeV(cross(X,Y));
+JCS.knee_r.V = [X Y Zml_knee];
+
+% define knee child
 JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin   = KneeCenter;
-% the knee axis is defined by the femoral fitting
+
+% the knee axis (parent) is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;
 
 % the talocrural joint is also defined by the talus fitting.
