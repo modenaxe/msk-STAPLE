@@ -58,7 +58,16 @@ CS.V_all = V_all;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
-[CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
+try
+    % sometimes Renault2018 fails for sparse meshes
+    [CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
+catch
+    % use Kai when Renault fails
+    FemHead = [];
+    [CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots);
+    CS.CenterFH_Renault  = CS.CenterFH_Kai;
+    CS.RadiusFH_Renault  = CS.RadiusFH_Kai;
+end
 
 % X0 points backwards
 CS.X0 = cross(CS.Y0, CS.Z0);
@@ -118,7 +127,8 @@ if result_plots == 1
         quickPlotTriang(postCondyle_Lat, 'b')
         quickPlotTriang(postCondyle_Med, 'r')
     end
-    quickPlotTriang(FemHead, 'g')
+    plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g' , alpha)
+%     quickPlotTriang(FemHead, 'g')
     % plot markers
     BLfields = fields(FemurBL_r);
     for nL = 1:numel(BLfields)
