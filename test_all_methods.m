@@ -51,9 +51,9 @@ for n_d = 1
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
 %     [CS] = Miranda2010_femur(geom_set.femur_r);
 %     [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
-%     [FemurCS2, JCS2] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
-%     [FemurCS3, JCS3] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
-    [FemurCS4, JCS4] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+%     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
+%     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
+    [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);

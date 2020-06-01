@@ -48,9 +48,9 @@ for nb = 2
                     JCS1.knee_r.V = nan(3,3);
                 end
                 [CS2, JCS2] = CS_femur_Kai2014(bone_triang, [], results_plots);
-                [CS3, JCS3] = GIBOK_femur(bone_triang, [], 'spheres', results_plots);
-                [CS4, JCS4] = GIBOK_femur(bone_triang, [], 'ellipsoids', results_plots);
-                [CS5, JCS5] = GIBOK_femur(bone_triang, [], 'cylinder', results_plots);
+                [CS3, JCS3] = GIBOC_femur(bone_triang, [], 'spheres', results_plots);
+                [CS4, JCS4] = GIBOC_femur(bone_triang, [], 'ellipsoids', results_plots);
+                [CS5, JCS5] = GIBOC_femur(bone_triang, [], 'cylinder', results_plots);
                 % cylinder fit chosen as reference - easy to change
                 ref_JCS = JCS5;
                 % table headers

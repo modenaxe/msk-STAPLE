@@ -69,13 +69,13 @@ if isfield(geom_set,'femur_r')
         case 'Kai'
             [CS.femur_r, JCS.femur_r, BL.femur_r]  = CS_femur_Kai2014(geom_set.femur_r);
         case 'GFem-spheres'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOK_femur(geom_set.femur_r, [], 'spheres');
+            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
         case 'GFem-ellipsoids'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOK_femur(geom_set.femur_r, [], 'ellipsoids');
+            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
         case 'GFem-cylinder'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOK_femur(geom_set.femur_r, [], 'cylinder');
+            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
         otherwise
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOK_femur(geom_set.femur_r);
+            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r);
     end
 %     addMarkersFromStruct(osimModel, 'femur_r', BL.femur_r, in_mm);
 end

@@ -1,4 +1,4 @@
-function [CS, JCS, FemurBL_r] = GIBOK_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
+function [CS, JCS, FemurBL_r] = GIBOC_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
 
 % check units
 if nargin<5;     in_mm = 1;  end
@@ -60,10 +60,10 @@ CS.V_all = V_all;
 % NB adds a CSs.Y0, (lateral)
 try
     % sometimes Renault2018 fails for sparse meshes
-    [CS, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
+    [CS, FemHeadACS] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
 catch
     % use Kai when Renault fails
-    FemHead = [];
+    warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
     [CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots);
     CS.CenterFH_Renault  = CS.CenterFH_Kai;
     CS.RadiusFH_Renault  = CS.RadiusFH_Kai;
