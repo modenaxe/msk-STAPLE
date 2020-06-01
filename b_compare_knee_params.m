@@ -51,19 +51,26 @@ for nb = 2
                 [CS3, JCS3] = GIBOK_femur(bone_triang, [], 'spheres', results_plots);
                 [CS4, JCS4] = GIBOK_femur(bone_triang, [], 'ellipsoids', results_plots);
                 [CS5, JCS5] = GIBOK_femur(bone_triang, [], 'cylinder', results_plots);
+                % cylinder fit chosen as reference - easy to change
+                ref_JCS = JCS5;
+                % table headers
                 table_head = {'KneeJointCentre_femur_dist_v_mm', 'Dist_norm_mm' 'KneeJointAxis_femur', 'Ang_diff_deg'};
                 methods_list = {'Miranda2010','Kai2014','GIBOK-Sphere','GIBOK-Ellipsoids','GIBOK-Cylinder'};
             case 'tibia_r'
-                try
-                    [CS1, JCS1] = Miranda2010_buildtACS(bone_triang);
-                catch
+%                 try
+%                     [CS1, JCS1] = Miranda2010_buildtACS(bone_triang);
+%                 catch
                     JCS1.knee_r.Origin = nan(1,3);
                     JCS1.knee_r.V = nan(3,3);
-                end
+%                 end
                 [CS2, JCS2] = CS_tibia_Kai2014(bone_triang, [], results_plots);
                 [CS3, JCS3] = GIBOK_tibia(bone_triang, [], 'plateau', results_plots);
                 [CS4, JCS4] = GIBOK_tibia(bone_triang, [], 'ellipse', results_plots);
                 [CS5, JCS5] = GIBOK_tibia(bone_triang, [], 'centroids', results_plots);
+                % Kai2013 chosen as reference - easy to change
+                ref_JCS = JCS2;
+%                 [CS, ref_JCS] = CRACK_tibia(bone_triang, [], results_plots);
+                % table headers
                 table_head = {'KneeJointCentre_tibia_v_mm', 'Dist_norm_mm' 'KneeJointAxis_tibia', 'Ang_diff_deg'};
                 methods_list = {'Miranda2010','Kai2014','GIBOK-Plateau','GIBOK-Ellipse','GIBOK-Centroids'};
             otherwise
@@ -75,16 +82,6 @@ for nb = 2
                                     JCS5.knee_r.Origin];
         
         % compute angular deviations
-        switch cur_bone
-            case 'femur_r'
-                % cylinder fit chosen as reference - easy to change
-                ref_JCS = JCS5;
-            case 'tibia_r'
-                % Kai2013 chosen as reference - easy to change
-%                 ref_JCS = JCS2;
-                [CS, ref_JCS] = CRACK_tibia(bone_triang, [], results_plots);
-                
-        end
         % compute metrics (distance vectors in ref femur/tibia coord frame)
         orig_diff = (ref_JCS.knee_r.V'*(joint_centres - ref_JCS.knee_r.Origin)')';
         orig_dist = sqrt(sum(orig_diff.^2, 2));
