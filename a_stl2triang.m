@@ -17,7 +17,8 @@ addpath(genpath('./GIBOC-toolbox'))
 % dataset_folder = './test_geometries/TLEM2';
 % dataset_folder = './test_geometries/GC4';
 % dataset_folder = './test_geometries/P0_MRI';
-dataset_folder = './test_geometries/JIA_MRI';
+% dataset_folder = './test_geometries/JIA_MRI';
+dataset_folder = './test_geometries/ULB_VM';
 % folder where to store the resulting triangulations
 triang_folder = '';
 %---------------------------------------------------
@@ -46,7 +47,7 @@ for n = 1:N_stl
     end
     
     % read in stl file
-    curr_stl_name = 'tibia_no_fibula_r.stl';%list_of_stl(n).name;
+    curr_stl_name = list_of_stl(n).name;
     [~, name, ext] = fileparts(curr_stl_name);
     disp('-------------------')
     disp(['GEOMETRY ', curr_stl_name, ' (', num2str(n),'/',num2str(N_stl),')'])
