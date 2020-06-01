@@ -7,7 +7,7 @@
 clearvars;  close all
 
 addpath('autoMSK_functions/validation_funcs');
-model_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+model_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 modelling_method = 'Modenese2018';
 osim_model_folder = ['validation',filesep,'opensim_models'];
 results_folder = './validation';

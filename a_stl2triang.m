@@ -16,7 +16,7 @@ addpath(genpath('./GIBOC-toolbox'))
 % dataset_folder = './test_geometries/VAKHUM_S6_CT';
 % dataset_folder = './test_geometries/TLEM2';
 % dataset_folder = './test_geometries/GC4';
-% dataset_folder = './test_geometries/P0_MRI';
+% dataset_folder = './test_geometries/ICL_MRI';
 % dataset_folder = './test_geometries/JIA_MRI';
 dataset_folder = './test_geometries/ULB_VM';
 % folder where to store the resulting triangulations

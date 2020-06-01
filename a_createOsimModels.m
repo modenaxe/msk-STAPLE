@@ -13,7 +13,7 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
 auto_models_folder = './validation/opensim_models';
-dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 body_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
 method = 'Modenese2018';

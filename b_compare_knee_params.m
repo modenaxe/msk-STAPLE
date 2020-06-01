@@ -13,7 +13,7 @@ addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 % SETTINGS
 %----------
 results_folder = 'results_ACS_estimations';
-dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 in_mm = 1;
 bone_set = { 'femur_r', 'tibia_r'};
 results_plots = 0;

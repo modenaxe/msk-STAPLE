@@ -10,7 +10,7 @@ addpath('autoMSK_functions');
 
 % settings
 %----------
-dataset_set = {'LHDL_CT', 'TLEM2_CT', 'P0_MRI', 'JIA_MRI'};
+dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 in_mm = 1;
 % if visualization is desired
 debug_plots = 0;
