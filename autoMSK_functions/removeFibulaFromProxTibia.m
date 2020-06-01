@@ -9,6 +9,7 @@ function ProxTibNoFib = removeFibulaFromProxTibia(ProxTib, funcNameForWarning)
 % it is assumed that fibula will appear as an individual triangulation,
 % e.g. it was segmented individually and then added as a mesh layer to
 % tibia
+disp('Attempting to remove fibula...')
 [TrSplitted] = TriSplitObjects(ProxTib);
 if max(size(TrSplitted))==2
     if TrSplitted(1).Vol>TrSplitted(2).Vol
@@ -20,9 +21,10 @@ if max(size(TrSplitted))==2
         % alternative
         % ProxTibNoFib = TriReduceMesh(ProxTib, TrSplitted(2).elements)  ;
     end
-    
+    disp('Done!')
 elseif max(size(TrSplitted))==1
     ProxTibNoFib = ProxTib;
+
 elseif max(size(TrSplitted))>2
     warndlg({['Proximal Tibia in ',funcNameForWarning,' consists of >2 triangulations. Please check!'],...
         'Proceeding with current geometry...'});
