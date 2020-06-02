@@ -4,6 +4,20 @@ repository to develop automated methods for generating musculoskeletal models fr
 # Plan
 The MSK models are built using the following approaches:
 
+# Summary of implemented methods
+
+| Bone                 | Rigid Body | Joint Coordinate System | Algorithms |
+| ---                  | ---     | ---                     | ---        |
+| Pelvis               | pelvis  | ground-pelvis | STAPLE-Pelvis |
+|                      |         | ground-pelvis | Kai-Pelvis    |
+| Femur                | femur   | hip child     | Kai-Femur     |
+|                      |         |               | GIBOC-Femur   |
+| Tibia+Fibula         | fibula  |  |  |
+| Patella              | patella |  |  |
+| Talus                | talus   |  |  |
+| Calcaneus+Foot bones | calcn   |  |  |
+| Phalanges            | toes    |  |  |
+
 * pelvis: using inertial axes
 * femur:
     1. Kai et al. 2014
