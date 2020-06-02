@@ -1,5 +1,11 @@
 function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots, debug_plots)
 
+% depends on
+% fitQuadriTalus
+% FitCSATalus
+
+
+
 % NOTE: CS contains multiple sets of axes:
 % * X0-Y0-Z0 : talus axes
 % * X1-Y1-Z1 : subtalar joint axes

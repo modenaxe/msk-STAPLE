@@ -1,5 +1,11 @@
 function [CS, JCS, TibiaBL_r] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
 
+% depends on
+% AnkleSurfFit
+% fitEllipseOnTibialCondylesEdge (PLATEAU)
+% ProjectOnPlan
+% 
+
 % check units
 if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end

@@ -1,5 +1,22 @@
 function [CS, JCS, FemurBL_r] = GIBOC_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
 
+%
+% depends on 
+% ????
+% FitCSA (?)
+% PlanPolygonCentroid3D
+% processFemoralEpyphysis
+% LargestEdgeConvHull
+% PCRegionGrowing
+% getFemoralCondyleMostProxPoint
+% lsplane
+% PtsOnCondylesFemur
+% fit_ellipse
+% smoothFemoralCondyles.m
+% filterFemoralCondyleSurf
+% ELLIPSOIDS
+% ellipsoid_fit
+
 % check units
 if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
@@ -152,8 +169,8 @@ if result_plots == 1
         case 'cylinder'
             plotCylinder( CS.Cyl_Y, CS.Cyl_Radius, CS.Cyl_Pt, CS.Cyl_Range*1.1, alpha, 'g')
         case 'ellipsoids'
-            PlotEllipsoid(CS.ellips_centre_med, CS.ellips_radii_med, CS.ellips_evec_med, 'r', alpha)
-            PlotEllipsoid(CS.ellips_centre_lat, CS.ellips_radii_lat, CS.ellips_evec_lat, 'b', alpha)
+            plotEllipsoid(CS.ellips_centre_med, CS.ellips_radii_med, CS.ellips_evec_med, 'r', alpha)
+            plotEllipsoid(CS.ellips_centre_lat, CS.ellips_radii_lat, CS.ellips_evec_lat, 'b', alpha)
         otherwise
             error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
     end

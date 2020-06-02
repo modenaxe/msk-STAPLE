@@ -6,7 +6,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 if nargin<5 debug_plots = 0; end
 
 % % Uridge in the initial (CT/MRI) coordinate system
-% UridgeR0 = CS.V_all*Uridge;
+UridgeR0 = CS.V_all*Uridge;
 
 % Construct RL ACS
 Center3 = mean(LowestPoints_CS0);

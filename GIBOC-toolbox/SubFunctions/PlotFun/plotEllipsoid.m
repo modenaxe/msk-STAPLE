@@ -5,7 +5,7 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 % based on https://www.mathworks.com/matlabcentral/answers/19716-what-is-the-function-to-plot-a-rotating-3-d-ellipsoid
-function PlotEllipsoid(centre, radii, evecs, color, alpha)
+function plotEllipsoid(centre, radii, evecs, color, alpha)
 
 if nargin<5
     alpha=0.4;

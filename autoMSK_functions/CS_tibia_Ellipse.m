@@ -7,7 +7,7 @@ function [CS, JCS] = CS_tibia_Ellipse(EpiTibAS, CS)
 [oLSP, Ztp] = lsplane(EpiTibAS.Points,CS.Z0);
 
 % fit ellipse to articular surface
-[~, Yelps, EllipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
+[~, Yelps, EllipsePts ] = fitEllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
 
 % centroid of the ellipse is considered knee centre on tibia
 KneeCenter = mean(EllipsePts);

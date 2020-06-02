@@ -35,6 +35,7 @@ function [ Xel, Yel, ellipsePts, ellipse_t, EdgePtsTop ,K  ] = ...
 %
 % [x0, a <, d, normd >] = lsplane(X)
 % ---------------------------------------------------------------------
+% depends on ProjectOnPlan
 if length(x0) > 1
     d = - (n(1)*x0(1) + n(2)*x0(2) + n(3)*x0(3));
 else

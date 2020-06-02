@@ -10,7 +10,7 @@ debug_plots = 0;
 % femoral condyle touch
 
 % fit ellipsoid
-[ Xel, Yel, ellipsePts, ellipsePpties] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
+[ Xel, Yel, ellipsePts, ellipsePpties] = fitEllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
 ELP1.a = ellipsePpties.a;
 ELP1.b = ellipsePpties.b;
 ELP1.Xel = -sign(Xel'*Y0)*Xel ; % Post to Ant

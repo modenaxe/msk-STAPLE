@@ -28,7 +28,7 @@ EpiTibAS = TriReduceMesh( EpiTib, [] , NodesEpiAS_OK );
 EpiTibAS = TriCloseMesh( EpiTib, EpiTibAS, 6*CoeffMorpho);
  
 % Fit an ellipse on proximal AS to get an initial Ml and AP axis
-[ Xel, Yel, ellipsePts , ellipsePpties] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
+[ Xel, Yel, ellipsePts , ellipsePpties] = fitEllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
 a = ellipsePpties.a;
 b = ellipsePpties.b;
 Xel = sign(Xel'*Y0)*Xel;

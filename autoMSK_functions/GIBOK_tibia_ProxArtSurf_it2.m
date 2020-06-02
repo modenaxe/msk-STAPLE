@@ -9,7 +9,7 @@ d = -oLSP * Ztp;
 
 % Seperate Medial and lateral
 [ Xel, Yel, ellipsePts , ellipsePpties] = ...
-                        EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
+                        fitEllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP);
 a = ellipsePpties.a;
 b = ellipsePpties.b;
 Xel = sign(Xel'*Y0)*Xel;

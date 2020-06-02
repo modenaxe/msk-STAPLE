@@ -10,7 +10,7 @@ function [CS, JCS] = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS)
 d = -oLSP*Ztp;
 
 % fit the ellipsoid and define the axes on it
-[ Xel, Yel, EllipsePts ] = EllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
+[ Xel, Yel, EllipsePts ] = fitEllipseOnTibialCondylesEdge( EpiTibAS, Ztp , oLSP );
 Xel = sign(Xel'* CS.Y0)*Xel;
 Yel = sign(Yel'* CS.Y0)*Yel;
 

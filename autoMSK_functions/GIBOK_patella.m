@@ -1,5 +1,8 @@
 % modified by LM in 2020
 function [ CS, JCS, PatellaBL_r] = GIBOK_patella( Patella, algorithm, result_plots, in_mm, debug_plots)
+% depends on
+% LSSLFitPatellaRidge
+% patRidgeFit
 
 % check units
 if nargin<3;     result_plots = 1;  end
@@ -32,10 +35,10 @@ PatPIACS = TriChangeCS( Patella, V_all, CenterVol );
 %% Identify initial guess of patella posterior ridge
 % Optimization to find the ridge orientation
 U0 = [1;0;0];
-U = LSSLFitRidge( PatPIACS,U0,30);
+U = LSSLFitPatellaRidge( PatPIACS,U0,30);
 % Refine the guess with higher number of slices (75 in original GIBOK tool)
 N_slices = 75;
-[ U, ~ ,LowestPoints_PIACS ] = LSSLFitRidge( PatPIACS,U, N_slices);
+[ U, ~ ,LowestPoints_PIACS ] = LSSLFitPatellaRidge( PatPIACS,U, N_slices);
 V = [U(2); -U(1); 0];
 
 %% Separate the ridge region from the apex region
@@ -74,7 +77,7 @@ else
 end
 
 %% Update the ridge orientation with optimisation only on the ridge region
-[ U, Uridge , LowestPoints_end ] = LSSLFitRidge( PatPIACS, U, N_slices, StartDist, EndDist);
+[ U, Uridge , LowestPoints_end ] = LSSLFitPatellaRidge( PatPIACS, U, N_slices, StartDist, EndDist);
 U = Side*U;
 
 LowestPoints_CS0 = bsxfun(@plus,LowestPoints_end*V_all',CenterVol');

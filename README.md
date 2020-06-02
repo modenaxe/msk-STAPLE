@@ -11,7 +11,7 @@ The MSK models are built using the following approaches:
 | Pelvis               | pelvis          | ground-pelvis           | STAPLE-Pelvis    |
 |                      |                 |                         | Kai-Pelvis       |
 | Femur                | femur           | hip child               | Kai-Femur        |
-| ---                  |                 |                         | GIBOC-Femur      |
+|                      |                 |                         | GIBOC-Femur      |
 |					   |                 | knee parent             | Kai-Femur        |
 |					   |                 |                         | GIBOC-Spheres    |
 |					   |                 |                         | GIBOC-Ellipsoids |

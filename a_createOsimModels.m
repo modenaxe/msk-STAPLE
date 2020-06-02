@@ -7,7 +7,7 @@
 clear; clc; close all
 tic
 % add useful scripts
-addpath(genpath('GIBOC-toolbox'));
+% addpath(genpath('GIBOC-toolbox'));
 addpath(genpath('autoMSK_functions'));
 % addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
@@ -58,7 +58,7 @@ for n_d = 1:4
     % print
     osimModel.set_credits('Luca Modenese, Jean-Baptist Renault - Toolbox to generate MSK models automatically.')
     osimModel.setName([dataset_set{n_d},'_auto']);
-    osimModel.print(fullfile(auto_models_folder, [method,'_',model_name, '.osim']));
+%     osimModel.print(fullfile(auto_models_folder, [method,'_',model_name, '.osim']));
 %     osimModel.print(fullfile([method,'_',model_name, '.osim']));
     osimModel.disownAllComponents();
     

@@ -1,4 +1,4 @@
-function [ U, Uridge ,LowestPoints_End ] = LSSLFitRidge( TR,U,nbSlice,StartDist,EndDist, debug_plot)
+function [ U, Uridge ,LowestPoints_End ] = LSSLFitPatellaRidge( TR,U,nbSlice,StartDist,EndDist, debug_plot)
 %Least Square Straight Line Fit on Patellar Ridge
 %To obtain the direction of the ridge a Least Square Straight Line is
 %fitted on the lowest points on slices of normal U, and the normal U is

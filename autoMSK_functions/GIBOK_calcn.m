@@ -1,6 +1,10 @@
 %% Initial Set up 
 function [CS, JCS, CalcnBL_r] = GIBOK_calcn(Calcn, result_plots, debug_plots, in_mm)
 
+% depends on
+% TriangleClosestPointPair
+% pl3t
+
 % check units
 if nargin<4;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
