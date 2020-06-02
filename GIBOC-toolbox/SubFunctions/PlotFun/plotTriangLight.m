@@ -1,4 +1,4 @@
-function PlotTriangLight(Triang, CS, new_plot, alpha)
+function plotTriangLight(Triang, CS, new_plot, alpha)
 
 if nargin<3
     figure()

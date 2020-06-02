@@ -25,6 +25,20 @@ Z0 = cross(X0,Y0);
 
 %% Convex hull approach with prior deleting of the phalanges
 [x, y, z] = deal(Calcn.Points(:,1), Calcn.Points(:,2), Calcn.Points(:,3));
+
+% In the vast majority of cases, the reference system at the foot is
+% computed using the geometries from talus to metatarsal bone, without the
+% phalanges.
+% This part of code is not needed
+% TODO : Adapt the code in case there are the phalanges
+%==========================================
+% Foot_Start = min(Foot.Points*X0);
+% Foot_End = max(Foot.Points*X0);
+% Foot_Length = Foot_End - Foot_Start; 
+% ElmtsNoPhalange= find(Foot.incenter*X0 < (Foot_Start+0.80*Foot_Length));
+% Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
+%==========================================
+
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Calcn.Points);
 
 % plot convex hull
@@ -218,7 +232,7 @@ end
 if result_plots == 1
     figure('Name', 'foot_r');
     % plot the calcn triangulation
-    PlotTriangLight(Calcn, CS, 0)
+    plotTriangLight(Calcn, CS, 0)
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(CS)
     % plot the bone landmarks

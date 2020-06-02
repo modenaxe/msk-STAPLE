@@ -34,8 +34,14 @@ Requires:
 * OpenSim v4.0 or higher
 
 # Test geometries
-Test geometries are available for developers (DO NOT REDISTRIBUTE!) at [this link](https://www.dropbox.com/sh/wk4izo66qxbxp3h/AABAcyxpHkfWy1v5AjJ7QOIYa?dl=0).
-You can simply copy them in the "test_geometries" directory and adapt the scripts.
+Test geometries are available in the "test_geometries" directory:
+* LHDL
+* TLEM2 (MRI)
+* TLEM2 (CT)
+* JIA (MRI)
+* ICL (MRI)
+* VAKHUM (CT)
+* ULB_VM (CT)
 
 # Further Development
 * Segment mass properties and degrees of freedom of the joint models can easily be customised. 

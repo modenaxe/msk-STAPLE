@@ -144,7 +144,7 @@ PelvisBL.LPS       = LPS;
 % debug plot
 if result_plots == 1
     figure('Name','Pelvis')
-    PlotTriangLight(Pelvis, CS, 0); hold on
+    plotTriangLight(Pelvis, CS, 0); hold on
 %     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...

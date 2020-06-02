@@ -101,7 +101,10 @@ switch algorithm
 end
 
 % landmark bone according to CS (only Origin and CS.V are used)
-PatellaBL_r   = LandmarkGeom(Patella, CS, 'patella_r');
+% PatellaBL_r   = LandmarkGeom(Patella, CS, 'patella_r');
+% TEMPORARY SETTINGS
+CS.Origin = CS.CenterVol;
+PatellaBL_r   = [];
 
 % %% Export Identified Objects
 % if nargout > 1
@@ -116,7 +119,7 @@ if result_plots == 1
     figure;
     alpha = 0.5;
 %     subplot(2,2,[1,3]);
-    PlotTriangLight(Patella, CS, 0)
+    plotTriangLight(Patella, CS, 0)
     quickPlotRefSystem(CS);
     plot3(LowestPoints_CS0(:,1), LowestPoints_CS0(:,2), LowestPoints_CS0(:,3),'k.')
 %     quickPlotRefSystem(JCS.patellofemoral_r);
@@ -125,11 +128,11 @@ if result_plots == 1
         quickPlotTriang(PatArtSurf, 'b')
     end
     % plot markers
-    BLfields = fields(PatellaBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(PatellaBL_r.(cur_name), 'k', 2)
-    end
+%     BLfields = fields(PatellaBL_r);
+%     for nL = 1:numel(BLfields)
+%         cur_name = BLfields{nL};
+%         plotDot(PatellaBL_r.(cur_name), 'k', 2)
+%     end
 end
 
 end

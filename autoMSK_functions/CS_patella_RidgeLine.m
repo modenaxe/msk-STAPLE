@@ -16,13 +16,15 @@ Y3 = normalizeV( cross(Z3,X3) );
 X3 = cross(Y3,Z3);
 
 % % GIBOC
-% CSs.RL.X = X3;
-% CSs.RL.Uridge = Uridge;
-% CSs.RL.UridgeR0 = UridgeR0;
-% CSs.RL.Y = Y3;
-% CSs.RL.Z = Z3;
-% CSs.RL.V = [X3 Y3 Z3];
-% CSs.RL.Origin = Center3;
+CSs.RL.X = X3;
+CSs.RL.Uridge = Uridge;
+CSs.RL.UridgeR0 = UridgeR0;
+CSs.RL.Y = Y3;
+CSs.RL.Z = Z3;
+CSs.RL.V = [X3 Y3 Z3];
+CSs.RL.Origin = Center3;
+
+CS.V = CSs.RL.V ;
 
 % ISB aligned axes
 JCS.patellofemoral_r.Uridge = Uridge;

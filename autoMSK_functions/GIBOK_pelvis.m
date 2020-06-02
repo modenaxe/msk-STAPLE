@@ -115,7 +115,7 @@ PelvisBL.SYMP      = SYMP;
 
 % debug plot
 if result_plots == 1
-    PlotTriangLight(Pelvis, CS, 1); hold on
+    plotTriangLight(Pelvis, CS, 1); hold on
     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...

@@ -43,8 +43,8 @@ for n_d = 1
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
-%     [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
+    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
 %     axis off
     
 %     %---- FEMUR -----

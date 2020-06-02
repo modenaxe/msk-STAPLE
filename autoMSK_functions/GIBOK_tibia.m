@@ -189,7 +189,7 @@ if result_plots == 1
     figure('Name', 'tibia_r');
     % plot entire tibia 
     subplot(2,2,[1,3])
-    PlotTriangLight(Tibia, CS, 0);
+    plotTriangLight(Tibia, CS, 0);
     quickPlotRefSystem(JCS.knee_r)
     quickPlotTriang(EpiTibASMed,'r');
     quickPlotTriang(EpiTibASLat,'b');
@@ -212,7 +212,7 @@ if result_plots == 1
     % plot proximal tibia
     subplot(2,2,2)
     alpha_AS = 1;
-    PlotTriangLight(ProxTib, CS, 0);
+    plotTriangLight(ProxTib, CS, 0);
     switch fit_method
         case 'ellipse'
             quickPlotTriang(EpiTibAS3,'g', 0, alpha_AS );
@@ -234,7 +234,7 @@ if result_plots == 1
 
     % plot distal tibia
     subplot(2,2,4)
-    PlotTriangLight(DistTib, CS, 0);
+    plotTriangLight(DistTib, CS, 0);
     quickPlotTriang(AnkleArtSurf, 'g');
     plotDot(CS.AnkleCenter, 'g', 4);
 %     plotDot(CS.CenterAnkleInside, 'y', 4);

@@ -115,14 +115,14 @@ if result_plots == 1
     figure('Name', 'talus_r')
     % plot talus and ref systems
     subplot(2,2,[1,3]);
-    PlotTriangLight(Talus, CS, 0, 0.7);
+    plotTriangLight(Talus, CS, 0, 0.7);
 %     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.ankle_r, 30);
     quickPlotRefSystem(JCS.subtalar_r, 30);
     
     subplot(2,2,2); 
     %Visually check the Inertia Axis orientation relative to the Talus geometry
-    PlotTriangLight(Talus, CS, 0, 0.7);
+    plotTriangLight(Talus, CS, 0, 0.7);
     %Plot the inertia Axis & Volumic center
 %     plotDot( CS.CenterVol', 'k', 2 )
 %     plotArrow( CS.X0, 1, CS.CenterVol, 40, 1, 'r')
@@ -144,7 +144,7 @@ if result_plots == 1
 %--------------------------------
     subplot(2,2,4); 
     % plot talocrural fitting results
-    PlotTriangLight(Talus, CS, 0, 0.6);
+    plotTriangLight(Talus, CS, 0, 0.6);
 
     %Plot ref system Axis & Volumic center
 %     plotArrow( CS.X2, 1, CenterVol, 40, 1, 'r')

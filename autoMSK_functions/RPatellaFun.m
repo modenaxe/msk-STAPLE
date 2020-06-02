@@ -70,7 +70,7 @@ nbCuts = 40;
 options = optimoptions(@fminunc,'Display','off','Algorithm','quasi-newton',...
     'MaxFunctionEvaluations',2500,'StepTolerance',1e-9,...
     'MaxIterations',2500,'OptimalityTolerance',1e-9,'Display','final-detailed');
-x1_0 = fminunc(@(x)patRidge(x,PatPIACS,1,1,nbCuts),x0,options);
+x1_0 = fminunc(@(x)patRidgeRainbow(x,PatPIACS,1,1,nbCuts),x0,options);
 U_0 = [-sin(x1_0);cos(x1_0);0];
 
 

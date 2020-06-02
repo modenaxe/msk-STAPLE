@@ -97,7 +97,7 @@ if result_plots == 1
     figure
     alpha = 0.5;
     subplot(2,2,[1,3]);
-    PlotTriangLight(Femur, CS, 0)
+    plotTriangLight(Femur, CS, 0)
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.hip_r);
     quickPlotRefSystem(JCS.knee_r);
@@ -109,12 +109,12 @@ if result_plots == 1
     end
     
     subplot(2,2,2); % femoral head
-    PlotTriangLight(ProxFem, CS, 0); hold on
+    plotTriangLight(ProxFem, CS, 0); hold on
     quickPlotRefSystem(JCS.hip_r);
     plotSphere(CS.CenterFH_Kai, CS.RadiusFH_Kai, 'g', alpha);
     
     subplot(2,2,4);
-    PlotTriangLight(DistFem, CS, 0); hold on
+    plotTriangLight(DistFem, CS, 0); hold on
     quickPlotRefSystem(JCS.knee_r);
     plotSphere(CS.Center_Med, CS.Radius_Med, 'r', alpha);
     plotSphere(CS.Center_Lat, CS.Radius_Lat, 'b', alpha);
