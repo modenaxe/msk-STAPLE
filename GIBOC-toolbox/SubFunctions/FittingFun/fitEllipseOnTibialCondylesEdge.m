@@ -1,5 +1,5 @@
 function [ Xel, Yel, ellipsePts, ellipse_t, EdgePtsTop ,K  ] = ...
-    EllipseOnTibialCondylesEdge( Tr, n , x0 )
+    fitEllipseOnTibialCondylesEdge( Tr, n , x0 )
 %ELLIPSEONTIBIALCONDYLESEDGE 
 %   Identify the edges of proximal tibial articular surfaces
 %
