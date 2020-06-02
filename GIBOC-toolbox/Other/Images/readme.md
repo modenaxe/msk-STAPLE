@@ -1,1 +1,0 @@
-# Folder containing some images
