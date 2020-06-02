@@ -9,7 +9,7 @@ tic
 % add useful scripts
 addpath(genpath('GIBOC-toolbox'));
 addpath(genpath('autoMSK_functions'));
-addpath(genpath('FemPatTibACS/KneeACS/Tools'));
+% addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
 auto_models_folder = './validation/opensim_models';
