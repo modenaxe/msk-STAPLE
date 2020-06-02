@@ -1,4 +1,4 @@
-# auto-msk-model
+# STAPLE (Shared Tools for Automatic Personalised Lower Extremity models)
 repository to develop automated methods for generating musculoskeletal models from segmented anatomical structures
 
 # Plan
@@ -11,7 +11,7 @@ The MSK models are built using the following approaches:
 | Pelvis               | pelvis          | ground-pelvis           | STAPLE-Pelvis    |
 |                      |                 |                         | Kai-Pelvis       |
 | Femur                | femur           | hip child               | Kai-Femur        |
-|                      |                 |                         | GIBOC-Femur      |
+| ---                  |                 |                         | GIBOC-Femur      |
 |					   |                 | knee parent             | Kai-Femur        |
 |					   |                 |                         | GIBOC-Spheres    |
 |					   |                 |                         | GIBOC-Ellipsoids |
