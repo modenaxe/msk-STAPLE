@@ -41,7 +41,7 @@ for n_d = 1:4
     disp(['Geometries imported in ', num2str(toc), ' s']);
     
     % create bodies
-    osimModel = createBodiesFromBoneGeometries(geom_set, vis_geom_folder);
+    osimModel = createBodiesFromBoneGeometrySet(geom_set, vis_geom_folder);
     
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
