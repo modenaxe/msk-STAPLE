@@ -1,5 +1,5 @@
 %% Initial Set up 
-function [CS, JCS, CalcnBL_r] = GIBOK_calcn(Calcn, result_plots, debug_plots, in_mm)
+function [CS, JCS, CalcnBL_r] = STAPLE_foot(Calcn, result_plots, debug_plots, in_mm)
 
 % depends on
 % TriangleClosestPointPair

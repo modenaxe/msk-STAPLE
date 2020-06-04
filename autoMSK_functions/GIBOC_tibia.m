@@ -1,4 +1,4 @@
-function [CS, JCS, TibiaBL_r] = GIBOK_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
+function [CS, JCS, TibiaBL_r] = GIBOC_tibia(Tibia, DistTib, fit_method, result_plots, in_mm, debug_plots)
 
 % depends on
 % AnkleSurfFit

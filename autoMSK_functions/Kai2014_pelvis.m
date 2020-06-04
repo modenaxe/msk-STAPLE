@@ -15,7 +15,7 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = CS_pelvis_Kai2014(Pelvis, result_plots, debug_plots, label_switch, in_mm)
+function [ CS, JCS, PelvisBL] = Kai2014_pelvis(Pelvis, result_plots, debug_plots, label_switch, in_mm)
 
 if nargin<2; result_plots=1; end
 if nargin<3;     debug_plots = 0;  end

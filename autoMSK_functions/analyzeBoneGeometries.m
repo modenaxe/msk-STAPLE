@@ -53,10 +53,10 @@ if nargin<4; in_mm = 1; end
 
 % ---- PELVIS -----
 if isfield(geom_set,'pelvis')
-        [CS.pelvis, JCS.pelvis, BL.pelvis]  = GIBOK_pelvis(geom_set.pelvis, in_mm);
+        [CS.pelvis, JCS.pelvis, BL.pelvis]  = STAPLE_pelvis(geom_set.pelvis, in_mm);
     %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 elseif isfield(geom_set,'pelvis_no_sacrum')
-        [CS.pelvis, JCS.pelvis, BL.pelvis]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum, in_mm);
+        [CS.pelvis, JCS.pelvis, BL.pelvis]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum, in_mm);
     %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 end
 
@@ -67,7 +67,7 @@ if isfield(geom_set,'femur_r')
         case 'Miranda'
             [CS.femur_r, JCS.femur_r, BL.femur_r] = Miranda2010_buildfACS(geom_set.tibia_r);
         case 'Kai'
-            [CS.femur_r, JCS.femur_r, BL.femur_r]  = CS_femur_Kai2014(geom_set.femur_r);
+            [CS.femur_r, JCS.femur_r, BL.femur_r]  = Kai2014_femur(geom_set.femur_r);
         case 'GFem-spheres'
             [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
         case 'GFem-ellipsoids'
@@ -86,15 +86,15 @@ if isfield(geom_set,'tibia_r')
         case 'Miranda' % same as Kai but using inertia
             [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
         case 'Kai'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = CS_tibia_Kai2014(geom_set.tibia_r);
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Kai2014_tibia(geom_set.tibia_r);
         case 'GTib-plateau'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'plateau');
         case 'GTib-ellipse'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'ellipse');
         case 'GTib-centroids'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
         otherwise
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = CS_tibia_Kai2014(geom_set.tibia_r);
+            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Kai2014_tibia(geom_set.tibia_r);
     end
 %     addMarkersFromStruct(osimModel, 'tibia_r', BL.tibia_r, in_mm);
 end
@@ -106,11 +106,11 @@ if isfield(geom_set,'patella_r')
         case 'Rainbow'
             [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
         case 'GPat-vol-ridge'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'volume-ridge');
         case 'GPat-ridge'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'ridge-line');
         case 'GPat-ACS'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
+            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
         otherwise
             error('choose coorect patellar algorithm');
     end
@@ -119,12 +119,12 @@ end
     
 %---- TALUS/ANKLE -----
 if isfield(geom_set,'talus_r')
-    [CS.talus_r, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+    [CS.talus_r, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
 end
 
 %---- CALCANEUS/SUBTALAR -----
 if isfield(geom_set,'calcn_r')
-    [CS.calcn_r, JCS.calcn_r, BL.calcn_r] = GIBOK_calcn(geom_set.calcn_r);
+    [CS.calcn_r, JCS.calcn_r, BL.calcn_r] = STAPLE_foot(geom_set.calcn_r);
 %     addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm); 
 end
 

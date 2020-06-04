@@ -43,36 +43,36 @@ for n_d = 1
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = GIBOK_pelvis(geom_set.pelvis_no_sacrum,1,0);
-    [PelvisRS, JCS.pelvis, PelvisBL2]  = CS_pelvis_Kai2014(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1,0);
+%     [PelvisRS, JCS.pelvis, PelvisBL2]  = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
 %     axis off
     
 %     %---- FEMUR -----
-    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
 %     [CS] = Miranda2010_femur(geom_set.femur_r);
-    [FemurCS1, JCS1] = CS_femur_Kai2014(geom_set.femur_r);
+%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r);
     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);
-    [TibiaCS1, JCS5] = CS_tibia_Kai2014(geom_set.tibia_r);
-    [TibiaCS2, JCS6] = GIBOK_tibia(geom_set.tibia_r, [], 'plateau');
-    [TibiaCS3, JCS7] = GIBOK_tibia(geom_set.tibia_r, [], 'ellipse');
-    [TibiaCS4, JCS8] = GIBOK_tibia(geom_set.tibia_r, [], 'centroids');
+    [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_r);
+    [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_r, [], 'plateau');
+    [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_r, [], 'ellipse');
+    [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
 
 %---- PATELLA -----
 [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'volume-ridge');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'ridge-line');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOK_patella(geom_set.patella_r, 'artic-surf');
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'volume-ridge');
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'ridge-line');
+[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
 
 %     %---- TALUS/ANKLE -----
-    [TalusCS, JCS.talus_r] = GIBOK_talus(geom_set.talus_r);
+    [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
 %     
 %     %---- CALCANEUS/SUBTALAR -----
-    JCS.calcn_r = GIBOK_calcn(geom_set.calcn_r, 0, 1);
+    JCS.calcn_r = STAPLE_foot(geom_set.calcn_r, 0, 1);
     %-----------------
     clear JCS
 %     close all

@@ -1,4 +1,4 @@
-function [CS, JCS] = GIBOK_talus(Talus, in_mm, result_plots, debug_plots)
+function [CS, JCS] = STAPLE_talus(Talus, in_mm, result_plots, debug_plots)
 
 % depends on
 % fitQuadriTalus

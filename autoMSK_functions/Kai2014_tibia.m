@@ -1,5 +1,5 @@
 
-function [CS, JCS, TibiaBL_r] = CS_tibia_Kai2014(Tibia, DistTib, result_plots, debug_plots)
+function [CS, JCS, TibiaBL_r] = Kai2014_tibia(Tibia, DistTib, result_plots, debug_plots)
 
 % default behaviour of results/debug plots
 if nargin<3;     result_plots = 1;  end
