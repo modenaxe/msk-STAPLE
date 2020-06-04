@@ -27,7 +27,7 @@ function MassInfo = calcMassInfo_Mirtich1996(v, f)
 
 % feedback to the user
 % I tried a waitbar, but the script was too slow!
-display('Calculating Inertia properties for selected mesh');
+disp('Calculating Inertia properties for selected mesh');
 tic
 
 % initializing integral vectors
@@ -97,8 +97,8 @@ I = [Ixx     Ixy     Ixz;
 % inertial vector (for use in OpenSim
 Iv = [Ixx Iyy Izz Ixy Ixz Iyz];
 
-display('Done!')
-display(['Elapsed time ', num2str(toc),' ms.'])
+disp('Done!')
+disp(['Elapsed time ', num2str(toc),' ms.'])
 
 % Collecting all results together
 MassInfo.mass       = mass;

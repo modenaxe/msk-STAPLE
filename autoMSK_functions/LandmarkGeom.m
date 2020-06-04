@@ -1,5 +1,5 @@
 function Landmarks = LandmarkGeom(TriObj, CS, bone_name, results_plot)
-
+% better LandmarkBoneTriGeom
 if nargin<4; results_plot = 0; end
 
 % get desired landmarks

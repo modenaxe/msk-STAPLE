@@ -93,14 +93,14 @@ CS.X0 = cross(CS.Y0, CS.Z0);
 EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
+[fullCondyle_Med, fullCondyle_Lat, CS] = femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med, postCondyle_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
+[postCondyle_Med, postCondyle_Lat, CS] = femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
-[Groove_Med, Groove_Lat, CS] = GIBOK_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
+[Groove_Med, Groove_Lat, CS] = femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
 CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
