@@ -10,6 +10,7 @@
 
 # MATLAB
 *.asv
+Miranda2010_*ACS.m
 
 # folders
 __*
