@@ -125,7 +125,7 @@ CS.Origin = CenterVol;
 CS.V = JCS.hip_r.V;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-FemurBL_r   = LandmarkGeom(Femur  , CS,     'femur_r');
+FemurBL_r   = landmarkTriGeomBone(Femur  , CS,     'femur_r');
 
 % result plot
 if result_plots == 1

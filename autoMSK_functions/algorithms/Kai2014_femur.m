@@ -90,7 +90,7 @@ JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = CS.KneeCenter;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-FemurBL_r   = LandmarkGeom(Femur, CS, 'femur_r');
+FemurBL_r   = landmarkTriGeomBone(Femur, CS, 'femur_r');
 
 % result plot
 if result_plots == 1

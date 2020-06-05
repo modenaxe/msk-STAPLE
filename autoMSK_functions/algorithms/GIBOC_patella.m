@@ -101,7 +101,7 @@ switch algorithm
 end
 
 % landmark bone according to CS (only Origin and CS.V are used)
-% PatellaBL_r   = LandmarkGeom(Patella, CS, 'patella_r');
+% PatellaBL_r   = landmarkTriGeomBone(Patella, CS, 'patella_r');
 % TEMPORARY SETTINGS
 CS.Origin = CS.CenterVol;
 PatellaBL_r   = [];

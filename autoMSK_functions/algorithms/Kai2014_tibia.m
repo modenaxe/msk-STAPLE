@@ -121,7 +121,7 @@ JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL_r   = LandmarkGeom(Tibia, CS, 'tibia_r');
+TibiaBL_r   = landmarkTriGeomBone(Tibia, CS, 'tibia_r');
 if just_tibia == 0
     TibiaBL_r.RLM = MostDistalMedialPt;
 end

@@ -208,7 +208,7 @@ JCS = CS;
 JCS.Origin = heelPt';
 
 % landmark bone according to CS (only Origin and CS.V are used)
-CalcnBL_r    = LandmarkGeom(Calcn, CS, 'calcn_r');
+CalcnBL_r    = landmarkTriGeomBone(Calcn, CS, 'calcn_r');
 CalcnBL_r.R1MGROUND = PtMetaMed;
 CalcnBL_r.R5MGROUND = PtMetaLat;
 CalcnBL_r.RHEEGROUND = heelPt;
