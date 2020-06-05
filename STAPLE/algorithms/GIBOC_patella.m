@@ -23,7 +23,7 @@ CoeffMorpho = computeTriCoeffMorpho(Patella);
 CS.CenterVol = CenterVol;
 CS.InertiaMatrix = InertiaMatrix;
 
-%%  Identify the ant-post axis (GIBOK Z axis) based on 'circularity'
+%%  Identify the ant-post axis (GIBOC Z axis) based on 'circularity'
 % Test for circularity, because on one face the surface is spherical and on the arular surface it's
 % more like a Hyperbolic Paraboloid, the countour od the cross section have
 % different circularity.
@@ -36,7 +36,7 @@ PatPIACS = TriChangeCS( Patella, V_all, CenterVol );
 % Optimization to find the ridge orientation
 U0 = [1;0;0];
 U = LSSLFitPatellaRidge( PatPIACS,U0,30);
-% Refine the guess with higher number of slices (75 in original GIBOK tool)
+% Refine the guess with higher number of slices (75 in original GIBOC tool)
 N_slices = 75;
 [ U, ~ ,LowestPoints_PIACS ] = LSSLFitPatellaRidge( PatPIACS,U, N_slices);
 V = [U(2); -U(1); 0];

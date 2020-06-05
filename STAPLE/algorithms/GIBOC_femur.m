@@ -77,11 +77,11 @@ CS.V_all = V_all;
 % NB adds a CSs.Y0, (lateral)
 try
     % sometimes Renault2018 fails for sparse meshes
-    [CS, FemHeadACS] = fitSphere2FemHead_Renault2019(ProxFem, CS, CoeffMorpho, debug_plots);
+    [CS, FemHeadACS] = GIBOC_femur_fitSphere2FemHead(ProxFem, CS, CoeffMorpho, debug_plots);
 catch
     % use Kai when Renault fails
     warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
-    [CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots);
+    [CS, ~] = Kai2014_femur_fitSpheres2Condyles(ProxFem, CS, debug_plots);
     CS.CenterFH_Renault  = CS.CenterFH_Kai;
     CS.RadiusFH_Renault  = CS.RadiusFH_Kai;
 end
@@ -90,17 +90,17 @@ end
 CS.X0 = cross(CS.Y0, CS.Z0);
 
 % Isolates the epiphysis
-EpiFem = GIBOK_isolate_epiphysis(DistFem, Z0, 'distal');
+EpiFem = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat, CS] = femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
+[fullCondyle_Med, fullCondyle_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
 
 % extract posterior part of condyles (points)
 % by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med, postCondyle_Lat, CS] = femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
+[postCondyle_Med, postCondyle_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
-[Groove_Med, Groove_Lat, CS] = femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
+[Groove_Med, Groove_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
 CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
@@ -117,7 +117,7 @@ switch fit_method
         % Fit the entire condyles with an ellipsoid
         [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CS);
     otherwise
-        error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
+        error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
 end
 
 % define segment ref system
@@ -172,7 +172,7 @@ if result_plots == 1
             plotEllipsoid(CS.ellips_centre_med, CS.ellips_radii_med, CS.ellips_evec_med, 'r', alpha)
             plotEllipsoid(CS.ellips_centre_lat, CS.ellips_radii_lat, CS.ellips_evec_lat, 'b', alpha)
         otherwise
-            error('GIBOK_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
+            error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
     end
 grid off
 end

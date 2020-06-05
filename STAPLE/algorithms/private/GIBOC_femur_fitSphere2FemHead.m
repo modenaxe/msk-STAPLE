@@ -1,4 +1,4 @@
-function [CSs, FemHead] = fitSphere2FemHead_Renault2019(ProxFem, CSs, CoeffMorpho, debug_plots)
+function [CSs, FemHead] = GIBOC_femur_fitSphere2FemHead(ProxFem, CSs, CoeffMorpho, debug_plots)
     
 if nargin < 4; debug_plots = 0; end
 % from CSs structures we need:

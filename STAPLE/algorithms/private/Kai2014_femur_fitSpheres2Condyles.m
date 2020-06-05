@@ -2,7 +2,7 @@
 % slice starts with just one curve, until it slices two condyles
 % when there are two curves, the next time there is one is the end of
 % loop
-function CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS, debug_plots)
+function CS = Kai2014_femur_fitSpheres2Condyles(DistFem, CS, debug_plots)
 
 % main plots are in the main method function. 
 % these debug plots are to see the details of the method

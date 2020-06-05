@@ -48,10 +48,10 @@ CS.InertiaMatrix = InertiaMatrix;
 CS.V_all = V_all;
 
 % extract the tibia (used to compute the mechanical Z axis)
-CS.CenterAnkleInside = GIBOK_tibia_DistMaxSectCentre(DistTib, CS);
+CS.CenterAnkleInside = GIBOC_tibia_DistMaxSectCentre(DistTib, CS);
 
 % extract the distal tibia articular surface
-AnkleArtSurf = GIBOK_tibia_DistArtSurf(DistTib, CS, CoeffMorpho);
+AnkleArtSurf = GIBOC_tibia_DistArtSurf(DistTib, CS, CoeffMorpho);
 
 % Method to get ankle center : 
 %  1) Fit a LS plan to the distal tibia art surface, 
@@ -67,7 +67,7 @@ plane_thick = 0.005 / dim_fact;
 Curves = TriPlanIntersect( DistTib, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 
 % this gets the larger area (allows fibula to be in the geometry)
-[TibiaDistSection, N_curves, ~] = GIBOK_getLargerPlanarSect(Curves);
+[TibiaDistSection, N_curves, ~] = getLargerPlanarSect(Curves);
 
 if debug_plots == 1
     quickPlotTriang(DistTib,[],1)
@@ -88,7 +88,7 @@ end
 
 %% Find a pseudo medioLateral Axis
 % DIFFERENT FROM ORIGINAL TOOLBOX
-% NB: in GIBOK AnkleArtSurfProperties is calculated from the AnkleArtSurf
+% NB: in GIBOC AnkleArtSurfProperties is calculated from the AnkleArtSurf
 % BEFORE the last iteration and filters
 
 % identify lateral direction
@@ -103,10 +103,10 @@ CS.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  );
 
 %% Proximal Tibia
 % remove fibula from prox tibia
-ProxTib = removeFibulaFromProxTibia(ProxTib, 'GIBOK_tibia.m');
+ProxTib = removeFibulaFromProxTibia(ProxTib, 'GIBOC_tibia.m');
 
 % isolate tibia proximal epiphysis 
-EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
+EpiTib = GIBOC_isolate_epiphysis(ProxTib, Z0, 'proximal');
 
 %============
 % ITERATION 1 
@@ -118,7 +118,7 @@ EpiTib = GIBOK_isolate_epiphysis(ProxTib, Z0, 'proximal');
 angle_thresh = 35;% deg
 curv_quartile = 0.25;
 %--------------
-[EpiTibAS, oLSP, Ztp] = GIBOK_tibia_FullProxArtSurf(EpiTib, CS, CoeffMorpho, angle_thresh, curv_quartile);
+[EpiTibAS, oLSP, Ztp] = GIBOC_tibia_FullProxArtSurf(EpiTib, CS, CoeffMorpho, angle_thresh, curv_quartile);
 
 % debug plots
 if debug_plots == 1
@@ -127,7 +127,7 @@ if debug_plots == 1
 end
 
 % remove the ridge and the central part of the surface
-EpiTibAS = GIBOK_tibia_ProxArtSurf_it1(ProxTib, EpiTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
+EpiTibAS = GIBOC_tibia_ProxArtSurf_it1(ProxTib, EpiTib, EpiTibAS, CS, Ztp , oLSP, CoeffMorpho);
 
 % debug plots
 if debug_plots == 1
@@ -142,8 +142,8 @@ EpiTibAS = TriCloseMesh(EpiTib,EpiTibAS, 30*CoeffMorpho);
 %==================
 % ITERATION 2 ( & 3 )
 %==================
-CS.Y0_GIBOK  = CS.Y0*-1;
-[EpiTibASMed, EpiTibASLat, ~] = GIBOK_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
+CS.Y0_GIBOC  = CS.Y0*-1;
+[EpiTibASMed, EpiTibASLat, ~] = GIBOC_tibia_ProxArtSurf_it2(EpiTib, EpiTibAS, CS, CoeffMorpho);
 
 % builld the triangulation
 % EpiTibAS3 is the final triang of the articular surfaces
@@ -166,7 +166,7 @@ switch fit_method
     case 'plateau'
         [CS, JCS] = CS_tibia_PlateauLayer(EpiTib, EpiTibAS3, CS);
     otherwise
-        error('GIBOK_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
+        error('GIBOC_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
 end
 
 % define segment ref system

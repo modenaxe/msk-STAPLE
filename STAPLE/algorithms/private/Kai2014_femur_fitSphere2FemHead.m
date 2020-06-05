@@ -1,4 +1,4 @@
-function [CS, MostProxPoint] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots)
+function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots)
 
 % main plots are in the main method function. 
 % these debug plots are to see the details of the method

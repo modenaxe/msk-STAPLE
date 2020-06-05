@@ -1,4 +1,4 @@
-function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface)
+function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOC_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface)
 
 debug_plots = 0;
 V_all = CSs.V_all;
@@ -39,7 +39,7 @@ end
 edge_threshold = 0.5; % used also for new coord syst below
 axes_dev_thresh = 0.75;
 
-[IdCdlPts, U_Axes, med_lat_ind] = femur_processEpiPhysis(EpiFem, CSs, V_all,...
+[IdCdlPts, U_Axes, med_lat_ind] = GIBOC_femur_processEpiPhysis(EpiFem, CSs, V_all,...
                                   edge_threshold, axes_dev_thresh);
 %============
 % Assign indices of points on Lateral or Medial Condyles Variable
@@ -86,8 +86,8 @@ U =  normalizeV( 3*Z0 - X1 );
 
 % Add ONE point (top one) on each proximal edges of each condyle that might
 % have been excluded from the initial selection
-PtMedTopCondyle = femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesMed, U);
-PtLatTopCondyle = femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U);
+PtMedTopCondyle = GIBOC_femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesMed, U);
+PtLatTopCondyle = GIBOC_femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesLat, U);
 
 % % [LM] plotting for debugging
 if debug_plots
@@ -160,8 +160,8 @@ CSs.Z1 = Z1;
 switch art_surface
     case 'full_condyles'
         % if output is full condyles then just filter and create triang
-        DesiredArtSurfLat_Tri = femur_smoothCondyles(EpiFem, ArticularSurface_Lat, CoeffMorpho);
-        DesiredArtSurfMed_Tri = femur_smoothCondyles(EpiFem, ArticularSurface_Med, CoeffMorpho);
+        DesiredArtSurfLat_Tri = GIBOC_femur_smoothCondyles(EpiFem, ArticularSurface_Lat, CoeffMorpho);
+        DesiredArtSurfMed_Tri = GIBOC_femur_smoothCondyles(EpiFem, ArticularSurface_Med, CoeffMorpho);
         
     case 'post_condyles'
         % Delete points that are anterior to Notch
@@ -172,8 +172,8 @@ switch art_surface
         
         % Filter with curvature and normal orientation to keep only the post parts
         % these are triangulations
-        DesiredArtSurfLat_Tri = femur_filterCondyleSurf(EpiFem, CSs, ArticularSurface_Lat, Pts_0_C1, CoeffMorpho);
-        DesiredArtSurfMed_Tri = femur_filterCondyleSurf(EpiFem, CSs, ArticularSurface_Med, Pts_0_C2, CoeffMorpho);
+        DesiredArtSurfLat_Tri = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, ArticularSurface_Lat, Pts_0_C1, CoeffMorpho);
+        DesiredArtSurfMed_Tri = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, ArticularSurface_Med, Pts_0_C2, CoeffMorpho);
     case 'pat_groove'
         % Generating patellar groove triangulations (med and lat)
         % initial estimations of anterior patellar groove (anterior to mid point)
@@ -184,8 +184,8 @@ switch art_surface
         PtsGroove_Lat = ant_lat(ant_lat*X1>PtNotch*X1,:);
         PtsGroove_Med = ant_med(ant_med*X1>PtNotch*X1,:);
         % triangulations of medial and lateral patellar groove surfaces
-        DesiredArtSurfLat_Tri = femur_filterCondyleSurf(EpiFem, CSs, PtsGroove_Lat, Pts_0_C1, CoeffMorpho);
-        DesiredArtSurfMed_Tri = femur_filterCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1, CoeffMorpho);
+        DesiredArtSurfLat_Tri = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, PtsGroove_Lat, Pts_0_C1, CoeffMorpho);
+        DesiredArtSurfMed_Tri = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1, CoeffMorpho);
     otherwise
 end
 end

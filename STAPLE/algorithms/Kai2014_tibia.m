@@ -33,7 +33,7 @@ slices_thick = 1;
 [ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Y0 , -AltAtMax );
 
 % keep just the largest outline (tibia section)
-[maxAreaSection, N_curves] = GIBOK_getLargerPlanarSect(Curves);
+[maxAreaSection, N_curves] = getLargerPlanarSect(Curves);
 
 % check number of curves
 if N_curves>2

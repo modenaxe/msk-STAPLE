@@ -58,10 +58,10 @@ CS.Z0 = Z0;
 CS.CenterVol = CenterVol;
 
 % find femoral head
-[CS, ~] = fitSphere2FemHead_Kai2014(ProxFem, CS, debug_plots);
+[CS, ~] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots);
 
 % slicing the femoral condyles
-CS = fitSpheres2FemCondyles_Kai2014(DistFem, CS, debug_plots);
+CS = Kai2014_femur_fitSpheres2Condyles(DistFem, CS, debug_plots);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Z = normalizeV(CS.Center_Lat-CS.Center_Med);
