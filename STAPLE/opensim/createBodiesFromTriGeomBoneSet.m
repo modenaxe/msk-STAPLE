@@ -8,7 +8,9 @@
 % refined and has the purposes of reducing the size of files for storage
 % and distribution, e.g. in GitHub.
 % ----------------------------------------------------------------------- %
-function osimModel = createBodiesFromBoneTriGeomSet(geom_set, vis_geom_folder, vis_geom_format, bone_density, in_mm)
+% name can be improved createModelWithBodiesFromTriGeomBoneSet
+% maybe create BOdySet instead?
+function osimModel = createBodiesFromTriGeomBoneSet(geom_set, vis_geom_folder, vis_geom_format, bone_density, in_mm)
 
 % add OpenSim libraries
 import org.opensim.modeling.*

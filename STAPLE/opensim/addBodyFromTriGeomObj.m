@@ -15,7 +15,7 @@ end
 % create body using the triangulation for computing the mass properties
 
 % compute mass properties
-boneMassProps= calcMassInfo_Mirtich1996(triGeom.Points, triGeom.ConnectivityList);
+boneMassProps= computeMassProperties_Mirtich1996(triGeom.Points, triGeom.ConnectivityList);
 bone_mass    = boneMassProps.mass * density;
 bone_COP     = boneMassProps.COM  * dim_fact;
 bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0; 
