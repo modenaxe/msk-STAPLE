@@ -31,7 +31,7 @@ if nargin<5; debug_plots = 0; end
 % but keep track of all geometries
 if ~exist('DistFem','var') || isempty(DistFem)
       V_all = pca(Femur.Points);
-      [ U_DistToProx ] = femur_get_correct_first_CS( Femur, debug_plots );
+      [ U_DistToProx ] = femur_guess_CS( Femur, debug_plots );
       [ProxFem, DistFem] = cutLongBoneMesh(Femur, U_DistToProx);
       [ ~, CenterVol] = TriInertiaPpties(Femur);
 else

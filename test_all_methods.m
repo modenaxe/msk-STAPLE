@@ -13,7 +13,7 @@ clear; clc; close all
 tic
 % add useful scripts
 % addpath(genpath('GIBOC-toolbox'));
-addpath(genpath('autoMSK_functions'));
+% addpath(genpath('autoMSK_functions'));
 addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
@@ -35,6 +35,8 @@ for n_d = 1
     % tri_folder = fullfile(main_ds_folder,'stl');
     tri_folder = fullfile(main_ds_folder,'tri');
     vis_geom_folder=fullfile(main_ds_folder,'vtp');
+
+    
     for nb = 1:numel(body_list)
         cur_body_name = body_list{nb};
         cur_geom_file = fullfile(tri_folder, cur_body_name);
@@ -43,14 +45,12 @@ for n_d = 1
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1,0);
-%     [PelvisRS, JCS.pelvis, PelvisBL2]  = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
-%     axis off
+    [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1,0);
+    [PelvisRS, JCS.pelvis, PelvisBL2]  = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
     
 %     %---- FEMUR -----
-%     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
-%     [CS] = Miranda2010_femur(geom_set.femur_r);
-%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r);
+    [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
+    [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r);
     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
@@ -63,15 +63,15 @@ for n_d = 1
     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
 
 %---- PATELLA -----
-[CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'volume-ridge');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'ridge-line');
-[CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'volume-ridge');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'ridge-line');
+% [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
 
-%     %---- TALUS/ANKLE -----
+    %---- TALUS/ANKLE -----
     [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
-%     
-%     %---- CALCANEUS/SUBTALAR -----
+    
+    %---- CALCANEUS/SUBTALAR -----
     JCS.calcn_r = STAPLE_foot(geom_set.calcn_r, 0, 1);
     %-----------------
     clear JCS

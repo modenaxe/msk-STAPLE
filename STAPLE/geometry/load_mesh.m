@@ -13,7 +13,7 @@ function tri_geom = load_mesh(a_tri_mesh_file)
 
 disp(['Attempting to read mesh file: ', a_tri_mesh_file]);
 
-% check if there is a file that could be opened adding
+% check if there is a file that could be opened adding extension
 if ~(exist(a_tri_mesh_file,'file')==2 || exist([a_tri_mesh_file,'.mat'],'file')==2 || exist([a_tri_mesh_file,'.stl'],'file')==2)
     disp([a_tri_mesh_file,' geometry not available.']);
     return

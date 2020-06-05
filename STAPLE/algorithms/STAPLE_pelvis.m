@@ -34,7 +34,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 [V_all, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
 
 % Modification of initial guess of CS direction [JB]
-[RotPseudoISB2Glob, LargestTriangle] = pelvis_get_correct_first_CS(Pelvis, debug_plots);
+[RotPseudoISB2Glob, LargestTriangle] = pelvis_guess_CS(Pelvis, debug_plots);
 
 %% Get the RPSIS and LPSIS raw BoneLandmarks (BL)
 [ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotPseudoISB2Glob, CenterVol);

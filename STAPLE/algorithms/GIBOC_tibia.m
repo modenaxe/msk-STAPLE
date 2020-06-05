@@ -21,7 +21,7 @@ CS = struct();
 if ~exist('DistTib','var') || isempty(DistTib)
     % Only one mesh, this is a long bone that should be cutted in two
     % parts
-    [ U_DistToProx ] = tibia_get_correct_first_CS(Tibia, debug_plots);
+    [ U_DistToProx ] = tibia_guess_CS(Tibia, debug_plots);
     [ProxTib, DistTib] = cutLongBoneMesh(Tibia, U_DistToProx);
 
 else

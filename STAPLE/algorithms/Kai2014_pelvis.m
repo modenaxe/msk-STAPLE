@@ -25,7 +25,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % Initial guess of CS direction [JB]
 % RISB2Glob_guess: principal inertial axes named as ISB (guess)
-[RISB2Glob_guess, LargestTriangle] = pelvis_get_correct_first_CS(Pelvis);
+[RISB2Glob_guess, LargestTriangle] = pelvis_guess_CS(Pelvis);
 
 % Get eigen vectors V_all and volumetric center
 [~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
