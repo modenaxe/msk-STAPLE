@@ -8,7 +8,7 @@ clear; clc; close all
 tic
 % add useful scripts
 % addpath(genpath('GIBOC-toolbox'));
-addpath(genpath('autoMSK_functions'));
+% addpath(genpath('autoMSK_functions'));
 % addpath(genpath('FemPatTibACS/KneeACS/Tools'));
 
 %--------------------------------------
@@ -32,19 +32,14 @@ for n_d = 1:4
     vis_geom_folder=fullfile(main_ds_folder,'vtp');
     
     tic
-    
-    for nb = 1:numel(body_list)
-        cur_body_name = body_list{nb};
-        cur_geom_file = fullfile(tri_folder, cur_body_name);
-        geom_set.(cur_body_name) = load_mesh(cur_geom_file);
-    end
+    geom_set = createTriGeomSet(body_list, tri_folder);
     disp(['Geometries imported in ', num2str(toc), ' s']);
     
     % create bodies
-    osimModel = createBodiesFromBoneGeometrySet(geom_set, vis_geom_folder);
+    osimModel = createBodiesFromTriGeomBoneSet(geom_set, vis_geom_folder);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
+    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
