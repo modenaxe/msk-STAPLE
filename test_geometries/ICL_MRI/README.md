@@ -6,4 +6,4 @@ Meshes smoothed using Meshlab.
 
 # DO NOT REDISTRIBUTE
 
-![ICL-MRI](https://github.com/modenaxe/auto-msk-model/blob/master/images/P0_MRI_bones.PNG)
+![ICL-MRI](https://github.com/modenaxe/auto-msk-model/blob/master/images/ICL_MRI_bones.PNG)
