@@ -1,0 +1,69 @@
+	    SOFTWARE END-USER LICENCE AGREEMENT
+
+
+This End-User Licence Agreement (Ref: CMSC/X/02/431) is between NPL
+Management Ltd (hereinafter referred to as "NPL") -- a wholly owned
+subsidiary of Serco Group plc acting under Contract to the Department
+of Trade & Industry -- and you (the "End-User") either acting on behalf
+of your organisation or yourself.
+
+It is hereby agreed that End-User will be permitted to use NPL's LSGE
+MATLAB Software free of charge for the express purpose of their own
+work in accordance with the following terms and conditions of this
+Agreement:
+
+
+	Copyright
+
+	Copyright ownership of the LSGE MATLAB software belongs to the
+	Secretary of State.  NPL has the right to manage it on behalf
+	of the Secretary of State.  The User may only make one copy of
+	the Software and any associated written material, as a back up.
+
+
+	Performance of the Software
+
+	The Software is provided "as is" with no guarantee of fitness
+	for purpose.  NPL will use its reasonable endeavours to resolve
+	any reported problems found in running the Software for the
+	purposes of evaluation, but NPL does not guarantee to fix any
+	problems in the Software nor to provide any updates or patches
+	by a particular date.
+
+
+	Other Restrictions
+
+	The User will not rent, lease, sublicense, transfer, resell the
+	Software (either in whole or in part) or use it for commercial
+	purposes without NPL's prior written permission.
+
+
+	No Liability for Consequential Damages.  
+
+	To the maximum extent permitted by applicable law, in no event
+	shall NPL or its suppliers be liable for any damages whatsoever
+	(including without limitation, damages for loss of business
+	profits, business interruption, loss of business information or
+	other pecuniary loss) arising out of the use or inability to
+	use the Software.
+
+
+	Assignment
+
+	NPL will be fully entitled to assign or novate this Agreement
+	to the Department of Trade and Industry (DTI) or any party
+	nominated by the DTI.
+
+
+The End-User hereby understands that any use of NPL's LSGE MATLAB
+software package (including small or unlimited use) will be entirely
+subject to the terms of this Licence Agreement.
+
+The End-User also understand that they will NOT make use of (or be
+permitted to gain access to) NPL's LSGE MATLAB software if they are
+unable to accept and/or comply to the terms of this Licence Agreement
+unless a written agreement is obtained from NPL.
+
+Such agreement shall not be unreasonably withheld.
+
+
