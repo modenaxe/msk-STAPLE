@@ -27,8 +27,8 @@ end
 % inertial axes
 [V_all, CenterVol, ~, D ] =  TriInertiaPpties(Pelvis);
 
-% smaller moment of inertia is prox/dist axis, not sure about direction yet
-% Z0_GIBOC
+% smaller moment of inertia is normally the medio/lateral axis. It will be
+% updated anyway. It can be checked using D from TriInertiaPpties.m
 Z0 = V_all(:,1);
 
 %% Get convexHull
