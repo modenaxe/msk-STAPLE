@@ -18,7 +18,7 @@ import org.opensim.modeling.*
 % adjust dimensional factors based on mm / m scales
 if nargin<6;     in_mm = 1; end
 % default geometry
-if nargin<4; vis_geom_format = '.vtp';end
+if nargin<4; vis_geom_format = 'obj';end
 % default density values from Dumas et al 2005.
 if nargin<5
     if in_mm==1
@@ -41,7 +41,7 @@ for nb = 1:Nb
     % bone being processed
     cur_body_name = body_list{nb};
     % geometry file used for visualisation
-    cur_vis_geom_file = fullfile(vis_geom_folder, [cur_body_name,vis_geom_format]);
+    cur_vis_geom_file = fullfile(vis_geom_folder, [cur_body_name,'.',vis_geom_format]);
     % triangulation used for computations
     cur_geom = geom_set.(cur_body_name);
     % correct names before naming the opensim model bodies
