@@ -10,43 +10,31 @@
 %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-tic
-% add useful scripts
-% addpath(genpath('GIBOC-toolbox'));
-% addpath(genpath('autoMSK_functions'));
-addpath(genpath('FemPatTibACS/KneeACS/Tools'));
+addpath(genpath('STAPLE'));
 
 %--------------------------------------
-auto_models_folder = './validation/opensim_models';
-dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
-body_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r','talus_r', 'calcn_r'};
+bone_geometries_folder = 'test_geometries';
+dataset_set = {'VAKHUM_S6_CT','LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
+bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r','talus_r', 'calcn_r'};
 in_mm = 1;
-% method = 'Modenese2018';%
-method = 'auto2020';
 %--------------------------------------
 
-% create model folder if required
-if ~isfolder(auto_models_folder); mkdir(auto_models_folder); end
 
 for n_d = 1
     % setup folders
     model_name = dataset_set{n_d};
-    main_ds_folder =  ['test_geometries',filesep,dataset_set{n_d}];
+    main_ds_folder =  fullfile(bone_geometries_folder,dataset_set{n_d});
     % tri_folder = fullfile(main_ds_folder,'stl');
     tri_folder = fullfile(main_ds_folder,'tri');
-    vis_geom_folder=fullfile(main_ds_folder,'vtp');
 
+    % create geometry set structure for the entire dataset
+    geom_set = createTriGeomSet(bones_list, tri_folder);
     
-    for nb = 1:numel(body_list)
-        cur_body_name = body_list{nb};
-        cur_geom_file = fullfile(tri_folder, cur_body_name);
-        geom_set.(cur_body_name) = load_mesh(cur_geom_file);
-    end
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1,0);
-    [PelvisRS, JCS.pelvis, PelvisBL2]  = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
+    [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1,1,1);
+    [PelvisRS, JCS.pelvis, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
     
 %     %---- FEMUR -----
     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
@@ -79,6 +67,4 @@ for n_d = 1
 end
 
 % remove paths
-rmpath(genpath('GIBOK-toolbox'));
-rmpath(genpath('FemPatTibACS/KneeACS/Tools'));
-rmpath('autoMSK_functions');
+addpath(genpath('STAPLE'));
