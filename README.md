@@ -1,8 +1,11 @@
-# STAPLE (Shared Tools for Automatic Personalised Lower Extremity models)
-repository to develop automated methods for generating musculoskeletal models from segmented anatomical structures
+# STAPLE: Shared Tools for Automatic Personalised Lower Extremity models
 
-# Plan
-The MSK models are built using the following approaches:
+## Overview
+This repository contains a computational tool called STAPLE that has been created for 
+enabling researchers in the biomechanical field to build models of the lower extremity 
+with minimum effort, ideally just clicking `RUN` on a script.
+
+
 
 # Summary of implemented methods
 
@@ -28,12 +31,15 @@ The MSK models are built using the following approaches:
 | Foot Phalanges       | toes            | TBA                     | TBA |
 
 
-# Requirements
-Requires:
-* MATLAB 2017a or more recent
-* OpenSim v4.0 or higher
+## Requirements
+* MATLAB v2018b or more recent
+* OpenSim v4.0 or higher, downloadable from this [website](https://simtk.org/projects/opensim)
 
-# Test geometries
+## Preliminary settings
+* You should ensure that the OpenSim Application Programming Interface (API) for MATLAB are installed and working.
+* Add the `STAPLE` folder to your MATLAB path.
+
+## Bone Geometries For Testing and Examples
 Test geometries are available in the "test_geometries" directory:
 * LHDL
 * TLEM2 (MRI)
