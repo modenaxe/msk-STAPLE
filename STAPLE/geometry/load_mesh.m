@@ -13,6 +13,8 @@ function tri_geom = load_mesh(a_tri_mesh_file)
 
 disp(['Attempting to read mesh file: ', a_tri_mesh_file]);
 
+tri_geom = [];
+
 % check if there is a file that could be opened adding extension
 if ~(exist(a_tri_mesh_file,'file')==2 || exist([a_tri_mesh_file,'.mat'],'file')==2 || exist([a_tri_mesh_file,'.stl'],'file')==2)
     disp([a_tri_mesh_file,' geometry not available.']);
@@ -50,5 +52,10 @@ if ischar(a_tri_mesh_file)
     end
 end
 
-disp(['...read as ', kwd, ' file.'])
+if isempty(tri_geom)
+    error([a_tri_mesh_file, ' could not be read. Please double check inputs.'])
+else
+	disp(['...read as ', kwd, ' file.'])
+end
+
 end
