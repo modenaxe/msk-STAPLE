@@ -57,7 +57,15 @@ X0 = V_all(:,ind_X);
 
 % Reorient X0 to point posterior to anterior
 anterior_v = LargestTriangle.incenter-CenterVol';
-X0 = sign(anterior_v*X0)*X0;
+X0 = normalizeV(sign(anterior_v*X0)*X0);
+
+if debug_plots == 1 
+    figure()
+    quickPlotTriang(Pelvis)
+    plotArrow(X0, 1, CenterVol, 60, 1, 'r')
+    plotArrow(Z0, 1, CenterVol, 60, 1, 'b')
+    title('X0 shold be pointing anteriorly')
+end
 
 % Y0 is just normal to X0 and Y0 (direction non inportant for now)
 Y0_temp = normalizeV(cross(Z0, X0));
@@ -72,13 +80,24 @@ P1 = Pelvis.Points(ind_P1,:);
 P2 = Pelvis.Points(ind_P2,:);
 P3 = (P1+P2)/2;% midpoint
 
-%upward vector
-upw = normalizeV(P3-CenterVol');
+if debug_plots == 1 
+    plotDot(P1, 'k', 7);
+    plotDot(P2, 'k', 7);
+    plotDot(P3, 'k', 7);
+end
+
+%upward vector (perpendicular to X0)
+upw_ini = normalizeV(P3-CenterVol');
+upw = upw_ini-(upw_ini'*X0)*X0;
+
 % vector pointing upward is Z
 [~, ind_Z] = max(abs(V_all'*upw));
 Z0 = V_all(:,ind_Z);
 Z0 = sign(upw'*Z0)*Z0;
 
+if debug_plots == 1
+    plotArrow(Z0, 1, CenterVol, 60, 1, 'b')
+end
 % Until now I have used GIBOC convention, now I build the ISB one!
 % X0 = X0_ISB, Z0 = Y_ISB
 RotPseudoISB2Glob = [X0,  Z0, cross(X0, Z0)];
