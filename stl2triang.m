@@ -18,7 +18,8 @@ addpath(genpath('STAPLE'))
 % dataset_folder = './test_geometries/ICL_MRI';
 % dataset_folder = './test_geometries/JIA_MRI';
 % dataset_folder = './test_geometries/ULB_VM';
-dataset_folder = './test_geometries/GIBOC_CT';
+% dataset_folder = './test_geometries/GIBOC_CT';
+dataset_folder = './test_geometries/JIA_ANKLE_MRI';
 % folder where to store the resulting triangulations
 triang_folder = [dataset_folder, filesep, 'tri'];
 %---------------------------------------------------
