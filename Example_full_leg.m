@@ -24,9 +24,10 @@ in_mm = 1;
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto2020'; % method = 'Modenese2018';
+modelling_method = 'auto2020'; % method = 'Modenese2018';
 %--------------------------------------
 
+tic
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
@@ -38,8 +39,8 @@ for n_d = 3%1:numel(dataset_set)
     main_ds_folder =  fullfile(bone_geometries_folder, cur_dataset);
     
     % model and model file naming
-    model_name = [dataset_set{n_d},'_auto'];
-    model_file_name = [method, '_', model_name, '.osim'];
+    model_name = ['auto',modelling_method,'_',dataset_set{n_d}];
+    model_file_name = [model_name, '.osim'];
     
     % options to read stl or mat(tri) files
     % tri_folder = fullfile(main_ds_folder,'stl');
@@ -49,7 +50,7 @@ for n_d = 3%1:numel(dataset_set)
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
-    geometry_folder_name = [cur_dataset, '_Geometry'];
+    geometry_folder_name = [model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     writeModelGeometyFolder(geom_set, geometry_folder_path, vis_geom_format);
     
@@ -63,7 +64,7 @@ for n_d = 3%1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createLowerLimbJoints(osimModel, JCS, modelling_method);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
@@ -80,4 +81,4 @@ for n_d = 3%1:numel(dataset_set)
 end
 
 % remove paths
-rmpath(genpath('msk-STAPLE/STAPLE'));
+rmpath(genpath('STAPLE'));

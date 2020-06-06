@@ -1,4 +1,4 @@
-function Condyle_end = femur_filterCondyleSurf(EpiFem, CSs, PtsCondyle, Pts_0_C, CoeffMorpho)
+function Condyle_end = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, PtsCondyle, Pts_0_C, CoeffMorpho)
 
 
 % NOTE in the original toolbox lateral and medial condyles were processed
