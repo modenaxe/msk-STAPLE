@@ -14,12 +14,15 @@ output_models_folder = 'Opensim_models';
 output_model_file_name = 'example_hip_joint_model.osim';
 
 % datasets that you would like to process
-dataset_set = {'LHDL_CT'};
+dataset_set = {'VAKHUM_S6_CT'};
 
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_r'};
 in_mm = 1;
+
+% visualization geometry format
+vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
 method = 'auto2020';
@@ -41,16 +44,20 @@ for n_d = 1:numel(dataset_set)
     % options to read stl or mat(tri) files
     % tri_folder = fullfile(main_ds_folder,'stl');
     tri_folder = fullfile(main_ds_folder,'tri');
-    vis_geom_folder=fullfile(main_ds_folder,'vtp');
     
     % create geometry set structure for the entire dataset
     geom_set = createTriGeomSet(bones_list, tri_folder);
+    
+    % create bone geometry folder for visualization
+    geometry_folder_name = [cur_dataset, '_Geometry'];
+    geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
+    writeModelGeometyFolder(geom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);
     
     % create bodies
-    osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, vis_geom_folder);
+    osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
