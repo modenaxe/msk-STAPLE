@@ -82,10 +82,17 @@ for n_d = 1:numel(dataset_set)
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
     
-    % add markers to the bones
-    BL = rmfield(BL,'tibia_r');
-    addBoneLandmarksAsMarkers(osimModel, BL);
     
+    %------------------------------------
+    % SPECIAL PART FOR INCOMPLETE MODELS
+    %------------------------------------
+    % remove markers found by Kai2014 at the tibia, as they will be
+    % incorrect.
+    BL = rmfield(BL,'tibia_r');
+    % add markers to the bones
+    addBoneLandmarksAsMarkers(osimModel, BL);
+    %-------------------------------------
+
     % finalize connections
     osimModel.finalizeConnections();
     
