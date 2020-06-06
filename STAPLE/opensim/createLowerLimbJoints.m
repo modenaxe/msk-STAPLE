@@ -29,10 +29,12 @@ end
 % knee joint
 %-------------
 if isfield(JCS, 'femur_r') && isfield(JCS, 'tibia_r')
-    if strcmp(method, 'Modenese2018')&& isfield(JCS, 'talus_r')
-        JCS.tibia_r = assembleKneeChildOrientationModenese2018(JCS.femur_r, JCS.tibia_r, JCS.talus_r);
-    else
-        warndlg('JCS structure does not have a talus_r field required for Modenese 2018 knee joint definition. Defining joint as auto2020.')
+    if strcmp(method, 'Modenese2018')
+        if isfield(JCS, 'talus_r')
+            JCS.tibia_r = assembleKneeChildOrientationModenese2018(JCS.femur_r, JCS.tibia_r, JCS.talus_r);
+        else
+            warndlg('JCS structure does not have a talus_r field required for Modenese 2018 knee joint definition. Defining joint as auto2020.')
+        end
     end
     JointParams = getJointParams('knee_r', JCS.femur_r, JCS.tibia_r);
     knee_r = createCustomJointFromStruct(osimModel, JointParams);
@@ -44,11 +46,13 @@ end
 if isfield(JCS, 'tibia_r') && isfield(JCS, 'talus_r') 
     JCS.tibia_r = assembleAnkleParentOrientation(JCS.tibia_r, JCS.talus_r);
     % in case you want to replicate the modelling from Modenese et al. 2018
-    if strcmp(method, 'Modenese2018') && isfield(JCS, 'calcn_r')
-        JCS.tibia_r = assembleAnkleParentOrientationModenese2018(JCS.tibia_r, JCS.talus_r);
-        JCS.talus_r = assembleAnkleChildOrientationModenese2018(JCS.talus_r, JCS.calcn_r);
-    else
-        warndlg('JCS structure does not have a calcn_r field required for Modenese 2018 ankle definition. Defining joint as auto2020.')
+    if strcmp(method, 'Modenese2018')
+        if isfield(JCS, 'calcn_r')
+            JCS.tibia_r = assembleAnkleParentOrientationModenese2018(JCS.tibia_r, JCS.talus_r);
+            JCS.talus_r = assembleAnkleChildOrientationModenese2018(JCS.talus_r, JCS.calcn_r);
+        else
+            warndlg('JCS structure does not have a calcn_r field required for Modenese 2018 ankle definition. Defining joint as auto2020.')
+        end
     end
     JointParams = getJointParams('ankle_r', JCS.tibia_r, JCS.talus_r);
     ankle_r = createCustomJointFromStruct(osimModel, JointParams);
@@ -59,10 +63,12 @@ end
 %----------------
 if isfield(JCS, 'talus_r') && isfield(JCS, 'calcn_r')
     % in case you want to replicate the modelling from Modenese et al. 2018
-    if strcmp(method, 'Modenese2018') && isfield(JCS, 'femur_r')
-        JCS.talus_r = assembleSubtalarParentOrientationModenese2018(JCS.femur_r, JCS.talus_r);
-    else
-        warndlg('JCS structure does not have a femur_r field required for Modenese 2018 subtalar definition. Defining joint as auto2020.')
+    if strcmp(method, 'Modenese2018')
+        if isfield(JCS, 'femur_r')
+            JCS.talus_r = assembleSubtalarParentOrientationModenese2018(JCS.femur_r, JCS.talus_r);
+        else
+            warndlg('JCS structure does not have a femur_r field required for Modenese 2018 subtalar definition. Defining joint as auto2020.')
+        end
     end
     JointParams = getJointParams('subtalar_r', JCS.talus_r, JCS.calcn_r);
     subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
