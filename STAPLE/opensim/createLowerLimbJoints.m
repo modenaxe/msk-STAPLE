@@ -9,13 +9,21 @@ function createLowerLimbJoints(osimModel, JCS, method)
 % if not specified, method is auto. Other option is Modenese2018.
 % This only influences ankle and subtalar joint.
 if nargin<3;     method = 'auto';   end
-    
+
 % ground_pelvis joint
 %---------------------
 if isfield(JCS, 'pelvis')
     JointParams = getJointParams('ground_pelvis', [], JCS.pelvis);
     pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
     osimModel.addJoint(pelvis_ground_joint);
+else
+    % this allows to create a free body with ground using any segment
+    % requires definition of fields child, child_orientation and
+    % child_location in JCS.free_to_ground (as subfields).
+    disp('Partial lower limb model detected.')
+    JointParams = getJointParams('free_to_ground', [], JCS.proxbody);
+    free_joint = createCustomJointFromStruct(osimModel, JointParams);
+    osimModel.addJoint(free_joint);
 end
 
 % hip joint

@@ -1,4 +1,4 @@
-function JointParamsStruct = getJointParams(joint_name, parentBodyCS, childBodyCS)
+function JointParamsStruct = getJointParams(joint_name, parentBody, childBody)
 % the assumption is that the reference system will be provided for each
 % body. Each body will have specified the parameters for the joint.
 
@@ -7,40 +7,40 @@ function JointParamsStruct = getJointParams(joint_name, parentBodyCS, childBodyC
 if nargin>1
     
     % empty input as parentBodyCS means all set to zero
-    if isempty(parentBodyCS)
-        parentBodyCS.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
-        parentBodyCS.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
+    if isempty(parentBody)
+        parentBody.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
+        parentBody.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
     end
     % if joint field is unavailable use the available one
-     if ~isfield(childBodyCS, joint_name)
-         childBodyCS.(joint_name) = [];
+     if ~isfield(childBody, joint_name)
+         childBody.(joint_name) = [];
      end
-     if ~isfield(parentBodyCS, joint_name)
-         parentBodyCS.(joint_name) = [];
+     if ~isfield(parentBody, joint_name)
+         parentBody.(joint_name) = [];
      end
     % if joint location is unavailable in child use parent
-    if isfield(childBodyCS.(joint_name), 'child_location')
-        JointParamsStruct.child_location   = childBodyCS.(joint_name).child_location;
+    if isfield(childBody.(joint_name), 'child_location')
+        JointParamsStruct.child_location   = childBody.(joint_name).child_location;
     else
-        JointParamsStruct.child_location   = parentBodyCS.(joint_name).parent_location;
+        JointParamsStruct.child_location   = parentBody.(joint_name).parent_location;
     end
     % if joint location is unavailable in parent use child
-    if isfield(parentBodyCS.(joint_name), 'parent_location')
-        JointParamsStruct.parent_location   = parentBodyCS.(joint_name).parent_location;
+    if isfield(parentBody.(joint_name), 'parent_location')
+        JointParamsStruct.parent_location   = parentBody.(joint_name).parent_location;
     else
-        JointParamsStruct.parent_location   = childBodyCS.(joint_name).child_location;
+        JointParamsStruct.parent_location   = childBody.(joint_name).child_location;
     end
     % if joint orientation is unavailable in child use parent
-    if isfield(childBodyCS.(joint_name), 'child_orientation')
-        JointParamsStruct.child_orientation   = childBodyCS.(joint_name).child_orientation;
+    if isfield(childBody.(joint_name), 'child_orientation')
+        JointParamsStruct.child_orientation   = childBody.(joint_name).child_orientation;
     else
-        JointParamsStruct.child_orientation   = parentBodyCS.(joint_name).parent_orientation;
+        JointParamsStruct.child_orientation   = parentBody.(joint_name).parent_orientation;
     end
     % if joint orientation is unavailable in parent use child
-    if isfield(parentBodyCS.(joint_name), 'parent_orientation')
-        JointParamsStruct.parent_orientation  = parentBodyCS.(joint_name).parent_orientation;
+    if isfield(parentBody.(joint_name), 'parent_orientation')
+        JointParamsStruct.parent_orientation  = parentBody.(joint_name).parent_orientation;
     else
-        JointParamsStruct.parent_orientation  = childBodyCS.(joint_name).child_orientation;
+        JointParamsStruct.parent_orientation  = childBody.(joint_name).child_orientation;
     end
 %     % assign orientations
 %     JointParamsStruct.parent_orientation     = parentBodyCS.(joint_name).parent_orientation;
@@ -55,7 +55,14 @@ switch joint_name
         JointParamsStruct.coordsNames         = {'pelvis_tilt','pelvis_list','pelvis_rotation', 'pelvis_tx','pelvis_ty', 'pelvis_tz'};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.rotationAxes        = 'zxy';
-        
+    case 'free_to_ground'
+        cb                                    = childBody.free_to_ground.child; % current bone
+        JointParamsStruct.name                = ['ground_',cb];
+        JointParamsStruct.parent              = 'ground';
+        JointParamsStruct.child               = cb;
+        JointParamsStruct.coordsNames         = {[cb,'_tilt'],[cb,'_list'],[cb,'_rotation'], [cb,'_tx'],[cb,'_ty'], [cb,'_tz']};
+        JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
+        JointParamsStruct.rotationAxes        = 'zxy';  
     case 'hip_r'
         JointParamsStruct.name                = 'hip_r';
         JointParamsStruct.parent              = 'pelvis';
