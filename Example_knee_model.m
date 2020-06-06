@@ -11,14 +11,14 @@ addpath(genpath('STAPLE'));
 % SETTINGS 
 %----------
 output_models_folder = 'Opensim_models';
-output_model_file_name = 'example_hip_joint_model.osim';
+output_model_file_name = 'example_knee_joint_model.osim';
 
 % datasets that you would like to process
 dataset_set = {'LHDL_CT'};
 
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
-bones_list = {'pelvis_no_sacrum','femur_r'};
+bones_list = {'femur_r', 'tibia_r'};
 in_mm = 1;
 
 % choose the definition of the joint coordinate systems (see documentation)
