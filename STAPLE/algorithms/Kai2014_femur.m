@@ -18,14 +18,14 @@
 % script that takes as an input a femur geometry and computes the ISB
 % reference system based on Kai et al. 2014.
 
-function [CS, JCS, FemurBL_r] = Kai2014_femur(Femur, DistFem, result_plots, in_mm, debug_plots)
+function [CS, JCS, FemurBL_r] = Kai2014_femur(Femur, DistFem, result_plots, debug_plots, in_mm)
 
 % check units
-if nargin<4;     in_mm = 1;  end
+if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % result plots on by default, debug off
-if nargin<3; result_plots = 1; end
-if nargin<5; debug_plots = 0; end
+if nargin<3; result_plots = 0; end
+if nargin<4; debug_plots = 0; end
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
