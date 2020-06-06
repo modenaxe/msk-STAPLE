@@ -28,11 +28,11 @@ if nargin<4
     end
 end
 
-% create the model
-osimModel = Model();
-
-% set gravity
-osimModel.setGravity(Vec3(0, -9.8081, 0));
+% % create the model
+% osimModel = Model();
+% 
+% % set gravity
+% osimModel.setGravity(Vec3(0, -9.8081, 0));
 
 % create the bodies
 body_list = fields(geom_set);
