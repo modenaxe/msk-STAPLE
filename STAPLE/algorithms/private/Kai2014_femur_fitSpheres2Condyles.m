@@ -50,7 +50,7 @@ while keep_slicing
             disp('The condyle slicing is happening in the incorrect direction of the anterior-posterior axis.')
             disp('Inverting axis.')
             CS.X0 = -CS.X0;
-            [FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS);
+            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS);
             break
         end
     end
