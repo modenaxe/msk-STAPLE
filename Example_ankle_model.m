@@ -62,10 +62,28 @@ for n_d = 1:numel(dataset_set)
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
+    %------------------------------------
+    % SPECIAL PART FOR INCOMPLETE MODELS
+    %------------------------------------
+    % Using Kai2014 on the proximal tibia identifies the largest section
+    % near the ankle joint. Importantly, the reference system is aligned
+    % with the principal components of the geometry, so roughly with the
+    % section of the tibial stem available. Being the largest section of
+    % tibia distal, the Y axis points downwards, and needs to be inverted.
+    JCS.tibia_r.knee_r.V(:,2) = -JCS.tibia_r.knee_r.V(:,2);
+    % Z axis is ok, as based on the detection of fibula.
+    % X axis needs to be inverted
+    JCS.tibia_r.knee_r.V(:,1) = normalizeV(cross(JCS.tibia_r.knee_r.V(:,2), JCS.tibia_r.knee_r.V(:,3)));
+    % creating an ad hoc body and joint for connecting with ground
+    JCS.proxbody.free_to_ground.child = 'tibia_r';
+    JCS.proxbody.free_to_ground.child_location = CS.tibia_r.Origin/1000; %in m
+    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(JCS.tibia_r.knee_r.V);
+    %----------------------------------------------------------------------
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
     
     % add markers to the bones
+    BL = rmfield(BL,'tibia_r');
     addBoneLandmarksAsMarkers(osimModel, BL);
     
     % finalize connections
