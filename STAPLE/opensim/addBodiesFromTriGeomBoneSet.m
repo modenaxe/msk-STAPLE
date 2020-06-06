@@ -10,17 +10,17 @@
 % ----------------------------------------------------------------------- %
 % name can be improved createModelWithBodiesFromTriGeomBoneSet
 % maybe create BOdySet instead?
-function osimModel = createBodiesFromTriGeomBoneSet(geom_set, vis_geom_folder, vis_geom_format, bone_density, in_mm)
+function osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, vis_geom_folder, vis_geom_format, bone_density, in_mm)
 
 % add OpenSim libraries
 import org.opensim.modeling.*
 
 % adjust dimensional factors based on mm / m scales
-if nargin<5;     in_mm = 1; end
+if nargin<6;     in_mm = 1; end
 % default geometry
-if nargin<3; vis_geom_format = '.vtp';end
+if nargin<4; vis_geom_format = '.vtp';end
 % default density values from Dumas et al 2005.
-if nargin<4
+if nargin<5
     if in_mm==1
         bone_density = 0.000001420;%kg/mm3
     else
