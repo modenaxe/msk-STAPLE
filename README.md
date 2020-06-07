@@ -12,7 +12,7 @@ Currently the tool creates skeletal models but will soon be extended with comple
 
 ## Summary of available methods on STAPLE
 
-STAPLE collects some algorithms from the literature and includes other algorithms that we developed on purpose.
+STAPLE collects some algorithms from the literature and others that we developed on purpose.
 The following table includes the methods currently available in STAPLE.
 
 | Bone                 | Rigid Body Name | Joint Coordinate System | Algorithms       |
@@ -44,7 +44,23 @@ The following table includes the methods currently available in STAPLE.
 * You should ensure that the OpenSim Application Programming Interface (API) for MATLAB are installed and working.
 * Add the `STAPLE` folder to your MATLAB path.
 
-# How to use STAPLE for building your own lower extremity models
+# Models you can generate using STAPLE
+Currently with STAPLE you can generate two kind of models:
+1. full lower limb (monolateral) models: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges)
+2. partial models: they include any meaningful combination of the previous bones. For example models of hip, knee and ankle joints can be created as individual models.
+
+# How to use STAPLE
+The workflow consists in:
+1. segmenting bone geometries from images
+2. ensuring that you group them as required (for example using the `flatten mesh layers` filter in MeshLab)
+3. 
+
+## Examples of use
+
+Examples of possible modelling sccenarios are provided in the main STAPLE folder. 
+You can run the example the examples and adapt them to your own study or data.
+More examples will be added in time.
+
 
 ## Bone geometries for testing and examples
 Test geometries are available in the "test_geometries" directory:
