@@ -20,12 +20,11 @@
 
 function [CS, JCS, FemurBL_r] = Kai2014_femur(Femur, DistFem, result_plots, debug_plots, in_mm)
 
-% check units
-if nargin<5;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % result plots on by default, debug off
 if nargin<3; result_plots = 0; end
 if nargin<4; debug_plots = 0; end
+if nargin<5;     in_mm = 1;  end% check units
+if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % if this is an entire femur then cut it in two parts
 % but keep track of all geometries
@@ -93,6 +92,7 @@ JCS.knee_r.Origin = CS.KneeCenter;
 FemurBL_r   = landmarkTriGeomBone(Femur, CS, 'femur_r');
 
 % result plot
+label_switch=1;
 if result_plots == 1
     figure
     alpha = 0.5;
@@ -106,6 +106,14 @@ if result_plots == 1
     for nL = 1:numel(BLfields)
         cur_name = BLfields{nL};
         plotDot(FemurBL_r.(cur_name), 'k', 7)
+        if label_switch==1
+            text(FemurBL_r.(cur_name)(1),...
+                FemurBL_r.(cur_name)(2),...
+                FemurBL_r.(cur_name)(3),...
+                ['  ',cur_name],...
+                'VerticalAlignment', 'Baseline',...
+                'FontSize',8);
+        end
     end
     
     subplot(2,2,2); % femoral head

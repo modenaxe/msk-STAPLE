@@ -100,10 +100,10 @@ EpiFem = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
 [postCondyle_Med, postCondyle_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
 
 % extract patellar grooves
-[Groove_Med, Groove_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
+% [Groove_Med, Groove_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
 
 % Fit two spheres to patellar groove
-CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
+% CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
 % how to compute the joint axes
 switch fit_method
@@ -127,7 +127,11 @@ CS.V = JCS.hip_r.V;
 % landmark bone according to CS (only Origin and CS.V are used)
 FemurBL_r   = landmarkTriGeomBone(Femur  , CS,     'femur_r');
 
+% check if right or left and correct CS
+correctCSforLegSide(FemurBL_r)
+
 % result plot
+label_switch=1;
 if result_plots == 1
     figure('Name','femur_r');
     alpha = 0.5;
@@ -151,6 +155,14 @@ if result_plots == 1
     for nL = 1:numel(BLfields)
         cur_name = BLfields{nL};
         plotDot(FemurBL_r.(cur_name), 'k', 7)
+        if label_switch==1
+            text(FemurBL_r.(cur_name)(1),...
+                FemurBL_r.(cur_name)(2),...
+                FemurBL_r.(cur_name)(3),...
+                ['  ',cur_name],...
+                'VerticalAlignment', 'Baseline',...
+                'FontSize',8);
+        end
     end
     
     subplot(2,2,2); % femoral head
