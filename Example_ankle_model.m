@@ -62,9 +62,9 @@ for n_d = 1:numel(dataset_set)
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
-    %------------------------------------
-    % SPECIAL PART FOR INCOMPLETE MODELS
-    %------------------------------------
+    %----------------------------------
+    % SPECIAL PART FOR PARTIAL MODELS
+    %----------------------------------
     % Using Kai2014 on the proximal tibia identifies the largest section
     % near the ankle joint. Importantly, the reference system is aligned
     % with the principal components of the geometry, so roughly with the
@@ -79,19 +79,19 @@ for n_d = 1:numel(dataset_set)
     JCS.proxbody.free_to_ground.child_location = CS.tibia_r.Origin/1000; %in m
     JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(JCS.tibia_r.knee_r.V);
     %----------------------------------------------------------------------
+    
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
     
-    
-    %------------------------------------
-    % SPECIAL PART FOR INCOMPLETE MODELS
-    %------------------------------------
+    %----------------------------------
+    % SPECIAL PART FOR PARTIAL MODELS
+    %----------------------------------
     % remove markers found by Kai2014 at the tibia, as they will be
     % incorrect.
     BL = rmfield(BL,'tibia_r');
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
-    %-------------------------------------
+    %-----------------------------------
 
     % finalize connections
     osimModel.finalizeConnections();
@@ -100,8 +100,9 @@ for n_d = 1:numel(dataset_set)
     osimModel.print(fullfile(output_models_folder, output_model_file_name));
     
     % inform the user about time employed to create the model
+    disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
-    
+    disp('-------------------------')
 end
 
 % remove paths

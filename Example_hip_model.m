@@ -4,6 +4,9 @@
 %    Author:   Luca Modenese, April 2018                                  %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
+% no modifications required since pelvis is the segment to attach to ground
+% as in standard full lower limb models
+% ----------------------------------------------------------------------- %
 clear; clc; close all
 addpath(genpath('STAPLE'));
 
@@ -11,10 +14,10 @@ addpath(genpath('STAPLE'));
 % SETTINGS 
 %----------
 output_models_folder = 'Opensim_models';
-output_model_file_name = 'example_hip_joint_model.osim';
+output_model_file_name = 'example_hip_joint.osim';
 
 % datasets that you would like to process
-dataset_set = {'VAKHUM_S6_CT'};
+dataset_set = {'LHDL_CT'};
 
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
@@ -61,7 +64,7 @@ for n_d = 1:numel(dataset_set)
     
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
-    
+
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
     
@@ -75,8 +78,9 @@ for n_d = 1:numel(dataset_set)
     osimModel.print(fullfile(output_models_folder, output_model_file_name));
     
     % inform the user about time employed to create the model
+    disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
-    
+    disp('-------------------------')
 end
 
 % remove paths

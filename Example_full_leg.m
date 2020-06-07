@@ -76,8 +76,9 @@ for n_d = 3%1:numel(dataset_set)
     osimModel.print(fullfile(output_models_folder, model_file_name));
     
     % inform the user about time employed to create the model
+    disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
-    
+    disp('-------------------------')
 end
 
 % remove paths

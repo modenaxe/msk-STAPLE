@@ -62,6 +62,16 @@ for n_d = 1:numel(dataset_set)
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
+    %----------------------------------
+    % SPECIAL PART FOR PARTIAL MODELS
+    %----------------------------------
+    % creating an ad hoc body and joint for connecting with ground
+    % femur will be aligned with ground using its proximal JCS
+    JCS.proxbody.free_to_ground.child = 'femur_r';
+    JCS.proxbody.free_to_ground.child_location = JCS.femur_r.hip_r.Origin/1000; %in m
+    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(JCS.femur_r.hip_r.V);
+    %----------------------------------------------------------------------
+    
     % create joints
     createLowerLimbJoints(osimModel, JCS, method);
     
@@ -75,8 +85,9 @@ for n_d = 1:numel(dataset_set)
     osimModel.print(fullfile(output_models_folder, output_model_file_name));
     
     % inform the user about time employed to create the model
+    disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
-    
+    disp('-------------------------')
 end
 
 % remove paths
