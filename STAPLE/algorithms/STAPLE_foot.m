@@ -201,22 +201,34 @@ CS.Z = -Y3; % Ventral to dorsal
 CS.V = [X3, Z3, -Y3];
 CS.Origin = CenterVol;
 
-
-% calcn does not have a real joint, but JCS structure is created for
-% consistency
-JCS = CS;
-JCS.Origin = heelPt';
-
 % landmark bone according to CS (only Origin and CS.V are used)
 CalcnBL_r    = landmarkTriGeomBone(Calcn, CS, 'calcn_r');
 CalcnBL_r.R1MGROUND = PtMetaMed;
 CalcnBL_r.R5MGROUND = PtMetaLat;
 CalcnBL_r.RHEEGROUND = heelPt;
-if norm(CalcnBL_r.R5M-CalcnBL_r.R5MGROUND)>10
-    disp('Dubious identification of R5M')
-    CalcnBL_r.R5MPROX = CalcnBL_r.R5M;
-    CalcnBL_r.R5M = CalcnBL_r.R5MGROUND;
+
+if norm(CalcnBL_r.RD5M-CalcnBL_r.R5MGROUND)>10
+    disp('Dubious identification of RD5M')
+    CalcnBL_r.R5MPROX = CalcnBL_r.RD5M;
+    CalcnBL_r.RD5M = CalcnBL_r.R5MGROUND;
 end
+
+% calcn currently does not have a real child joint, but JCS structure is created for
+% consistency
+JCS = CS;
+JCS.Origin = heelPt';
+
+% define toes joint
+Z = normalizeV(CalcnBL_r.RD5M-CalcnBL_r.RD1M);
+X = normalizeV(X3-X3*(X3'*Z));
+Y = normalizeV(cross(Z,X));
+midpoint_DM = (CalcnBL_r.RD5M+CalcnBL_r.RD1M)/2.0;
+JCS.toes_r.Origin = midpoint_DM;
+JCS.toes_r.V = [X Y Z];
+JCS.toes_r.parent_location = midpoint_DM * dim_fact;
+JCS.toes_r.parent_orientation = computeXYZAngleSeq(JCS.toes_r.V);
+
+
 label_switch = 1;
 
 paper_figure = 0;
@@ -234,7 +246,7 @@ if result_plots == 1
     % plot the calcn triangulation
     plotTriangLight(Calcn, CS, 0)
     % Plot the inertia Axis & Volumic center
-    quickPlotRefSystem(CS)
+    quickPlotRefSystem(JCS.toes_r)
     % plot the bone landmarks
     %     plotDot(heelPt,'g',3)
     %     plotDot(PtMetaLat,'b',3)
