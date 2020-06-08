@@ -16,11 +16,7 @@ Miranda2010_*ACS.m
 __*
 /_old
 test_geometries/
-validation/*.xlsx
-validation/opensim_models/*_Geometries/
-validation/*_manual_*/
-validation/TLEM2_Carbone*/
-validation/_old/*
+OpenSim_models/
 
 *.zip
 
