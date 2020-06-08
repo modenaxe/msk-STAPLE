@@ -134,10 +134,10 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 JCS.hip_r.parent_orientation        = computeXYZAngleSeq(CS.V);
 
 % Export bone landmarks
-PelvisBL.RASIS     = RASIS; % in Pelvis ref
-PelvisBL.LASIS     = LASIS; % in Pelvis ref
-PelvisBL.RPSIS     = RPSIS; % in Pelvis ref
-PelvisBL.LPSIS     = LPSIS; % in Pelvis ref
+PelvisBL.RASI     = RASIS; % in Pelvis ref
+PelvisBL.LASI     = LASIS; % in Pelvis ref
+PelvisBL.RPSI     = RPSIS; % in Pelvis ref
+PelvisBL.LPSI     = LPSIS; % in Pelvis ref
 PelvisBL.RPS       = RPS;
 PelvisBL.LPS       = LPS;
 
