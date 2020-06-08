@@ -17,6 +17,9 @@ N_bones = numel(bone_names);
 for nb = 1:N_bones
     cur_bone_name = bone_names{nb};
     cur_tri = aTriGeomBoneSet.(cur_bone_name);
+    % reduce geometry for visualization to 30% of faces
+    coeff_reduc = 0.3;
+    cur_tri = reduceTriObjGeometry(cur_tri, coeff_reduc);
     switch aFileFormat
         case 'obj'
             writeOBJfile(cur_tri, fullfile(aGeomFolder, [cur_bone_name,'.obj']));
