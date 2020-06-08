@@ -20,7 +20,7 @@ in_mm = 1;
 %--------------------------------------
 
 
-for n_d = 1:numel(dataset_set)
+for n_d = 2%1:numel(dataset_set)
     % setup folders
     model_name = dataset_set{n_d};
     main_ds_folder =  fullfile(bone_geometries_folder,dataset_set{n_d});
@@ -38,7 +38,7 @@ for n_d = 1:numel(dataset_set)
 %     
 % %     %---- FEMUR -----
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
-    [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r, [], 1);
+%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r, [], 1);
 %     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
 %     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
 %     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
@@ -57,10 +57,10 @@ for n_d = 1:numel(dataset_set)
 % % [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
 % 
 %     %---- TALUS/ANKLE -----
-%     [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
+    [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
 %     
 %     %---- CALCANEUS/SUBTALAR -----
-%     JCS.calcn_r = STAPLE_foot(geom_set.calcn_r, 0, 1);
+%     JCS.calcn_r = STAPLE_foot(geom_set.calcn_r, 1, 0);
 %     %-----------------
     clear JCS
 %     close all

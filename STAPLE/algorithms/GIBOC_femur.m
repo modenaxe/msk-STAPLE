@@ -128,7 +128,7 @@ CS.V = JCS.hip_r.V;
 FemurBL_r   = landmarkTriGeomBone(Femur  , CS,     'femur_r');
 
 % check if right or left and correct CS
-correctCSforLegSide(FemurBL_r)
+% correctCSforLegSide(FemurBL_r)
 
 % result plot
 label_switch=1;
