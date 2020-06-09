@@ -1,4 +1,4 @@
-function writeModelGeometyFolder(aTriGeomBoneSet, aGeomFolder, aFileFormat)
+function writeModelGeometriesFolder(aTriGeomBoneSet, aGeomFolder, aFileFormat)
 
 % all formats are ASCII, as required by the OpenSim visualized
 if nargin<3; aFileFormat='obj'; end

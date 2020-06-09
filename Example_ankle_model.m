@@ -51,7 +51,7 @@ for n_d = 1:numel(dataset_set)
     % create bone geometry folder for visualization
     geometry_folder_name = [cur_dataset, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
-    writeModelGeometyFolder(geom_set, geometry_folder_path, vis_geom_format);
+    writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);

@@ -54,7 +54,7 @@ for n_d = 1%:numel(dataset_set)
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     % write down geometries in chosen format (internally they are
     % simplified for faster visualization)
-    writeModelGeometyFolder(triGeom_set, geometry_folder_path, vis_geom_format);
+    writeModelGeometriesFolder(triGeom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);
