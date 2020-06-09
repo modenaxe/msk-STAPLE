@@ -24,7 +24,7 @@ in_mm = 1;
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'auto2020'; % method = 'Modenese2018';
+modelling_method = 'Modenese2020'; % method = 'Modenese2018';
 %--------------------------------------
 
 tic
@@ -32,7 +32,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 3%1:numel(dataset_set)
+for n_d = 1%:numel(dataset_set)
     
     % setup folders
     cur_dataset = dataset_set{n_d};
@@ -47,21 +47,23 @@ for n_d = 3%1:numel(dataset_set)
     tri_folder = fullfile(main_ds_folder,'tri');
     
     % create geometry set structure for the entire dataset
-    geom_set = createTriGeomSet(bones_list, tri_folder);
+    triGeom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
     geometry_folder_name = [model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
-    writeModelGeometyFolder(geom_set, geometry_folder_path, vis_geom_format);
+    % write down geometries in chosen format (internally they are
+    % simplified for faster visualization)
+    writeModelGeometyFolder(triGeom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);
     
     % create bodies
-    osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
+    osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
+    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set);
     
     % create joints
     createLowerLimbJoints(osimModel, JCS, modelling_method);
