@@ -112,7 +112,7 @@ if isfield(geom_set,'patella_r')
         case 'GPat-ACS'
             [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
         otherwise
-            error('choose coorect patellar algorithm');
+            % error('choose coorect patellar algorithm');
     end
                 
 end

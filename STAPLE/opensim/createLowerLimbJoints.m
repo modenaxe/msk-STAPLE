@@ -84,13 +84,14 @@ if isfield(JCS, 'talus_r') && isfield(JCS, 'calcn_r')
 end 
 
 % patella joint
-if isfield(JCS, 'patella_r') && isfield(JCS, 'femur_r')
-    JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.femur_r, JCS.patella_r);
-    JointParams = getJointParams('patellofemoral_r', JCS.femur_r, JCS.patella_r);
-    patfem_r = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(patfem_r);
+%---------------
+% if isfield(JCS, 'patella_r') && isfield(JCS, 'femur_r')
+%     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.femur_r, JCS.patella_r);
+%     JointParams = getJointParams('patellofemoral_r', JCS.femur_r, JCS.patella_r);
+%     patfem_r = createCustomJointFromStruct(osimModel, JointParams);
+%     osimModel.addJoint(patfem_r);
 %     addPatFemJointCoordCouplerConstraint(osimModel, side)
 %     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
-end
+% end
 
 end
