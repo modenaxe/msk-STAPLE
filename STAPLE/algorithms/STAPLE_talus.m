@@ -104,11 +104,15 @@ JCS.subtalar_r.Origin = CS.talocalc_centre;
 paper_figure = 0;
 if paper_figure == 1
     figure()
-    PlotTriangLight(Talus, CS, 0, 1);
+    plotTriangLight(Talus, CS, 0, 1);
     trisurf(Talonavic_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
     trisurf(Talocalcn_AS,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
     trisurf(TalTrochAS,'Facecolor','g','FaceAlpha',1,'edgecolor','none');
     axis off
+    length_arrow = 30;
+    plotArrow( CS.V(:,1), 1, CS.Origin, 43, 1, 'r')
+    plotArrow( CS.V(:,2), 1, CS.Origin, length_arrow, 1, 'g')
+    plotArrow( CS.V(:,3), 1, CS.Origin, length_arrow, 1, 'b')
 end
 
 if result_plots == 1

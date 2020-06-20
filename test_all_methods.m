@@ -57,7 +57,7 @@ for n_d = 2%1:numel(dataset_set)
 % % [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
 % 
 %     %---- TALUS/ANKLE -----
-%     [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
+    [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
 %     %---- CALCANEUS/SUBTALAR -----
 %     JCS.calcn_r = STAPLE_foot(geom_set.calcn_r, 1, 0);
 %     %-----------------
