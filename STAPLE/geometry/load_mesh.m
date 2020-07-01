@@ -1,14 +1,27 @@
+% LOAD_MESH Read a file, with specified or unspecified extension, as a
+% three-dimensional surface mesh file. The script guesses the triangulation
+% format when it is not specified, attempting to open the file as a 
+% STL or MATLAB file.
+%
+%   tri_geom = LOAD_MESH(a_tri_mesh_file)
+%
+% Inputs:
+%   a_tri_mesh_file - a file path to a surface mesh, with extension .STL,
+%       .MAT or no extension.
+%
+% Outputs:
+%   tri_geom - a MATLAB triangulation object.
+%
+%
+% See also CREATETRIGEOMSET
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese                                              %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
-% Script used to read a file, with specified or unspecified extension, as a
-% three-dimensional mesh file. 
-% The script tries to guess the triangulation format is not specified,
-% trying to open the file as a STL or MATLAB file.
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+%
+% TODO: add OBJ reading
+
 function tri_geom = load_mesh(a_tri_mesh_file)
 
 disp(['Attempting to read mesh file: ', a_tri_mesh_file]);
@@ -26,7 +39,7 @@ if ischar(a_tri_mesh_file)
     [~,~,ext] = fileparts(a_tri_mesh_file);
     % if stl file just open it
     if strcmp(ext,'.stl')
-        % NB: these two lines could be just stlread for MATLAB>v2020
+        % NB: these two lines could be just stlread for MATLAB>R2018b
         [Nodes, Elmts] = stlRead(a_tri_mesh_file);
         tri_geom = triangulation(Elmts,Nodes);
         kwd = 'STL';

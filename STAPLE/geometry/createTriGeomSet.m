@@ -1,9 +1,35 @@
+% CREATETRIGEOMSET Create a structure of triangulation objects from a list
+% of files and the folder where those files are located
+%
+%   triGeomSet = createTriGeomSet(aTriGeomList, geom_file_folder)
+%
+% Inputs:
+%   aTriGeomList - a cell array consisting of a list of names of
+%       triangulated geometries that will be seeked in geom_file_folder.
+%       The names set the name of the triangulated objects and should
+%       correspond to the names of the bones to include in the OpenSim
+%       models.
+%
+%   geom_file_folder - the folder where triangulated geometry files will be
+%       seeked.
+%
+% Outputs:
+%   triGeomSet - structure with as many fields as the triangulations that
+%       could be loaded from the aTriGeomList from the geom_file_folder.
+%       Each field correspond to a triangulated geometry.
+%
+% Example of use:
+% tri_folder = 'test_geometries\dataset1\tri';
+% bones_list = {'pelvis','femur_r','tibia_r','talus_r','calcn_r'};
+% geom_set = createTriGeomSet(bones_list, tri_folder);
+%
+% See also LOAD_MESH
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese, April 2018                                  %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+
 function triGeomSet = createTriGeomSet(aTriGeomList, geom_file_folder)
 tic
 for nb = 1:numel(aTriGeomList)
@@ -18,6 +44,6 @@ for nb = 1:numel(aTriGeomList)
     end
 end
 % tell user all went well
-disp(['Geometry set of triangulations created in ', num2str(toc), ' s']);
+disp(['Set of triangulated geometries created in ', num2str(toc), ' s']);
 
 end
