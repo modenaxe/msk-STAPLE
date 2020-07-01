@@ -1,25 +1,31 @@
+% CALCOSIMMODELMASS Calculate the total mass of the segment of an OpenSim
+% model.
+%
+%   total_mass = calcOsimModelMass(aOsimModel, print_results)
+%
+% Inputs:
+%   aOsimModel - an OpenSim model. Note that the model has been read by
+%       MATLAB externally, i.e. this is an OpenSim object, not a file path.
+%
+%   print_results - print or not the total mass. Valid values: 1 or 0.
+%
+% Outputs:
+%   total_mass - mass in Kg obtained summing the masses of all segments
+%       included in the model.
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-% Licensed under the Apache License, Version 2.0 (the "License");         %
-% you may not use this file except in compliance with the License.        %
-% You may obtain a copy of the License at                                 %
-% http://www.apache.org/licenses/LICENSE-2.0.                             %
-%                                                                         %
-% Unless required by applicable law or agreed to in writing, software     %
-% distributed under the License is distributed on an "AS IS" BASIS,       %
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         %
-% implied. See the License for the specific language governing            %
-% permissions and limitations under the License.                          %
-%                                                                         %
-%    Author:   Luca Modenese,  2020                                       %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
-%
-% Given an OpenSim model, this function calculates its total mass.
-%
-function total_mass = calcOsimModelMass(aOsimModel, varargin)
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 
+function total_mass = calcOsimModelMass(aOsimModel, print_results)
+
+% OpenSim libraries
+import org.opensim.modeling.*
+
+% unless specified as input, do not print mass
+if nargin==1; print_results=0; end
+    
 % extracts the bodyset from the model
 bodyset = aOsimModel.getBodySet;
 
@@ -28,23 +34,16 @@ total_mass = 0;
 for n_body = 0:bodyset.getSize()-1
     % current body
     curr_body = bodyset.get(n_body);
+    % this check is necessary if the script is used in OpenSim 3.3
     if strcmp(char(curr_body.getName), 'ground')
         continue
     end
-    total_mass = total_mass + curr_body.getMass;
+    total_mass = total_mass + curr_body.getMass();
 end
 
-% display only if requested
-if isempty(varargin)==1
-    % display the output
-    display('========= CALCULATING MODEL MASS ========')
-    display(['Mass for model ',char(aOsimModel.getName),' is:   ',num2str(total_mass),' Kg.']);
-else
-    if varargin{1}==1
-        % display the output
-        display('========= CALCULATING MODEL MASS ========')
-        display(['Mass for model ',char(aOsimModel.getName),' is:   ',num2str(total_mass),' Kg.']);
-    end
+% display output only if requested
+if print_results==1
+    disp(['Mass of model ',char(aOsimModel.getName),':   ',num2str(total_mass),' Kg.']);
 end
 
 end
