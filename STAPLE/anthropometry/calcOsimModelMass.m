@@ -1,5 +1,5 @@
 % CALCOSIMMODELMASS Calculate the total mass of the segment of an OpenSim
-% model.
+% model. Tested for OpenSim 4.1.
 %
 %   total_mass = calcOsimModelMass(aOsimModel, print_results)
 %
