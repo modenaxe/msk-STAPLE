@@ -18,7 +18,7 @@
 function osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass)
 
 % A MESS WITH THE DIMENSIONS OF THE JCS.origin....TO FIX!
-
+%---------------------------------------------
 % compute COM positions
 thigh_axis = JCS.femur_r.hip_r.Origin-JCS.femur_r.knee_r.Origin;
 thigh_L = norm(thigh_axis);
@@ -26,8 +26,9 @@ shank_axis = JCS.femur_r.knee_r.Origin-JCS.talus_r.ankle_r.Origin';
 shank_L = norm(shank_axis);
 foot_axis = JCS.talus_r.ankle_r.Origin'-JCS.calcn_r.toes_r.Origin;
 foot_L = norm(foot_axis);
+%---------------------------------------------
 
-% coefficients from Winter 2015
+% coefficients from Winter 2015 (book)
 thigh_COM = thigh_L*0.567*thigh_axis/thigh_L+JCS.femur_r.knee_r.Origin;
 shank_COM = shank_L*0.567*shank_axis/shank_L+JCS.talus_r.ankle_r.Origin';
 calcn_COM = foot_L*0.5*foot_axis/foot_L+JCS.calcn_r.toes_r.Origin;

@@ -25,8 +25,6 @@ import org.opensim.modeling.*
 % get bodyset
 subjspec_bodyset = osimModel.getBodySet;
 
-m = Mat33;
-
 for n_b = 1:subjspec_bodyset.getSize()-1
     
     curr_body = subjspec_bodyset.get(n_b);
@@ -34,9 +32,9 @@ for n_b = 1:subjspec_bodyset.getSize()-1
     % updating the mass
     curr_body.setMass(coeff* curr_body.getMass);
     
-    % updatign the inertia matrix assuming geometry does not change, only
-    % mass
+    % updating the inertia matrix for the change in mass
     m = curr_body.get_inertia();
+    
     % components of inertia
     xx = m.get(0)*coeff;
     yy = m.get(1)*coeff;
@@ -46,8 +44,9 @@ for n_b = 1:subjspec_bodyset.getSize()-1
     yz = m.get(5)*coeff;
     upd_inertia = Inertia(xx , yy , zz , xy , xz , yz);
     
-    % updating inertias
+    % updating Inertia
     curr_body.setInertia(upd_inertia);
+
 end
 
 end

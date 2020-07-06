@@ -1,5 +1,30 @@
-% generic function that creates a body from a triangulated geometry.
-% Needs a density and a name. Units and mesh visualis file optional
+% ADDBODYFROMTRIGEOMOBJ Create an OpenSim Body from a MATLAB triangulation
+% object. Requires a name and a density.
+%
+%   triGeomSet = createTriGeomSet(aTriGeomList, geom_file_folder)
+%
+% Inputs:
+%   osimModel - .
+%
+%   body_name - .
+%
+%   triGeom - .
+%
+% Outputs:
+%   osim_body - .
+%
+% Example of use:
+% tri_folder = 'test_geometries\dataset1\tri';
+% bones_list = {'pelvis','femur_r','tibia_r','talus_r','calcn_r'};
+% geom_set = createTriGeomSet(bones_list, tri_folder);
+%
+% See also LOAD_MESH
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+
 function osim_body = addBodyFromTriGeomObj(osimModel, body_name, triGeom, density, in_mm, vis_mesh_file)
 
 % OpenSim libraries
