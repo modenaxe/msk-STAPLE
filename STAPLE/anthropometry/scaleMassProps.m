@@ -46,7 +46,8 @@ for n_b = 1:subjspec_bodyset.getSize()-1
     
     % updating Inertia
     curr_body.setInertia(upd_inertia);
-
+    
+    clear m
 end
 
 end
