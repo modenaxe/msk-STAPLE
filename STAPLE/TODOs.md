@@ -11,4 +11,7 @@
 - [ ] 8) maybe it would be better to have a single function dealing with all the visualization.
 - [ ] 9) check in addBoneLandmarksAsMarkers if the cur_body_name corresponds to a body
 - [ ] 10) mapGait2392MassPropToModel check equivalence of segment names
+- [ ] 11) scaleMassProps double check that the use of the mass coeff is correct. Validate with opensim
+- [ ] 12) ADDBODYFROMTRIGEOMOBJ remove ArrayDouble.createVec3
+- [ ] 13) verify that bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0
 # Dimensionality of Origin: same as OpenSim

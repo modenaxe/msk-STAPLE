@@ -4,13 +4,13 @@
 %   osimModel = mapGait2392MassPropToModel(osimModel)
 %
 % Inputs:
-%   osimModel - the OpenSim model for which the material properties of the
-%       segments will be updated using the gait2392 values
+%   osimModel - the OpenSim model for which the mass properties of the
+%       segments will be updated using the gait2392 values.
 %
 % Outputs:
 %   osimModel - the OpenSim model with the updated inertial properties.
 %
-% See also GAIT2392MASSPROPS.
+% See also GAIT2392MASSPROPS, SCALEMASSPROPS.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese, 2020
