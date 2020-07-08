@@ -24,7 +24,7 @@
 % See also LANDMARKBONEGEOM.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
+%  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 

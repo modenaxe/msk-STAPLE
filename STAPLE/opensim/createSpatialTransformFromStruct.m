@@ -95,6 +95,7 @@ for n = 1:6
     % the axis without a coordinate associated will be assigned a constant
     % zero function (they will not move).
     TransAxis = updTransformAxisCoordName(TransAxis, coords_names{n});
+    % assign appropriate function
     if ~strcmp(coords_names{n},'')
         TransAxis.set_function(lin_fun);
     else

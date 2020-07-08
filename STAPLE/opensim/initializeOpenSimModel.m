@@ -1,3 +1,23 @@
+% INITIALIZEOPENSIMMODEL Create barebone of OpenSim model adding name,
+% gravity and credits for the automatic models.
+%
+%   osimModel = initializeOpenSimModel(aModelNameString)
+%
+% Inputs:
+%   aModelNameString - a string that will be set as name of the automatic
+%       model.
+%
+% Outputs:
+%   osimModel - an OpenSim model to use as basis for the automatic
+%       modelling. It has only a name, includes gravity and has credits.
+%
+% See also CREATELOWERLIMBJOINTS, ADDBODYFROMTRIGEOMOBJ, 
+% ADDBODIESFROMTRIGEOMBONESET.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function osimModel = initializeOpenSimModel(aModelNameString)
 
 % add OpenSim libraries
