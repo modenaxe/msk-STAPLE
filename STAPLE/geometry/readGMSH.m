@@ -1,12 +1,12 @@
-%MESHREADGMSH reads a .msh file written in ASCII format by GMSH
-%V are the vertices
-%F are the faces
+% MESHREADGMSH reads a .msh file written in ASCII format by GMSH. 
+% V are the vertices
+% F are the faces
+% Function was originally in GIBOC-Knee.
 %-------------------------------------------------------------------------%
 %  Author:   JB Renault
 %  Copyright 2020 JB Renault
 %-------------------------------------------------------------------------%
-function [v, f] = mshReadGMSH(fileName)
-
+function [v, f] = readGMSH(fileName)
 
 %======================
 % GMSH .msh ascii file format
