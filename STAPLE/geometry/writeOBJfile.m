@@ -17,9 +17,12 @@
 % See also CREATETRIGEOMSET, REDUCETRIOBJGEOMETRY, LOAD_MESH.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
-%  Copyright 2020 Luca Modenese
+% Author: Luca Modenese 
+% email: l.modenese@imperial.ac.uk
+% Website: https://github.com/modenaxe/msk-STAPLE
+% Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
+
 function writeOBJfile(aMatTriObj, aOBJfile)
 
 % Please refer to description of file format:

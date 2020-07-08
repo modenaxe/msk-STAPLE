@@ -21,7 +21,7 @@
 % See also REDUCEPATCH.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
+%  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 function reducedTriObj = reduceTriObjGeometry(boneTriObj, coeff_reduc)

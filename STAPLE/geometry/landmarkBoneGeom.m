@@ -24,10 +24,10 @@
 %
 % See also GETBONELANDMARKLIST, FINDLANDMARKCOORDS.
 %
-% ----------------------------------------------------------------------- %
-%    Author:   Luca Modenese,  2020                                       %
-%    email:    l.modenese@imperial.edu.au                                 % 
-% ----------------------------------------------------------------------- %
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function Landmarks = landmarkBoneGeom(TriObj, CS, bone_name, debug_plots)
 
 % better LandmarkBoneTriGeom
@@ -65,7 +65,7 @@ COM = [0 0 0]';
 % 2) dividing the bone in three parts
 ub = max(TriPoints(:,2))*0.3;
 lb = max(TriPoints(:,2))*(-0.3);
-if debug_plot == 1
+if debug_plots == 1
     figure()
     title('proximal (blue) and distal (red) geom')
     % check proximal geometry

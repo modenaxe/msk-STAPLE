@@ -14,10 +14,10 @@
 %
 % See also FINDLANDMARKCOORDS, LANDMARKTRIGEOMBONE.
 %
-% ----------------------------------------------------------------------- %
-%    Author:   Luca Modenese,  2020                                       %
-%    email:    l.modenese@imperial.edu.au                                 % 
-% ----------------------------------------------------------------------- %
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 %
 % TODO: add landmarking for left side
 
