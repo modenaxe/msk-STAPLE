@@ -26,7 +26,7 @@ function MassProps = computeMassProperties_Mirtich1996(v, f)
 
 % feedback to the user
 % I tried a waitbar, but the script was too slow!
-disp('Calculating Inertia properties for selected triangulated geometry');
+disp('Calculating Inertia properties...');
 tic
 
 % initializing integral vectors
