@@ -64,6 +64,10 @@ if nargin<5; body_density = 1420*dim_fact;end % bone density by default (Dumas 2
 % add the individual bodies to the model
 body_list = fields(geom_set);
 Nb = numel(body_list);
+
+disp('-------------------------------------')
+disp(['Adding ', num2str(Nb), ' bodies to the OpenSim model'])
+
 for nb = 1:Nb
     % bone being processed
     cur_body_name = body_list{nb};
@@ -76,8 +80,13 @@ for nb = 1:Nb
     if strcmp(cur_body_name,'pelvis_no_sacrum')
         cur_body_name = 'pelvis';
     end
+    
+    disp(['     ',num2str(nb),') ', cur_body_name])
+    
     % creating the body and adding it to the OpenSim model
     addBodyFromTriGeomObj(osimModel, cur_geom, cur_body_name, cur_vis_geom_file, body_density, in_mm);
+    disp('      ADDED')
+    disp('      -----')
 end
 
 end
