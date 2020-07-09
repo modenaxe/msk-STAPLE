@@ -1,9 +1,35 @@
+% CREATELOWERLIMBJOINTS Create the lower limb joints based on assigned
+% joint coordinate systems stored in a structure and adds them to an
+% existing OpenSim model.
+%
+% createLowerLimbJoints(osimModel, JCS, method)
+%
+% Inputs:
+%   osimModel - an OpenSim model of the lower limb to which we want to add
+%       the lower limb joints. 
+%
+%   JCS - a MATLAB structure created using the function 
+%       createLowerLimbJoints(). This structure includes as fields the
+%       elements to generate a CustomJoint using the
+%       createCustomJointFromStruct function. See these functions for
+%       details.
+%
+%   method - optional input specifying the final arrangements of location
+%       and orientation of the CustomJoint. Valid values are
+%       'Modenese2018', which will define the same reference systems
+%       described in Modenese et al. J Biomech (2018), or 'auto', that will
+%       use the tibial JCS as well. See Modenese and Renault, JBiomech 2020
+%       for details.
+%
+% Outputs:
+%   none - the joints are added to the input OpenSim model.
+%
+% See also GETJOINTPARAMS, CREATECUSTOMJOINTFROMSTRUCT, CREATELOWERLIMBJOINTS.
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese, March 2020                                  %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function createLowerLimbJoints(osimModel, JCS, method)
 
 % if not specified, method is auto. Other option is Modenese2018.

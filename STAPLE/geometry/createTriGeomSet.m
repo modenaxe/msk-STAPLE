@@ -32,6 +32,7 @@
 
 function triGeomSet = createTriGeomSet(aTriGeomList, geom_file_folder)
 tic
+triGeomSet = [];
 for nb = 1:numel(aTriGeomList)
     cur_tri_name = aTriGeomList{nb};
     cur_tri_geom_file = fullfile(geom_file_folder, cur_tri_name);
@@ -43,7 +44,10 @@ for nb = 1:numel(aTriGeomList)
         triGeomSet.(cur_tri_name) = cur_tri_geom;
     end
 end
-% tell user all went well
-disp(['Set of triangulated geometries created in ', num2str(toc), ' s']);
-
+if isempty(triGeomSet)
+    error('createTriGeomSet.m No triangulations were read in input.')
+else
+    % tell user all went well
+    disp(['Set of triangulated geometries created in ', num2str(toc), ' s']);
+end
 end

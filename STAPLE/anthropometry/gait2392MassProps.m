@@ -18,7 +18,7 @@
 % See also MAPGAIT2392MASSPROPTOMODEL.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
+%  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 

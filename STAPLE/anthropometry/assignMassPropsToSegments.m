@@ -24,7 +24,7 @@
 % See also MAPGAIT2392MASSPROPTOMODEL, SCALEMASSPROPS.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
+%  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 function osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass)

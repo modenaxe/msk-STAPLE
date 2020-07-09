@@ -13,7 +13,7 @@
 % See also GAIT2392MASSPROPS, SCALEMASSPROPS.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2020
+%  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 function osimModel = mapGait2392MassPropToModel(osimModel)

@@ -93,7 +93,6 @@ else
     JointParamsStruct.parent_orientation  = childBodyStruct.(joint_name).child_orientation;
 end
 
-
 %% assign the parameters required to create a CustomJoint
 switch joint_name
     case 'ground_pelvis'
@@ -118,7 +117,6 @@ switch joint_name
         JointParamsStruct.coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational'};
         JointParamsStruct.rotationAxes        = 'zxy';
-        
     case 'knee_r'
         JointParamsStruct.name               = 'knee_r';
         JointParamsStruct.parent             = 'femur_r';
