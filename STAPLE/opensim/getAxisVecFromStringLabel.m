@@ -13,7 +13,7 @@
 % See also CREATECUSTOMJOINTFROMSTRUCT, GETJOINTPARAMS.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, 2015
+%  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
