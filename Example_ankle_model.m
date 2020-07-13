@@ -62,9 +62,9 @@ for n_d = 1:numel(dataset_set)
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
-    %----------------------------------
-    % SPECIAL PART FOR PARTIAL MODELS
-    %----------------------------------
+    %-----------------------------------
+    % SPECIAL SECTION FOR PARTIAL MODELS
+    %-----------------------------------
     % Using Kai2014 on the proximal tibia identifies the largest section
     % near the ankle joint. Importantly, the reference system is aligned
     % with the principal components of the geometry, so roughly with the

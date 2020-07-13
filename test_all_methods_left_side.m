@@ -30,6 +30,8 @@ for n_d = 1:numel(dataset_set)
     % create geometry set structure for the entire dataset
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
+    % mirror
+    
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
@@ -38,17 +40,17 @@ for n_d = 1:numel(dataset_set)
     
 %     %---- FEMUR -----
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_l);
-    [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_l, [],1, 1);
-    [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_l, [], 'spheres');
-    [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_l, [], 'ellipsoids');
-    [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_l, [], 'cylinder');
+%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_l, [],1, 1);
+%     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_l, [], 'spheres');
+%     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_l, [], 'ellipsoids');
+%     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_l, [], 'cylinder');
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_l);
-    [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_l);
-    [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_l, [], 'plateau');
-    [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_l, [], 'ellipse');
-    [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_l, [], 'centroids');
+%     [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_l);
+%     [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_l, [], 'plateau');
+%     [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_l, [], 'ellipse');
+%     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_l, [], 'centroids');
 
 %---- PATELLA -----
 % [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();

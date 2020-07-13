@@ -46,15 +46,15 @@ for n_d = 1%:numel(dataset_set)
     % tri_folder = fullfile(main_ds_folder,'stl');
     tri_folder = fullfile(main_ds_folder,'tri');
     
-    % create geometry set structure for the entire dataset
+    % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
     geometry_folder_name = [model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
-    % write down geometries in chosen format (internally they are
-    % simplified for faster visualization)
-    writeModelGeometriesFolder(triGeom_set, geometry_folder_path, vis_geom_format);
+    
+    % convert geometries in chosen format (30% of faces for faster visualization)
+    writeModelGeometriesFolder(triGeom_set, geometry_folder_path, vis_geom_format,0.3);
     
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);
