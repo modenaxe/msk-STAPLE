@@ -31,7 +31,13 @@
 %-------------------------------------------------------------------------%
 
 function triGeomSet = createTriGeomSet(aTriGeomList, geom_file_folder)
+
+disp('--------------------------------')
+disp('Creating set of triangulations' )
+disp('--------------------------------')
+
 tic
+disp(['Reading geometries from folder: ', geom_file_folder]);
 triGeomSet = [];
 for nb = 1:numel(aTriGeomList)
     cur_tri_name = aTriGeomList{nb};

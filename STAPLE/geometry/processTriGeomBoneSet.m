@@ -76,6 +76,10 @@ if nargin<3; method_femur = ''; method_tibia = ''; in_mm = 1; end
 if nargin<4; method_tibia = ''; in_mm = 1; end
 if nargin<5; in_mm = 1; end
 
+disp('-----------------------------------')
+disp('Processing provided bone geometries')
+disp('-----------------------------------')
+
 % ---- PELVIS -----
 if isfield(geom_set,'pelvis')
     switch method_pelvis
@@ -101,7 +105,7 @@ if isfield(geom_set,'femur_r')
         case 'Miranda'
             [CS.femur_r, JCS.femur_r, BL.femur_r] = Miranda2010_buildfACS(geom_set.tibia_r);
         case 'Kai'
-            [CS.femur_r, JCS.femur_r, BL.femur_r]  = Kai2014_femur(geom_set.femur_r);
+            [CS.femur_r, JCS.femur_r, BL.femur_r] = Kai2014_femur(geom_set.femur_r);
         case 'GIBOC-spheres'
             [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
         case 'GIBOC-ellipsoids'
