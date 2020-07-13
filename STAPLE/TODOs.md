@@ -14,4 +14,5 @@
 - [ ] 11) scaleMassProps double check that the use of the mass coeff is correct. Validate with opensim
 - [ ] 12) ADDBODYFROMTRIGEOMOBJ remove ArrayDouble.createVec3
 - [ ] 13) verify that bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0
+- [ ] 14) test reading from stl and writing stl geometries
 # Dimensionality of Origin: same as OpenSim
