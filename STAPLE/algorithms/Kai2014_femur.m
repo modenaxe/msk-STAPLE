@@ -89,7 +89,7 @@ JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 JCS.knee_r.Origin = CS.KneeCenter;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-FemurBL_r   = landmarkTriGeomBone(Femur, CS, 'femur_r');
+FemurBL_r   = landmarkBoneGeom(Femur, CS, 'femur_r');
 
 % result plot
 label_switch=1;
@@ -101,20 +101,9 @@ if result_plots == 1
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.hip_r);
     quickPlotRefSystem(JCS.knee_r);
-    % plot markers
-    BLfields = fields(FemurBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(FemurBL_r.(cur_name), 'k', 7)
-        if label_switch==1
-            text(FemurBL_r.(cur_name)(1),...
-                FemurBL_r.(cur_name)(2),...
-                FemurBL_r.(cur_name)(3),...
-                ['  ',cur_name],...
-                'VerticalAlignment', 'Baseline',...
-                'FontSize',8);
-        end
-    end
+    
+    % plot markers and labels
+    plotBoneLandmarks(FemurBL_r, label_switch)
     
     subplot(2,2,2); % femoral head
     plotTriangLight(ProxFem, CS, 0); hold on

@@ -125,7 +125,7 @@ CS.Origin = CenterVol;
 CS.V = JCS.hip_r.V;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-FemurBL_r   = landmarkTriGeomBone(Femur  , CS,     'femur_r');
+FemurBL_r   = landmarkBoneGeom(Femur  , CS,     'femur_r');
 
 % check if right or left and correct CS
 % correctCSforLegSide(FemurBL_r)
@@ -150,20 +150,9 @@ if result_plots == 1
     end
     plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g' , alpha)
 %     quickPlotTriang(FemHead, 'g')
-    % plot markers
-    BLfields = fields(FemurBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(FemurBL_r.(cur_name), 'k', 7)
-        if label_switch==1
-            text(FemurBL_r.(cur_name)(1),...
-                FemurBL_r.(cur_name)(2),...
-                FemurBL_r.(cur_name)(3),...
-                ['  ',cur_name],...
-                'VerticalAlignment', 'Baseline',...
-                'FontSize',8);
-        end
-    end
+
+    % plot markers and labels
+    plotBoneLandmarks(FemurBL_r, label_switch);
     
     subplot(2,2,2); % femoral head
     plotTriangLight(ProxFem, CS, 0); hold on

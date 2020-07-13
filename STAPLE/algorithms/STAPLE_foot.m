@@ -202,7 +202,7 @@ CS.V = [X3, Z3, -Y3];
 CS.Origin = CenterVol;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-CalcnBL_r    = landmarkTriGeomBone(Calcn, CS, 'calcn_r');
+CalcnBL_r    = landmarkBoneGeom(Calcn, CS, 'calcn_r');
 CalcnBL_r.R1MGROUND = PtMetaMed;
 CalcnBL_r.R5MGROUND = PtMetaLat;
 CalcnBL_r.RHEEGROUND = heelPt;
@@ -256,16 +256,8 @@ if result_plots == 1
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
     
-    % plot markers
-    BLfields = fields(CalcnBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(CalcnBL_r.(cur_name), 'k', 3)  ;
-        if label_switch==1
-            text(CalcnBL_r.(cur_name)(1),CalcnBL_r.(cur_name)(2),CalcnBL_r.(cur_name)(3),...
-                cur_name, 'VerticalAlignment', 'Baseline', 'FontSize',8);
-        end
-    end
+    % plot markers and labels
+    plotBoneLandmarks(CalcnBL_r, label_switch)
 end
 
 end
