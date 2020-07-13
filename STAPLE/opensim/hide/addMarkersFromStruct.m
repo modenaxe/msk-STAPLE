@@ -1,15 +1,9 @@
 function addMarkersFromStruct(osimModel, frame_name, MarkerStruct, in_mm)
+
 % OpenSim libraries
 import org.opensim.modeling.*
 
-
-if in_mm == 1
-    dim_fact = 0.001;
-else
-    % assumed in metres
-    dim_fact = 1;
-end
-
+if in_mm == 1; dim_fact = 0.001; else; dim_fact = 1; end
 
 markers_names = fields(MarkerStruct);
 N_markers = length(markers_names);
