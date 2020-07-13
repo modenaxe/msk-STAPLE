@@ -1,9 +1,31 @@
-function [CS, JCS] = STAPLE_talus(Talus, in_mm, result_plots, debug_plots)
-
+% STAPLE_talus Process the geometry of talus bone to identify the
+% talocrural and subtalar joint axes.
+%
+% [CS, JCS] = STAPLE_talus(    )
+%
+% Inputs:
+%   Talus - 
+%
+%   result_plots - 
+%
+%   debug_plots
+%
+% Outputs:
+%   CS - 
+%
+%   JCS - 
+%
 % depends on
 % fitQuadriTalus
 % FitCSATalus
-
+%
+% See also .
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+function [CS, JCS] = STAPLE_talus(Talus, in_mm, result_plots, debug_plots)
 
 
 % NOTE: CS contains multiple sets of axes:
@@ -115,6 +137,7 @@ if paper_figure == 1
     trisurf(Talocalcn_AS,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
     trisurf(TalTrochAS,'Facecolor','g','FaceAlpha',1,'edgecolor','none');
     axis off
+    % adjusted lengths of arrow (otherwise too long)
     length_arrow = 30;
     plotArrow( CS.V(:,1), 1, CS.Origin, 43, 1, 'r')
     plotArrow( CS.V(:,2), 1, CS.Origin, length_arrow, 1, 'g')

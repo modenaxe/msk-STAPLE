@@ -1,6 +1,9 @@
 
 function [CS, JCS, TibiaBL_r] = Kai2014_tibia(Tibia, DistTib, result_plots, debug_plots)
 
+% Slices 1 mm apart as in Kai et al. 2014
+slices_thickness = 1;
+
 % default behaviour of results/debug plots
 if nargin<3;     result_plots = 1;  end
 if nargin<4;     debug_plots = 0;  end
@@ -25,9 +28,8 @@ end
 Y0 = V_all(:,1);
 Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
 
-% Slices 1 mm apart as in Kai et al. 2014
-slices_thick = 1;
-[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Y0, slices_thick);
+% slice tibia along axis
+[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Y0, slices_thickness);
 
 % slice at max area
 [ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Y0 , -AltAtMax );
@@ -37,12 +39,12 @@ slices_thick = 1;
 
 % check number of curves
 if N_curves>2
-    warning(['There are ', num2str(N_curves), ' section areas.']);
+    warning(['There are ', num2str(N_curves), ' section areas at the largest tibial slice.']);
     error('This should not be the case (only tibia and possibly fibula should be there).')
 end
 
 % Move the outline curve points in the inertial ref system, so the vertical
-% component (:,1) is on a plane
+% component (:,1) is orthogonal to a plane
 PtsCurves = vertcat(maxAreaSection.Pts)*V_all;
 
 % Fit a planar ellipse to the outline of the tibia section
@@ -129,7 +131,8 @@ label_switch = 1;
 
 % plot reference systems
 if result_plots == 1
-    figure('Name','tibia_r')
+    % plot tibia and reference systems
+    figure('Name','Tibia-Kai2014')
     plotTriangLight(Tibia, CS, 0);
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.knee_r);
@@ -140,7 +143,6 @@ if result_plots == 1
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
     plotDot(MostDistalMedialPt, m_col, 4);
-    title('Tibia - Kai et al. 2014')
 end
 
 end

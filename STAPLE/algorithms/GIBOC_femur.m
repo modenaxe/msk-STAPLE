@@ -79,7 +79,7 @@ try
     % sometimes Renault2018 fails for sparse meshes
     [CS, FemHeadACS] = GIBOC_femur_fitSphere2FemHead(ProxFem, CS, CoeffMorpho, debug_plots);
 catch
-    % use Kai when Renault fails
+    % use Kai if GIBOC approach fails
     warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
     [CS, ~] = Kai2014_femur_fitSpheres2Condyles(ProxFem, CS, debug_plots);
     CS.CenterFH_Renault  = CS.CenterFH_Kai;

@@ -247,17 +247,19 @@ if result_plots == 1
     plotTriangLight(Calcn, CS, 0)
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(JCS.toes_r)
-    % plot the bone landmarks
-    %     plotDot(heelPt,'g',3)
-    %     plotDot(PtMetaLat,'b',3)
-    %     plotDot(PtMetaMed,'r',3)
+
+    
+    % plot markers and labels
+    plotBoneLandmarks(CalcnBL_r, label_switch)   
     
     % Plot the sole plane
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
-    
-    % plot markers and labels
-    plotBoneLandmarks(CalcnBL_r, label_switch)
+        % plot the bone landmarks
+    %     plotDot(heelPt,'g',3)
+    %     plotDot(PtMetaLat,'b',3)
+    %     plotDot(PtMetaMed,'r',3)
+
 end
 
 end
