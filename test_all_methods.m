@@ -32,15 +32,15 @@ for n_d = 2%1:numel(dataset_set)
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-    [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1);
-    [PelvisRS, JCS.pelvis, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
+%     [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1);
+%     [PelvisRS, JCS.pelvis, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
     
     %---- FEMUR -----
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_r);
-    [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r, [], 1);
-    [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
-    [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
-    [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
+%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_r, [], 1);
+%     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
+%     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
+%     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
     %
     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_r);

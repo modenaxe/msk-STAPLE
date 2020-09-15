@@ -13,7 +13,9 @@ function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debu
 % ONLY TESTED : on closed triangulation resulting in close intersection
 % curve
 % -------------------------------------------------------------------------
-
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 %% Check Arguments in
 if nargin < 3
     error("Not engough input argument for TriPlanIntersect");

@@ -1,38 +1,41 @@
 
-function [CS, JCS, TibiaBL_r] = Kai2014_tibia(Tibia, DistTib, result_plots, debug_plots)
+function [CS, JCS, TibiaBL_r] = Kai2014_tibia(tibiaTri, side, result_plots, debug_plots, in_mm)
 
 % Slices 1 mm apart as in Kai et al. 2014
 slices_thickness = 1;
 
 % default behaviour of results/debug plots
+if nargin<2;     side='r';  end
 if nargin<3;     result_plots = 1;  end
 if nargin<4;     debug_plots = 0;  end
+if nargin<5;     in_mm = 1;  end %placeholder
 
-% if this is an entire tibia then cut it in two parts
-% but keep track of all geometries
-if ~exist('DistTib','var') || isempty(DistTib)
-    % Only one mesh, this is a long bone that should be cutted in two
-    % parts
-    V_all = pca(Tibia.Points);
-    [ U_DistToProx ] = tibia_guess_CS(Tibia, debug_plots);
-    [ProxTib, DistTib] = cutLongBoneMesh(Tibia, U_DistToProx);
-    [ ~, CenterVol] = TriInertiaPpties( Tibia );
-else
-    % join two parts in one triangulation
-    ProxTib = Tibia;
-    Tibia = TriUnite(DistTib, ProxTib);
-    [ V_all, CenterVol] = TriInertiaPpties( Tibia );
-end
+% get sign correspondent to body side
+side_sign = getSideSign(side);
 
-% checks on vertical direction
+% it is assumed that, even for partial geometries, the tibial bone is
+% always provided as unique file
+V_all = pca(tibiaTri.Points);
+
+% guess vertical direction, pointing proximally
+U_DistToProx = tibia_guess_CS(tibiaTri, debug_plots);
+
+% divide bone in three parts and take proximal and distal 
+[ProxTib, DistTib] = cutLongBoneMesh(tibiaTri, U_DistToProx);
+
+% center of the volume
+[ ~, CenterVol] = TriInertiaPpties( tibiaTri );
+
+% REDUNDANT
+% % checks on vertical direction
 Y0 = V_all(:,1);
-Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
+% Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
 
-% slice tibia along axis
-[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(Tibia, Y0, slices_thickness);
+% slice tibia along axis and get maximum height
+[~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(tibiaTri, Y0, slices_thickness);
 
-% slice at max area
-[ Curves , ~, ~ ] = TriPlanIntersect(Tibia, Y0 , -AltAtMax );
+% slice geometry at max area
+[ Curves , ~, ~ ] = TriPlanIntersect(tibiaTri, Y0 , -AltAtMax );
 
 % keep just the largest outline (tibia section)
 [maxAreaSection, N_curves] = getLargerPlanarSect(Curves);
@@ -85,6 +88,9 @@ CenterEllipse = transpose(V_all*[mean(PtsCurves(:,1)); % constant anyway
 [U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Y0);
 if just_tibia == 1; m_col = 'r'; else; m_col = 'b'; end
 
+% adjust for body side, so that U_tmp is aligned as Z_ISB
+U_tmp = side_sign*U_tmp;
+
 % making Y0/U_temp normal to Z0 (still points laterally)
 Z0_temp = normalizeV(U_tmp' - (U_tmp*Y0)*Y0); 
 
@@ -106,14 +112,15 @@ Z_cs = normalizeV(cross(X, Y));
 CS.V = [X Y Z_cs];
 
 % define the knee reference system
+joint_name = ['knee_',side];
 Ydp_knee  = normalizeV(cross(Z, X));
-JCS.knee_r.Origin = CenterEllipse;
-JCS.knee_r.V = [X Ydp_knee Z]; 
+JCS.(joint_name).Origin = CenterEllipse;
+JCS.(joint_name).V = [X Ydp_knee Z]; 
 
 % NOTE THAT CS.V and JCS.knee_r.V are the same, so the distinction is here
 % purely formal. This is because all axes are perpendicular.
 
-JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
+JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 
 % the knee axis is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;
@@ -123,7 +130,7 @@ JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL_r   = landmarkBoneGeom(Tibia, CS, 'tibia_r');
+TibiaBL_r   = landmarkBoneGeom(tibiaTri, CS, 'tibia_r');
 if just_tibia == 0
     TibiaBL_r.RLM = MostDistalMedialPt;
 end
@@ -133,7 +140,7 @@ label_switch = 1;
 if result_plots == 1
     % plot tibia and reference systems
     figure('Name','Tibia-Kai2014')
-    plotTriangLight(Tibia, CS, 0);
+    plotTriangLight(tibiaTri, CS, 0);
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.knee_r);
     
