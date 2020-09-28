@@ -28,5 +28,4 @@ I.D = [149634160.000000 10430637056.000000 10463520768.000000 ];
 
 (MassInfo.COM - Mesh.COM)/Mesh.COM*100
 (MassInfo.mass-Mesh.Volume)/Mesh.Volume*100
-(I.Mat-MassInfo.Imat)/
-(InertiaInfo.PrincMom - I.D)
+(I.Mat-MassInfo.Imat)/(InertiaInfo.PrincMom - I.D)

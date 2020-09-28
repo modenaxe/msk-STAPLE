@@ -17,6 +17,8 @@ __*
 /_old
 test_geometries/
 OpenSim_models/
+docs/*.html
+docs/*.m
 
 *.zip
 

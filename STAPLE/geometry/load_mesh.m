@@ -1,14 +1,27 @@
+% LOAD_MESH Read a file, with specified or unspecified extension, as a
+% three-dimensional surface mesh file. The script guesses the triangulation
+% format when it is not specified, attempting to open the file as a
+% STL or MATLAB file.
+%
+%   tri_geom = LOAD_MESH(a_tri_mesh_file)
+%
+% Inputs:
+%   a_tri_mesh_file - a file path to a surface mesh, with extension .STL,
+%       .MAT, .MSH or no extension.
+%
+% Outputs:
+%   tri_geom - a MATLAB triangulation object.
+%
+%
+% See also CREATETRIGEOMSET
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese                                              %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
-% Script used to read a file, with specified or unspecified extension, as a
-% three-dimensional mesh file. 
-% The script tries to guess the triangulation format is not specified,
-% trying to open the file as a STL or MATLAB file.
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese, 2020
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+%
+% TODO: add OBJ reading
+
 function tri_geom = load_mesh(a_tri_mesh_file)
 
 disp(['Attempting to read mesh file: ', a_tri_mesh_file]);
@@ -26,9 +39,15 @@ if ischar(a_tri_mesh_file)
     [~,~,ext] = fileparts(a_tri_mesh_file);
     % if stl file just open it
     if strcmp(ext,'.stl')
-        % NB: these two lines could be just stlread for MATLAB>v2020
-        [Nodes, Elmts] = stlRead(a_tri_mesh_file);
-        tri_geom = triangulation(Elmts,Nodes);
+        % recent versions of Matlab (>2018b) can deal with stl files
+        if verLessThan('matlab', '9.5')
+            error('load_mesh.m Please update MATLAB to a version >2018b to read .STL files. Alternatively download the <a href="https://www.mathworks.com/matlabcentral/fileexchange/51200-stltools">StlTools package from MATLAB Central</a> and uncomment the lines below this error.');
+            % NB: the following two lines could be just stlread for MATLAB>R2018b
+            %         [Nodes, Elmts] = stlRead(a_tri_mesh_file);
+            %         tri_geom = triangulation(Elmts,Nodes);
+        else
+            tri_geom = stlread(a_tri_mesh_file);
+        end
         kwd = 'STL';
         % if matlab file just open it
     elseif strcmp(ext,'.mat')
@@ -36,7 +55,11 @@ if ischar(a_tri_mesh_file)
         str_name = fields(geom);
         tri_geom = geom.(str_name{1});
         kwd = 'MATLAB';
-    % if does not have extension try to open as MATLAB file
+    elseif strcmp(ext,'.msh')
+        [vert, faces] = readGMSH(a_tri_mesh_file);
+        tri_geom = triangulation(vert, faces);
+        kwd = 'GMSH';
+        % if does not have extension try to open as MATLAB file
     elseif isempty(ext)
         try
             geom = load(a_tri_mesh_file);
@@ -46,7 +69,7 @@ if ischar(a_tri_mesh_file)
         catch
             % if does not have extension try to open as stl file
             [Nodes, Elmts] = stlRead([a_tri_mesh_file,'.stl']);
-            tri_geom = triangulation(Elmts,Nodes); 
+            tri_geom = triangulation(Elmts,Nodes);
             kwd = 'STL';
         end
     end
@@ -55,7 +78,10 @@ end
 if isempty(tri_geom)
     error([a_tri_mesh_file, ' could not be read. Please double check inputs.'])
 else
-	disp(['...read as ', kwd, ' file.'])
+    % use GIBOC function to fix normals (as in original function)
+    tri_geom = TriFixNormals(tri_geom);
+    % file is read
+    disp(['...read as ', kwd, ' file.'])
 end
 
 end

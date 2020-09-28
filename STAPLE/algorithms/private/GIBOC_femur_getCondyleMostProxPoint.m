@@ -1,4 +1,4 @@
-function PtTopCondyle = femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesTrace, U)
+function PtTopCondyle = GIBOC_femur_getCondyleMostProxPoint(EpiFem, CSs, PtsCondylesTrace, U)
 
 sphere_search_radius = 7.5;
 plane_search_thick = 2.5;

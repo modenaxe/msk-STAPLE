@@ -121,7 +121,7 @@ JCS.knee_r.child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL_r   = landmarkTriGeomBone(Tibia, CS, 'tibia_r');
+TibiaBL_r   = landmarkBoneGeom(Tibia, CS, 'tibia_r');
 if just_tibia == 0
     TibiaBL_r.RLM = MostDistalMedialPt;
 end
@@ -133,20 +133,10 @@ if result_plots == 1
     plotTriangLight(Tibia, CS, 0);
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.knee_r);
-    % plot markers
-    BLfields = fields(TibiaBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(TibiaBL_r.(cur_name), 'k', 7)
-        if label_switch==1
-            text(TibiaBL_r.(cur_name)(1),...
-                TibiaBL_r.(cur_name)(2),...
-                TibiaBL_r.(cur_name)(3),...
-                ['  ',cur_name],...
-                'VerticalAlignment', 'Baseline',...
-                'FontSize',8);
-        end
-    end
+    
+    % plot markers and labels
+    plotBoneLandmarks(TibiaBL_r, label_switch)
+
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
     plotDot(MostDistalMedialPt, m_col, 4);

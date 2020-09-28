@@ -178,7 +178,7 @@ CS.Origin = CenterVol;
 % CS.Z = XY
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL_r   = landmarkTriGeomBone(Tibia, CS, 'tibia_r');
+TibiaBL_r   = landmarkBoneGeom(Tibia, CS, 'tibia_r');
 if just_tibia == 0
     TibiaBL_r.RLM = MostDistalMedialPt;
 end
@@ -194,20 +194,9 @@ if result_plots == 1
     quickPlotTriang(EpiTibASMed,'r');
     quickPlotTriang(EpiTibASLat,'b');
     quickPlotTriang(AnkleArtSurf, 'g');
-    % plot markers
-    BLfields = fields(TibiaBL_r);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(TibiaBL_r.(cur_name), 'k', 7)
-        if label_switch==1
-            text(TibiaBL_r.(cur_name)(1),...
-                TibiaBL_r.(cur_name)(2),...
-                TibiaBL_r.(cur_name)(3),...
-                ['  ',cur_name],...
-                'VerticalAlignment', 'Baseline',...
-                'FontSize',8);
-        end
-    end
+    
+    % plot markers and labels
+    plotBoneLandmarks(TibiaBL_r, label_switch);
 
     % plot proximal tibia
     subplot(2,2,2)

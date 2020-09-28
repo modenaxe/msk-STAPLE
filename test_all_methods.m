@@ -48,7 +48,7 @@ for n_d = 2%1:numel(dataset_set)
 %     [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_r);
 %     [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_r, [], 'plateau');
 %     [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_r, [], 'ellipse');
-%     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
+    [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
 % 
 % %---- PATELLA -----
 % % [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();

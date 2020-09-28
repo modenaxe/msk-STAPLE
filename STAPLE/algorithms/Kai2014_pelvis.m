@@ -149,20 +149,9 @@ if result_plots == 1
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
         'edgecolor','k');
-    % plot markers
-    BLfields = fields(PelvisBL);
-    for nL = 1:numel(BLfields)
-        cur_name = BLfields{nL};
-        plotDot(PelvisBL.(cur_name), 'k', 7)
-        if label_switch==1
-            text(PelvisBL.(cur_name)(1),...
-                PelvisBL.(cur_name)(2),...
-                PelvisBL.(cur_name)(3),...
-                ['  ',cur_name],...
-                'VerticalAlignment', 'Baseline',...
-                'FontSize',8);
-        end
-    end
+
+    % plot markers and labels
+    plotBoneLandmarks(PelvisBL, label_switch)
 end
 
 end

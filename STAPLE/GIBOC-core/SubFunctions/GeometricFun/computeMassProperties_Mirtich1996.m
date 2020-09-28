@@ -1,6 +1,5 @@
 % ----------------------------------------------------------------------- %
 %    Author:   Luca Modenese, November 2015                               %
-%    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 % Script that given the vertices v and facets of a triangular mesh
 % calculates the inertial properties (Volume, Mass, COM and Inertia matrix
@@ -10,7 +9,7 @@
 % of polihedron, but is optimized to work with triangular meshes. The
 % implementation was taken from Eberly, D., 2003. Polyhedral mass 
 % properties (revisited). AVAILABLE AT: 
-% www.magic-sofiware.com/Documentation/PolyhedratMassProperties.pdf 
+% https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf
 %
 % VERIFICATION: this code yealds the same values as NMSBuilder for a femur
 % and a sphere. (Exactly the same values, but it's faster!)
@@ -27,7 +26,7 @@ function MassProps = computeMassProperties_Mirtich1996(v, f)
 
 % feedback to the user
 % I tried a waitbar, but the script was too slow!
-disp('Calculating Inertia properties for selected triangulated geometry');
+disp('Calculating Inertia properties...');
 tic
 
 % initializing integral vectors
@@ -97,8 +96,7 @@ I = [Ixx     Ixy     Ixz;
 % inertial vector (for use in OpenSim
 Iv = [Ixx Iyy Izz Ixy Ixz Iyz];
 
-disp('Done!')
-disp(['Elapsed time ', num2str(toc),' ms.'])
+disp(['...Done! Elapsed time ', num2str(toc),' ms.'])
 
 % Collecting all results together
 MassProps.mass       = mass;

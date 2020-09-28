@@ -1,30 +1,25 @@
-%-------------------------------------------------------------------------%
-% Copyright (c) 2019 Modenese L.                                          %
-%                                                                         %
-% Licensed under the Apache License, Version 2.0 (the "License");         %
-% you may not use this file except in compliance with the License.        %
-% You may obtain a copy of the License at                                 %
-% http://www.apache.org/licenses/LICENSE-2.0.                             %
-%                                                                         % 
-% Unless required by applicable law or agreed to in writing, software     %
-% distributed under the License is distributed on an "AS IS" BASIS,       %
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         %
-% implied. See the License for the specific language governing            %
-% permissions and limitations under the License.                          %
-%                                                                         %
-%    Author:   Luca Modenese,  2019                                       %
-%    email:    l.modenese@mperial.ac.uk                                   % 
-% ----------------------------------------------------------------------- %
+% GETAXISVECFROMSTRINGLABEL Take one character as input ('x', 'y' or 'z')
+% and returns the corresponding vector (as a row).
 %
-% Fuction that takes as input one character, 'x', 'y' or 'z' and returns
-% the corresponding vector (as a row)
-%---------------------------
-% last modified: 18/05/2016
-% Author: Luca Modenese
+% v = getAxisVecFromStringLabel(axisLabel)
+%
+% Inputs:
+%   axisLabel - a string indicating an axis. Valid values are: 'x', 'y' or
+%       'z'.
+%
+% Outputs:
+%   v - a row vector corresponding to the axis label specified as input.
+%
+% See also CREATECUSTOMJOINTFROMSTRUCT, GETJOINTPARAMS.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 
 function v = getAxisVecFromStringLabel(axisLabel)
 
-% TO DO: needs a check on single character
+% TODO: needs a check on single character
 
 % make it case independent
 axisLabel = lower(axisLabel);
