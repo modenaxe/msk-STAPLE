@@ -27,10 +27,16 @@ shank_L = norm(shank_axis);
 foot_axis = JCS.talus_r.ankle_r.Origin'-JCS.calcn_r.toes_r.Origin;
 foot_L = norm(foot_axis);
 
+% Deleva
+% thigh: COM pos 40.95 - Mass % 14.16 - 32.9% 32.9 14.9%
+% shank: 44.59 - 4.33 - 25.5 24.9 10.3
+% foot: 44.15 - 1.37 - 25.7 24.5 12.4
+
 % coefficients from Winter 2015
 thigh_COM = thigh_L*0.567*thigh_axis/thigh_L+JCS.femur_r.knee_r.Origin;
 shank_COM = shank_L*0.567*shank_axis/shank_L+JCS.talus_r.ankle_r.Origin';
 calcn_COM = foot_L*0.5*foot_axis/foot_L+JCS.calcn_r.toes_r.Origin;
+% set the COM
 osimModel.getBodySet().get('femur_r').setMassCenter(osimVec3FromArray(thigh_COM/1000));
 osimModel.getBodySet().get('tibia_r').setMassCenter(osimVec3FromArray(shank_COM/1000));
 osimModel.getBodySet().get('calcn_r').setMassCenter(osimVec3FromArray(calcn_COM/1000));
