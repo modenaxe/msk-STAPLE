@@ -47,7 +47,7 @@ for n_d = 1:numel(dataset_set)
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_l);
-%     [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_l);
+    [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_l,'L',1,0);
 %     [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_l, [], 'plateau');
 %     [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_l, [], 'ellipse');
 %     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_l, [], 'centroids');

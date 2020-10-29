@@ -27,7 +27,9 @@ end
 [~ , I_dist_fib] = max( DistTib.Points* -Z0 );
 MostDistalMedialPt = DistTib.Points(I_dist_fib,:);
 
-% compute a vector pointing laterally (Z_ISB)
+% compute a vector pointing from the most distal point (medial) to the
+% centre of distal part of tibia. Points laterally for any leg side, so 
+% it is Z_ISB for right and -Z_ISB for left side.
 if just_tibia
     % vector pointing laterally
     U_tmp = CenterVolTibDist'- MostDistalMedialPt;
@@ -35,7 +37,8 @@ else
     %tibia and fibula
     % check which area is larger(Tibia)
     if DistCurves(1).Area>DistCurves(2).Area
-        % vector from tibia section to fibular section
+        % vector from tibia section to fibular section (same considerations
+        % as just_tibia = 1 using the centroid.
         U_tmp = mean(DistCurves(2).Pts) - mean(DistCurves(1).Pts);
     else
         U_tmp = -1 * (mean(DistCurves(2).Pts) - mean(DistCurves(1).Pts));
