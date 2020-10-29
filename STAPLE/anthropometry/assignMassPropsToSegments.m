@@ -44,6 +44,7 @@ foot_L = norm(foot_axis);
 thigh_COM = thigh_L*0.567*thigh_axis/thigh_L+JCS.femur_r.knee_r.Origin;
 shank_COM = shank_L*0.567*shank_axis/shank_L+JCS.talus_r.ankle_r.Origin';
 calcn_COM = foot_L*0.5*foot_axis/foot_L+JCS.calcn_r.toes_r.Origin;
+% set the COM
 osimModel.getBodySet().get('femur_r').setMassCenter(osimVec3FromArray(thigh_COM/1000));
 osimModel.getBodySet().get('tibia_r').setMassCenter(osimVec3FromArray(shank_COM/1000));
 osimModel.getBodySet().get('calcn_r').setMassCenter(osimVec3FromArray(calcn_COM/1000));
