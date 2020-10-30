@@ -79,7 +79,7 @@ if nargin>3
     vis_geom.set_scale_factors(Vec3(dim_fact));
     osim_body.attachGeometry(vis_geom);
 % else
-%     % untested for now
+%     % untested for now - not needed if writeModelGeometriesFolder is used
 %     geom_folder = 'Geometries';
 %     if ~isfolder(geom_folder); mkdir(geom_folder); end
 %     writeOBJfile(triGeom, fullfile(geom_folder,[body_name,'.obj']));
