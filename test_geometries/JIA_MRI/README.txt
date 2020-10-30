@@ -1,1 +1,0 @@
-geometries from "Linking joint impairment and gait biomechanics in patients with Juvenile Idiopathic Arthritis"

@@ -1,9 +1,9 @@
-# Data from _in vivo_ MRI study.
+# Data from ICL-MRI dataset.
 
-Skeleton from participant P0, copyright Imperial College London.
+Skeleton from one healthy participant collected at Imperial College London (7 May 2019).
 
-Meshes smoothed using Meshlab.
+Meshes were smoothed using Meshlab.
 
-# DO NOT REDISTRIBUTE
+**Please cite STAPLE reference publication if using these data in other work.**
 
 ![ICL-MRI](https://github.com/modenaxe/auto-msk-model/blob/master/images/ICL_MRI_bones.PNG)
