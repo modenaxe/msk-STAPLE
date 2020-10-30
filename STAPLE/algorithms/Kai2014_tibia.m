@@ -11,7 +11,7 @@ if nargin<4;     debug_plots = 0;  end
 if nargin<5;     in_mm = 1;  end %placeholder
 
 % get sign correspondent to body side
-side_sign = getSideSign(side);
+side_sign = bodySide2Sign(side);
 
 % it is assumed that, even for partial geometries, the tibial bone is
 % always provided as unique file
@@ -26,10 +26,12 @@ U_DistToProx = tibia_guess_CS(tibiaTri, debug_plots);
 % center of the volume
 [ ~, CenterVol] = TriInertiaPpties( tibiaTri );
 
-% REDUNDANT
-% % checks on vertical direction
+% checks on vertical direction
 Y0 = V_all(:,1);
-% Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
+% NOTE: not redundant for partial models, e.g. ankle model. If this check
+% is not implemented the vertical axis is not aligned with the Z axis of
+% the images.
+Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
 
 % slice tibia along axis and get maximum height
 [~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(tibiaTri, Y0, slices_thickness);
