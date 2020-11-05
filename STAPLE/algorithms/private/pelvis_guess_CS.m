@@ -107,6 +107,7 @@ if debug_plots == 1
     quickPlotTriang(PelvisInertia)
     plotDot(PelvisInertia.Points(ind_P1,:), 'k', 7);
     plotDot(PelvisInertia.Points(ind_P2,:), 'k', 7);
+    title('Points should be external points in the iliac wings (inertia ref syst)')
 end
 
 % these are the most external points in the iliac wings
@@ -121,6 +122,7 @@ if debug_plots == 1
     plotDot(P1, 'k', 7);
     plotDot(P2, 'k', 7);
     plotDot(P3, 'k', 7);
+    title('Points should be external points in the iliac wings (glob ref syst)')
 end
 
 %upward vector (perpendicular to X0)
