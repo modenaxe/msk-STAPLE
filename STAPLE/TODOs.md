@@ -1,18 +1,28 @@
-# Identified tasks
+# STAPLE TASKS BEFORE RELEASE
+## Functions to integrate to have bones with ISB reference systems
+- [ ] transformTriGeomSet needs testing
+- [ ] writeTransformedBoneGeom needs integration in pipeline
 
-- [ ] 0) uniform variable names, they are still changing across scripts.
-- [ ] 1) getBoneLandmarkList needs left side bones
-- [ ] 2) transformTriGeomSet needs testing
-- [ ] 3) writeTransformedBoneGeom needs integration in pipeline
-- [ ] 4) integrate a writeSTL at some point
-- [ ] 5) landmarkTriGeomBone: requires a check AFTER the dimensionality of Origin is decided.
-- [ ] 6) getJointParams, createCustomJointFromStruct: .parent, .child change them to .childName, .parentName
-- [ ] 7) better to have createBOdyFromTriGeomObj and then add the body in addBodiesFromTriGeomBoneSet
-- [ ] 8) maybe it would be better to have a single function dealing with all the visualization.
-- [ ] 9) check in addBoneLandmarksAsMarkers if the cur_body_name corresponds to a body
-- [ ] 10) mapGait2392MassPropToModel check equivalence of segment names
-- [ ] 11) scaleMassProps double check that the use of the mass coeff is correct. Validate with opensim
-- [ ] 12) ADDBODYFROMTRIGEOMOBJ remove ArrayDouble.createVec3
-- [ ] 13) verify that bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0
-- [ ] 14) test reading from stl and writing stl geometries
-# Dimensionality of Origin: same as OpenSim
+## Priority: make a consistent interface for functions
+- [ ] uniform variable names, they are still changing across scripts.
+- [ ] landmarkTriGeomBone: requires a check AFTER the dimensionality of Origin is decided.
+- [ ] Dimensionality of Origin: same as OpenSim
+
+## mass properties
+- [ ] mapGait2392MassPropToModel check equivalence of segment names
+- [ ] scaleMassProps double check that the use of the mass coeff is correct. Validate with opensim
+- [ ] verify that bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0
+
+## geometry
+- [ ] test writing stl geometries
+- [x] integrate a writeSTL at some point -> integrated MATLAB stlfunction
+- [x] getBoneLandmarkList needs left side bones
+- [x] better to have createBOdyFromTriGeomObj and then add the body in addBodiesFromTriGeomBoneSet -> I have decided for another approach. Implemented.
+- [x] ADDBODYFROMTRIGEOMOBJ remove ArrayDouble.createVec3 -> originally to remove dependency from OpenSim API. Change of plans
+- [x] check in addBoneLandmarksAsMarkers if the cur_body_name corresponds to a body
+- [X] test reading from stl geometries -> TLEM2
+
+
+# Optional
+- [ ] getJointParams, createCustomJointFromStruct: .parent, .child change them to .childName, .parentName
+- [ ] maybe it would be better to have a single function dealing with all the visualizations.
