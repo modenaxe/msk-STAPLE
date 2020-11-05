@@ -1,5 +1,5 @@
 
-function [CS, JCS, TibiaBL_r] = Kai2014_tibia(tibiaTri, side, result_plots, debug_plots, in_mm)
+function [CS, JCS, TibiaBL] = Kai2014_tibia(tibiaTri, side, result_plots, debug_plots, in_mm)
 
 % Slices 1 mm apart as in Kai et al. 2014
 slices_thickness = 1;
@@ -11,7 +11,7 @@ if nargin<4;     debug_plots = 0;  end
 if nargin<5;     in_mm = 1;  end %placeholder
 
 % get sign correspondent to body side
-side_sign = bodySide2Sign(side);
+[side_sign, side_low] = bodySide2Sign(side);
 
 % it is assumed that, even for partial geometries, the tibial bone is
 % always provided as unique file
@@ -114,7 +114,7 @@ Z_cs = normalizeV(cross(X, Y));
 CS.V = [X Y Z_cs];
 
 % define the knee reference system
-joint_name = ['knee_',side];
+joint_name = ['knee_',side_low];
 Ydp_knee  = normalizeV(cross(Z, X));
 JCS.(joint_name).Origin = CenterEllipse;
 JCS.(joint_name).V = [X Ydp_knee Z]; 
@@ -122,7 +122,7 @@ JCS.(joint_name).V = [X Ydp_knee Z];
 % NOTE THAT CS.V and JCS.knee_r.V are the same, so the distinction is here
 % purely formal. This is because all axes are perpendicular.
 
-JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
+JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.(joint_name).V);
 
 % the knee axis is defined by the femoral fitting
 % CS.knee_r.child_location = KneeCenter*dim_fact;
@@ -132,9 +132,9 @@ JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.knee_r.V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL_r   = landmarkBoneGeom(tibiaTri, CS, 'tibia_r');
+TibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_',side_low]);
 if just_tibia == 0
-    TibiaBL_r.RLM = MostDistalMedialPt;
+    TibiaBL.RLM = MostDistalMedialPt;
 end
 label_switch = 1;
 
@@ -144,10 +144,10 @@ if result_plots == 1
     figure('Name','Tibia-Kai2014')
     plotTriangLight(tibiaTri, CS, 0);
     quickPlotRefSystem(CS);
-    quickPlotRefSystem(JCS.knee_r);
+    quickPlotRefSystem(JCS.(joint_name));
     
     % plot markers and labels
-    plotBoneLandmarks(TibiaBL_r, label_switch)
+    plotBoneLandmarks(TibiaBL, label_switch)
 
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
