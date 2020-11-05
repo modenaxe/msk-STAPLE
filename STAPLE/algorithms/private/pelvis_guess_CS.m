@@ -59,20 +59,55 @@ X0 = V_all(:,ind_X);
 anterior_v = LargestTriangle.incenter-CenterVol';
 X0 = normalizeV(sign(anterior_v*X0)*X0);
 
+% Y0 is just normal to X0 and Y0 (direction non inportant for now)
+% NOTE: Z normally points medio-laterally, Y will be cranio-caudal.
+% Directions not established yet
+Y0_temp = normalizeV(cross(Z0, X0));
+
 if debug_plots == 1 
     figure()
     quickPlotTriang(Pelvis)
     plotArrow(X0, 1, CenterVol, 60, 1, 'r')
+    plotArrow(Y0_temp, 1, CenterVol, 60, 1, 'g')
     plotArrow(Z0, 1, CenterVol, 60, 1, 'b')
-    title('X0 shold be pointing anteriorly')
+    title('X0 shold be pointing anteriorly - no interest in other axes')
 end
 
-% Y0 is just normal to X0 and Y0 (direction non inportant for now)
-Y0_temp = normalizeV(cross(Z0, X0));
+% transform the pelvis to the new set of inertial axes
 [ PelvisInertia, ~ , ~ ] = TriChangeCS(Pelvis, [X0, Y0_temp, Z0]', CenterVol);
+
+if debug_plots == 1 
+    figure()
+    quickPlotTriang(PelvisInertia)
+    plotArrow([1, 0, 0]', 1, [0 0 0]', 60, 1, 'r')
+    plotArrow([0, 1, 0]', 1, [0 0 0]', 60, 1, 'g')
+    plotArrow([0, 0, 1]', 1, [0 0 0]', 60, 1, 'b')
+    title('Check axes of inertia orientation')
+end
+
 % [~, ind_medLat] = max(abs(Y0_temp));
-[~, ind_P1] = max(PelvisInertia.Points(:,2));
-[~, ind_P2] = min(PelvisInertia.Points(:,2));
+[L1y, ind_P1y] = max(PelvisInertia.Points(:,2));
+[L2y, ind_P2y] = min(PelvisInertia.Points(:,2));
+spanY = abs(L1y)+abs(L2y);
+
+[L1_z, ind_P1z] = max(PelvisInertia.Points(:,3));
+[L2_z, ind_P2z] = min(PelvisInertia.Points(:,3));
+spanZ = abs(L1_z)+abs(L2_z);
+
+if spanY>spanZ
+    ind_P1 = ind_P1y;
+    ind_P2 = ind_P2y;
+else
+    ind_P1 = ind_P1z;
+    ind_P2 = ind_P2z;
+end
+
+if debug_plots == 1 
+    figure()
+    quickPlotTriang(PelvisInertia)
+    plotDot(PelvisInertia.Points(ind_P1,:), 'k', 7);
+    plotDot(PelvisInertia.Points(ind_P2,:), 'k', 7);
+end
 
 % these are the most external points in the iliac wings
 % these are iliac crest tubercles (ICT)
@@ -81,6 +116,8 @@ P2 = Pelvis.Points(ind_P2,:);
 P3 = (P1+P2)/2;% midpoint
 
 if debug_plots == 1 
+    figure()
+    quickPlotTriang(Pelvis)
     plotDot(P1, 'k', 7);
     plotDot(P2, 'k', 7);
     plotDot(P3, 'k', 7);
