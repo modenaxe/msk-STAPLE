@@ -43,6 +43,11 @@ Nb = numel(body_list);
 for nb = 1:Nb
     % body name
     cur_body_name = body_list{nb};
+    % check that cur_body_name actually corresponds to a body
+    if osimModel.getBodySet().getIndex(cur_body_name)<0
+        warndlg(['Markers assigned to body ',cur_body_name,' cannot be added to the model. Body is not in BodySet.']);
+        continue
+    end
     % loop through the markers
     cur_body_markers = BLStruct.(cur_body_name);
     % the actual markers are fields of the cur_body_markers variable
@@ -51,7 +56,7 @@ for nb = 1:Nb
     for nm = 1:N_markers
         % define the markers
         cur_marker_name = markers_list{nm};
-        % TODO: check if the cur_body_name corresponds to a body
+        % get body
         cur_phys_frame = osimModel.getBodySet.get(cur_body_name);
         Loc = cur_body_markers.(cur_marker_name)*dim_fact;
         marker = Marker(cur_marker_name,...
