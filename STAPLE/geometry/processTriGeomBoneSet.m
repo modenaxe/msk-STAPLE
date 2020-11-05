@@ -86,7 +86,7 @@ if isfield(geom_set,'pelvis')
         case 'STAPLE'
             [CS.pelvis, JCS.pelvis, BL.pelvis]  = STAPLE_pelvis(geom_set.pelvis, in_mm);
         case 'Kai'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = Kai2014_pelvis(geom_set.pelvis, 0, 0, 1);
+            [CS.pelvis, JCS.pelvis, BL.pelvis]  = Kai2014_pelvis(geom_set.pelvis, 1, 0, 1);
     end
     %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 elseif isfield(geom_set,'pelvis_no_sacrum')
