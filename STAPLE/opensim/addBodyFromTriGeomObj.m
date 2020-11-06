@@ -24,7 +24,7 @@
 %       generation of automatic lower extremity models this value is
 %       overwritten by mass properties estimated through regression
 %       equations. The purpose of computing them is to provide a reasonable
-%       first estimate
+%       first estimate.
 %       
 %   in_mm - (optional) indicates if the provided geometries are given in mm
 %       (value: 1) or m (value: 0). Please note that all tests and analyses

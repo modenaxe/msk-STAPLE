@@ -19,6 +19,7 @@ dataset_set = {'JIA_ANKLE_MRI'};
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
 bones_list = {'tibia_r','talus_r','calcn_r'};
+side = 'r';
 in_mm = 1;
 
 % visualization geometry format
@@ -60,7 +61,7 @@ for n_d = 1:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
+    [JCS, BL, CS] = processTriGeomBoneSet(geom_set, 'r');
     
     %-----------------------------------
     % SPECIAL SECTION FOR PARTIAL MODELS

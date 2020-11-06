@@ -99,7 +99,7 @@ N = TR.vertexNormal;
 % Calculate Rotation matrices for the normals
 M= zeros(3,3,nv);
 Minv= zeros(3,3,nv);
-for i=1:nv, 
+for i=1:nv 
     [M(:,:,i),Minv(:,:,i)]=VectorRotationMatrix(N(i,:));
 end
 

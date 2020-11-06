@@ -35,22 +35,22 @@ for n_d = 1:numel(dataset_set)
     %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
     
     %---- PELVIS -----
-%     [PelvisRS, JCS.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum,1);
-%     [PelvisRS, JCS.pelvis, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum);
+%     [PelvisRS1, JCS00.pelvis, PelvisBL]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum, 'L');
+%     [PelvisRS2, JCS01.pelvis, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum, 'L');
     
 %     %---- FEMUR -----
 %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.femur_l);
-%     [FemurCS1, JCS1] = Kai2014_femur(geom_set.femur_l, [],1, 1);
-%     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_l, [], 'spheres');
-%     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_l, [], 'ellipsoids');
-%     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_l, [], 'cylinder');
+%     [FemurCS1, JCS1, FemurBL1] = Kai2014_femur(geom_set.femur_l, 'L');
+%     [FemurCS2, JCS2] = GIBOC_femur(geom_set.femur_l, 'L', 'spheres';
+%     [FemurCS3, JCS3] = GIBOC_femur(geom_set.femur_l, 'L', 'ellipsoids');
+%     [FemurCS4, JCS4] = GIBOC_femur(geom_set.femur_l, 'L', 'cylinder');
 %     %
 %     %---- TIBIA -----
 %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.tibia_l);
-    [TibiaCS1, JCS5] = Kai2014_tibia(geom_set.tibia_l,'L',1,0);
-%     [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_l, [], 'plateau');
-%     [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_l, [], 'ellipse');
-%     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_l, [], 'centroids');
+%     [TibiaCS1, JCS5, TibiaBL5] = Kai2014_tibia(geom_set.tibia_l, 'L');
+%     [TibiaCS2, JCS6] = GIBOC_tibia(geom_set.tibia_l, 'L', 'plateau');
+%     [TibiaCS3, JCS7] = GIBOC_tibia(geom_set.tibia_l, 'L', 'ellipse');
+%     [TibiaCS4, JCS8] = GIBOC_tibia(geom_set.tibia_l,'L', 'centroids');
 
 %---- PATELLA -----
 % [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
@@ -59,10 +59,10 @@ for n_d = 1:numel(dataset_set)
 % [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
 
     %---- TALUS/ANKLE -----
-    [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_l);
+%     [TalusCS, JCS.talus_r] = STAPLE_talus(geom_set.talus_l, 'L');
     
     %---- CALCANEUS/SUBTALAR -----
-    JCS.calcn_r = STAPLE_foot(geom_set.calcn_l, 1, 0);
+     JCS.calcn_r = STAPLE_foot(geom_set.calcn_l, 'L', 1, 0);
     %-----------------
     clear JCS
 %     close all

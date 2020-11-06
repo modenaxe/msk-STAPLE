@@ -18,6 +18,7 @@ dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
+side = 'r';
 in_mm = 1;
 
 % visualization geometry format
@@ -63,7 +64,7 @@ for n_d = 1%:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set);
+    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
     createLowerLimbJoints(osimModel, JCS, modelling_method);
