@@ -15,13 +15,17 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, result_plots, debug_plots, label_switch, in_mm)
+function [ CS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, side, result_plots, debug_plots, in_mm)
 
-if nargin<2; result_plots=1; end
-if nargin<3;     debug_plots = 0;  end
-if nargin<4;     label_switch = 1;  end
-if nargin<5;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+if nargin<2;    side = 'r';       end
+if nargin<3;    result_plots=1;    end
+if nargin<4;    debug_plots = 0;   end
+if nargin<5;    in_mm = 1;         end
+if in_mm == 1;  dim_fact = 0.001;  else;  dim_fact = 1; end
+
+% get side id correspondent to body side (used for hip joint parent)
+% no need for sign, left and right rf are identical
+[~, side_low] = bodySide2Sign(side);
 
 % guess of direction of axes on medical images (not always correct)
 % Z : pointing cranially
@@ -31,7 +35,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % -------------------------------------------------------------------------
 
 % inertial axes
-[V_all, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
+[~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
 
 % Modification of initial guess of CS direction [JB]
 [RotPseudoISB2Glob, LargestTriangle] = pelvis_guess_CS(Pelvis, debug_plots);
@@ -39,20 +43,20 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 %% Get the RPSIS and LPSIS raw BoneLandmarks (BL)
 [ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RotPseudoISB2Glob, CenterVol);
 
+%--------------------
+% PREVIOUS ATTEMPTS
+%--------------------
 % get the bony landmarks
 % Along an axis oriented superiorly and a bit on the right we find
 % projected on this axis succesively RASIS, LASIS then SYMP
-[~, ind_XYZ] = max(abs(RotPseudoISB2Glob));
-
+% [~, ind_XYZ] = max(abs(RotPseudoISB2Glob));
 % RASIS_ind = find(LargestTriangle.Points(:,ind_XYZ(2))>0 & LargestTriangle.Points(:,ind_XYZ(3))>0);
 % LASIS_ind = find(LargestTriangle.Points(:,ind_XYZ(2))>0 & LargestTriangle.Points(:,ind_XYZ(3))<0);
-
-%---------------------------
-% THIS IS NOT GENERIC
-%---------------------------
+% % not generic
 % U_SupSupRight = normalizeV(4*RotPseudoISB2Glob(:,2)+RotPseudoISB2Glob(:,3));
 % [~,I] = sort(LargestTriangle.Points*U_SupSupRight);
 %------------------------------------------
+
 % project vectors on Z (SYMP is the minimal one)
 [~, I] = sort(abs((LargestTriangle.Points-CenterVol')*RotPseudoISB2Glob(:,3)));
 ASI_inds = I(2:3);
@@ -76,10 +80,10 @@ Nodes_LPSIS = find( PelvisPseudoISB.Points(:,1) < 0 & ...
     PelvisPseudoISB.Points(:,2) > 0 & ...
     PelvisPseudoISB.Points(:,3) < 0 ) ;
 Pelvis_LPSIS = TriReduceMesh(Pelvis, [], Nodes_LPSIS);
+
 % Find the most posterior points in this eigth
 [~,Imin] = min(Pelvis_LPSIS.Points*RotPseudoISB2Glob(:,1));
 LPSIS = Pelvis_LPSIS.Points(Imin,:);
-
 
 % check if bone landmarks are correctly identified or axes were incorrect
 if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
@@ -87,6 +91,7 @@ if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
     disp('GIBOK_pelvis.')
     warndlg('Inter-ASIS distance is shorter than inter-PSIS distance. Better check manually.')
 end
+
 % segment reference system
 CS.CenterVol = CenterVol;
 CS.Origin = CS.CenterVol;
@@ -103,8 +108,9 @@ JCS.ground_pelvis.Origin = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
 JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 
-% define hip_r parent
-JCS.hip_r.parent_orientation        = computeXYZAngleSeq(CS.V);
+% define hip parent
+hip_name = ['hip_', side_low];
+JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(CS.V);
 
 % Export bone landmarks
 PelvisBL.RASI     = RASIS; 
@@ -114,6 +120,7 @@ PelvisBL.LPSI     = LPSIS;
 PelvisBL.SYMP      = SYMP;
 
 % debug plot
+label_switch = 1;
 if result_plots == 1
     plotTriangLight(Pelvis, CS, 1); hold on
     quickPlotRefSystem(CS)
@@ -123,7 +130,6 @@ if result_plots == 1
     
     % plot markers and labels
     plotBoneLandmarks(PelvisBL, label_switch);
-    
 end
 
 end
