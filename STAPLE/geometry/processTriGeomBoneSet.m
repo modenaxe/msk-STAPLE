@@ -68,13 +68,18 @@
 %--------------------------------------------------------------------------
 
 
-function [JCS, BL, CS] = processTriGeomBoneSet(geom_set, method_pelvis, method_femur, method_tibia, in_mm)
+function [JCS, BL, CS] = processTriGeomBoneSet(geom_set, side, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
 
 % setting defaults
-if nargin<2; method_pelvis = 'STAPLE'; method_femur = ''; method_tibia = ''; in_mm = 1; end
-if nargin<3; method_femur = ''; method_tibia = ''; in_mm = 1; end
-if nargin<4; method_tibia = ''; in_mm = 1; end
-if nargin<5; in_mm = 1; end
+if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
+if nargin<4; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
+if nargin<5; algo_tibia = 'Kai'; in_mm = 1; end
+if nargin<6; result_plots = 1; end
+if nargin<7; debug_plots = 0; end
+if nargin<8; in_mm = 1; end
+
+% get side id correspondent to body side
+[~, side_low] = bodySide2Sign(side);
 
 disp('-----------------------------------')
 disp('Processing provided bone geometries')
@@ -82,73 +87,86 @@ disp('-----------------------------------')
 
 % ---- PELVIS -----
 if isfield(geom_set,'pelvis')
-    switch method_pelvis
+    switch algo_pelvis
         case 'STAPLE'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = STAPLE_pelvis(geom_set.pelvis, in_mm);
+            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+                STAPLE_pelvis(geom_set.pelvis, side, result_plots, debug_plots, in_mm);
         case 'Kai'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = Kai2014_pelvis(geom_set.pelvis, 1, 0, 1);
+            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+                Kai2014_pelvis(geom_set.pelvis, side, result_plots, debug_plots, in_mm);
     end
-    %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 elseif isfield(geom_set,'pelvis_no_sacrum')
-    switch method_pelvis
+    switch algo_pelvis
         case 'STAPLE'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = STAPLE_pelvis(geom_set.pelvis_no_sacrum, in_mm);
+            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+                STAPLE_pelvis(geom_set.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
         case 'Kai'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = Kai2014_pelvis(geom_set.pelvis_no_sacrum, 0, 0, 1);
+            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+                Kai2014_pelvis(geom_set.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
     end
-    %     addMarkersFromStruct(osimModel, 'pelvis', BL.pelvis, in_mm);
 end
 
 % ---- FEMUR -----
-if isfield(geom_set,'femur_r')
-    switch method_femur
-        case 'Miranda'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = Miranda2010_buildfACS(geom_set.tibia_r);
+femur_name = ['femur_', side_low];
+if isfield(geom_set, femur_name)
+    switch algo_femur
+%         case 'Miranda'
+%             [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = Miranda2010_buildfACS(geom_set.(femur_name));
         case 'Kai'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = Kai2014_femur(geom_set.femur_r);
+            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+                Kai2014_femur(geom_set.(femur_name), side);
         case 'GIBOC-spheres'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'spheres');
+            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+                GIBOC_femur(geom_set.(femur_name), side, 'spheres', result_plots, debug_plots, in_mm);
         case 'GIBOC-ellipsoids'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'ellipsoids');
+            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ....
+                GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids', result_plots, debug_plots, in_mm);
         case 'GIBOC-cylinder'
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r, [], 'cylinder');
+            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+                GIBOC_femur(geom_set.(femur_name), side, 'cylinder', result_plots, debug_plots, in_mm);
         otherwise
-            [CS.femur_r, JCS.femur_r, BL.femur_r] = GIBOC_femur(geom_set.femur_r);
+            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+                GIBOC_femur(geom_set.(femur_name), side, 'cylinder', result_plots, debug_plots, in_mm);
     end
-%     addMarkersFromStruct(osimModel, 'femur_r', BL.femur_r, in_mm);
 end
 
 %---- TIBIA -----
-if isfield(geom_set,'tibia_r')
-    switch method_tibia
-        case 'Miranda' % same as Kai but using inertia
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
+tibia_name = ['tibia_', side_low];
+if isfield(geom_set, tibia_name)
+    switch algo_tibia
+%         case 'Miranda' % same as Kai but using inertia
+%             [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
         case 'Kai'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Kai2014_tibia(geom_set.tibia_r);
+            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+                Kai2014_tibia(geom_set.(tibia_name), side, result_plots, debug_plots, in_mm);
         case 'GIBOC-plateau'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'plateau');
+            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+                GIBOC_tibia(geom_set.(tibia_name), side, 'plateau', result_plots, debug_plots, in_mm);
         case 'GIBOC-ellipse'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'ellipse');
+            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+                GIBOC_tibia(geom_set.(tibia_name), side, 'ellipse', result_plots, debug_plots, in_mm);
         case 'GIBOC-centroids'
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = GIBOC_tibia(geom_set.tibia_r, [], 'centroids');
+            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+                GIBOC_tibia(geom_set.(tibia_name), side, 'centroids', result_plots, debug_plots, in_mm);
         otherwise
-            [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Kai2014_tibia(geom_set.tibia_r);
+            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ....
+                Kai2014_tibia(geom_set.(tibia_name), side, result_plots, debug_plots, in_mm);
     end
-%     addMarkersFromStruct(osimModel, 'tibia_r', BL.tibia_r, in_mm);
 end
 
 
 %---- PATELLA -----
-if isfield(geom_set,'patella_r')
+patella_name = ['patella_', side_low];
+if isfield(geom_set, patella_name)
     switch method_patella
         case 'Rainbow'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = Rainbow2013_buildpACS();
+            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = Rainbow2013_buildpACS();
         case 'GIBOC-vol-ridge'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'volume-ridge');
+            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(geom_set.(patella_name), 'volume-ridge');
         case 'GIBOC-ridge'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'ridge-line');
+            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(geom_set.(patella_name), 'ridge-line');
         case 'GIBOC-ACS'
-            [CS.patella_r, JCS.patella_r, BL.patella_r] = GIBOC_patella(geom_set.patella_r, 'artic-surf');
+            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(geom_set.(patella_name), 'artic-surf');
         otherwise
             % error('choose coorect patellar algorithm');
     end
@@ -156,14 +174,17 @@ if isfield(geom_set,'patella_r')
 end
     
 %---- TALUS/ANKLE -----
-if isfield(geom_set,'talus_r')
-    [CS.talus_r, JCS.talus_r] = STAPLE_talus(geom_set.talus_r);
+talus_name = ['talus_', side_low];
+if isfield(geom_set,talus_name)
+    [CS.(talus_name), JCS.(talus_name)] = ...
+        STAPLE_talus(geom_set.(talus_name), side, result_plots,  debug_plots, in_mm);
 end
 
 %---- CALCANEUS/SUBTALAR -----
-if isfield(geom_set,'calcn_r')
-    [CS.calcn_r, JCS.calcn_r, BL.calcn_r] = STAPLE_foot(geom_set.calcn_r);
-%     addMarkersFromStruct(osimModel, 'calcn_r',   CalcnBL,  in_mm); 
+calcn_name = ['calcn_', side_low];
+if isfield(geom_set,calcn_name)
+    [CS.(calcn_name), JCS.(calcn_name), BL.(calcn_name)] =...
+        STAPLE_foot(geom_set.(calcn_name), side, result_plots,  debug_plots, in_mm);
 end
 
 end
