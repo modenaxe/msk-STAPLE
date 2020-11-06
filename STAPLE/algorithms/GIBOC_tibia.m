@@ -188,7 +188,7 @@ CS.Origin = CenterVol;
 % landmark bone according to CS (only Origin and CS.V are used)
 TibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_', side_low]);
 if just_tibia == 0
-    TibiaBL.([side_low, 'LM']) = MostDistalPt;
+    TibiaBL.([upper(side_low), 'LM']) = MostDistalPt;
 end
 
 label_switch = 1;
