@@ -32,14 +32,14 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1%:numel(dataset_set)
+for n_d = 1
     
     % setup folders
     cur_dataset = dataset_set{n_d};
     main_ds_folder =  fullfile(bone_geometries_folder, cur_dataset);
     
     % model and model file naming
-    model_name = ['auto',modelling_method,'_',dataset_set{n_d}];
+    model_name = ['test_STL_input_',dataset_set{n_d}];
     model_file_name = [model_name, '.osim'];
     
     % options to read stl or mat(tri) files
