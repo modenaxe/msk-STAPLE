@@ -30,11 +30,29 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function createLowerLimbJoints(osimModel, JCS, method)
+function createLowerLimbJoints(osimModel, JCS, side, workflow)
 
 % if not specified, method is auto. Other option is Modenese2018.
 % This only influences ankle and subtalar joint.
-if nargin<3;     method = 'auto';   end
+if nargin<3;     error('createLowerLimbJoints.m Error: you need to specify a body side.');   end
+if nargin<4;     workflow = 'auto';   end
+
+% get sign correspondent to body side
+[side_sign, side_low] = bodySide2Sign(side);
+
+% joint names
+hip_name      = ['hip_',side_low];
+knee_name     = ['knee_',side_low];
+ankle_name    = ['ankle_',side_low];
+subtalar_name = ['subtalar_',side_low];
+% patellofemoral_name = ['patellofemoral_',side_low];
+
+% segment names
+femur_name      = ['femur_',side_low];
+tibia_name      = ['tibia_',side_low];
+% patella_name    = ['patella_',side_low];
+talus_name      = ['talus_',side_low];
+calcn_name      = ['calcn_',side_low];
 
 % ground_pelvis joint
 %---------------------
@@ -54,68 +72,68 @@ end
 
 % hip joint
 %-------------
-if isfield(JCS, 'pelvis') && isfield(JCS, 'femur_r')
-    JointParams = getJointParams('hip_r', JCS.pelvis, JCS.femur_r);
-    hip_r = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(hip_r);
+if isfield(JCS, 'pelvis') && isfield(JCS, femur_name)
+    JointParams = getJointParams(hip_name, JCS.pelvis, JCS.(femur_name));
+    hip_joint = createCustomJointFromStruct(osimModel, JointParams);
+    osimModel.addJoint(hip_joint);
 end
 
 % knee joint
 %-------------
-if isfield(JCS, 'femur_r') && isfield(JCS, 'tibia_r')
-    if strcmp(method, 'Modenese2018')
-        if isfield(JCS, 'talus_r')
-            JCS.tibia_r = assembleKneeChildOrientationModenese2018(JCS.femur_r, JCS.tibia_r, JCS.talus_r);
+if isfield(JCS, femur_name) && isfield(JCS, tibia_name)
+    if strcmp(workflow, 'Modenese2018')
+        if isfield(JCS, talus_name)
+            JCS.(tibia_name) = assembleKneeChildOrientationModenese2018(JCS.(femur_name), JCS.(tibia_name), JCS.(talus_name));
         else
             warndlg('JCS structure does not have a talus_r field required for Modenese 2018 knee joint definition. Defining joint as auto2020.')
         end
     end
-    JointParams = getJointParams('knee_r', JCS.femur_r, JCS.tibia_r);
-    knee_r = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(knee_r);
+    JointParams = getJointParams(knee_name, JCS.(femur_name), JCS.(tibia_name));
+    knee_joint = createCustomJointFromStruct(osimModel, JointParams);
+    osimModel.addJoint(knee_joint);
 end
 
 % ankle joint
 %-------------
-if isfield(JCS, 'tibia_r') && isfield(JCS, 'talus_r') 
-    JCS.tibia_r = assembleAnkleParentOrientation(JCS.tibia_r, JCS.talus_r);
+if isfield(JCS, tibia_name) && isfield(JCS, talus_name) 
+    JCS.(tibia_name) = assembleAnkleParentOrientation(JCS.(tibia_name), JCS.(talus_name));
     % in case you want to replicate the modelling from Modenese et al. 2018
-    if strcmp(method, 'Modenese2018')
-        if isfield(JCS, 'calcn_r')
-            JCS.tibia_r = assembleAnkleParentOrientationModenese2018(JCS.tibia_r, JCS.talus_r);
-            JCS.talus_r = assembleAnkleChildOrientationModenese2018(JCS.talus_r, JCS.calcn_r);
+    if strcmp(workflow, 'Modenese2018')
+        if isfield(JCS, calcn_name)
+            JCS.(tibia_name) = assembleAnkleParentOrientationModenese2018(JCS.(tibia_name), JCS.(talus_name));
+            JCS.(talus_name) = assembleAnkleChildOrientationModenese2018(JCS.(talus_name), JCS.(calcn_name));
         else
             warndlg('JCS structure does not have a calcn_r field required for Modenese 2018 ankle definition. Defining joint as auto2020.')
         end
     end
-    JointParams = getJointParams('ankle_r', JCS.tibia_r, JCS.talus_r);
-    ankle_r = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(ankle_r);
+    JointParams = getJointParams(ankle_name, JCS.(tibia_name), JCS.(talus_name));
+    ankle_joint = createCustomJointFromStruct(osimModel, JointParams);
+    osimModel.addJoint(ankle_joint);
 end
 
 % subtalar joint
 %----------------
-if isfield(JCS, 'talus_r') && isfield(JCS, 'calcn_r')
+if isfield(JCS, talus_name) && isfield(JCS, calcn_name)
     % in case you want to replicate the modelling from Modenese et al. 2018
-    if strcmp(method, 'Modenese2018')
-        if isfield(JCS, 'femur_r')
-            JCS.talus_r = assembleSubtalarParentOrientationModenese2018(JCS.femur_r, JCS.talus_r);
+    if strcmp(workflow, 'Modenese2018')
+        if isfield(JCS, femur_name)
+            JCS.(talus_name) = assembleSubtalarParentOrientationModenese2018(JCS.(femur_name), JCS.(talus_name));
         else
-            warndlg('JCS structure does not have a femur_r field required for Modenese 2018 subtalar definition. Defining joint as auto2020.')
+            warndlg(['JCS structure does not have a ', femur_name,' field required for Modenese 2018 subtalar definition. Defining joint as auto2020.'])
         end
     end
-    JointParams = getJointParams('subtalar_r', JCS.talus_r, JCS.calcn_r);
-    subtalar_r = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(subtalar_r);
+    JointParams = getJointParams(subtalar_name, JCS.(talus_name), JCS.(calcn_name));
+    subtalar_joint = createCustomJointFromStruct(osimModel, JointParams);
+    osimModel.addJoint(subtalar_joint);
 end 
 
 % patella joint
 %---------------
-% if isfield(JCS, 'patella_r') && isfield(JCS, 'femur_r')
-%     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.femur_r, JCS.patella_r);
-%     JointParams = getJointParams('patellofemoral_r', JCS.femur_r, JCS.patella_r);
-%     patfem_r = createCustomJointFromStruct(osimModel, JointParams);
-%     osimModel.addJoint(patfem_r);
+% if isfield(JCS, patella_name) && isfield(JCS, femur_name)
+%     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.(femur_name), JCS.(patella_name));
+%     JointParams = getJointParams(patellofemoral_name, JCS.(femur_name), JCS.(patella_name));
+%     patfem_joint = createCustomJointFromStruct(osimModel, JointParams);
+%     osimModel.addJoint(patfem_joint);
 %     addPatFemJointCoordCouplerConstraint(osimModel, side)
 %     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
 % end
