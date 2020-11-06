@@ -15,20 +15,19 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = Kai2014_pelvis(Pelvis, result_plots, debug_plots, label_switch, in_mm)
+function [ CS, JCS, PelvisBL] = Kai2014_pelvis(pelvisTri, result_plots, debug_plots, in_mm)
 
 if nargin<2; result_plots=1; end
 if nargin<3;     debug_plots = 0;  end
-if nargin<4;     label_switch = 0;  end
-if nargin<5;     in_mm = 1;  end
+if nargin<4;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % Initial guess of CS direction [JB]
 % RISB2Glob_guess: principal inertial axes named as ISB (guess)
-[RISB2Glob_guess, LargestTriangle] = pelvis_guess_CS(Pelvis);
+[RISB2Glob_guess, LargestTriangle] = pelvis_guess_CS(pelvisTri);
 
 % Get eigen vectors V_all and volumetric center
-[~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
+[~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(pelvisTri);
 
 %------------------------------------
 % TODO: develop other way of identifying the axes direction.
@@ -42,7 +41,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % generating a triangulated pelvis with axes directed as they would be in a
 % ISB reference system (Y upwards, X frontal etc)
-[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( Pelvis, RISB2Glob_guess, CenterVol);
+[ PelvisPseudoISB, ~ , ~ ] = TriChangeCS( pelvisTri, RISB2Glob_guess, CenterVol);
 
 % In ISB reference system: right side if z>0, upwards if Y>0
 R_side_ind = PelvisPseudoISB.Points(:,3)>0;
@@ -88,12 +87,12 @@ if debug_plots == 1
 end
 
 % extract points on bone in medical images ref system
-[RASIS, LASIS, RPSIS, LPSIS, RPS, LPS] = deal(  Pelvis.Points(RASIS_ind,:), ...
-                                                Pelvis.Points(LASIS_ind,:), ...
-                                                Pelvis.Points(RPSIS_ind,:), ...
-                                                Pelvis.Points(LPSIS_ind,:), ...
-                                                Pelvis.Points(RPS_ind,:), ...
-                                                Pelvis.Points(LPS_ind,:)); 
+[RASIS, LASIS, RPSIS, LPSIS, RPS, LPS] = deal(  pelvisTri.Points(RASIS_ind,:), ...
+                                                pelvisTri.Points(LASIS_ind,:), ...
+                                                pelvisTri.Points(RPSIS_ind,:), ...
+                                                pelvisTri.Points(LPSIS_ind,:), ...
+                                                pelvisTri.Points(RPS_ind,:), ...
+                                                pelvisTri.Points(LPS_ind,:)); 
 
 % check if bone landmarks are correctly identified or axes were incorrect
 % TEST: inter-ASIS distance must be larger than inter-PSIS
@@ -142,9 +141,10 @@ PelvisBL.RPS       = RPS;
 PelvisBL.LPS       = LPS;
 
 % debug plot
+label_switch = 1;
 if result_plots == 1
     figure('Name','Pelvis')
-    plotTriangLight(Pelvis, CS, 0); hold on
+    plotTriangLight(pelvisTri, CS, 0); hold on
 %     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
