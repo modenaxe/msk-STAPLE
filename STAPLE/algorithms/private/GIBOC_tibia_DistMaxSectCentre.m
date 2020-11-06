@@ -1,14 +1,14 @@
-function CenterAnkleInside = GIBOC_tibia_DistMaxSectCentre(DistTib, CSs)
+function CenterAnkleInside = GIBOC_tibia_DistMaxSectCentre(DistTibTri, Z0)
 
-Z0 = CSs.Z0;
+% Z0: proximal-distal vector
 
 % slice dist tibia an get larger area
 slice_step = 0.3;
 offset = 1;
-[~, ~, ~, ~, maxAlt] = TriSliceObjAlongAxis(DistTib, Z0, slice_step, offset);
+[~, ~, ~, ~, maxAlt] = TriSliceObjAlongAxis(DistTibTri, Z0, slice_step, offset);
 
 % section where the are is maximum 
-Curves = TriPlanIntersect( DistTib, Z0 , -maxAlt );
+Curves = TriPlanIntersect( DistTibTri, Z0 , -maxAlt );
 
 [Curve, N_curves] = getLargerPlanarSect(Curves);
 

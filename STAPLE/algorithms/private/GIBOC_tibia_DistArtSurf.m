@@ -1,7 +1,5 @@
-function AnkleArtSurf = GIBOC_tibia_DistArtSurf(DistTib, CSs, CoeffMorpho)
+function AnkleArtSurf = GIBOC_tibia_DistArtSurf(DistTib, Z0, V_all, CoeffMorpho)
 
-Z0 = CSs.Z0;
-V_all = CSs.V_all;
 % Get mean curvature of Distal Tibia
 Cmean = TriCurvature(DistTib,false);
 
