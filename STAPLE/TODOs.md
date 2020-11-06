@@ -1,9 +1,11 @@
 # STAPLE TASKS BEFORE RELEASE
+
 ## Functions to integrate to have bones with ISB reference systems
 - [ ] transformTriGeomSet needs testing
 - [ ] writeTransformedBoneGeom needs integration in pipeline
 
 ## Priority: make a consistent interface for functions
+- [ ] process left side
 - [ ] uniform variable names, they are still changing across scripts.
 - [ ] landmarkTriGeomBone: requires a check AFTER the dimensionality of Origin is decided.
 - [ ] Dimensionality of Origin: same as OpenSim
@@ -14,7 +16,7 @@
 - [ ] verify that bone_inertia = boneMassProps.Ivec * density * dim_fact^2.0
 
 ## geometry
-- [ ] test writing stl geometries
+- [x] test writing stl geometries
 - [x] integrate a writeSTL at some point -> integrated MATLAB stlfunction
 - [x] getBoneLandmarkList needs left side bones
 - [x] better to have createBOdyFromTriGeomObj and then add the body in addBodiesFromTriGeomBoneSet -> I have decided for another approach. Implemented.
