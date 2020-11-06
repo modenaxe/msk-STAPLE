@@ -16,11 +16,12 @@ function [ Z0 ] = femur_guess_CS( Femur, debug_plots )
 % epiphysis should be closer to the first principal inertia axis than the
 % one from the proximal epiphysis.
 % -------------------------------------------------------------------------
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Luca Modenese, Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 
 %% inputs checks
-if nargin < 2
-    debug_plots = 1;
-end
+if nargin<2; debug_plots = 1; end
 
 
 %% Part Used for developpment
