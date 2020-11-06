@@ -37,19 +37,7 @@
 %
 % See also PROCESSTRIGEOMBONESET, KAI2014_FEMUR, GIBOC_TIBIA, GIBOC_PELVIS.
 %
-%-------------------------------------------------------------------------%
-%  Author:   Luca Modenese
-%  Copyright 2020 Luca Modenese
-%-------------------------------------------------------------------------%
-function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
-                                                   side,...
-                                                   fit_method,...
-                                                   result_plots,...
-                                                   debug_plots,...
-                                                   in_mm)
-
-                                               
-% depends on 
+% % depends on 
 % ????
 % FitCSA (?)
 % PlanPolygonCentroid3D
@@ -64,6 +52,16 @@ function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
 % filterFemoralCondyleSurf
 % ELLIPSOIDS
 % ellipsoid_fit
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
+                                                   side,...
+                                                   fit_method,...
+                                                   result_plots,...
+                                                   debug_plots,...
+                                                   in_mm)
 
 % result plots on by default, debug off
 if nargin<2;    side = 'r';              end
@@ -71,7 +69,7 @@ if nargin<3;    fit_method = 'cylinder'; end
 if nargin<4;    result_plots = 1;        end
 if nargin<5;    debug_plots = 0;         end
 if nargin<6;    in_mm = 1;               end
-if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
+if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end %placeholder
 
 % default algorithm: cylinder fitting (Modenese et al. JBiomech 2018)
 if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
@@ -83,12 +81,12 @@ end
 % use separated proximal and distal triangulations. Check Git history if
 % you are interested in that.
 [ U_DistToProx ] = femur_guess_CS( femurTri, debug_plots);
-[ProxFem, DistFem] = cutLongBoneMesh(femurTri, U_DistToProx);
+[ProxFemTri, DistFemTri] = cutLongBoneMesh(femurTri, U_DistToProx);
 
 % Compute the coefficient for morphology operations
 CoeffMorpho = computeTriCoeffMorpho(femurTri);
 
-% Get inertial eigen vectors V_all of the Femur 3D geometry and vol center
+% Get inertial principal vectors V_all of the femur geometry & volum center
 [ V_all, CenterVol ] = TriInertiaPpties( femurTri );
 
 %-------------------------------------
@@ -103,19 +101,19 @@ CS.V_all = V_all;
 
 % Check that the distal femur is 'below' the proximal femur or invert Z0
 Z0 = V_all(:,1);
-Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
+Z0 = sign((mean(ProxFemTri.Points)-mean(DistFemTri.Points))*Z0)*Z0;
 CS.Z0 = Z0;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
 try
     % sometimes Renault2018 fails for sparse meshes
-    % FemHeadAS: articular surface of the hip
-    [CS, FemHeadTri] = GIBOC_femur_fitSphere2FemHead(ProxFem, CS, CoeffMorpho, debug_plots);
+    % FemHeadAS is the articular surface of the hip
+    [CS, FemHeadTri] = GIBOC_femur_fitSphere2FemHead(ProxFemTri, CS, CoeffMorpho, debug_plots);
 catch
     % use Kai if GIBOC approach fails
     warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
-    [CS, ~] = Kai2014_femur_fitSpheres2Condyles(ProxFem, CS, debug_plots);
+    [CS, ~] = Kai2014_femur_fitSpheres2Condyles(ProxFemTri, CS, debug_plots);
     CS.CenterFH_Renault  = CS.CenterFH_Kai;
     CS.RadiusFH_Renault  = CS.RadiusFH_Kai;
 end
@@ -124,7 +122,7 @@ end
 CS.X0 = cross(CS.Y0, CS.Z0);
 
 % Isolates the epiphysis
-EpiFemTri = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
+EpiFemTri = GIBOC_isolate_epiphysis(DistFemTri, Z0, 'distal');
 
 % extract full femoral condyles
 [fullCondyle_Med_Tri, fullCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS, CoeffMorpho, 'full_condyles');
@@ -139,12 +137,14 @@ end
 % on long convexhull edges extremities
 [postCondyle_Med_Tri, postCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS,  CoeffMorpho, 'post_condyles');
 
-% exporting articular surfaces (more triangulations can be easily added)
+% exporting articular surfaces (more triangulations can be easily added
+% commenting out the parts of interest
 if nargout>3
-    ArtSurf.hip       = FemHeadTri;
+%     ArtSurf.hip       = FemHeadTri;
+%     ArtSurf.med_cond  = fullCondyle_Med_Tri;
+%     ArtSurf.lat_cond  = fullCondyle_Lat_Tri;
     ArtSurf.epiphysis = EpiFemTri;
-    ArtSurf.med_cond  = fullCondyle_Med_Tri;
-    ArtSurf.lat_cond  = fullCondyle_Lat_Tri;
+    ArtSurf.condyles  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
 end
 
 % extract patellar grooves
@@ -204,13 +204,13 @@ if result_plots == 1
     
     % femoral head
     subplot(2,2,2); 
-    plotTriangLight(ProxFem, CS, 0); hold on
+    plotTriangLight(ProxFemTri, CS, 0); hold on
     quickPlotRefSystem(JCS.(hip_name));
     plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g', alpha);
     
     % distal femur
     subplot(2,2,4);
-    plotTriangLight(DistFem, CS, 0); hold on
+    plotTriangLight(DistFemTri, CS, 0); hold on
     quickPlotRefSystem(JCS.(knee_name));
     % plot fitting method
     switch fit_method

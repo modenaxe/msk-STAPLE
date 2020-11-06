@@ -3,7 +3,7 @@
 % fitEllipseOnTibialCondylesEdge (PLATEAU)
 % ProjectOnPlan
 
-function [CS, JCS, TibiaBL] = GIBOC_tibia(tibiaTri, side, fit_method, result_plots,  debug_plots, in_mm)
+function [CS, JCS, TibiaBL, ArtSurf] = GIBOC_tibia(tibiaTri, side, fit_method, result_plots,  debug_plots, in_mm)
 
 % result plots on by default, debug off
 if nargin<2;    side = 'r';              end
@@ -17,9 +17,6 @@ if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
 if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
     fit_method = 'ellipse';
 end
-
-% get sign correspondent to body side
-[side_sign, side_low] = bodySide2Sign(side);
 
 % it is assumed that, even for partial geometries, the femoral bone is
 % always provided as unique file. Previous versions of this function did
@@ -149,11 +146,19 @@ CS.Y0_GIBOC  = CS.Y0*-1;
 [EpiTibASMedTri, EpiTibASLatTri, ~] = GIBOC_tibia_ProxArtSurf_it2(EpiTibTri, EpiTibASTri, CS, CoeffMorpho);
 
 % build the final triangulation of the articular surfaces of the prox tibia
-EpiTibAS3Tri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
+EpiTibArtSurfTri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
+
+% exporting articular surfaces (more triangulations can be easily added
+% commenting out the parts of interest
+if nargout>3
+    ArtSurf.epi_tibia   = EpiTibTri;
+    ArtSurf.tib_plateau = EpiTibArtSurfTri;
+    ArtSurf.ankle_sup   = AnkleArtSurfTri;
+end
 
 % debug plots
 if debug_plots == 1
-    quickPlotTriang(EpiTibAS3Tri, [], 1);hold on
+    quickPlotTriang(EpiTibArtSurfTri, [], 1);hold on
     title('STEP3: Final Articular Surface (refined)')
 end
 
@@ -161,12 +166,12 @@ end
 switch fit_method
     case 'ellipse'
         % fit an ellipse to the articular surface
-        [CS, JCS] = CS_tibia_Ellipse(EpiTibAS3Tri, CS, side);
+        [CS, JCS] = CS_tibia_Ellipse(EpiTibArtSurfTri, CS, side);
     case 'centroids'
         % uses the centroid of the articular surfaces to define the Z axis
         [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMedTri, EpiTibASLatTri, CS, side);
     case 'plateau'
-        [CS, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibAS3Tri, CS, side);
+        [CS, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibArtSurfTri, CS, side);
     otherwise
         error('GIBOC_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
 end
@@ -206,7 +211,7 @@ if result_plots == 1
     plotTriangLight(ProxTibTri, CS, 0);
     switch fit_method
         case 'ellipse'
-            quickPlotTriang(EpiTibAS3Tri,'g', 0, alpha_ArtSurf );
+            quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
             quickPlotRefSystem(JCS.(knee_name))
             title('GIBOC Tibia - Ellipse fitting')
         case 'centroids'
@@ -218,7 +223,7 @@ if result_plots == 1
                 1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
             title('GIBOC Tibia - Centroids')
         case 'plateau'
-            quickPlotTriang(EpiTibAS3Tri,'g', 0, alpha_ArtSurf );
+            quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
             quickPlotRefSystem(JCS.(knee_name))
             title('GIBOC Tibia - Plateau')
     end
