@@ -2,7 +2,7 @@
 % slice starts with just one curve, until it slices two condyles
 % when there are two curves, the next time there is one is the end of
 % loop
-function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS)
+function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS, debug_plots)
 
 X0 = CS.X0;
 Z0 = CS.Z0;
@@ -20,9 +20,11 @@ FC_Lat_Pts = [];
 d = MostPostPoint*-X0 - 0.25;
 count = 1;
 
-% debug plot
-quickPlotTriang(DistFem, [], 1);
-plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
+% debug plots
+if debug_plots == 1
+    quickPlotTriang(DistFem, [], 1);
+    plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
+end
 
 keep_slicing = 1;
 
@@ -42,7 +44,7 @@ while keep_slicing
             disp('The condyle slicing is happening in the incorrect direction of the anterior-posterior axis.')
             disp('Inverting axis.')
             CS.X0 = -CS.X0;
-            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS);
+            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS, debug_plots);
             return
         end
     end
@@ -98,12 +100,14 @@ while keep_slicing
         FC_Lat_Pts = [FC_Lat_Pts; Curves(3-IcurvePost1).Pts];
     end
     
-        % plot curves after break condition!
-    c_set = ['r', 'b','k'];
-    if ~isempty(Curves)
-        for c = 1:Nbr_of_curves
-            if c>3; col = 'k'; else;  col = c_set(c);  end
-            plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3), col); hold on; axis equal
+    % plot curves after break condition!
+    if debug_plots == 1
+        c_set = ['r', 'b','k'];
+        if ~isempty(Curves)
+            for c = 1:Nbr_of_curves
+                if c>3; col = 'k'; else;  col = c_set(c);  end
+                plot3(Curves(c).Pts(:,1), Curves(c).Pts(:,2), Curves(c).Pts(:,3), col); hold on; axis equal
+            end
         end
     end
     
