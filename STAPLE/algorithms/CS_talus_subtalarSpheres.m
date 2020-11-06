@@ -1,5 +1,7 @@
-function [CS, TlCcnAS1, TlNvc_AS] = CS_talus_subtalarSpheres(Talus, CS, alt_TlNvc_start, alt_TlNeck_start, CoeffMorpho)
+function [CS, TlCcnAS1, TlNvc_AS] = CS_talus_subtalarSpheres(Talus, side, CS, alt_TlNvc_start, alt_TlNeck_start, CoeffMorpho)
 
+% get sign correspondent to body side
+[sign_side, ~] = bodySide2Sign(side);
 
 alt_TlNvc_end = max(Talus.incenter*CS.X0);
 TlNvc_length = alt_TlNvc_end-alt_TlNvc_start;
@@ -24,6 +26,7 @@ TlNvc_AS_refined = bsxfun(@plus ,Pts_T_R(ID_Pts_keep, :) * V' , CS.CenterVol');
 % be eliminated to ensure triangulation, so fitting TlNvc_AS.Points will
 % give SLIGHTLY different results).
 TlNvc_AS = TriReduceMesh( TlNvc_AS, [], ID_Pts_keep );
+
 % stlWrite('talo_nav_AS.stl', TlNvc_AS.ConnectivityList, TlNvc_AS.Points)
 % [Center_TlNvc, Radius_TlNvc,~] = sphereFit(TlNvc_AS.Points) ;
 
@@ -97,11 +100,20 @@ u_SubtalarAxis = normalizeV(Center_TlNvc-Center_TlCcn);
 %% 5. Save reference system details
 % these axes (IN GIBOK CONVENTIONS) are used by throcheaCylinder
 CS.X1 = u_SubtalarAxis; % approx anter-post
-CS.Z1 = normalizeV(cross(CS.X1,CS.Y0));
+CS.Z1 = normalizeV(cross(CS.X1,CS.Y0)) * sign_side; % attempt of adjusting for side based on debugplot
 CS.Y1 = normalizeV(cross(CS.Z1,CS.X1));
 
+% check axes in GIBOK conventions
+debug_plots = 0;
+if debug_plots == 1
+    figure
+    quickPlotTriang(Talus); hold on
+    T.X=CS.X1; T.Y=CS.Y1; T.Z=CS.Z1;T.Origin=CS.CenterVol;
+    quickPlotRefSystem(T)
+end
+
 % store info about talo-navicular artic surf
-CS.V_subtalar_r = [CS.Y1 CS.Z1 CS.X1];
+CS.V_subtalar = [CS.Y1 CS.Z1 CS.X1];
 CS.subtalar_axis   = u_SubtalarAxis;
 CS.subtalar_axis_centre = (Center_TlNvc+Center_TlCcn)/2;
 CS.subtalar_axis_length = norm((Center_TlNvc-Center_TlCcn));

@@ -1,30 +1,34 @@
 %% Initial Set up 
-function [CS, JCS, CalcnBL_r] = STAPLE_foot(Calcn, result_plots, debug_plots, in_mm)
+function [CS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side, result_plots, debug_plots, in_mm)
 
 % depends on
 % TriangleClosestPointPair
 % pl3t
 
-% check units
-if nargin<4;     in_mm = 1;  end
+% results/debug plot default
+if nargin<3;  result_plots =1;  end
+if nargin<4;  debug_plots = 0;  end
+if nargin<5;     in_mm = 1;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 
-% results/debug plot default
-if nargin<2;  result_plots =1;  end
-if nargin<3;  debug_plots = 0;  end
+% get sign correspondent to body side
+[sign_side, side_low] = bodySide2Sign(side);
+
+% joint names
+toes_name     = ['toes_', side_low];
 
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties( Calcn );
+[ V_all, CenterVol ] = TriInertiaPpties( calcnTri );
 X0 = V_all(:,1);
 
 % Get least square plane normal vector of the foot
-[~,Z0] = lsplane(Calcn.Points);
+[~,Z0] = lsplane(calcnTri.Points);
 Y0 = normalizeV(cross(Z0,X0));
 Z0 = cross(X0,Y0);
 
 %% Convex hull approach with prior deleting of the phalanges
-[x, y, z] = deal(Calcn.Points(:,1), Calcn.Points(:,2), Calcn.Points(:,3));
+[x, y, z] = deal(calcnTri.Points(:,1), calcnTri.Points(:,2), calcnTri.Points(:,3));
 
 % In the vast majority of cases, the reference system at the foot is
 % computed using the geometries from talus to metatarsal bone, without the
@@ -39,7 +43,7 @@ Z0 = cross(X0,Y0);
 % Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
 %==========================================
 
-[ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(Calcn.Points);
+[ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(calcnTri.Points);
 
 % plot convex hull
 if debug_plots == 1
@@ -120,7 +124,7 @@ metaCandidatePoints = CandidatePoints(notHeelPtsID,:);
 IdxMeta1 = knnsearch(clusterCentroids, metatarsPt1) ;
 PtsMeta1 = metaCandidatePoints(clusterIdx == IdxMeta1, :);
 if debug_plots == 1
-    quickPlotTriang(Calcn);
+    quickPlotTriang(calcnTri);
     pl3t(PtsMeta1,'mo');
 end
 
@@ -132,7 +136,7 @@ end
 
 if debug_plots == 1
     figure(2)
-    quickPlotTriang(Calcn);
+    quickPlotTriang(calcnTri);
     pl3t(metaCandidatePoints(clusterIdx==1,:),'b.')
     hold on
     axis equal
@@ -201,16 +205,17 @@ CS.Z = -Y3; % Ventral to dorsal
 CS.V = [X3, Z3, -Y3];
 CS.Origin = CenterVol;
 
-% landmark bone according to CS (only Origin and CS.V are used)
-CalcnBL_r    = landmarkBoneGeom(Calcn, CS, 'calcn_r');
-CalcnBL_r.R1MGROUND = PtMetaMed;
-CalcnBL_r.R5MGROUND = PtMetaLat;
-CalcnBL_r.RHEEGROUND = heelPt;
+% landmarks bone according to CS (only Origin and CS.V are used)
+CalcnBL    = landmarkBoneGeom(calcnTri, CS, ['calcn_',side_low]);
+side_up = upper(side_low);
+CalcnBL.([side_up,'1MGROUND' ]) = PtMetaMed;
+CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat;
+CalcnBL.([side_up,'HEEGROUND']) = heelPt;
 
-if norm(CalcnBL_r.RD5M-CalcnBL_r.R5MGROUND)>10
-    disp('Dubious identification of RD5M')
-    CalcnBL_r.R5MPROX = CalcnBL_r.RD5M;
-    CalcnBL_r.RD5M = CalcnBL_r.R5MGROUND;
+if norm(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'5MGROUND' ]))>10
+    disp(['Dubious identification of ',side_up,'D5M'])
+    CalcnBL.([side_up,'5MPROX']) = CalcnBL.([side_up,'D5M']);
+    CalcnBL.([side_up,'D5M'])    = CalcnBL.([side_up,'5MGROUND' ]);
 end
 
 % calcn currently does not have a real child joint, but JCS structure is created for
@@ -219,14 +224,14 @@ JCS = CS;
 JCS.Origin = heelPt';
 
 % define toes joint
-Z = normalizeV(CalcnBL_r.RD5M-CalcnBL_r.RD1M);
+Z = normalizeV(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'D1M']))*sign_side;
 X = normalizeV(X3-X3*(X3'*Z));
 Y = normalizeV(cross(Z,X));
-midpoint_DM = (CalcnBL_r.RD5M+CalcnBL_r.RD1M)/2.0;
-JCS.toes_r.Origin = midpoint_DM;
-JCS.toes_r.V = [X Y Z];
-JCS.toes_r.parent_location = midpoint_DM * dim_fact;
-JCS.toes_r.parent_orientation = computeXYZAngleSeq(JCS.toes_r.V);
+midpoint_DM = (CalcnBL.([side_up,'D5M'])+CalcnBL.([side_up,'D1M']))/2.0;
+JCS.(toes_name).Origin = midpoint_DM;
+JCS.(toes_name).V = [X Y Z];
+JCS.(toes_name).parent_location = midpoint_DM * dim_fact;
+JCS.(toes_name).parent_orientation = computeXYZAngleSeq(JCS.(toes_name).V);
 
 
 label_switch = 1;
@@ -234,7 +239,7 @@ label_switch = 1;
 paper_figure = 0;
 if paper_figure == 1
     figure
-    quickPlotTriang(Calcn)
+    quickPlotTriang(calcnTri)
     trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.8,'edgecolor','k');
@@ -242,15 +247,15 @@ if paper_figure == 1
 end
 
 if result_plots == 1
-    figure('Name', 'foot_r');
+    figure('Name', ['foot_',side_low]);
     % plot the calcn triangulation
-    plotTriangLight(Calcn, CS, 0)
+    plotTriangLight(calcnTri, CS, 0)
     % Plot the inertia Axis & Volumic center
-    quickPlotRefSystem(JCS.toes_r)
+    quickPlotRefSystem(JCS.(toes_name))
 
     
     % plot markers and labels
-    plotBoneLandmarks(CalcnBL_r, label_switch)   
+    plotBoneLandmarks(CalcnBL, label_switch)   
     
     % Plot the sole plane
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));

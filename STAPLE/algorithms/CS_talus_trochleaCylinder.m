@@ -1,4 +1,8 @@
-function [CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, alt_TlNeck_start, alt_TlTib_start, CoeffMorpho)
+% NOTE: uses axis computed in the subtalar analysis
+function [CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, side, CS, alt_TlNeck_start, alt_TlTib_start, CoeffMorpho)
+
+% get sign correspondent to body side
+[sign_side, ~] = bodySide2Sign(side);
 
 debug_plots = 0;
 
@@ -65,6 +69,7 @@ if debug_plots == 1
     T.X=X1; T.Y=Y1; T.Z=Z1;T.Origin=CenterVol;
     quickPlotRefSystem(T)
 end
+
 % 5.4 Refine the articular surface 
 % Remove elements that are too for from from initial cylinder fit
 %   more than 5% of radius inside or more than 10% outside
@@ -86,13 +91,13 @@ TalTrochAS = TlTrcAS1 ;
 % ankle axis
 ankleAxis =  normalizeV(an);
 
-% align Y2 with -Y1, which is Z (points laterally) for ISB (see debug plot)
-CS.Z2 = normalizeV(sign(-Y1'*ankleAxis)*ankleAxis);
+% align Z2 with -Y1, which is Z in ISB conventions (see debug plot)
+CS.Z2 = normalizeV(sign(-Y1'*ankleAxis)*ankleAxis)*sign_side; % right: lateral, left: medial
 CS.Y2 = normalizeV(cross(CS.Z2, X0));
 CS.X2 = normalizeV(cross(CS.Y2, CS.Z2));
 
 % store ankle info (NB: only CS.V is needed for plotting and joints)
-CS.V_ankle_r        = [CS.X2 CS.Y2 CS.Z2];
+CS.V_ankle        = [CS.X2 CS.Y2 CS.Z2];
 CS.ankle_cyl_radius = rn;
 CS.ankle_cyl_centre = x0n;% this could be the middle point of the cyl
 CS.ankle_cyl_axis   = ankleAxis;

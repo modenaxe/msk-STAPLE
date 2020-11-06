@@ -25,7 +25,7 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function [CS, JCS] = STAPLE_talus(Talus, in_mm, result_plots, debug_plots)
+function [CS, JCS] = STAPLE_talus(talusTri, side, result_plots,  debug_plots, in_mm)
 
 
 % NOTE: CS contains multiple sets of axes:
@@ -33,17 +33,26 @@ function [CS, JCS] = STAPLE_talus(Talus, in_mm, result_plots, debug_plots)
 % * X1-Y1-Z1 : subtalar joint axes
 % * X2-Y2-Z2 : talocrural joint axes
 
-% check units
-if nargin<2;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+% result plots on by default, debug off
+if nargin<2;    side = 'r';              end
+if nargin<3;    result_plots = 1;        end
+if nargin<4;    debug_plots = 0;         end
+if nargin<5;    in_mm = 1;               end
+if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
 
-% result and debg plot default
-if nargin<3;  result_plots =1;  end
-if nargin<4;     debug_plots = 0; end
+% compute scaling factor for filters
+CoeffMorpho = computeTriCoeffMorpho(talusTri);
+
+% get sign correspondent to body side
+[~, side_low] = bodySide2Sign(side);
+
+% joint names
+ankle_name     = ['ankle_', side_low];
+subtalar_name  = ['subtalar_', side_low];
 
 %% 1. Indentify the inertia axis of the Talus
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
-[ V_all, CS.CenterVol, CS.InertiaMatrix, CS.D ] = TriInertiaPpties( Talus );
+[ V_all, CS.CenterVol, CS.InertiaMatrix, CS.D ] = TriInertiaPpties( talusTri );
 
 % X0 can be seen as a initial antero-posterior or postero-anterior axis,
 % the orientation of Y0 and Z0 can be inconsistent across subjects because
@@ -54,9 +63,9 @@ if nargin<4;     debug_plots = 0; end
 % inferior-superior direction intial guess (Z0). Y0 is made perpendicular
 % to X0 and Z0.
 CS.X0 = V_all(:,1); 
-[CS.Z0,CS.Y0] = fitQuadriTalus(Talus, V_all, debug_plots);
+[CS.Z0,CS.Y0] = fitQuadriTalus(talusTri, V_all, debug_plots);
 if debug_plots == 1
-    figure;     quickPlotTriang(Talus)
+    figure;     quickPlotTriang(talusTri)
     CS.Origin = CS.CenterVol;     quickPlotRefSystem(CS)
     CS.Origin = []; % reset
 end
@@ -65,7 +74,7 @@ end
 slice_step = 0.3;
 cut_offset = 0.3;
 debug_plot_slice = 0;
-[Areas, Alt] = TriSliceObjAlongAxis(Talus, CS.X0, slice_step, cut_offset, debug_plot_slice);
+[Areas, Alt] = TriSliceObjAlongAxis(talusTri, CS.X0, slice_step, cut_offset, debug_plot_slice);
 
 % Given the shape of the curve we can fit a bi-gaussian curve to identify
 % the two maxima of the Area = f(Alt) curve
@@ -86,24 +95,26 @@ debug_plot_slice = 0;
                                                             debug_plots);
 % Change X0 orientation if necessary ( or = +/- 1 )
 CS.X0 = or*CS.X0;
-CS.Y0 = or*CS.Y0;    
+CS.Y0 = or*CS.Y0; 
+
 if debug_plots == 1
-    figure;     quickPlotTriang(Talus)
+    figure;     quickPlotTriang(talusTri)
     CS.Origin = CS.CenterVol;     quickPlotRefSystem(CS)
     CS.Origin = []; % reset
 end
 
-% compute scaling factor for filters
-CoeffMorpho = computeTriCoeffMorpho(Talus);
-
 % fit spheres to talonavicular and talocalcaneal
-[CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(Talus, CS,...
+[CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(talusTri,...
+                                                       side,...
+                                                       CS,...
                                                        alt_TlNvc_start,...
                                                        alt_TlNeck_start,...
                                                        CoeffMorpho);
 
 % fit cylinder to talar trochlea
-[CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, CS, ...
+[CS, TalTrochAS] = CS_talus_trochleaCylinder(talusTri,...
+                                             side,...
+                                             CS, ...
                                              alt_TlNeck_start,...
                                              alt_TlTib_start,...
                                              CoeffMorpho);
@@ -117,22 +128,22 @@ CS.Origin       = CS.CenterVol;
 CS.V = [CS.X0, CS.Z0, -CS.Y0];
 
 % define ankle joint
-JCS.ankle_r.V = CS.V_ankle_r;
-JCS.ankle_r.child_location = CS.ankle_cyl_centre * dim_fact;
-JCS.ankle_r.child_orientation = computeXYZAngleSeq(JCS.ankle_r.V);
-JCS.ankle_r.Origin = CS.ankle_cyl_centre;
+JCS.(ankle_name).V = CS.V_ankle;
+JCS.(ankle_name).child_location = CS.ankle_cyl_centre * dim_fact;
+JCS.(ankle_name).child_orientation = computeXYZAngleSeq(JCS.(ankle_name).V);
+JCS.(ankle_name).Origin = CS.ankle_cyl_centre;
 
 % define subtalar joint
-JCS.subtalar_r.V = CS.V_subtalar_r;
-JCS.subtalar_r.parent_location = CS.talocalc_centre * dim_fact;
-JCS.subtalar_r.parent_orientation = computeXYZAngleSeq(JCS.subtalar_r.V);
-JCS.subtalar_r.Origin = CS.talocalc_centre;
+JCS.(subtalar_name).V = CS.V_subtalar;
+JCS.(subtalar_name).parent_location = CS.talocalc_centre * dim_fact;
+JCS.(subtalar_name).parent_orientation = computeXYZAngleSeq(JCS.(subtalar_name).V);
+JCS.(subtalar_name).Origin = CS.talocalc_centre;
 
 % figure used in paper (bone+articular surfaces)
 paper_figure = 0;
 if paper_figure == 1
     figure()
-    plotTriangLight(Talus, CS, 0, 1);
+    plotTriangLight(talusTri, CS, 0, 1);
     trisurf(Talonavic_AS,'Facecolor','r','FaceAlpha',1,'edgecolor','none');
     trisurf(Talocalcn_AS,'Facecolor','b','FaceAlpha',1,'edgecolor','none');
     trisurf(TalTrochAS,'Facecolor','g','FaceAlpha',1,'edgecolor','none');
@@ -148,14 +159,14 @@ if result_plots == 1
     figure('Name', 'talus_r')
     % plot talus and ref systems
     subplot(2,2,[1,3]);
-    plotTriangLight(Talus, CS, 0, 0.7);
+    plotTriangLight(talusTri, CS, 0, 0.7);
 %     quickPlotRefSystem(CS);
-    quickPlotRefSystem(JCS.ankle_r, 30);
-    quickPlotRefSystem(JCS.subtalar_r, 30);
+    quickPlotRefSystem(JCS.(ankle_name), 30);
+    quickPlotRefSystem(JCS.(subtalar_name), 30);
     
     subplot(2,2,2); 
     %Visually check the Inertia Axis orientation relative to the Talus geometry
-    plotTriangLight(Talus, CS, 0, 0.7);
+    plotTriangLight(talusTri, CS, 0, 0.7);
     %Plot the inertia Axis & Volumic center
 %     plotDot( CS.CenterVol', 'k', 2 )
 %     plotArrow( CS.X0, 1, CS.CenterVol, 40, 1, 'r')
@@ -177,7 +188,7 @@ if result_plots == 1
 %--------------------------------
     subplot(2,2,4); 
     % plot talocrural fitting results
-    plotTriangLight(Talus, CS, 0, 0.6);
+    plotTriangLight(talusTri, CS, 0, 0.6);
 
     %Plot ref system Axis & Volumic center
 %     plotArrow( CS.X2, 1, CenterVol, 40, 1, 'r')
