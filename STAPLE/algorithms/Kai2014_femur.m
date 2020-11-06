@@ -36,6 +36,10 @@ if in_mm == 1;  dim_fact = 0.001; else;  dim_fact = 1; end
 % get sign correspondent to body side
 [side_sign, side_low] = bodySide2Sign(side);
 
+% joint names
+hip_name = ['hip_',side_low];
+knee_name = ['knee_',side_low];
+
 % it is assumed that, even for partial geometries, the femoral bone is
 % always provided as unique file. Previous versions of this function did
 % use separated proximal and distal triangulations. Check Git history if
@@ -87,7 +91,6 @@ CS.Z = normalizeV(cross(X, Y));
 CS.V = [X Y Z];
 
 % define the hip reference system
-hip_name = ['hip_',side_low];
 Zml_hip = normalizeV(cross(X, Y));
 JCS.(hip_name).V  = [X Y Zml_hip];
 JCS.(hip_name).child_location    = CS.CenterFH_Kai*dim_fact;
@@ -95,7 +98,6 @@ JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
 JCS.(hip_name).Origin = CS.CenterFH_Kai;
 
 % define the knee reference system
-knee_name = ['knee_',side_low];
 Ydp_knee = normalizeV(cross(Z, X));
 JCS.(knee_name).V  = [X Ydp_knee Z];
 JCS.(knee_name).parent_location = CS.KneeCenter*dim_fact;
