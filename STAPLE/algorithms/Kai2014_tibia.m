@@ -1,4 +1,28 @@
-
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+% Licensed under the Apache License, Version 2.0 (the "License");         %
+% you may not use this file except in compliance with the License.        %
+% You may obtain a copy of the License at                                 %
+% http://www.apache.org/licenses/LICENSE-2.0.                             %
+%                                                                         % 
+% Unless required by applicable law or agreed to in writing, software     %
+% distributed under the License is distributed on an "AS IS" BASIS,       %
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         %
+% implied. See the License for the specific language governing            %
+% permissions and limitations under the License.                          %
+%                                                                         %
+%    Authors:  Jean-Baptiste Renault & Luca Modenese                      %
+%    email:    l.modenese@imperial.ac.uk                                  % 
+% ----------------------------------------------------------------------- %
+% Custom implementation of the method for defining a reference system of
+% the tibia described in the following publication: 
+% Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 1229-1233.
+% https://doi.org/10.1016/j.jbiomech.2013.12.013
+%
+% This implementation includes several non-obvious checks to ensure that
+% the bone geometry is always sliced in the correct direction.
+% ----------------------------------------------------------------------- %
 function [CS, JCS, TibiaBL] = Kai2014_tibia(tibiaTri, side, result_plots, debug_plots, in_mm)
 
 % Slices 1 mm apart as in Kai et al. 2014
@@ -14,7 +38,9 @@ if nargin<5;     in_mm = 1;  end %placeholder
 [side_sign, side_low] = bodySide2Sign(side);
 
 % it is assumed that, even for partial geometries, the tibial bone is
-% always provided as unique file
+% always provided as unique file. Previous versions of this function did
+% use separated proximal and distal triangulations. Check Git history if
+% you are interested in that.
 V_all = pca(tibiaTri.Points);
 
 % guess vertical direction, pointing proximally
