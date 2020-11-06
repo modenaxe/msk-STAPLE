@@ -1,25 +1,33 @@
-function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, in_mm, debug_plots, tolp, tolg)
+function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm, tolp, tolg)
 
-% check units
-if nargin<4;     in_mm = 1;  end
+% NOTE: depend on CS_femur_SpheresOnCondyles
+
+% default behaviour: do not plot
+if nargin<5;    debug_plots = 0;         end
+if nargin<6;    in_mm = 1;               end
+if nargin<7;    tolp=0.001; tolg=0.001;  end
 if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
-% debug plots off by default
-if nargin<5; debug_plots = 0; end
 
-% check tolerances (tolp: tol step length; tolg: tol test of gradient)
-if nargin < 6  ;     tolp = 0.001;    tolg = 0.001;  end
+% get sign correspondent to body side
+[~, side_low] = bodySide2Sign(side);
+
+% joint names
+knee_name = ['knee_', side_low];
+hip_name  = ['hip_', side_low];
 
 % get all points of triangulations
 PtsCondyle    = [Condyle_Lat.Points; Condyle_Med.Points];
 
 % initialise the least square search for cylinder with the sphere fitting
-[CSSph, JCSSph] = CS_femur_SpheresOnCondyles(Condyle_Lat, Condyle_Med, CS, 0);
+% note that this function provides an already adjusted direction of the M-L
+% axis that will be used for aligning the cylinder axis below.
+[CSSph, JCSSph] = CS_femur_SpheresOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm);
 
 % initialise variables
 Axe0 = (CSSph.sphere_center_lat - CSSph.sphere_center_med)';
 Center0 = 0.5*(CSSph.sphere_center_lat + CSSph.sphere_center_med)';
 Radius0 = 0.5*(CSSph.sphere_radius_lat +CSSph.sphere_radius_med);
-Z_dir = JCSSph.knee_r.V(:, 3);
+Z_dir = JCSSph.(knee_name).V(:, 3);
 
 % fit least square cylinder
 [x0n, an, rn] = lscylinder(PtsCondyle, Center0, Axe0, Radius0, tolp, tolg);
@@ -53,22 +61,22 @@ CS.Cyl_Range           = range(PtsCondyldeOnCylAxis*Y2);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 Y = normalizeV(CS.CenterFH_Renault - KneeCenter); %mech axis of femur
-Z = normalizeV(sign(Y2'*Z_dir)* Y2);% cylinder axis
+Z = normalizeV(sign(Y2'*Z_dir)* Y2);% cylinder axis (ALREADY side-adjusted)
 X = normalizeV(cross(Y, Z));
 
 % define hip joint
 Zml_hip = normalizeV(cross(X, Y));
-JCS.hip_r.V = [X Y Zml_hip];
-JCS.hip_r.child_location = CS.CenterFH_Renault * dim_fact;
-JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
-JCS.hip_r.Origin = CS.CenterFH_Renault;
+JCS.(hip_name).V = [X Y Zml_hip];
+JCS.(hip_name).child_location = CS.CenterFH_Renault * dim_fact;
+JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
+JCS.(hip_name).Origin = CS.CenterFH_Renault;
 
 % define knee joint
 Y_knee = normalizeV(cross(Z, X));
-JCS.knee_r.V = [X Y_knee Z];
-JCS.knee_r.parent_location = KneeCenter * dim_fact;
-JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
-JCS.knee_r.Origin = KneeCenter;
+JCS.(knee_name).V = [X Y_knee Z];
+JCS.(knee_name).parent_location = KneeCenter * dim_fact;
+JCS.(knee_name).parent_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
+JCS.(knee_name).Origin = KneeCenter;
 
 % % debug plots
 if debug_plots == 1

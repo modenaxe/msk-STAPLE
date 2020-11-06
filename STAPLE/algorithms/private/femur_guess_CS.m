@@ -94,7 +94,6 @@ if abs(distToDiaphAxis1 - distToDiaphAxis2)/(distToDiaphAxis1 + distToDiaphAxis2
         "distal to proximal axis, of the femur could be incorrect.")
 end
 
-
 if debug_plots
     figure()
     pl3t(CenterEpi1,'r*')
@@ -106,4 +105,5 @@ if debug_plots
     pl3tVectors(CenterVol, -Y0, 50);
     pl3tVectors(CenterVol, Y0, 50);
     trisurf(Femur,'facealpha',0.5,'facecolor','cyan','edgecolor','none')
+    axis equal; grid on
 end

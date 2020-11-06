@@ -1,6 +1,6 @@
-function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOC_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface)
+function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOC_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface, debug_plots)
 
-debug_plots = 0;
+if nargin<5;    debug_plots = 0;         end
 V_all = CSs.V_all;
 Z0 = CSs.Z0;
 
@@ -49,6 +49,8 @@ PtsCondylesLat = EpiFem.Points(IdCdlPts(:,med_lat_ind(2)),:);
 
 % % debugging plots: plotting the lines between the points identified
 if debug_plots
+    figure
+    title('Line betweeen trace of condyles (Lat=black)')
     plot3(PtsCondylesLat(:,1), PtsCondylesLat(:,2), PtsCondylesLat(:,3),'ko');hold on
     plot3(PtsCondylesMed(:,1), PtsCondylesMed(:,2), PtsCondylesMed(:,3),'ro');
     N=size(PtsCondylesLat,1)*2;
@@ -103,7 +105,7 @@ PtMiddleCondyle         = mean(0.5*(PtsCondylesMed+PtsCondylesLat));
 Pt_AxisOnSurf_proj      = PtMiddleCondyle*VC; % middle point
 Epiphysis_Pts_DF_2D_RC  = EpiFem.Points*VC; % distal femur
 
-% THESE TRANSFORMATION ARE INVERSE - DOESN'T MAKE MUCH SENSE [LM]
+% THESE TRANSFORMATION ARE INVERSE [LM]
 %============================
 Pts_Proj_CLat           = [PtsCondylesLat;PtLatTopCondyle;PtLatTopCondyle]*VC;
 Pts_Proj_CMed           = [PtsCondylesMed;PtMedTopCondyle;PtMedTopCondyle]*VC;
@@ -188,4 +190,5 @@ switch art_surface
         DesiredArtSurfMed_Tri = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, PtsGroove_Med, Pts_0_C1, CoeffMorpho);
     otherwise
 end
+
 end

@@ -1,10 +1,16 @@
-function [CS, JCS] = CS_femur_EllipsoidsOnCondyles(Condyle_Lat,Condyle_Med, CS, in_mm, debug_plots)
+function [CS, JCS] = CS_femur_EllipsoidsOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm)
 
-% check units
-if nargin<4;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
-% debug plots off by default
-if nargin<5; debug_plots = 0; end
+% default behaviour: do not plot
+if nargin<5;    debug_plots = 0;         end
+if nargin<6;    in_mm = 1;               end
+if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
+
+% get sign correspondent to body side
+[side_sign, side_low] = bodySide2Sign(side);
+
+% joint names
+knee_name = ['knee_', side_low];
+hip_name  = ['hip_', side_low];
 
 % fitting ellipsoids
 [center_lat, radii_lat, evecs_lat] = ellipsoid_fit( Condyle_Lat.Points , '' );
@@ -22,23 +28,23 @@ CS.ellips_evec_lat = evecs_lat;
 KneeCenter = 0.5*(center_med+center_lat)';
 
 % Starting axes: X is orthog to Y and Z, which are not mutually perpend
-Z = normalizeV(center_lat-center_med); % points laterally
+Z = normalizeV(center_lat-center_med) * side_sign; 
 Y = normalizeV(CS.CenterFH_Renault - KneeCenter);
 X = normalizeV(cross(Y, Z));
 
 % define hip axes
 Zml_hip = normalizeV(cross(X, Y));
-JCS.hip_r.V = [X Y Zml_hip];
-JCS.hip_r.child_location = CS.CenterFH_Renault * dim_fact;
-JCS.hip_r.child_orientation = computeXYZAngleSeq(JCS.hip_r.V);
-JCS.hip_r.Origin = CS.CenterFH_Renault;
+JCS.(hip_name).V = [X Y Zml_hip];
+JCS.(hip_name).child_location = CS.CenterFH_Renault * dim_fact;
+JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
+JCS.(hip_name).Origin = CS.CenterFH_Renault;
 
 % define knee joint
 Y_knee = normalizeV(cross(Z, X));
-JCS.knee_r.V = [X Y_knee Z];
-JCS.knee_r.parent_location = KneeCenter * dim_fact;
-JCS.knee_r.parent_orientation = computeXYZAngleSeq(JCS.knee_r.V);
-JCS.knee_r.Origin = KneeCenter;
+JCS.(knee_name).V = [X Y_knee Z];
+JCS.(knee_name).parent_location = KneeCenter * dim_fact;
+JCS.(knee_name).parent_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
+JCS.(knee_name).Origin = KneeCenter;
 
 % debug plots
 if debug_plots == 1

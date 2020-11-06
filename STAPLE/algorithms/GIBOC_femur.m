@@ -1,6 +1,54 @@
-function [CS, JCS, FemurBL_r] = GIBOC_femur(Femur, DistFem, fit_method, result_plots, in_mm, debug_plots)
-
+% GIBOC_FEMUR Automatically define a reference system based on bone
+% morphology by fitting analytical shapes to the articular surfaces. It is
+% normally used within processTriGeomBoneSet.m in workflows to generate
+% musculoskeletal models. The GIBOC algorithm can also extract articular
+% surfaces.
 %
+%   [CS, JCS, FemurBL] = GIBOC_femur(femurTri,...
+%                                    side,...
+%                                    fit_method,...
+%                                    result_plots,...
+%                                    debug_plots,...
+%                                    in_mm)
+%
+% Inputs:
+%   femurTri - a MATLAB triangulation object representing a femur.
+%
+%   side - a string indicating the body side. Valid options: 'R', 'r' for 
+%       the right side, 'L' and 'l' for the left side.
+%
+%   fit_method - a string indicating the name to assign to the OpenSim body.
+%
+%   result_plots - 
+%
+%   debug_plots - 
+%       
+%   in_mm - (optional) indicates if the provided geometries are given in mm
+%       (value: 1) or m (value: 0). Please note that all tests and analyses
+%       done so far were performed on geometries expressed in mm, so this
+%       option is more a placeholder for future adjustments.
+%
+% Outputs:
+%   CS - 
+%
+%   JCS - 
+%
+%   FemurBL - 
+%
+% See also PROCESSTRIGEOMBONESET, KAI2014_FEMUR, GIBOC_TIBIA, GIBOC_PELVIS.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
+                                                   side,...
+                                                   fit_method,...
+                                                   result_plots,...
+                                                   debug_plots,...
+                                                   in_mm)
+
+                                               
 % depends on 
 % ????
 % FitCSA (?)
@@ -17,67 +65,53 @@ function [CS, JCS, FemurBL_r] = GIBOC_femur(Femur, DistFem, fit_method, result_p
 % ELLIPSOIDS
 % ellipsoid_fit
 
-% check units
-if nargin<5;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % result plots on by default, debug off
-if nargin<4; result_plots = 1; end
-if nargin<6; debug_plots = 0; end
+if nargin<2;    side = 'r';              end
+if nargin<3;    fit_method = 'cylinder'; end
+if nargin<4;    result_plots = 1;        end
+if nargin<5;    debug_plots = 0;         end
+if nargin<6;    in_mm = 1;               end
+if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
 
-% coordinate system structure to store results
-CS = struct();
-
-% if this is an entire femur then cut it in two parts
-% but keep track of all geometries
-if ~exist('DistFem','var') || isempty(DistFem)
-    [ U_DistToProx ] = femur_guess_CS( Femur, debug_plots );
-    [ProxFem, DistFem] = cutLongBoneMesh(Femur, U_DistToProx);
-else
-    % join two parts in one triangulation
-    ProxFemur = Femur;
-    Femur = TriUnite(ProxFemur, DistFem);
-end
-
-% default method is the cylinder fitting one as in Modenese et al. JBiomech
-% 2018
+% default algorithm: cylinder fitting (Modenese et al. JBiomech 2018)
 if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
     fit_method = 'cylinder';
 end
 
-% Get the mean edge length of the triangles composing the femur
-% This is necessary because the functions were originally developed for
-% triangulation with constant mean edge lengths of 0.5 mm
-PptiesFemur = TriMesh2DProperties( Femur );
+% it is assumed that, even for partial geometries, the femoral bone is
+% always provided as unique file. Previous versions of this function did
+% use separated proximal and distal triangulations. Check Git history if
+% you are interested in that.
+[ U_DistToProx ] = femur_guess_CS( femurTri, debug_plots);
+[ProxFem, DistFem] = cutLongBoneMesh(femurTri, U_DistToProx);
 
-% Assume triangles are equilaterals
-meanEdgeLength = sqrt( 4/sqrt(3) * PptiesFemur.TotalArea / Femur.size(1) );
+% Compute the coefficient for morphology operations
+CoeffMorpho = computeTriCoeffMorpho(femurTri);
 
-% Get the coefficient for morphology operations
-CoeffMorpho = 0.5 / meanEdgeLength ;
+% Get inertial eigen vectors V_all of the Femur 3D geometry and vol center
+[ V_all, CenterVol ] = TriInertiaPpties( femurTri );
 
-% Initial Coordinate system (from inertial axes and femoral head)
 %-------------------------------------
-% Z0: points upwards (inertial axis) 
-% Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
+% Initial Coordinate system (from inertial axes and femoral head):
+% * Z0: points upwards (inertial axis) 
+% * Y0: points medio-lat (from OT and Z0 in findFemoralHead.m)
 %-------------------------------------
-
-% Get eigen vectors V_all of the Femur 3D geometry and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties( Femur );
+% coordinate system structure to store coordinate system's info
+CS = struct();
+CS.CenterVol = CenterVol;
+CS.V_all = V_all;
 
 % Check that the distal femur is 'below' the proximal femur or invert Z0
 Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
-
-% store approximate Z direction and centre of mass of triangulation
 CS.Z0 = Z0;
-CS.CenterVol = CenterVol;
-CS.V_all = V_all;
 
 % Find Femoral Head Center
 % NB adds a CSs.Y0, (lateral)
 try
     % sometimes Renault2018 fails for sparse meshes
-    [CS, FemHeadACS] = GIBOC_femur_fitSphere2FemHead(ProxFem, CS, CoeffMorpho, debug_plots);
+    % FemHeadAS: articular surface of the hip
+    [CS, FemHeadTri] = GIBOC_femur_fitSphere2FemHead(ProxFem, CS, CoeffMorpho, debug_plots);
 catch
     % use Kai if GIBOC approach fails
     warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
@@ -90,18 +124,31 @@ end
 CS.X0 = cross(CS.Y0, CS.Z0);
 
 % Isolates the epiphysis
-EpiFem = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
+EpiFemTri = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
 
 % extract full femoral condyles
-[fullCondyle_Med, fullCondyle_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'full_condyles');
+[fullCondyle_Med_Tri, fullCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS, CoeffMorpho, 'full_condyles');
+% plot condyles to ensure medial and lateral sides are correct and surfaces are ok
+if debug_plots
+    figure(); subplot(1,2,1);
+    quickPlotTriang(femurTri); quickPlotTriang(fullCondyle_Lat_Tri,'b'); quickPlotTriang(fullCondyle_Med_Tri,'r');
+    title('Full Condyles (red: medial)');
+end
 
-% extract posterior part of condyles (points)
-% by fitting an ellipse on long convexhull edges extremities
-[postCondyle_Med, postCondyle_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS,  CoeffMorpho, 'post_condyles');
+% extract posterior part of condyles (points) by fitting an ellipse 
+% on long convexhull edges extremities
+[postCondyle_Med_Tri, postCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS,  CoeffMorpho, 'post_condyles');
+
+% exporting articular surfaces (more triangulations can be easily added)
+if nargout>3
+    ArtSurf.hip       = FemHeadTri;
+    ArtSurf.epiphysis = EpiFemTri;
+    ArtSurf.med_cond  = fullCondyle_Med_Tri;
+    ArtSurf.lat_cond  = fullCondyle_Lat_Tri;
+end
 
 % extract patellar grooves
 % [Groove_Med, Groove_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
-
 % Fit two spheres to patellar groove
 % CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
@@ -109,60 +156,63 @@ EpiFem = GIBOC_isolate_epiphysis(DistFem, Z0, 'distal');
 switch fit_method
     case 'spheres'
         % Fit two spheres on articular surfaces of posterior condyles
-        [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat, postCondyle_Med, CS);
+        [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side);
     case 'cylinder'
         % Fit the posterior condyles with a cylinder
-        [CS, JCS] = CS_femur_CylinderOnCondyles(postCondyle_Lat, postCondyle_Med, CS);
+        [CS, JCS] = CS_femur_CylinderOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side);
     case 'ellipsoids'
         % Fit the entire condyles with an ellipsoid
-        [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat, fullCondyle_Med, CS);
+        [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat_Tri, fullCondyle_Med_Tri, CS, side);
     otherwise
         error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
 end
 
+% joint names (extracted from JCS defined in the fit_methods)
+joint_name_list = fields(JCS);
+hip_name  = joint_name_list{strncmp(joint_name_list, 'hip', 3)};
+knee_name = joint_name_list{~strncmp(joint_name_list, 'hip', 3)};
+side_low = hip_name(end);
+
 % define segment ref system
 CS.Origin = CenterVol;
-CS.V = JCS.hip_r.V;
+CS.V = JCS.(hip_name).V; % needed for plotting of femurTri
 
 % landmark bone according to CS (only Origin and CS.V are used)
-FemurBL_r   = landmarkBoneGeom(Femur  , CS,     'femur_r');
-
-% check if right or left and correct CS
-% correctCSforLegSide(FemurBL_r)
+FemurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
 
 % result plot
 label_switch=1;
 if result_plots == 1
-    figure('Name','femur_r');
+    figure('Name',['femur_',side_low]);
     alpha = 0.5;
+    
+    % plot full femur and final JCSs
     subplot(2,2,[1,3]);
-    plotTriangLight(Femur, CS, 0)
-%     quickPlotRefSystem(CS);
-    quickPlotRefSystem(JCS.hip_r);
-    quickPlotRefSystem(JCS.knee_r);
+    plotTriangLight(femurTri, CS, 0)
+    quickPlotRefSystem(JCS.(hip_name));
+    quickPlotRefSystem(JCS.(knee_name));
     % add articular surfaces
     if strcmp(fit_method,'ellipsoids')
-        quickPlotTriang(fullCondyle_Lat, 'b')
-        quickPlotTriang(fullCondyle_Med, 'r')
+        quickPlotTriang(fullCondyle_Lat_Tri, 'b')
+        quickPlotTriang(fullCondyle_Med_Tri, 'r')
     else
-        quickPlotTriang(postCondyle_Lat, 'b')
-        quickPlotTriang(postCondyle_Med, 'r')
+        quickPlotTriang(postCondyle_Lat_Tri, 'b')
+        quickPlotTriang(postCondyle_Med_Tri, 'r')
     end
-    plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g' , alpha)
-%     quickPlotTriang(FemHead, 'g')
-
-    % plot markers and labels
-    plotBoneLandmarks(FemurBL_r, label_switch);
+    % add markers and labels
+    plotBoneLandmarks(FemurBL, label_switch);
     
-    subplot(2,2,2); % femoral head
+    % femoral head
+    subplot(2,2,2); 
     plotTriangLight(ProxFem, CS, 0); hold on
-    quickPlotRefSystem(JCS.hip_r);
+    quickPlotRefSystem(JCS.(hip_name));
     plotSphere(CS.CenterFH_Renault, CS.RadiusFH_Renault, 'g', alpha);
     
+    % distal femur
     subplot(2,2,4);
     plotTriangLight(DistFem, CS, 0); hold on
-    quickPlotRefSystem(JCS.knee_r);
-    
+    quickPlotRefSystem(JCS.(knee_name));
+    % plot fitting method
     switch fit_method
         case 'spheres'
             plotSphere(CS.sphere_center_lat, CS.sphere_radius_lat, 'b', alpha);
@@ -184,6 +234,6 @@ end
 % quickPlotTriang(Groove_Med, 'r')
 % plotSphere(CS.patgroove_center_med,CS.patgroove_radius_med, 'r', alpha);
 % plotSphere(CS.patgroove_center_lat,CS.patgroove_radius_lat, 'b', alpha);
-
+    
 end
 
