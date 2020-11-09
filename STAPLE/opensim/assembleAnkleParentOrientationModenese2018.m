@@ -22,23 +22,35 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-function TibiaStruct = assembleAnkleParentOrientationModenese2018(TibiaStruct, TalusStruct)
+function TibiaStruct = assembleAnkleParentOrientationModenese2018(TibiaStruct, TalusStruct, side_raw)
+
+if nargin<3
+    % guess side from structure: it should be ok, as processTriGeomBoneSet uses
+    % field that end with side.
+    side = inferBodySideFromAnatomicStruct(TalusStruct);
+else
+    [~, side] = bodySide2Sign(side_raw);
+end
+
+% joint names
+ankle_name = ['ankle_', side];
+knee_name = ['knee_', side];
 
 % take Z from ankle joint (axis of rotation)
-Zparent  = TalusStruct.ankle_r.V(:,3);
+Zparent  = TalusStruct.(ankle_name).V(:,3);
 
 % take line joining talus and knee centres
-if isequal(size(TibiaStruct.knee_r.Origin), [1, 3])
-    TibiaStruct.knee_r.Origin = TibiaStruct.knee_r.Origin';
+if isequal(size(TibiaStruct.(knee_name).Origin), [1, 3])
+    TibiaStruct.(knee_name).Origin = TibiaStruct.(knee_name).Origin';
 end
-Ytemp = (TibiaStruct.knee_r.Origin - TalusStruct.ankle_r.Origin)/...
-    norm(TibiaStruct.knee_r.Origin - TalusStruct.ankle_r.Origin);
+Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
+    norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
 
 % Y and Z orthogonal
 Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
 Xparent  = normalizeV(cross(Ytemp, Zparent));
 
 % assigning pose matrix and parent orientation
-TibiaStruct.ankle_r.V = [Xparent Yparent Zparent];
-TibiaStruct.ankle_r.parent_orientation = computeXYZAngleSeq(TibiaStruct.ankle_r.V);
+TibiaStruct.(ankle_name).V = [Xparent Yparent Zparent];
+TibiaStruct.(ankle_name).parent_orientation = computeXYZAngleSeq(TibiaStruct.(ankle_name).V);
 end

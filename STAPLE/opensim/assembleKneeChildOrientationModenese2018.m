@@ -24,28 +24,40 @@
 %  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function TibiaStruct = assembleKneeChildOrientationModenese2018(FemurStruct, TibiaStruct, TalusStruct)
+function TibiaStruct = assembleKneeChildOrientationModenese2018(FemurStruct, TibiaStruct, TalusStruct, side_raw)
+
+if nargin<4
+    % guess side from structure: it should be ok, as processTriGeomBoneSet uses
+    % field that end with side.
+    side = inferBodySideFromAnatomicStruct(TalusStruct);
+else
+    [~, side] = bodySide2Sign(side_raw);
+end
+
+% joint names
+knee_name = ['knee_', side];
+ankle_name = ['ankle_', side];
 
 % take Z from knee joint (axis of rotation)
-Zparent  = FemurStruct.knee_r.V(:,3);
+Zparent  = FemurStruct.(knee_name).V(:,3);
 
 % take line joining talus and knee centres
-if isequal(size(FemurStruct.knee_r.Origin), [1, 3])
-    TibiaStruct.knee_r.Origin = FemurStruct.knee_r.Origin';
+if isequal(size(FemurStruct.(knee_name).Origin), [1, 3])
+    TibiaStruct.(knee_name).Origin = FemurStruct.(knee_name).Origin';
 else
-    TibiaStruct.knee_r.Origin = FemurStruct.knee_r.Origin;
+    TibiaStruct.(knee_name).Origin = FemurStruct.(knee_name).Origin;
 end
 
 % vertical axis joining knee and ankle joint centres
-Ytemp = (TibiaStruct.knee_r.Origin - TalusStruct.ankle_r.Origin)/...
-    norm(TibiaStruct.knee_r.Origin - TalusStruct.ankle_r.Origin);
+Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
+    norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
 
 % Y and Z orthogonal
 Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
 Xparent  = normalizeV(cross(Ytemp, Zparent));
 
 % assigning pose matrix and child orientation
-TibiaStruct.knee_r.V = [Xparent Yparent Zparent];
-TibiaStruct.knee_r.child_orientation = computeXYZAngleSeq(TibiaStruct.knee_r.V);
+TibiaStruct.(knee_name).V = [Xparent Yparent Zparent];
+TibiaStruct.(knee_name).child_orientation = computeXYZAngleSeq(TibiaStruct.(knee_name).V);
 
 end

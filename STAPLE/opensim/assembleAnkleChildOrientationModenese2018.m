@@ -21,10 +21,21 @@
 %  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function TalusStruct = assembleAnkleChildOrientationModenese2018(TalusStruct, CalcnStruct)
+function TalusStruct = assembleAnkleChildOrientationModenese2018(TalusStruct, CalcnStruct, side_raw)
+
+if nargin<3
+    % guess side from structure: it should be ok, as processTriGeomBoneSet uses
+    % field that end with side.
+    side = inferBodySideFromAnatomicStruct(TalusStruct);
+else
+    [~, side] = bodySide2Sign(side_raw);
+end
+
+% joint names
+ankle_name = ['ankle_', side];
 
 % take Z from ankle joint (axis of rotation)
-Zchild  = normalizeV(TalusStruct.ankle_r.V(:,3));
+Zchild  = normalizeV(TalusStruct.(ankle_name).V(:,3));
 
 % take X ant-post axis of the calcaneus
 Xtemp = CalcnStruct.V(:,1);
@@ -34,8 +45,8 @@ Xchild = normalizeV(Xtemp - Zchild* dot(Zchild,Xtemp)/norm(Zchild));
 Ychild  = normalizeV(cross(Zchild, Xtemp));
 
 % assigning pose matrix and child orientation
-TalusStruct.ankle_r.V = [Xchild Ychild Zchild];
-TalusStruct.ankle_r.child_orientation = computeXYZAngleSeq(TalusStruct.ankle_r.V);
+TalusStruct.(ankle_name).V = [Xchild Ychild Zchild];
+TalusStruct.(ankle_name).child_orientation = computeXYZAngleSeq(TalusStruct.(ankle_name).V);
 
 
 end

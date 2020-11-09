@@ -22,20 +22,32 @@
 %  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function TibiaStruct = assembleAnkleParentOrientation(TibiaStruct, TalusStruct)
+function TibiaStruct = assembleAnkleParentOrientation(TibiaStruct, TalusStruct, side_raw)
+
+if nargin<3
+    % guess side from structure: it should be ok, as processTriGeomBoneSet uses
+    % field that end with side.
+    side = inferBodySideFromAnatomicStruct(TibiaStruct);
+else
+    [~, side] = bodySide2Sign(side_raw);
+end
+
+% joint names
+ankle_name = ['ankle_', side];
+knee_name = ['knee_', side];
 
 % take Z from ankle joint (axis of rotation)
-Zpar  = normalizeV(TalusStruct.ankle_r.V(:,3));
+Zpar  = normalizeV(TalusStruct.(ankle_name).V(:,3));
 
 % take vertical axis of the tibia
-Ytemp = TibiaStruct.knee_r.V(:,2);
+Ytemp = TibiaStruct.(knee_name).V(:,2);
 
 % Y and Z orthogonal
 Ypar = normalizeV(Ytemp - Zpar* dot(Zpar,Ytemp)/norm(Zpar));
 Xpar = normalizeV(cross(Ytemp, Zpar));
 
 % assigning pose matrix and parent orientation
-TibiaStruct.ankle_r.V = [Xpar Ypar Zpar];
-TibiaStruct.ankle_r.parent_orientation = computeXYZAngleSeq(TibiaStruct.ankle_r.V);
+TibiaStruct.(ankle_name).V = [Xpar Ypar Zpar];
+TibiaStruct.(ankle_name).parent_orientation = computeXYZAngleSeq(TibiaStruct.(ankle_name).V);
 
 end
