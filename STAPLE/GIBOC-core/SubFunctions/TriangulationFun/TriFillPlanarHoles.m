@@ -1,7 +1,11 @@
-function [ TRout ] = TriFillPlanarHoles( TRin)
-%TRIFILLPLANARHOLES Fill planar convex holes in the triangulation
+% TRIFILLPLANARHOLES Fill planar convex holes in the triangulation
 %   For now the holes have to be planar
 %   FOR NOW WORKS WITH ONLY ONE HOLE
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ TRout ] = TriFillPlanarHoles( TRin)
 
 FB = TRin.freeBoundary;
 

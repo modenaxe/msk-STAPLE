@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ w0 , w1 , w2 , f1 , f2 , f3 , g0 , g1 , g2 ] = Subexpressions (w0 , w1 , w2) 
 %A Macro
 %   Detailed explanation goes here

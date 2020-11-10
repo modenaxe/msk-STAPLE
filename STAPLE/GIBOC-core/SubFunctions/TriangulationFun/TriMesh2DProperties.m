@@ -1,6 +1,9 @@
+% TRIMESH2DPROPERTIES Compute some 2D properties of a triangulation object.
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ Properties ] = TriMesh2DProperties( TR )
-%TriMesh2DProperties Compute some 2D properties of a Triangulation object
-%TR
 
 Properties.Name = inputname(1);
 

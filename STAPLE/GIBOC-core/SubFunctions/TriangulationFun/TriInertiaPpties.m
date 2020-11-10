@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [eigVctrs, CenterVol, InertiaMatrix, D, mass ] = TriInertiaPpties( Tr )
 %Get inertia of polyhedra of triangular faces
 

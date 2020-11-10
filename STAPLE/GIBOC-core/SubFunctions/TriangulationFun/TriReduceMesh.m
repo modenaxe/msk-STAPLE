@@ -1,11 +1,15 @@
-function [ TRout ] = TriReduceMesh( TR, ElmtsKept, NodesKept )
-%Remove unnecessary Node and Renumber the elements accordingly 
-%   Detailed explanation goes here
+% TRIREDUCEMESH Remove unnecessary Node and Renumber the elements accordingly 
+% Inputs:
 % TR : A triangulation object with n Elements
 % ElmtsKept : A nx1 vectors of index of the rows of kept elments, or a
 % binary indicating kept Elements
 % NodesKept : ID of kept nodes of corresponding to TR connectibity list OR 
 % list of nodes coordinates
+% -------------------------------------------------------------------------
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ TRout ] = TriReduceMesh( TR, ElmtsKept, NodesKept )
 
 if nargin >2
     

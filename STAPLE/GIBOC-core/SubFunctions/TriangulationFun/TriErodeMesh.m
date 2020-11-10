@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ TRout ] = TriErodeMesh( TRin, nbElmts )
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here

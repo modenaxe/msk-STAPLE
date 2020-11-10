@@ -1,11 +1,16 @@
-function [ TrOut ] = TriFixNormals( TrIn)
-%Check if the triangulation is correctly oriented; normals should be
+% TRIFIXNORMALS 
+% Check if the triangulation is correctly oriented; normals should be
 %pointing outwards. Randomly selct 2500 Points on the surface and move them
 %by 5 mm in the normal direction. Fit a convexhull on the points before
 %and after the move and compare volume. Volume should be higher after if
 %normal are outwardly orientated.
-%
-%   Detailed explanation goes here
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ TrOut ] = TriFixNormals( TrIn)
+
+
 Nodes = TrIn.Points;
 Elmts = TrIn.ConnectivityList;
 

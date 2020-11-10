@@ -1,6 +1,10 @@
+% TRIKEEPLARGESTPATCH Keep the largest (by area) connected patch of a 
+% triangulation object.
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ TRout ] = TriKeepLargestPatch( TRin )
-%TriKeepLargestPatch : Keep the largest (by area) connected patch of a triangulation
-% Object
 
 Trin2 = TriErodeMesh(TRin,1);
 

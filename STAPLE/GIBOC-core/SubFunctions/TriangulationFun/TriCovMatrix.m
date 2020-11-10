@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ CovM ] = TriCovMatrix( TR )
 %Compute the weighted Cov matrix of a triangulation by taking the triangle
 %center and weighting them by their corresponding area

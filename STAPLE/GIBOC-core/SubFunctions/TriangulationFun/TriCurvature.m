@@ -1,5 +1,4 @@
-function [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=TriCurvature(TR,usethird, Rot0)
-% This function calculates the principal curvature directions and values
+% TRICURVATURE Calculate the principal curvature directions and values
 % of a triangulated mesh. 
 %
 % The function first rotates the data so the normal of the current
@@ -74,12 +73,14 @@ function [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=TriCurvature(TR,usethird, R
 %   plot3(V(Cgaussian<0,1),V(Cgaussian<0,2),V(Cgaussian<0,3),'r.');
 %   plot3(V(Cgaussian>0,1),V(Cgaussian>0,2),V(Cgaussian>0,3),'b.');
 %   axis equal; view(3)
-% 
+% ------------------------------------------------------------------------%
 % Function is written by D.Kroon University of Twente (August 2011)  
 % Last Update, 15-1-2014 D.Kroon at Focal.
-
+% ------------------------------------------------------------------------%
 % Slightly modified for triangulation inputs
 % Last modification, 15-11-2017; JB Renault at AMU.
+% ------------------------------------------------------------------------%
+function [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=TriCurvature(TR,usethird, Rot0)
 
 % Check inputs
 if(nargin<2), usethird=false; end

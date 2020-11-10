@@ -1,17 +1,6 @@
-% TRISLICEOBJALONGAXIS Convert a rotation matrix in the orientation vector
-% used in OpenSim (X-Y-Z axes rotation order).
-%
-%   orientation = computeXYZAngleSeq(aRotMat)
-%
-% Inputs:
-%   aRotMat - a rotation matrix, normally obtained writing as columns the
-%       axes of the body reference system, expressed in global reference
-%       system.
-%
-% Outputs:
-%   orientation - the sequence of angles used in OpenSim to define the
-%       joint orientation. Sequence of rotation is X-Y-Z.
-%
+% TRISLICEOBJALONGAXIS Slice a MATLAB triangulation object TriObj along a
+% specified axis. Notation and inputs are consistent with the other
+% GIBOC-Knee functions used to manipulate triangulations.
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese, 2020
 %  Copyright 2020 Luca Modenese
@@ -19,7 +8,8 @@
 
 function [Areas, Alt, maxArea, maxAreaInd, maxAlt] = TriSliceObjAlongAxis(...
                                                         TriObj, Axis, step,...
-                                                        cut_offset, debug_plot)
+                                                        cut_offset,...
+                                                        debug_plot)
 
 if nargin<4
     cut_offset = 0.5;

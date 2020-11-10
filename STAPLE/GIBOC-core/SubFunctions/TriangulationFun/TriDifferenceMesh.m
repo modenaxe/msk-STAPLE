@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ TRout ] = TriDifferenceMesh( TR1 , TR2 )
 %Boolean difference between original mesh TR1 and another mesh TR2
 %   Detailed explanation goes here

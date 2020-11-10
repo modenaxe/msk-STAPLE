@@ -1,4 +1,3 @@
-function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debug_plots )
 %TriPlanIntersect:  Intersection between a 3D Triangulation object (Tr)
 %                   and a 3D plan defined by normal vector n , d
 % Output :
@@ -16,7 +15,9 @@ function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debu
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-%% Check Arguments in
+function [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debug_plots )
+
+% Check Arguments in
 if nargin < 3
     error("Not engough input argument for TriPlanIntersect");
 elseif nargin == 3

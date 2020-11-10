@@ -1,5 +1,4 @@
-function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
-%TriDilateMesh
+% TRIDILATEMESH
 % This function is analog to a dilate function performed on binary images 
 % (https://en.wikipedia.org/wiki/Mathematical_morphology)
 % In :
@@ -10,7 +9,12 @@ function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 %   - nbElemts : The number of neigbour elements/facets that will be dilated (analog to the number of pixel of the dilation)
 % Out :
 %   - TRout : the dilated triangulation
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 
+function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 
 % Round the number of elements to upper integer;
 nbElmts = ceil(nbElmts);

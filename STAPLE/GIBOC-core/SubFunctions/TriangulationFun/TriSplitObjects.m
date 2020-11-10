@@ -1,5 +1,5 @@
-function [TrSplitted] = TriSplitObjects(TrIn)
-%TriSplitObjects splits triangulation composed of multiple 
+% TRISPLITOBJECTS splits triangulation composed of multiple unconnected
+% parts.
 %
 % Input:
 %   TrIn        A triangulation object containing multiple unconnected
@@ -9,8 +9,13 @@ function [TrSplitted] = TriSplitObjects(TrIn)
 %   TrSplitted: A structure containing the splitted parts of Tr
 %               TrSplitted(i).Tr each separated Triangulation object
 %               TrSplitted(i).Vol the volume of the Triangulation object
-
+%
 % -------------------------------------------------------------------------
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%--------------------------------------------------------------------------
+
+function [TrSplitted] = TriSplitObjects(TrIn)
 
 %% Part for developmment
 % clear all

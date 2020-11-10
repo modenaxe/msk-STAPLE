@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ TRout ] = TriConnectedPatch( TR, PtsInitial  )
 %TriConnectedPatch : Find the connected mesh (elements sharing at least an
 %edge) starting from a given point (not necessarily lying on the mesh)
