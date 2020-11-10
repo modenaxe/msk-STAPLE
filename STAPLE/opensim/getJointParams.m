@@ -48,7 +48,7 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-function JointParamsStruct = getJointParams(joint_name, parentBodyStruct, childBodyStruct)
+function JointParamsStruct = getJointParams(joint_name, parentBodyStruct, childBodyStruct, side)
 
 %% Ensure that location and orientation are set on both parent and child
 % empty input as parentBodyCS means all set to zero
@@ -110,42 +110,41 @@ switch joint_name
         JointParamsStruct.coordsNames         = {[cb,'_tilt'],[cb,'_list'],[cb,'_rotation'], [cb,'_tx'],[cb,'_ty'], [cb,'_tz']};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.rotationAxes        = 'zxy';  
-    case 'hip_r'
-        JointParamsStruct.name                = 'hip_r';
+    case ['hip_', side]
+        JointParamsStruct.name                = ['hip_', side];
         JointParamsStruct.parent              = 'pelvis';
-        JointParamsStruct.child               = 'femur_r';
-        JointParamsStruct.coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
+        JointParamsStruct.child               = ['femur_', side];
+        JointParamsStruct.coordsNames         = {['hip_flexion_', side],['hip_adduction_', side],['hip_rotation_', side]};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational'};
         JointParamsStruct.rotationAxes        = 'zxy';
-    case 'knee_r'
-        JointParamsStruct.name               = 'knee_r';
-        JointParamsStruct.parent             = 'femur_r';
-        JointParamsStruct.child              = 'tibia_r';
-        JointParamsStruct.coordsNames        = {'knee_angle_r'};
+    case ['knee_', side]
+        JointParamsStruct.name               = ['knee_', side];
+        JointParamsStruct.parent             = ['femur_', side];
+        JointParamsStruct.child              = ['tibia_', side];
+        JointParamsStruct.coordsNames        = {['knee_angle_', side]};
+        JointParamsStruct.coordsTypes        = {'rotational'};
+        JointParamsStruct.rotationAxes       = 'zxy';   
+    case ['ankle_', side]
+        JointParamsStruct.name               = ['ankle_', side];
+        JointParamsStruct.parent             = ['tibia_', side];
+        JointParamsStruct.child              = ['talus_', side];
+        JointParamsStruct.coordsNames        = {['ankle_angle_', side]};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.rotationAxes       = 'zxy';
-        
-    case 'ankle_r'
-        JointParamsStruct.name               = 'ankle_r';
-        JointParamsStruct.parent             = 'tibia_r';
-        JointParamsStruct.child              = 'talus_r';
-        JointParamsStruct.coordsNames        = {'ankle_angle_r'};
-        JointParamsStruct.coordsTypes        = {'rotational'};
-        JointParamsStruct.rotationAxes       = 'zxy';
-    case 'subtalar_r'
-        JointParamsStruct.name               = 'subtalar_r';
-        JointParamsStruct.parent             = 'talus_r';
-        JointParamsStruct.child              = 'calcn_r';
-        JointParamsStruct.coordsNames        = {'subtalar_angle_r'};
+    case ['subtalar_', side]
+        JointParamsStruct.name               = ['subtalar_', side];
+        JointParamsStruct.parent             = ['talus_', side];
+        JointParamsStruct.child              = ['calcn_', side];
+        JointParamsStruct.coordsNames        = {['subtalar_angle_', side]};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.rotationAxes       = 'zxy';
     case 'patellofemoral_r'
-        JointParamsStruct.name               = 'patellofemoral_r';
-        JointParamsStruct.parent             = 'femur_r';
-        JointParamsStruct.child              = 'patella_r';
-        JointParamsStruct.coordsNames        = {'knee_angle_r_beta'};
+        JointParamsStruct.name               = ['patellofemoral_', side];
+        JointParamsStruct.parent             = ['femur_', side];
+        JointParamsStruct.child              = ['patella_', side];
+        JointParamsStruct.coordsNames        = {['knee_angle_',side,'_beta']};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.rotationAxes       = 'zxy';
     otherwise
-        error('getJointParams.m Unsupported joint.')
+        error(['getJointParams.m Unsupported joint ',joint_name ,'.']);
 end
