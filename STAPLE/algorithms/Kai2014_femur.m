@@ -1,34 +1,41 @@
-%-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-% Licensed under the Apache License, Version 2.0 (the "License");         %
-% you may not use this file except in compliance with the License.        %
-% You may obtain a copy of the License at                                 %
-% http://www.apache.org/licenses/LICENSE-2.0.                             %
-%                                                                         % 
-% Unless required by applicable law or agreed to in writing, software     %
-% distributed under the License is distributed on an "AS IS" BASIS,       %
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         %
-% implied. See the License for the specific language governing            %
-% permissions and limitations under the License.                          %
-%                                                                         %
-%    Authors:  Jean-Baptiste Renault & Luca Modenese                      %
-%    email:    l.modenese@imperial.ac.uk                                  % 
-% ----------------------------------------------------------------------- %
-% Custom implementation of the method for defining a reference system of
-% the femur described in the following publication: 
-% Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 1229-1233.
-% https://doi.org/10.1016/j.jbiomech.2013.12.013
+% KAI2014_FEMUR Implement a custom implementation of the method for 
+% defining a reference system of the femur described in the following 
+% publication: Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 
+% 1229-1233. https://doi.org/10.1016/j.jbiomech.2013.12.013
+% The algorithm creates a reference system from the centre of the femoral 
+% head and the centres of the femoral condyles, after identifying these
+% feature through slicing the bone geometry with planes perpendicular to
+% the longitudinal axis and anterior-posterior axis respectively.
 %
-% This implementation includes several non-obvious checks to ensure that
-% the bone geometry is always sliced in the correct direction.
-% ----------------------------------------------------------------------- %
+%   [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side, result_plots, ...
+%                                      debug_plots, in_mm)
+%
+% Inputs:
+%   femurTri - MATLAB triangulation object of the entire femoral geometry.
+%
+%   side - 
+%
+%   result_plots - enable plots of final fittings and reference systems. 
+%       Value: 1 (default) or 0.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+% Outputs:
+%   CS - update input structure including radii and centres of the spheres
+%       fitted to the femoral condyles identified by the algorithm.
+%
+% See also KAI2014_FEMUR, KAI2014_FEMUR_FITSPHERE2FEMHEAD.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 
 function [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side, result_plots, debug_plots, in_mm)
 
 % result plots on by default, debug off
 if nargin<2;    side = 'r';       end
-if nargin<3;    result_plots = 0; end
+if nargin<3;    result_plots = 1; end
 if nargin<4;    debug_plots = 0;  end
 if nargin<5;    in_mm = 1;        end
 if in_mm == 1;  dim_fact = 0.001; else;  dim_fact = 1; end

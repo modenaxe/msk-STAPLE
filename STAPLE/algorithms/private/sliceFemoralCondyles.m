@@ -1,19 +1,51 @@
-% used by KaiFemur
-% slice starts with just one curve, until it slices two condyles
-% when there are two curves, the next time there is one is the end of
-% loop
-function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS, debug_plots)
+% SLICEFEMORAL2CONDYLES Slice femoral condyles for use in Kai2014_femur.
+% This function is practically identical to 
+% Kai2014_femur_fitSpheres2Condyles and it is used in one of the sanity
+% checks in a recursive manner.
+%
+%   CS = sliceFemoralCondyles(DistFemTri, CS, debug_plots)
+%
+% Inputs:
+%   DistFemTri - MATLAB Triangulation object for the distal femur (most 
+%       distal third of the bone geometry, normally).
+%
+%   CS - structure including the reference systems and parameters
+%       resulting from the geometrical analysis of the femur. In input it
+%       requires a preliminary reference system defined as follow:
+%           X0: ant-posterior direction, pointing posteriorly
+%           Y0: medio-lateral direction, pointing medially
+%           Z0: prox-distal direction, pointing cranially
+%       These fields are initialised by Kai2014_femur_fitSphere2FemHead.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+% Outputs:
+%   CS - update input structure including radii and centres of the spheres
+%       fitted to the femoral condyles identified by the algorithm.
+%
+%   FC_Med_Pts - points identified to belong to the medial femoral condyle.
+%
+%   FC_Lat_Pts - points identified to belong to the lateral femoral condyle.
+%
+% See also KAI2014_FEMUR_FITSPHERES2CONDYLES, KAI2014_FEMUR, 
+% KAI2014_FEMUR_FITSPHERE2FEMHEAD.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, loosely based on GIBOK prototype. 
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots)
 
+% X0 points backwards in GIBOK
 X0 = CS.X0;
 Z0 = CS.Z0;
 
 area_limit = 4;%mm^2
 sections_limit = 15;
-% X0 points backwards in GIBOK
 
 % most posterior point
-[~ , I_Post_FC] = max( DistFem.Points*-X0 );
-MostPostPoint = DistFem.Points(I_Post_FC,:);
+[~ , I_Post_FC] = max( DistFemTri.Points*-X0 );
+MostPostPoint = DistFemTri.Points(I_Post_FC,:);
 
 FC_Med_Pts = [];
 FC_Lat_Pts = [];
@@ -22,7 +54,7 @@ count = 1;
 
 % debug plots
 if debug_plots == 1
-    quickPlotTriang(DistFem, [], 1);
+    quickPlotTriang(DistFemTri, [], 1);
     plot3(MostPostPoint(:,1), MostPostPoint(:,2), MostPostPoint(:,3),'g*', 'LineWidth', 3.0);
 end
 
@@ -30,7 +62,7 @@ keep_slicing = 1;
 
 while keep_slicing
 
-    [ Curves , ~, ~ ] = TriPlanIntersect(DistFem, X0 , d );
+    [ Curves , ~, ~ ] = TriPlanIntersect(DistFemTri, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices
@@ -39,12 +71,12 @@ while keep_slicing
     
     % check if the curves touch the bounding box of DistFem
     for cn = 1:Nbr_of_curves
-        if abs(max(Curves(cn).Pts * Z0)-max(DistFem.Points * Z0)) < 8 %mm
+        if abs(max(Curves(cn).Pts * Z0)-max(DistFemTri.Points * Z0)) < 8 %mm
             disp('The plane sections are as high as the distal femur.')
             disp('The condyle slicing is happening in the incorrect direction of the anterior-posterior axis.')
             disp('Inverting axis.')
             CS.X0 = -CS.X0;
-            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS, debug_plots);
+            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots);
             return
         end
     end
