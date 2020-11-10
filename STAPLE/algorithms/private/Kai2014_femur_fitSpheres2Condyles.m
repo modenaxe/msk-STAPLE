@@ -1,8 +1,50 @@
-% used by KaiFemur
-% slice starts with just one curve, until it slices two condyles
-% when there are two curves, the next time there is one is the end of
-% loop
-function CS = Kai2014_femur_fitSpheres2Condyles(DistFem, CS, debug_plots)
+% KAI2014_FEMUR_FITSPHERES2CONDYLES Slice the distal part of the femoral
+% geometries using planes perpendicular to the anterio-posterior direction.
+% It starts from the most posterior point of the condyles, that is normally
+% on the medial condyle. This point, and the geometrical operations, are
+% performed relying on the reference system X0-Y0-Z0 defined in 
+% Kai2014_femur_fitSphere2FemHead.m, which has proved reliable in our
+% tests. 
+% The function assumes that the first slice(s) will only produce one
+% slicing area (cutting just the medial condyle), then two slicing areas
+% (cutting plane reaching also lateral condyles) and when the slicing
+% profile is again a single area the function will stop, assuming the
+% entire condyles have been slices. At that point each condyles will be
+% fit using a spherical least-squares fit.
+% Despite the simplicity of the algorithm, several things can go wrong,
+% especially if a low-quality mesh is being processed, so there are
+% multiple checks for ensuring that the cuts are being performed in the
+% correct directions and according to the algorithm.
+%
+%   CS = Kai2014_femur_fitSpheres2Condyles(DistFemTri, CS, debug_plots)
+%
+% Inputs:
+%   DistFemTri - MATLAB Triangulation object for the distal femur (most 
+%       distal third of the bone geometry, normally).
+%
+%   CS - structure including the reference systems and parameters
+%       resulting from the geometrical analysis of the femur. In input it
+%       requires a preliminary reference system defined as follow:
+%           X0: ant-posterior direction, pointing posteriorly
+%           Y0: medio-lateral direction, pointing medially
+%           Z0: prox-distal direction, pointing cranially
+%       These fields are initialised by Kai2014_femur_fitSphere2FemHead.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+% Outputs:
+%   CS - update input structure including radii and centres of the spheres
+%       fitted to the femoral condyles identified by the algorithm.
+%
+% See also KAI2014_FEMUR, KAI2014_FEMUR_FITSPHERE2FEMHEAD.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, loosely based on GIBOK prototype. 
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+
+
+function CS = Kai2014_femur_fitSpheres2Condyles(DistFemTri, CS, debug_plots)
 
 % main plots are in the main method function. 
 % these debug plots are to see the details of the method
@@ -15,11 +57,14 @@ Z0 = CS.Z0;
 
 area_limit = 4;%mm^2
 sections_limit = 15;
+dist_area_centroid_threshold = 20; %mm
 % X0 points backwards in GIBOK
 
 % most posterior point
-[~ , I_Post_FC] = max( DistFem.Points*-X0 );
-MostPostPoint = DistFem.Points(I_Post_FC,:);
+% NOTE: it assumes that the mostPosteriorPoint is MEDIAL, if that is not
+% the case there will be a check at the end of the function.
+[~ , I_Post_FC] = max( DistFemTri.Points*-X0 );
+MostPostPoint = DistFemTri.Points(I_Post_FC,:);
 
 FC_Med_Pts = [];
 FC_Lat_Pts = [];
@@ -28,7 +73,7 @@ count = 1;
 
 % debug plot
 if debug_plots == 1
-    quickPlotTriang(DistFem, [], 1);
+    quickPlotTriang(DistFemTri, [], 1);
     plotDot(MostPostPoint,'g', 5.0);
 end
 
@@ -36,7 +81,7 @@ keep_slicing = 1;
 
 while keep_slicing
 
-    [ Curves , ~, ~ ] = TriPlanIntersect(DistFem, X0 , d );
+    [ Curves , ~, ~ ] = TriPlanIntersect(DistFemTri, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices
@@ -45,12 +90,12 @@ while keep_slicing
     
     % check if the curves touch the bounding box of DistFem
     for cn = 1:Nbr_of_curves
-        if abs(max(Curves(cn).Pts * Z0)-max(DistFem.Points * Z0)) < 8 %mm
+        if abs(max(Curves(cn).Pts * Z0)-max(DistFemTri.Points * Z0)) < 8 %mm
             disp('The plane sections are as high as the distal femur.')
             disp('The condyle slicing is happening in the incorrect direction of the anterior-posterior axis.')
             disp('Inverting axis.')
             CS.X0 = -CS.X0;
-            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFem, CS, debug_plots);
+            [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots);
             break
         end
     end
@@ -85,9 +130,15 @@ while keep_slicing
         end
         % section leading to very small areas are also removed.
         % this condition is rarely reached
-        [ ~, Area_sec2 ] = PlanPolygonCentroid3D( Curves(2).Pts );
+        [ Centroid2, Area_sec2 ] = PlanPolygonCentroid3D( Curves(2).Pts );
         if abs(Area_sec2)<area_limit
             disp('Slice recognized as artefact (small area). Skipping it.')
+            continue
+        end
+        % section might and up in the same condyle even
+        [ Centroid1, ~ ] = PlanPolygonCentroid3D( Curves(1).Pts );
+        if norm(Centroid1-Centroid2)< dist_area_centroid_threshold
+            disp('Slice recognized as artefact (two areas on same condyle). Skipping it.')
             continue
         end
         % needs to identify which is the section near starting point
@@ -126,6 +177,22 @@ end
 % centre of the knee if the midpoint between spheres
 KneeCenter = 0.5*(center_med+center_lat);
 
+% the Kai2014_femur_fitSphere2FemHead.m function does a good job at
+% initialising the directions of the X0-Y0-Z0 reference system correctly,
+% while this slicing function can identify medial and lateral condyles 
+% incorrectly. This check verifies that the identification is correct,
+% otherwise it switches the condyles.
+med_v_to_check = (center_med - center_lat);
+if sign(dot(CS.Y0, med_v_to_check))<0
+    warning('Femur_Kai: Incorrect identification of medial and lateral condyles. Inverting M-L axis')
+    center_lat_temp = center_med;
+    radius_lat_temp = radius_med;
+    center_med = center_lat;
+    radius_med = radius_lat;
+    center_lat = center_lat_temp;
+    radius_lat = radius_lat_temp;
+end
+
 % store axes in structure
 CS.Center_Lat = center_lat;
 CS.Radius_Lat = radius_lat;
@@ -137,6 +204,16 @@ CS.KneeCenter = KneeCenter;
 if debug_plots == 1
     plotSphere(center_med, radius_med, 'r', 0.4);
     plotSphere(center_lat, radius_lat, 'b', 0.4);
+end
+
+% check sections
+if debug_plots
+    figure()
+    plot3(FC_Med_Pts(:,1), FC_Med_Pts(:,2), FC_Med_Pts(:,3),'r.');
+    hold on; axis equal
+    plot3(FC_Lat_Pts(:,1), FC_Lat_Pts(:,2), FC_Lat_Pts(:,3),'b.');
+    plotDot(MostPostPoint,'g', 2.0);
+    title('check if slices are reasonable (red:medial')
 end
 
 end
