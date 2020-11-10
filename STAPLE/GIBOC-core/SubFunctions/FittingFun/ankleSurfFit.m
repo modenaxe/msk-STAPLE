@@ -1,4 +1,4 @@
-function [ TibiaElmtsIDOK ] = AnkleSurfFit( TR_AnkleSurf, TR_Tibia, V )
+function [ TibiaElmtsIDOK ] = ankleSurfFit( TR_AnkleSurf, TR_Tibia, V )
 %Find the ID of the elements of the distal tibia that lies on a +/- 1 mm poly22 fit of a initial estimate of
 %the surface (TR_AnkleSurf)
 

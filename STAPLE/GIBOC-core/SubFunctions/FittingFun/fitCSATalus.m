@@ -1,4 +1,4 @@
-function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(Alt, Area, debug_plots)
+function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = fitCSATalus(Alt, Area, debug_plots)
 %  Create a fit.
 %
 %  Data for 'untitled fit 1' fit:

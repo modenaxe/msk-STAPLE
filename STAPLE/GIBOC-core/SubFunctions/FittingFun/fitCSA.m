@@ -1,4 +1,4 @@
-function [Zdiaph,Zepi,or] = FitCSA(Z, Area)
+function [Zdiaph,Zepi,or] = fitCSA(Z, Area)
 %FitCSA(Z,AREA)
 %  Create a fit of the evolution of the cross section area :
 %       1st step is to fit a double gaussian on the curve 
