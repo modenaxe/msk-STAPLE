@@ -1,11 +1,4 @@
-function [ Z0 ] = femur_guess_CS( Femur, debug_plots )
-% Function to test putting back together a correct orientation of the femur
-% Inputs :
-%           Femur : A triangulation of a complete femur
-%           debug_plots : A boolean to display plots useful for debugging
-%
-% Output :
-%           Z0 : A unit vector giving the distal to proximal direction
+% FEMUR_GUESS_CS Provide an informed guess of the femur orientation.
 % -------------------------------------------------------------------------
 %                           General Idea
 % The idea is to exploit the fact that the distal epiphysis of the bone is
@@ -16,11 +9,24 @@ function [ Z0 ] = femur_guess_CS( Femur, debug_plots )
 % epiphysis should be closer to the first principal inertia axis than the
 % one from the proximal epiphysis.
 % -------------------------------------------------------------------------
+%
+%   Z0 = femur_guess_CS( Femur, debug_plots )
+% Inputs:
+%   Femur - A MATLAB triangulation object of the complete femur.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+% Output:
+%   Z0 - A unit vector giving the distal to proximal direction.
+%
+% -------------------------------------------------------------------------
 %  Author:   Jean-Baptiste Renault
-%  Copyright 2020 Luca Modenese, Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
-%% inputs checks
+function [ Z0 ] = femur_guess_CS( Femur, debug_plots )
+
+% inputs checks
 if nargin<2; debug_plots = 1; end
 
 

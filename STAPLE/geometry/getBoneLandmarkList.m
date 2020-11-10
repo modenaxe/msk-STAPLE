@@ -18,11 +18,10 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-%
-% TODO: add landmarking for left side
 
 function LandmarkInfo = getBoneLandmarkList(bone_name)
 
+% used notation to describe the landmarks
 % LandmarkInfo{1} = BL name
 % LandmarkInfo{2} = axis
 % LandmarkInfo{3} = operator (max/min)

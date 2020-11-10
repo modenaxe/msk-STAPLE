@@ -12,7 +12,6 @@
 % Outputs:
 %   tri_geom - a MATLAB triangulation object.
 %
-%
 % See also CREATETRIGEOMSET
 %
 %-------------------------------------------------------------------------%
