@@ -1,5 +1,4 @@
-function [TrProx, TrDist] = cutLongBoneMesh(TrLB, U_0, L_ratio)
-%CUTLONGBONEMESH Separate the Mesh of long bone in two parts:
+% CUTLONGBONEMESH Separate the Mesh of long bone in two parts:
 %   a proximal and a distal one.
 % inputs :
 %       TrLB        The triangulation of a long bone
@@ -12,6 +11,11 @@ function [TrProx, TrDist] = cutLongBoneMesh(TrLB, U_0, L_ratio)
 %       TrProx      Triangulation of the proximal part of the long bone
 %       TrDist      Triangulation of the distal part of the long bone
 %
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault 
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [TrProx, TrDist] = cutLongBoneMesh(TrLB, U_0, L_ratio)
 
 % to customize cuts of the entire bone
 if nargin < 2

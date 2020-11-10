@@ -1,14 +1,13 @@
-function [ IdxPointsPair , EdgesLength , K, ...
-    Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
-%Compute the convex hull of the points cloud Pts and sort the edges by 
-% their length
-% INPUTS :
+% LARGESTEDGECONVHULL Compute the convex hull of the points cloud Pts and 
+% sort the edges by their length.
+%
+% INPUTS:
 %       - Pts :         A Point Cloud in 2D [nx2] or 3D [nx3]
 %
 %       - Minertia :    A matrice of inertia to transform the points
 %                       beforehand
 %
-% OUTPUTS :
+% OUTPUTS:
 %       - IdxPointsPair :   [mx2] or [mx3] matrix of the index of pair of
 %                           points forming the edges
 %
@@ -23,7 +22,13 @@ function [ IdxPointsPair , EdgesLength , K, ...
 %                           corresponding to the Index of the points
 %                           forming the the edge.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ IdxPointsPair , EdgesLength , K, ...
+    Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
+
 %
 % TODO: this function can benefit from squeeze
 if min(size(Pts)) == 2
@@ -31,8 +36,6 @@ if min(size(Pts)) == 2
     EdgeLength = sqrt(sum(diff(Pts(K,:),1).^2,2));
     [EdgesLength,I] = sort(EdgeLength,'descend');
     IdxPointsPair = [K(I) K(I+1)];
-    
-    
     
 elseif min(size(Pts)) == 3
     if nargin > 1
