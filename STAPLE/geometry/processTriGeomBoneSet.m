@@ -68,18 +68,21 @@
 %--------------------------------------------------------------------------
 
 
-function [JCS, BL, CS] = processTriGeomBoneSet(geom_set, side, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
+function [JCS, BL, CS] = processTriGeomBoneSet(geom_set, side_raw, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
 
 % setting defaults
+if nargin<2
+    side = inferBodySideFromAnatomicStruct(geom_set);
+else
+    % get sign correspondent to body side
+    [~, side] = bodySide2Sign(side_raw);
+end
 if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
 if nargin<4; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
 if nargin<5; algo_tibia = 'Kai'; in_mm = 1; end
 if nargin<6; result_plots = 1; end
 if nargin<7; debug_plots = 0; end
 if nargin<8; in_mm = 1; end
-
-% get side id correspondent to body side
-[~, side_low] = bodySide2Sign(side);
 
 disp('-----------------------------------')
 disp('Processing provided bone geometries')
@@ -107,7 +110,7 @@ elseif isfield(geom_set,'pelvis_no_sacrum')
 end
 
 % ---- FEMUR -----
-femur_name = ['femur_', side_low];
+femur_name = ['femur_', side];
 if isfield(geom_set, femur_name)
     switch algo_femur
 %         case 'Miranda'
@@ -131,7 +134,7 @@ if isfield(geom_set, femur_name)
 end
 
 %---- TIBIA -----
-tibia_name = ['tibia_', side_low];
+tibia_name = ['tibia_', side];
 if isfield(geom_set, tibia_name)
     switch algo_tibia
 %         case 'Miranda' % same as Kai but using inertia
@@ -156,7 +159,7 @@ end
 
 
 %---- PATELLA -----
-patella_name = ['patella_', side_low];
+patella_name = ['patella_', side];
 if isfield(geom_set, patella_name)
     switch method_patella
         case 'Rainbow'
@@ -174,14 +177,14 @@ if isfield(geom_set, patella_name)
 end
     
 %---- TALUS/ANKLE -----
-talus_name = ['talus_', side_low];
+talus_name = ['talus_', side];
 if isfield(geom_set,talus_name)
     [CS.(talus_name), JCS.(talus_name)] = ...
         STAPLE_talus(geom_set.(talus_name), side, result_plots,  debug_plots, in_mm);
 end
 
 %---- CALCANEUS/SUBTALAR -----
-calcn_name = ['calcn_', side_low];
+calcn_name = ['calcn_', side];
 if isfield(geom_set,calcn_name)
     [CS.(calcn_name), JCS.(calcn_name), BL.(calcn_name)] =...
         STAPLE_foot(geom_set.(calcn_name), side, result_plots,  debug_plots, in_mm);
