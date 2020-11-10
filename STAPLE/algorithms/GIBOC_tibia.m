@@ -3,10 +3,10 @@
 % fitEllipseOnTibialCondylesEdge (PLATEAU)
 % ProjectOnPlan
 
-function [CS, JCS, TibiaBL, ArtSurf] = GIBOC_tibia(tibiaTri, side, fit_method, result_plots,  debug_plots, in_mm)
+function [CS, JCS, TibiaBL, ArtSurf] = GIBOC_tibia(tibiaTri, side_raw, fit_method, result_plots,  debug_plots, in_mm)
 
 % result plots on by default, debug off
-if nargin<2;    side = 'r';              end
+if nargin<2;    side_raw = 'r';          end
 if nargin<3;    fit_method = 'ellipse';  end
 if nargin<4;    result_plots = 1;        end
 if nargin<5;    debug_plots = 0;         end
@@ -17,6 +17,21 @@ if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end
 if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
     fit_method = 'ellipse';
 end
+
+% get sign correspondent to body side
+[~, side_low] = bodySide2Sign(side_raw);
+
+% inform user about settings
+disp('---------------------')
+disp('   GIBOC - TIBIA     '); 
+disp('---------------------')
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', fit_method]);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
 
 % it is assumed that, even for partial geometries, the femoral bone is
 % always provided as unique file. Previous versions of this function did
@@ -47,6 +62,9 @@ CS.CenterVol = CenterVol;
 CS.V_all = V_all;
 % CS.InertiaMatrix = InertiaMatrix;
 
+% printout
+disp('Computing centre of ankle joint...')
+
 %--------- COMPUTE ANKLE CENTRE (USED BY SURF CENTROIDS) -----------
 % compute centre of distal larger section to compute the mechanical Z axis
 % within CS_tibia_ArtSurfCentroids.m
@@ -73,6 +91,8 @@ Curves = TriPlanIntersect( DistTibTri, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 % ankle centre (considers only tibia)
 Centre = PlanPolygonCentroid3D( TibiaDistSection.Pts );
 CS.AnkleCenter = Centre - plane_thick * nAAS';
+
+disp('Done.')
 
 % check ankle centre section
 if debug_plots == 1
@@ -108,6 +128,7 @@ end
 CS.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
 
 %% Proximal Tibia
+
 % remove fibula from prox tibia
 ProxTibTri = removeFibulaFromProxTibia(ProxTibTri, 'GIBOC_tibia.m');
 
@@ -119,7 +140,11 @@ EpiTibTri = GIBOC_isolate_epiphysis(ProxTibTri, Z0, 'proximal');
 angle_thresh = 35;% [deg]
 curv_quartile = 0.25;
 
+% printout
+disp('Processing proximal tibia:')
+
 % first approximation of tibial surface
+disp('  Step #1: identify tibiofem artic surfaces')
 [EpiTibASTri, oLSP, Ztp] = GIBOC_tibia_FullProxArtSurf(EpiTibTri, CS, CoeffMorpho, angle_thresh, curv_quartile);
 
 % debug plots
@@ -129,6 +154,7 @@ if debug_plots == 1
 end
 
 % STEP2: remove the ridge and the central part of the surface
+disp('  Step #2: remove intercondilar ridge')
 EpiTibASTri = GIBOC_tibia_ProxArtSurf_it1(ProxTibTri, EpiTibTri, EpiTibASTri, CS, Ztp , oLSP, CoeffMorpho);
 
 % debug plots
@@ -142,6 +168,7 @@ EpiTibASTri = TriOpenMesh(EpiTibTri,EpiTibASTri, 15*CoeffMorpho);
 EpiTibASTri = TriCloseMesh(EpiTibTri,EpiTibASTri, 30*CoeffMorpho);
 
 % STEP3: identify medial and lateral articular surfaces
+disp('  Step #3: split medial and lateral surfaces')
 CS.Y0_GIBOC  = CS.Y0*-1;
 [EpiTibASMedTri, EpiTibASLatTri, ~] = GIBOC_tibia_ProxArtSurf_it2(EpiTibTri, EpiTibASTri, CS, CoeffMorpho);
 
@@ -151,11 +178,12 @@ EpiTibArtSurfTri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
 if nargout>3
-    ArtSurf.(['prox_tibia_', side])         = EpiTibTri;
-    ArtSurf.(['plateau_', side])       = EpiTibArtSurfTri;
-    ArtSurf.(['plateau_med_', side])   = EpiTibASMedTri;
-    ArtSurf.(['plateau_lat_', side])   = EpiTibASLatTri;
-    ArtSurf.(['tibiotalar_', side])        = AnkleArtSurfTri;
+    disp('Storing articular surfaces for export...')
+    ArtSurf.(['prox_tibia_', side_raw])         = EpiTibTri;
+    ArtSurf.(['plateau_', side_raw])       = EpiTibArtSurfTri;
+    ArtSurf.(['plateau_med_', side_raw])   = EpiTibASMedTri;
+    ArtSurf.(['plateau_lat_', side_raw])   = EpiTibASLatTri;
+    ArtSurf.(['tibiotalar_', side_raw])        = AnkleArtSurfTri;
 end
 
 % debug plots
@@ -165,15 +193,16 @@ if debug_plots == 1
 end
 
 % compute joint coord system
+disp(['Fitting tibial proximal articular surfaces using ', fit_method, ' method.'])
 switch fit_method
     case 'ellipse'
         % fit an ellipse to the articular surface
-        [CS, JCS] = CS_tibia_Ellipse(EpiTibArtSurfTri, CS, side);
+        [CS, JCS] = CS_tibia_Ellipse(EpiTibArtSurfTri, CS, side_raw);
     case 'centroids'
         % uses the centroid of the articular surfaces to define the Z axis
-        [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMedTri, EpiTibASLatTri, CS, side);
+        [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMedTri, EpiTibASLatTri, CS, side_raw);
     case 'plateau'
-        [CS, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibArtSurfTri, CS, side);
+        [CS, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibArtSurfTri, CS, side_raw);
     otherwise
         error('GIBOC_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
 end
@@ -243,6 +272,9 @@ if result_plots == 1
     plotDot(MostDistalPt,plot_col,3);
     text(MostDistalPt(1),MostDistalPt(2),MostDistalPt(3),'    MostDistPoint','FontSize',8);
 end
+
+% final printout
+disp('Done.');
 
 end
 

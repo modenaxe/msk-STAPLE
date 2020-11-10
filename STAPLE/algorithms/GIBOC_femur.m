@@ -57,14 +57,14 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
-                                                   side,...
+                                                   side_raw,...
                                                    fit_method,...
                                                    result_plots,...
                                                    debug_plots,...
                                                    in_mm)
 
 % result plots on by default, debug off
-if nargin<2;    side = 'r';              end
+if nargin<2;    side_raw = 'r';          end
 if nargin<3;    fit_method = 'cylinder'; end
 if nargin<4;    result_plots = 1;        end
 if nargin<5;    debug_plots = 0;         end
@@ -75,6 +75,21 @@ if in_mm == 1;  dim_fact = 0.001;        else;  dim_fact = 1; end %placeholder
 if ~exist('fit_method', 'var') || isempty(fit_method) || strcmp(fit_method, '')
     fit_method = 'cylinder';
 end
+
+% get sign correspondent to body side
+[~, side_low] = bodySide2Sign(side_raw);
+
+% inform user about settings
+disp('---------------------')
+disp('   GIBOC - FEMUR     '); 
+disp('---------------------')
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', fit_method]);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
 
 % it is assumed that, even for partial geometries, the femoral bone is
 % always provided as unique file. Previous versions of this function did
@@ -113,7 +128,7 @@ try
 catch
     % use Kai if GIBOC approach fails
     warndlg({'Renault2018 fitting has failed.','Using Kai femoral head fitting.'})
-    [CS, ~] = Kai2014_femur_fitSpheres2Condyles(ProxFemTri, CS, debug_plots);
+    [CS, ~] = Kai2014_femur_fitSphere2FemHead(ProxFemTri, CS, debug_plots);
     CS.CenterFH_Renault  = CS.CenterFH_Kai;
     CS.RadiusFH_Renault  = CS.RadiusFH_Kai;
 end
@@ -125,6 +140,7 @@ CS.X0 = cross(CS.Y0, CS.Z0);
 EpiFemTri = GIBOC_isolate_epiphysis(DistFemTri, Z0, 'distal');
 
 % extract full femoral condyles
+disp('Extracting femoral condyles articular surfaces...')
 [fullCondyle_Med_Tri, fullCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS, CoeffMorpho, 'full_condyles');
 % plot condyles to ensure medial and lateral sides are correct and surfaces are ok
 if debug_plots
@@ -140,11 +156,12 @@ end
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
 if nargout>3
-    ArtSurf.(['hip_', side])       = FemHeadTri;
-    ArtSurf.(['med_cond_', side])  = fullCondyle_Med_Tri;
-    ArtSurf.(['lat_cond_', side])  = fullCondyle_Lat_Tri;
-    ArtSurf.(['dist_femur_', side]) = EpiFemTri;
-    ArtSurf.(['condyles_', side])  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
+    disp('Storing articular surfaces for export...')
+    ArtSurf.(['hip_', side_raw])       = FemHeadTri;
+    ArtSurf.(['med_cond_', side_raw])  = fullCondyle_Med_Tri;
+    ArtSurf.(['lat_cond_', side_raw])  = fullCondyle_Lat_Tri;
+    ArtSurf.(['dist_femur_', side_raw]) = EpiFemTri;
+    ArtSurf.(['condyles_', side_raw])  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
 end
 
 % extract patellar grooves
@@ -153,19 +170,20 @@ end
 % CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
 % how to compute the joint axes
+disp(['Fitting femoral distal articular surfaces using ', fit_method, ' method...'])
 switch fit_method
 %     case 'artic_surf_only'
 %         [CS, JCS, FemurBL] = deal([], [], []);
 %         return
     case 'spheres'
         % Fit two spheres on articular surfaces of posterior condyles
-        [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side);
+        [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side_raw);
     case 'cylinder'
         % Fit the posterior condyles with a cylinder
-        [CS, JCS] = CS_femur_CylinderOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side);
+        [CS, JCS] = CS_femur_CylinderOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side_raw);
     case 'ellipsoids'
         % Fit the entire condyles with an ellipsoid
-        [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat_Tri, fullCondyle_Med_Tri, CS, side);
+        [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat_Tri, fullCondyle_Med_Tri, CS, side_raw);
     otherwise
         error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.');%,...
 %             'To extract the articular surfaces without calculating joint parameters you can use ''artic_surf_only''.'])
@@ -231,6 +249,9 @@ if result_plots == 1
     end
 grid off
 end
+
+% final printout
+disp('Done.');
 
 % % plot patellar fitting as well
 % PlotTriangLight(DistFem, CS, 1); hold on
