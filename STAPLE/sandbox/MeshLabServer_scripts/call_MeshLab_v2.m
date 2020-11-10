@@ -1,7 +1,9 @@
-% =========================================================================
-%    Author: Luca Modenese, September 2015
-%    email:    l.modenese@sheffield.ac.uk                                 
-% =========================================================================
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 %
 % Script that allows to specify scripts to apply to one or more meshes to
 % be selected manually.
@@ -34,6 +36,8 @@
 % The format of the output mesh is guessed by the used extension.
 % Script is optional and must be in the format saved by MeshLab.
 % =========================================================================
+% first version 2015
+
 clear
 clc
 % select one or more meshes to elaborate

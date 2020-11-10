@@ -1,9 +1,12 @@
-% =========================================================================
-%    Author: Luca Modenese, September 2015
-%    email:    l.modenese@sheffield.ac.uk                                 
-% =========================================================================
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%                                                                         %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 % function that applies a Meshlab script to a an input mesh and writes the
 % resulting geometry in output mesh.
+% first version 2015
 function [status,cmdout] = runMeshLabScript(input_mesh, output_mesh, script)
 
 % inform used

@@ -1,21 +1,28 @@
+% BODYSIDE2SIGN Returns a sign and a mono-character, lower-case string
+% corresponding to a body side. Used in several STAPLE functions for:
+% 1) having a standard side label
+% 2) adjust the reference systems to the body side.
+%
+%   [sign_side, side_low] = bodySide2Sign(side)
+%
+% Inputs:
+%   side - generic string identifying a body side. 'right', 'r', 'left' and
+%       'l' are accepted inputs, both lower and upper cases.
+%
+% Outputs:
+%   sign_side - sign to adjust reference systems based on body side. Value:
+%       1 for right side, Value: -1 for left side.
+%
+%   side_low - a single character, lower case body side label that can be 
+%           used in all other STAPLE functions requiring such input.
+%
+% See also INFERBODYSIDEFROMANATOMICSTRUCT.
+%
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-% Licensed under the Apache License, Version 2.0 (the "License");         %
-% you may not use this file except in compliance with the License.        %
-% You may obtain a copy of the License at                                 %
-% http://www.apache.org/licenses/LICENSE-2.0.                             %
-%                                                                         % 
-% Unless required by applicable law or agreed to in writing, software     %
-% distributed under the License is distributed on an "AS IS" BASIS,       %
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         %
-% implied. See the License for the specific language governing            %
-% permissions and limitations under the License.                          %
-%                                                                         %
-%    Author:   Luca Modenese                                              %
-%    email:    l.modenese@imperial.ac.uk                                  % 
-% ----------------------------------------------------------------------- %
-% function that maps: r/R/right -> +1 and l/L/left-> -1
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
+
 function [sign_side, side_low] = bodySide2Sign(side)
 
 side_low = lower(side);

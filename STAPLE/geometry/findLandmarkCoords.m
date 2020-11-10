@@ -31,7 +31,7 @@
 %
 % ----------------------------------------------------------------------- %
 %    Author:   Luca Modenese,  2020                                       %
-%    email:    l.modenese@imperial.edu.au                                 % 
+%    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
 
 function [BL, BL_ind] = findLandmarkCoords(points, axis_name, operator)
