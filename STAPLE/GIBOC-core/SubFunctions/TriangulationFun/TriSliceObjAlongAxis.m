@@ -42,6 +42,7 @@ for d = -Alt
     end
 end
 
+disp(['Sliced #', num2str(it-1), ' times']);
 [maxArea, maxAreaInd] = max(Areas);
 maxAlt = Alt(maxAreaInd);
 
