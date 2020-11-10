@@ -34,7 +34,9 @@
 %  Author:   Luca Modenese, loosely based on GIBOK prototype. 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots)
+function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots, debug_prints)
+
+if nargin<4; debug_prints=0; end
 
 % X0 points backwards in GIBOK
 X0 = CS.X0;
@@ -59,14 +61,16 @@ if debug_plots == 1
 end
 
 keep_slicing = 1;
-
+disp('Slicing femoral condyles...');
 while keep_slicing
 
     [ Curves , ~, ~ ] = TriPlanIntersect(DistFemTri, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices
-    disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    if debug_prints
+        disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    end
     count = count+1;
     
     % check if the curves touch the bounding box of DistFem

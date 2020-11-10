@@ -21,7 +21,7 @@ if max(size(TrSplitted))==2
         % alternative
         % ProxTibNoFib = TriReduceMesh(ProxTib, TrSplitted(2).elements)  ;
     end
-    disp('Done!')
+    disp('Fibula removed from triangulation.')
 elseif max(size(TrSplitted))==1
     ProxTibNoFib = ProxTib;
 
