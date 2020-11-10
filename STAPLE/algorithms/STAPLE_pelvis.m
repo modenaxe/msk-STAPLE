@@ -27,6 +27,17 @@ if in_mm == 1;  dim_fact = 0.001;  else;  dim_fact = 1; end
 % no need for sign, left and right rf are identical
 [~, side_low] = bodySide2Sign(side);
 
+disp('---------------------')
+disp('   STAPLE - PELVIS   '); 
+disp('---------------------')
+disp(['* Hip Joint   : ', upper(side_low)]);
+disp(['* Method      : ', 'convex hull']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 % guess of direction of axes on medical images (not always correct)
 % Z : pointing cranially
 % Y : pointing posteriorly
@@ -38,6 +49,7 @@ if in_mm == 1;  dim_fact = 0.001;  else;  dim_fact = 1; end
 [~, CenterVol, InertiaMatrix, D ] =  TriInertiaPpties(Pelvis);
 
 % Modification of initial guess of CS direction [JB]
+disp('Analyzing pelvis geometry...')
 [RotPseudoISB2Glob, LargestTriangle] = pelvis_guess_CS(Pelvis, debug_plots);
 
 %% Get the RPSIS and LPSIS raw BoneLandmarks (BL)
@@ -56,6 +68,8 @@ if in_mm == 1;  dim_fact = 0.001;  else;  dim_fact = 1; end
 % U_SupSupRight = normalizeV(4*RotPseudoISB2Glob(:,2)+RotPseudoISB2Glob(:,3));
 % [~,I] = sort(LargestTriangle.Points*U_SupSupRight);
 %------------------------------------------
+
+disp('Landmarking...')
 
 % project vectors on Z (SYMP is the minimal one)
 [~, I] = sort(abs((LargestTriangle.Points-CenterVol')*RotPseudoISB2Glob(:,3)));
@@ -110,20 +124,21 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 
 % define hip parent
 hip_name = ['hip_', side_low];
-JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(CS.V);
+JCS.(hip_name).parent_orientation   = computeXYZAngleSeq(CS.V);
 
 % Export bone landmarks
 PelvisBL.RASI     = RASIS; 
 PelvisBL.LASI     = LASIS; 
 PelvisBL.RPSI     = RPSIS; 
 PelvisBL.LPSI     = LPSIS; 
-PelvisBL.SYMP      = SYMP;
+PelvisBL.SYMP     = SYMP;
 
 % debug plot
 label_switch = 1;
 if result_plots == 1
-    plotTriangLight(Pelvis, CS, 1); hold on
-    quickPlotRefSystem(CS)
+    figure('Name', 'STAPLE pelvis')
+    plotTriangLight(Pelvis, CS, 0); hold on
+    quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
         'edgecolor','k');
@@ -131,5 +146,8 @@ if result_plots == 1
     % plot markers and labels
     plotBoneLandmarks(PelvisBL, label_switch);
 end
+
+% final printout
+disp('Done.');
 
 end

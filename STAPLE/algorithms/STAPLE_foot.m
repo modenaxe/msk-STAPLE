@@ -17,6 +17,18 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % joint names
 toes_name     = ['toes_', side_low];
 
+% inform user about settings
+disp('---------------------')
+disp('   STAPLE - FOOT     '); 
+disp('---------------------')
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', 'sphere & cylinder']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
 [ V_all, CenterVol ] = TriInertiaPpties( calcnTri );
@@ -28,6 +40,7 @@ Y0 = normalizeV(cross(Z0,X0));
 Z0 = cross(X0,Y0);
 
 %% Convex hull approach with prior deleting of the phalanges
+disp('Computing convex hull...')
 [x, y, z] = deal(calcnTri.Points(:,1), calcnTri.Points(:,2), calcnTri.Points(:,3));
 
 % In the vast majority of cases, the reference system at the foot is
@@ -42,7 +55,6 @@ Z0 = cross(X0,Y0);
 % ElmtsNoPhalange= find(Foot.incenter*X0 < (Foot_Start+0.80*Foot_Length));
 % Foot2 = TriReduceMesh( Foot, ElmtsNoPhalange );
 %==========================================
-
 [ IdxPtsPair , EdgesLength , K] = LargestEdgeConvHull(calcnTri.Points);
 
 % plot convex hull
@@ -51,6 +63,8 @@ if debug_plots == 1
 end
 
 % Convert the convexHull to triangulation object
+% remove indices not in the triangulation anymore
+% keep_ind = unique(K);
 Foot2_CH = triangulation(K,x,y,z);
 [V_all_CH, CenterVol_CH] = TriInertiaPpties( Foot2_CH );
 
@@ -72,6 +86,8 @@ Foot2_CH_Proj = triangulation(Foot2_CH.ConnectivityList, Foot2_CH_PTS_Proj);
 % Find the largest triangle on the projected Convex Hull
 [ Foot2_CH_Proj_Ppties ] = TriMesh2DProperties( Foot2_CH_Proj );
 [~,I] = max(Foot2_CH_Proj_Ppties.Area);
+
+disp('Landmarking...')
 
 %% Attribute the triangle vertices to the heel or the metatarsus
 triangleNrml = - Foot2_CH.faceNormal(I)'; % minus to point superiorly
@@ -213,7 +229,8 @@ CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat;
 CalcnBL.([side_up,'HEEGROUND']) = heelPt;
 
 if norm(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'5MGROUND' ]))>10
-    disp(['Dubious identification of ',side_up,'D5M'])
+    disp(['  Dubious identification of ',side_up,'D5M...Renamed ', side_up,'5MPROX.'])
+    disp(['  Appending alternative ', side_up,'D5M.'])
     CalcnBL.([side_up,'5MPROX']) = CalcnBL.([side_up,'D5M']);
     CalcnBL.([side_up,'D5M'])    = CalcnBL.([side_up,'5MGROUND' ]);
 end
@@ -266,5 +283,7 @@ if result_plots == 1
     %     plotDot(PtMetaMed,'r',3)
 
 end
+
+disp('Done');
 
 end

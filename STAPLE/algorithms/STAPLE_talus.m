@@ -27,7 +27,6 @@
 %-------------------------------------------------------------------------%
 function [CS, JCS] = STAPLE_talus(talusTri, side, result_plots,  debug_plots, in_mm)
 
-
 % NOTE: CS contains multiple sets of axes:
 % * X0-Y0-Z0 : talus axes
 % * X1-Y1-Z1 : subtalar joint axes
@@ -50,6 +49,18 @@ CoeffMorpho = computeTriCoeffMorpho(talusTri);
 ankle_name     = ['ankle_', side_low];
 subtalar_name  = ['subtalar_', side_low];
 
+% inform user about settings
+disp('---------------------')
+disp('   STAPLE - TALUS    '); 
+disp('---------------------')
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', 'sphere & cylinder']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 %% 1. Indentify the inertia axis of the Talus
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
 [ V_all, CS.CenterVol, CS.InertiaMatrix, CS.D ] = TriInertiaPpties( talusTri );
@@ -71,6 +82,7 @@ if debug_plots == 1
 end
 
 % 2.1 Evolution of the cross section area (CSA) along the X0 axis 
+disp('Slicing talus along long dimension...')
 slice_step = 0.3;
 cut_offset = 0.3;
 debug_plot_slice = 0;
@@ -90,7 +102,7 @@ debug_plot_slice = 0;
 %   alt_TlTib_start, gives the altitude along X0 at wich articular surface
 %   with the tibia can start
 
-[or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = FitCSATalus(Alt,...
+[or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = fitCSATalus(Alt,...
                                                             Areas,...
                                                             debug_plots);
 % Change X0 orientation if necessary ( or = +/- 1 )
@@ -104,6 +116,7 @@ if debug_plots == 1
 end
 
 % fit spheres to talonavicular and talocalcaneal
+disp('Processing subtalar joint artic surfaces:')
 [CS, Talocalcn_AS, Talonavic_AS] = CS_talus_subtalarSpheres(talusTri,...
                                                        side,...
                                                        CS,...
@@ -112,6 +125,7 @@ end
                                                        CoeffMorpho);
 
 % fit cylinder to talar trochlea
+disp('Processing talocrural joint artic surfaces:')
 [CS, TalTrochAS] = CS_talus_trochleaCylinder(talusTri,...
                                              side,...
                                              CS, ...
@@ -207,5 +221,7 @@ if result_plots == 1
     title('Talocrural Joint Axis');
 %     axis off
 end
+
+disp('Done.')
 
 end
