@@ -27,6 +27,17 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % no need for sign, left and right rf are identical
 [~, side_low] = bodySide2Sign(side);
 
+disp('----------------------')
+disp('   KAI2014 - PELVIS   '); 
+disp('----------------------')
+disp(['* Hip Joint   : ', upper(side_low)]);
+disp(['* Method      : ', 'N/A']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 % Initial guess of CS direction [JB]
 % RISB2Glob_guess: principal inertial axes named as ISB (guess)
 [RISB2Glob_guess, LargestTriangle] = pelvis_guess_CS(pelvisTri);
@@ -51,6 +62,7 @@ if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
 % In ISB reference system: right side if z>0, upwards if Y>0
 R_side_ind = PelvisPseudoISB.Points(:,3)>0;
 
+disp('Analyzing pelvis geometry...')
 % identifying the height of point beween most distal point and section with
 % largest medio-lateral span.
 [min_dist_H, ~] = min(PelvisPseudoISB.Points(:,2)); % most dist
@@ -73,6 +85,8 @@ Dist_ind =  PelvisPseudoISB.Points(:,2)<H_div_plane;
 % [Areas, Alt] = TriSliceObjAlongAxis(PelvisPseudoISB, [0 0  1]', 1);
 % figure; plot(Alt, Areas)
 %---------------------------------------------
+
+disp('Landmarking...')
 
 % identifying bony landmarks
 [~, RASIS_ind] = max(PelvisPseudoISB.Points(:,1).* R_side_ind);
@@ -138,18 +152,18 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
 hip_name = ['hip_', side_low];
 JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(CS.V);
 
-% Export bone landmarks
-PelvisBL.RASI     = RASIS; % in Pelvis ref
-PelvisBL.LASI     = LASIS; % in Pelvis ref
-PelvisBL.RPSI     = RPSIS; % in Pelvis ref
-PelvisBL.LPSI     = LPSIS; % in Pelvis ref
-PelvisBL.RPS       = RPS;
-PelvisBL.LPS       = LPS;
+% Export bone landmarks(pelvis ref system)
+PelvisBL.RASI     = RASIS;
+PelvisBL.LASI     = LASIS;
+PelvisBL.RPSI     = RPSIS;
+PelvisBL.LPSI     = LPSIS;
+PelvisBL.RPS      = RPS;
+PelvisBL.LPS      = LPS;
 
 % debug plot
 label_switch = 1;
 if result_plots == 1
-    figure('Name','Pelvis')
+    figure('Name','Kai2014 Pelvis')
     plotTriangLight(pelvisTri, CS, 0); hold on
 %     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
@@ -159,5 +173,8 @@ if result_plots == 1
     % plot markers and labels
     plotBoneLandmarks(PelvisBL, label_switch)
 end
+
+% final printout
+disp('Done.');
 
 end

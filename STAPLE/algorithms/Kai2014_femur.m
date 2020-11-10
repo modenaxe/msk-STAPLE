@@ -47,10 +47,24 @@ if in_mm == 1;  dim_fact = 0.001; else;  dim_fact = 1; end
 hip_name = ['hip_',side_low];
 knee_name = ['knee_',side_low];
 
+% inform user
+disp('---------------------')
+disp('   KAI2014 - FEMUR   '); 
+disp('---------------------')
+% inform user about settings
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', 'spheres']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 % it is assumed that, even for partial geometries, the femoral bone is
 % always provided as unique file. Previous versions of this function did
 % use separated proximal and distal triangulations. Check Git history if
 % you are interested in that.
+disp('Computing PCA for given geometry...');
 V_all = pca(femurTri.Points);
 
 % guess vertical direction, pointing proximally
@@ -82,6 +96,7 @@ CS.CenterVol = CenterVol;
 [CS, ~] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots);
 
 % slicing the femoral condyles
+disp('Processing femoral condyles:')
 CS = Kai2014_femur_fitSpheres2Condyles(DistFem, CS, debug_plots);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
@@ -139,6 +154,9 @@ if result_plots == 1
     plotSphere(CS.Center_Med, CS.Radius_Med, 'r', alpha);
     plotSphere(CS.Center_Lat, CS.Radius_Lat, 'b', alpha);
 end
+
+% final printout
+disp('Done.');
 
 end
 

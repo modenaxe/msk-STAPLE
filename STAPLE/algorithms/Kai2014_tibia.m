@@ -37,10 +37,23 @@ if nargin<5;     in_mm = 1;  end %placeholder
 % get sign correspondent to body side
 [side_sign, side_low] = bodySide2Sign(side);
 
+% inform user about settings
+disp('---------------------')
+disp('   KAI2014 - TIBIA   '); 
+disp('---------------------')
+disp(['* Body Side   : ', upper(side_low)]);
+disp(['* Fit Method  : ', 'N/A']);
+disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
+disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
+disp(['* Triang Units: ', 'mm']);
+disp('---------------------')
+disp('Initializing method...')
+
 % it is assumed that, even for partial geometries, the tibial bone is
 % always provided as unique file. Previous versions of this function did
 % use separated proximal and distal triangulations. Check Git history if
 % you are interested in that.
+disp('Computing PCA for given geometry...');
 V_all = pca(tibiaTri.Points);
 
 % guess vertical direction, pointing proximally
@@ -60,6 +73,7 @@ Y0 = V_all(:,1);
 Y0 = sign((mean(ProxTib.Points)-mean(DistTib.Points))*Y0)*Y0;
 
 % slice tibia along axis and get maximum height
+disp('Slicing tibia longitudinally...')
 [~, ~, ~, ~, AltAtMax] = TriSliceObjAlongAxis(tibiaTri, Y0, slices_thickness);
 
 % slice geometry at max area
@@ -79,6 +93,7 @@ end
 PtsCurves = vertcat(maxAreaSection.Pts)*V_all;
 
 % Fit a planar ellipse to the outline of the tibia section
+disp('Fitting ellipse to largest section...')
 FittedEllipse = fit_ellipse(PtsCurves(:,2), PtsCurves(:,3));
 
 % depending on the largest axes, YElpsMax is assigned.
@@ -179,5 +194,7 @@ if result_plots == 1
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on
     plotDot(MostDistalMedialPt, m_col, 4);
 end
+
+disp('Done.')
 
 end
