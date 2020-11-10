@@ -1,3 +1,25 @@
+% INFERBODYSIDEFROMANATOMICSTRUCT Infer the body side that the user wants
+% to process based on a structure containing the anatomical objects
+% (triangulations or joint definitions) given as input. The implemented
+% logic is trivial: the fields are checked for standard names of bones and
+% joints used in OpenSim models.
+%
+%   guessed_side = inferBodySideFromAnatomicStruct(anat_struct)
+%
+% Inputs:
+%   anat_struct - a MATLAB structure containing anatomical objects, e.g. a
+%       set of bone triangulation or joint definitions.
+%
+% Outputs:
+%   guessed_side - a body side label that can be used in all other STAPLE
+%       functions requiring such input.
+%
+% See also CREATELOWERLIMBJOINTS, GETJOINTPARAMS.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function guessed_side = inferBodySideFromAnatomicStruct(anat_struct)
 % check using the bone names
 fields_side = fields(anat_struct);
