@@ -1,17 +1,17 @@
-function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots)
+function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots, debug_prints)
+
 
 % main plots are in the main method function. 
 % these debug plots are to see the details of the method
-if nargin<3
-    debug_plots=0;
-end
+if nargin<3; debug_plots=0; end
+if nargin<4; debug_prints=0; end
 
 % parameters used to identify artefact sections.
 sect_pts_limit = 15;
 
-% plane normal must be negative (GIBOK)
+% plane normal must be negative (GIBOC)
 corr_dir = -1;
-disp('Computing Femoral Head Centre (Kai et al. 2014)...')
+disp('Computing centre of femoral head:')
 
 % Find the most proximal point
 [~ , I_Top_FH] = max( ProxFem.Points*CS.Z0 );
@@ -39,6 +39,10 @@ d = MostProxPoint*CS.Z0 - 0.25;
 keep_slicing = 1;
 count = 1;
 max_area_so_far = 0;
+
+% print
+disp('  Slicing proximal femur...');
+
 while keep_slicing
     
     % slice the proximal femur
@@ -46,7 +50,9 @@ while keep_slicing
     Nbr_of_curves = length(Curves);
     
     % counting slices
-    disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    if debug_prints 
+        disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    end
     count = count+1;
     
 %     % plot curves
@@ -117,6 +123,9 @@ while keep_slicing
     end
 end
 
+% print
+disp(['  Sliced #', num2str(count), ' times']);
+
 % assemble the points from one and two curves
 fitPoints = [Ok_FH_Pts; Ok_FH_Pts_med];
 
@@ -134,13 +143,24 @@ fitPoints = fitPoints(ind_keep,:);
 sph_RMSE = mean(abs(ErrorDist));
 
 % print
-disp('-----------------')
-disp('Final  Estimation')
-disp('-----------------')
-disp(['Centre:   ', num2str(CenterFH)]);
-disp(['Radius:   ', num2str(Radius)]);
-disp(['Mean Res: ', num2str(sph_RMSE)])
-disp('-----------------')
+if debug_prints
+    disp('-----------------')
+    disp('Final  Estimation')
+    disp('-----------------')
+    disp(['Centre:   ', num2str(CenterFH)]);
+    disp(['Radius:   ', num2str(Radius)]);
+    disp(['Mean Res: ', num2str(sph_RMSE)])
+    disp('-----------------')
+end
+
+% feedback on fitting
+% chosen as large error based on error in regression equations (LM)
+fit_thereshold = 20; 
+if sph_RMSE>fit_thereshold
+    warning(['Large sphere fit RMSE: ', num2str(sph_RMSE), '(>', num2str(fit_thereshold), 'mm).'])
+else
+    disp(['  Reasonable sphere fit error (RMSE<', num2str(fit_thereshold), 'mm).'])
+end
 
 % body reference system
 CS.CenterFH_Kai = CenterFH ;

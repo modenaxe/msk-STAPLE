@@ -44,14 +44,12 @@
 %-------------------------------------------------------------------------%
 
 
-function CS = Kai2014_femur_fitSpheres2Condyles(DistFemTri, CS, debug_plots)
+function CS = Kai2014_femur_fitSpheres2Condyles(DistFemTri, CS, debug_plots, debug_prints)
 
 % main plots are in the main method function. 
 % these debug plots are to see the details of the method
-if nargin<3
-    debug_plots=0;
-end
-
+if nargin<3; debug_plots=0; end
+if nargin<4; debug_prints=0; end
 X0 = CS.X0;
 Z0 = CS.Z0;
 
@@ -79,13 +77,18 @@ end
 
 keep_slicing = 1;
 
+% print
+disp('  Slicing femoral condyles...');
+
 while keep_slicing
 
     [ Curves , ~, ~ ] = TriPlanIntersect(DistFemTri, X0 , d );
     Nbr_of_curves = length(Curves);
     
     % counting slices
-    disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    if debug_prints
+        disp(['section #',num2str(count),': ', num2str(Nbr_of_curves),' curves.'])
+    end
     count = count+1;
     
     % check if the curves touch the bounding box of DistFem
@@ -111,7 +114,7 @@ while keep_slicing
     % if there are too many curves maybe you are slicing from the
     % front (happened) -> invert and restart
     if Nbr_of_curves > 2
-        disp('The quality of the mesh is low ( > 3 section areas detected).');
+        disp('The quality of the mesh is low (>3 section areas detected).');
         disp('Skipping section')
         continue
     end    
@@ -170,6 +173,8 @@ while keep_slicing
     
 end
 
+disp(['  Sliced #', num2str(count), ' times']);
+
 % fitting spheres to points from the sliced curves
 [center_med,radius_med] = sphereFit(FC_Med_Pts);
 [center_lat,radius_lat] = sphereFit(FC_Lat_Pts);
@@ -215,5 +220,9 @@ if debug_plots
     plotDot(MostPostPoint,'g', 2.0);
     title('check if slices are reasonable (red:medial')
 end
+
+% % print
+% disp('Done with femoral condyles.')
+% disp('----')
 
 end
