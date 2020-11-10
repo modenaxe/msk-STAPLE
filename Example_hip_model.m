@@ -1,59 +1,64 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
-%    Author:   Luca Modenese, April 2018                                  %
+%    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-% no modifications required since pelvis is the segment to attach to ground
-% as in standard full lower limb models
+% This example demonstrates how to setup a simple STAPLE workflow to 
+% automatically create a model of the hip joint from the LHDL-CT dataset 
+% included in the test_geometry folder.
 % ----------------------------------------------------------------------- %
 clear; clc; close all
 addpath(genpath('STAPLE'));
 
-%----------
-% SETTINGS 
-%----------
+%----------%
+% SETTINGS %
+%----------%
+% set output folder
 output_models_folder = 'Opensim_models';
+
+% set output model name
 output_model_file_name = 'example_hip_joint.osim';
 
-% datasets that you would like to process
+% dataset(s) that you would like to process specified as cell array. 
+% If you add multiple datasets they will be batched processed but you will
+% have to adapt the folder and file namings below.
 dataset_set = {'LHDL_CT'};
 
-% cell array with the bone geometries that you would like to process
-bone_geometries_folder = 'test_geometries';
-bones_list = {'pelvis_no_sacrum','femur_r'};
-side = 'R';
-in_mm = 1;
+% folder where the various datasets (and their geometries) are located.
+datasets_folder = 'test_geometries';
 
-% visualization geometry format
+% cell array with the name of the bone geometries to process.
+bones_list = {'pelvis_no_sacrum','femur_r'};
+
+% format of visualization geometry (obj preferred - smaller files)
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
-% choose the definition of the joint coordinate systems (see documentation)
-method = 'auto2020';
+% choose the definition of the joint coordinate systems (see
+% documentation). For hip joint creation this option has no effect.
+workflow = 'auto';
 %--------------------------------------
-
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
+% setup for batch processing
 for n_d = 1:numel(dataset_set)
     
-    % setup folders
+    % dataset id used to name OpenSim model and setup folders
     cur_dataset = dataset_set{n_d};
-    main_ds_folder =  fullfile(bone_geometries_folder, cur_dataset);
     
-    % model and model file naming
+    % model name
     model_name = [dataset_set{n_d},'_auto'];
     
-    % options to read stl or mat(tri) files
-    % tri_folder = fullfile(main_ds_folder,'stl');
-    tri_folder = fullfile(main_ds_folder,'tri');
+    % folder including the bone geometries in MATLAB format ('tri'/'stl')
+    tri_folder = fullfile(datasets_folder, cur_dataset, 'tri');
     
-    % create geometry set structure for the entire dataset
+    % create TriGeomSet structure for the specified geometries
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
-    geometry_folder_name = [cur_dataset, '_Geometry'];
+    geometry_folder_name = 'example_hip_joint_Geometry';
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
@@ -64,10 +69,10 @@ for n_d = 1:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(geom_set, side);
+    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
 
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createLowerLimbJoints(osimModel, JCS, workflow);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
@@ -81,6 +86,8 @@ for n_d = 1:numel(dataset_set)
     % inform the user about time employed to create the model
     disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
+    disp(['Model file save as: ', fullfile(output_models_folder, output_model_file_name),'.']);
+    disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
 end
 

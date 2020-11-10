@@ -1,7 +1,7 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
-%    Author:   Luca Modenese, April 2018                                  %
+%    Author:   Luca Modenese, April 2020                                  %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
@@ -16,7 +16,7 @@ output_models_folder = 'Opensim_models';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 
 % cell array with the bone geometries that you would like to process
-bone_geometries_folder = 'test_geometries';
+datasets_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 side = 'r';
 in_mm = 1;
@@ -25,7 +25,7 @@ in_mm = 1;
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2020'; % method = 'Modenese2018';
+modelling_method = 'Modenese2018'; % 'auto';
 %--------------------------------------
 
 tic
@@ -37,7 +37,7 @@ for n_d = 1%:numel(dataset_set)
     
     % setup folders
     cur_dataset = dataset_set{n_d};
-    main_ds_folder =  fullfile(bone_geometries_folder, cur_dataset);
+    main_ds_folder =  fullfile(datasets_geometries_folder, cur_dataset);
     
     % model and model file naming
     model_name = ['auto',modelling_method,'_',dataset_set{n_d}];
@@ -67,7 +67,7 @@ for n_d = 1%:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, modelling_method);
+    createLowerLimbJoints(osimModel, JCS, side, modelling_method);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
@@ -81,6 +81,7 @@ for n_d = 1%:numel(dataset_set)
     % inform the user about time employed to create the model
     disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
+    disp(['Saved as ', fullfile(output_models_folder, model_file_name),'.']);
     disp('-------------------------')
 end
 

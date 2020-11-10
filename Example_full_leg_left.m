@@ -81,6 +81,7 @@ for n_d = 1%:numel(dataset_set)
     % inform the user about time employed to create the model
     disp('-------------------------')
     disp(['Model generated in ', num2str(toc)]);
+    disp(['Saved as ', fullfile(output_models_folder, model_file_name),'.']);
     disp('-------------------------')
 end
 

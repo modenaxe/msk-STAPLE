@@ -4,8 +4,16 @@
 %    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
+% Example demonstrating how to exatract the articular surfaces of the
+% tibiofemoral joint automatically from a set of femoral and tibial
+% geometries through a batch processing using the GIBOC algorithms
+% available in the STAPLE package.
+%
+% This functionality can be useful for definition of advanced joint models 
+% with contact.
+%
 % Please note how the identification of the articular surfaces returns
-% better results when applied to better quality meshes.
+% better results when applied to better quality meshes, as expected.
 % 
 % The exportable articular surfaces are available on the GIBOC_tibia and
 % GIBOC_femur functions where the ArtSurf variable is defined.
@@ -13,45 +21,70 @@
 clear; clc; close all
 addpath(genpath('STAPLE'));
 
-%--------------------------------------
+%----------%
+% SETTINGS %
+%----------%
+% folders where the bone geometries are stored
 bone_geometries_folder = 'test_geometries';
+
+% name of the datasets to process
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI'};
-bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','patella_r','talus_r', 'calcn_r'};
-artic_surf_folder = './Articular_surfaces';
-in_mm = 1;
+
+% names of the bones to process with STAPLE
+bones_list = {'femur_r','tibia_r'};
+
+% folder where the articulalar surfaces will be stored
+output_artic_surf_folder = './Articular_surfaces';
 %--------------------------------------
 
 for n_d = 1:numel(dataset_set)
+    
     % setup folders
     dataset_name = dataset_set{n_d};
-    main_ds_folder =  fullfile(bone_geometries_folder,dataset_set{n_d});
-    % tri_folder = fullfile(main_ds_folder,'stl');
-    tri_folder = fullfile(main_ds_folder,'tri');
+    
+    % folder of the bone geometries in MATLAB format ('tri'/'stl')
+    tri_folder = fullfile(bone_geometries_folder, dataset_set{n_d},'tri');
 
     % create geometry set structure for the entire dataset
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
-    % extract femoral tibiofemoral articular surfaces
-    [FemurCS3, TibiaJCS3, ~, ArtSurfFem] = GIBOC_femur(geom_set.femur_r, 'R', [], 0);
-    % extract articular surface in the tibia
-    [TibiaCS, TibiaJCS, ~, ArtSurfTib] = GIBOC_tibia(geom_set.tibia_r, 'R', [], 0);
+    % infer body side from TriGeomSet
+    side = inferBodySideFromAnatomicStruct(geom_set);
+    
+    % extract femoral articular surfaces for tibio-femoral joint.
+    % NB: *) fit_method not important here - there is no fitting to do
+    %     *) no need to plot fitting results
+    [FemurCS, FemurJCS, ~, ArtSurfFem] = GIBOC_femur(geom_set.femur_r, side, 'cylinder', 0);
+    
+    % extract tibial articular surfaces for tibio-femoral joint.
+    % NB: *) fit_method not important here - there is no fitting to do
+    %     *) no need to plot fitting results
+    [TibiaCS, TibiaJCS, ~, ArtSurfTib] = GIBOC_tibia(geom_set.tibia_r, side, 'ellipse', 0);
+    
+    % NOTE: all articular surfaces are extracted from the bones of
+    % interest. By commenting the fields in the GIBOC_femur.m and 
+    % GIBOC_tibia.m the exported triangulations can be customized.
     
     % plot the articular surfaces and nearby bone
-    figure('Name', dataset_name)
-    % femur
+    figure('Name', dataset_name, 'Position', [626 502 1175 459])
+    
+    % distal femur and articular surface of individual condyles
     subplot(1, 2, 1)
-    quickPlotTriang(ArtSurfFem.epiphysis);
-    quickPlotTriang(ArtSurfFem.condyles, 'b');
-    title('Distal femur with condyles')
-    % tibia
+    quickPlotTriang(ArtSurfFem.(['dist_femur_',side]));
+    quickPlotTriang(ArtSurfFem.(['med_cond_',side]), 'r');
+    quickPlotTriang(ArtSurfFem.(['lat_cond_',side]), 'b');
+    title({'Distal femur (condyles)'; 'red: medial - blue: lateral'})
+    
+    % proximal tibia and compartmental articular surfaces
     subplot(1,2,2)
-    quickPlotTriang(ArtSurfTib.epi_tibia);
-    quickPlotTriang(ArtSurfTib.tib_plateau, 'r');
-    title('Proximal tibia with plateau')
+    quickPlotTriang(ArtSurfTib.(['prox_tibia_',side]));
+    quickPlotTriang(ArtSurfTib.(['plateau_med_',side]), 'r');
+    quickPlotTriang(ArtSurfTib.(['plateau_lat_',side]), 'b');
+    title({'Proximal tibia (plateau)'; 'red: medial - blue: lateral'})
     
     % save the triangulations as STL files
     % create folder
-    curr_artic_surf_folder = fullfile(artic_surf_folder, dataset_name);
+    curr_artic_surf_folder = fullfile(output_artic_surf_folder, dataset_name);
     if ~isfolder(curr_artic_surf_folder); mkdir(curr_artic_surf_folder); end
     % export femoral surfaces
     fem_str_fields = fields(ArtSurfFem);
