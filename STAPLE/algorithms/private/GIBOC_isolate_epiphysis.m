@@ -5,7 +5,7 @@ slice_step = 1; %mm
 [Areas, Alt] = TriSliceObjAlongAxis(TriObj, Z0, slice_step);
 
 % removes mesh above the limit of epiphysis (Zepi)
-[~ , Zepi, ~] = FitCSA(Alt, Areas);
+[~ , Zepi, ~] = fitCSA(Alt, Areas);
 
 % choose the bone part of interest
 if strcmp(prox_epi, 'proximal')

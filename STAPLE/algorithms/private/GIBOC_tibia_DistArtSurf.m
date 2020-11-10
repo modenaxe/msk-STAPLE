@@ -26,7 +26,7 @@ AnkleArtSurf0 = TriConnectedPatch( AnkleArtSurf0, mean(AnkleArtSurf0.Points));
 % 2nd : fit a polynomial surface to it AND 
 % exclude points that are two far (1mm) from the fitted surface,
 % then smooth the results with open & close morphology operations
-TibiaElmtsIDOK = AnkleSurfFit( AnkleArtSurf0, DistTib, V_all );
+TibiaElmtsIDOK = ankleSurfFit( AnkleArtSurf0, DistTib, V_all );
 AnkleArtSurf = TriReduceMesh(DistTib , TibiaElmtsIDOK);
 AnkleArtSurf = TriErodeMesh(AnkleArtSurf,2);
 AnkleArtSurf = TriCloseMesh(DistTib,AnkleArtSurf,6*CoeffMorpho);

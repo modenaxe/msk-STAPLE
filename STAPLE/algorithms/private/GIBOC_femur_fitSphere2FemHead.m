@@ -16,9 +16,11 @@
 % ----------------------------------------------------------------------- %
 
 
-function [CSs, FemHead] = GIBOC_femur_fitSphere2FemHead(ProxFem, CSs, CoeffMorpho, debug_plots)
+function [CSs, FemHead] = GIBOC_femur_fitSphere2FemHead(ProxFem, CSs, CoeffMorpho, debug_plots, debug_prints)
     
 if nargin < 4; debug_plots = 0; end
+if nargin < 5; debug_prints = 0; end
+
 % from CSs structures we need:
 % - CSs.CenterVol
 % - CSs.Z0
@@ -33,7 +35,7 @@ if nargin < 4; debug_plots = 0; end
 % FemHead_dil_coeff = 1.5;
 %norm_thres
 
-disp('Computing Femoral Head Centre (Renault et al. 2014)...')
+disp('Computing centre of femoral head:')
 
 % Find the most proximal on femur top head
 [~ , I_Top_FH] = max( ProxFem.incenter*CSs.Z0 ); 
@@ -63,13 +65,18 @@ FemHead0 = TriUnite(Patch_MM_FH,Patch_Top_FH);
 [Centre, Radius, ErrorDist] = sphereFit(FemHead0.Points);
 sph_RMSE = mean(abs(ErrorDist));
 
-disp('----------------')
-disp('First Estimation')
-disp('----------------')
-disp(['Centre: ', num2str(Centre)]);
-disp(['Radius: ', num2str(Radius)]);
-disp(['Mean Res: ', num2str(sph_RMSE)])
-disp('-----------------')
+% print
+disp(['     Fit #1: RMSE: ',num2str(sph_RMSE), ' mm']);
+
+if debug_prints
+    disp('----------------')
+    disp('First Estimation')
+    disp('----------------')
+    disp(['Centre: ', num2str(Centre)]);
+    disp(['Radius: ', num2str(Radius)]);
+    disp(['Mean Res: ', num2str(sph_RMSE)])
+    disp('-----------------')
+end
 
 % TODO:  check the errors at various STEPS to evaluate if fitting is
 % improving or not!
@@ -83,17 +90,23 @@ FemHead_dil_coeff = 1.5;
 sph_RMSECond = mean(abs(ErrorDistCond));
 % CenterFH0 = CenterFH;
 
-disp('----------------')
-disp('Cond  Estimation')
-disp('----------------')
-disp(['Centre: ', num2str(CenterFH)]);
-disp(['Radius: ', num2str(RadiusDil)]);
-disp(['Mean Res: ', num2str(sph_RMSECond)])
-disp('-----------------')
+% print
+disp(['     Fit #2: RMSE: ',num2str(sph_RMSECond), ' mm']);
+
+if debug_prints
+    disp('----------------')
+    disp('Cond  Estimation')
+    disp('----------------')
+    disp(['Centre: ', num2str(CenterFH)]);
+    disp(['Radius: ', num2str(RadiusDil)]);
+    disp(['Mean Res: ', num2str(sph_RMSECond)])
+    disp('-----------------')
+end
+
 
 % check
 if ~RadiusDil>Radius
-    warning('Dilated femoral head smaller than original mesh. Please check.')
+    warning('Dilated femoral head smaller than original mesh. Please check manually.')
 end
 
 % Theorical Normal of the face (from real fem centre to dilate one)
@@ -155,13 +168,27 @@ FemHead = TriOpenMesh(ProxFem ,FemHead,3*CoeffMorpho);
 [CenterFH,Radius, ErrorDistFinal] = sphereFit(FemHead.Points);
 sph_RMSEFinal = mean(abs(ErrorDistFinal));
 
-disp('-----------------')
-disp('Final  Estimation')
-disp('-----------------')
-disp(['Centre: ', num2str(CenterFH)]);
-disp(['Radius: ', num2str(Radius)]);
-disp(['Mean Res: ', num2str(sph_RMSEFinal)])
-disp('-----------------')
+% print
+disp(['     Fit #3: RMSE: ',num2str(sph_RMSEFinal), ' mm']);
+
+% feedback on fitting
+% chosen as large error based on error in regression equations (LM)
+fit_thereshold = 25;
+if sph_RMSE>fit_thereshold
+    warning(['Large sphere fit RMSE: ', num2str(sph_RMSE), '(>', num2str(fit_thereshold), 'mm).'])
+else
+    disp(['Reasonable sphere fit error (RMSE<', num2str(fit_thereshold), 'mm).'])
+end
+
+if debug_prints
+    disp('-----------------')
+    disp('Final  Estimation')
+    disp('-----------------')
+    disp(['Centre: ', num2str(CenterFH)]);
+    disp(['Radius: ', num2str(Radius)]);
+    disp(['Mean Res: ', num2str(sph_RMSEFinal)])
+    disp('-----------------')
+end
 
 % Write to the results struct
 % CSs.CenterFH0 = CenterFH0;

@@ -1,6 +1,7 @@
-function [IdCdlPts, U_Axes, med_lat_ind] = femur_processEpiPhysis(EpiFem, CSs, Inertia_Vects, edge_threshold, axes_dev_thresh)
+function [IdCdlPts, U_Axes, med_lat_ind] = GIBOC_femur_processEpiPhysis(EpiFem, CSs, Inertia_Vects, edge_threshold, axes_dev_thresh)
 
 debug_plots = 0;
+debug_prints = 0;
 % default axes_dev_thresh = 0.75;
 % default edge_threshold = 0.5;
 
@@ -28,7 +29,9 @@ end
 % check on number of saved edges
 N_edges = size(Edges, 1);
 N_saved_edges = size(Ikept,1);
-disp(['Processing ', num2str(N_saved_edges/N_edges*100), '% of edges in convex hull.'])
+if debug_prints
+    disp(['Processing ', num2str(N_saved_edges/N_edges*100), '% of edges in convex hull.'])
+end
 
 %Index of nodes identified on condyles:
 IdCdlPts = IdxPointsPair(Ikept,:);
