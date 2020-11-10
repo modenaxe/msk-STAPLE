@@ -18,14 +18,12 @@ dataset_set = {'TLEM2_CT'};
 % cell array with the bone geometries that you would like to process
 bone_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_l','tibia_l','talus_l', 'calcn_l'};
-in_mm = 1;
-side = 'l';
 
 % visualization geometry format
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2020'; % method = 'Modenese2018';
+workflow = 'Modenese2018';
 %--------------------------------------
 
 tic
@@ -35,20 +33,22 @@ if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
 for n_d = 1%:numel(dataset_set)
     
-    % setup folders
+    % dataset being processed
     cur_dataset = dataset_set{n_d};
-    main_ds_folder =  fullfile(bone_geometries_folder, cur_dataset);
-    
-    % model and model file naming
-    model_name = ['auto',modelling_method,'_',dataset_set{n_d}];
-    model_file_name = [model_name, '_', side, '.osim'];
     
     % options to read stl or mat(tri) files
     % tri_folder = fullfile(main_ds_folder,'stl');
-    tri_folder = fullfile(main_ds_folder,'tri');
+    tri_folder = fullfile(bone_geometries_folder, cur_dataset,'tri');
     
     % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);
+    
+    % get the body side
+    side = inferBodySideFromAnatomicStruct(triGeom_set);
+    
+    % model and model file naming
+    model_name = ['auto',workflow,'_',dataset_set{n_d}];
+    model_file_name = [model_name, '_', side, '.osim'];
     
     % create bone geometry folder for visualization
     geometry_folder_name = [model_name, '_',side,'_Geometry'];
@@ -64,10 +64,10 @@ for n_d = 1%:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
+    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, modelling_method);
+    createLowerLimbJoints(osimModel, JCS, workflow);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

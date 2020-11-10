@@ -25,7 +25,7 @@ in_mm = 1;
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2018'; % 'auto';
+workflow = 'Modenese2018'; % 'auto';
 %--------------------------------------
 
 tic
@@ -40,7 +40,7 @@ for n_d = 1%:numel(dataset_set)
     main_ds_folder =  fullfile(datasets_geometries_folder, cur_dataset);
     
     % model and model file naming
-    model_name = ['auto',modelling_method,'_',dataset_set{n_d}];
+    model_name = ['auto',workflow,'_',dataset_set{n_d}];
     model_file_name = [model_name, '.osim'];
     
     % options to read stl or mat(tri) files
@@ -67,7 +67,7 @@ for n_d = 1%:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, side, modelling_method);
+    createLowerLimbJoints(osimModel, JCS, workflow);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
