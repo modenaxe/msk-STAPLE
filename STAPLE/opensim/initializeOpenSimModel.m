@@ -24,7 +24,7 @@ function osimModel = initializeOpenSimModel(aModelNameString)
 import org.opensim.modeling.*
 
 disp('-------------------------------------')
-disp('Initializing automatic OpenSim model')
+disp('Initializing automatic OpenSim model:')
 
 % create the model
 osimModel = Model();

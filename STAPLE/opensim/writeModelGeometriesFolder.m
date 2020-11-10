@@ -49,6 +49,10 @@ aFileFormat = lower(aFileFormat);
 bone_names = fields(aTriGeomBoneSet);
 N_bones = numel(bone_names);
 
+disp('-------------------------------------')
+disp('Writing geometries for visualization ')
+disp('-------------------------------------')
+
 for nb = 1:N_bones
     cur_bone_name = bone_names{nb};
     cur_tri = aTriGeomBoneSet.(cur_bone_name);
@@ -70,4 +74,7 @@ for nb = 1:N_bones
         otherwise
             error('writeModelGeometriesFolder.m Please specify a file format to write the model geometries between ''stl'' and ''obj''.');
     end
+end
+% inform the user
+disp(['Stored ', aFileFormat ,' files in folder ', aGeomFolder]);
 end

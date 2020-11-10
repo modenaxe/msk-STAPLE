@@ -66,7 +66,7 @@ else
     % this allows to create a free body with ground using any segment
     % requires definition of fields child, child_orientation and
     % child_location in JCS.free_to_ground (as subfields).
-    disp('Partial lower limb model detected.')
+    disp('Partial model detected (attaching proxbody to ground).')
     JointParams = getJointParams('free_to_ground', [], JCS.proxbody, side_low);
     free_joint = createCustomJointFromStruct(osimModel, JointParams);
     osimModel.addJoint(free_joint);
