@@ -19,6 +19,7 @@ Z1 = CS.Z1;
 Y1 = CS.Y1;
 
 % 5.2 Identify the 'articular surfaces' of the ankle joint
+disp('  Step #1: first guess of talar trochlea surf');
 % Get mean curvature of the Talus
 [Cmean, Cgaussian, ~, ~, k1, k2] = TriCurvature(Talus,false);
 maxAbsCurv =  max(abs(k1), abs(k2));
@@ -47,6 +48,7 @@ TlTrcAS0 = TriDilateMesh(Talus,TlTrcAS0,2*CoeffMorpho);
 % 5.3 Get the first cylinder 
 % Fit a sphere to a get an initial guess at the radius and a point on the
 % axis
+disp('  Step #2: explorative sphere fit');
 [Center_TlTrc_0,Radius_TlTrc_0] = sphereFit(TlTrcAS0.incenter) ;
 [x0n, an, rn, d] = lscylinder( TlTrcAS0.incenter, Center_TlTrc_0', Y0,...%this was Y1
                             Radius_TlTrc_0, 0.001, 0.001);
@@ -74,6 +76,7 @@ end
 % Remove elements that are too for from from initial cylinder fit
 %   more than 5% of radius inside or more than 10% outside
 % Also remove elements that are too posterior
+disp('  Step #3: refine talar trochlea artic surf');
 TlTrcASElmtsOK =  find( d > -0.05*rn &...% cond1
                         abs(d) < 0.1*rn &... % cond2
                         TlTrcAS0.incenter*X0 > alt_TlTib_start);% cond3
@@ -85,10 +88,12 @@ TlTrcAS1 = TriKeepLargestPatch( TlTrcAS1 );
 TalTrochAS = TlTrcAS1 ;
 
 % fitting a cylinder
+disp('  Step #4: fit cylinder to artic surf');
 [x0n, an, rn] = lscylinder( TlTrcAS1.incenter, x0n, ankleAxis,...
                             rn, 0.001, 0.001);
                         
 % ankle axis
+disp('  Step #4: compute talocrural (ankle) axis');
 ankleAxis =  normalizeV(an);
 
 % align Z2 with -Y1, which is Z in ISB conventions (see debug plot)

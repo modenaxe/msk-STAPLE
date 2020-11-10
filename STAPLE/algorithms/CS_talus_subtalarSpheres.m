@@ -14,13 +14,17 @@ TlNvc_AS = TriReduceMesh( Talus, ElmtsTlNvc );
 % refine articular area
 % the area is very large (larger than AS) unless just the -Z points are considered
 % Translate the point by T
+disp('  Step #1: first guess talo-nav artic surf');
 Pts_T = bsxfun(@minus , TlNvc_AS.Points , CS.CenterVol');
 V = [CS.X0 CS.Y0 CS.Z0];
 Pts_T_R = Pts_T * V;
 ID_Pts_keep = find(Pts_T_R(:,3)<0);
 TlNvc_AS_refined = bsxfun(@plus ,Pts_T_R(ID_Pts_keep, :) * V' , CS.CenterVol');
+
 % 2.3 Fit sphere to the refine surface
-[Center_TlNvc, Radius_TlNvc,~] = sphereFit(TlNvc_AS_refined);
+[Center_TlNvc, Radius_TlNvc, ErrorDistNav] = sphereFit(TlNvc_AS_refined);
+sph_RMSEFinal_tibnav = mean(abs(ErrorDistNav));
+disp(['  Step #2: fit sphere to talo-nav artic surf (RMSE: ',num2str(sph_RMSEFinal_tibnav), ' mm)']);
 
 % get an articular surface for the identified points (NB, some points will
 % be eliminated to ensure triangulation, so fitting TlNvc_AS.Points will
@@ -51,6 +55,7 @@ U2 = normalizeV(U2);
 
 % First guess of the nodes that should be on the surface based on normal
 % orientation relative to the estimated directions U1 and U2
+disp('  Step #3: first guess of talo-calcn artic surf vertices.');
 TlCcnASNodesOK0 =  find(k2 > quantile(k2,0.33) &...
     (acosd(Talus.vertexNormal*U1)<30 | acosd(Talus.vertexNormal*U2)<30) &...
     Talus.Points*CS.X0<CS.CenterVol'*CS.X0 &...
@@ -76,6 +81,7 @@ CPts  = bsxfun(@minus, Talus.Points, TlCcnASCenter);
 normal_CPts = -CPts./repmat(sqrt(sum(CPts.^2,2)),1,3);
 
 % Second and final guess of the Talo-Calcaneal articular surface 
+disp('  Step #4: refined identification of talo-calcn artic surf.');
 TlCcnASNodesOK1 =  find(k2 > quantile(k2,0.33) &...
     acosd(Talus.vertexNormal*U)<60 &...
     sum(Talus.vertexNormal.*normal_CPts,2)>0 &...
@@ -91,9 +97,12 @@ TlCcnAS1 = TriCloseMesh(Talus,TlCcnAS1,2 * CoeffMorpho);
 
 % 3.3 Fit a sphere to approximate AS
 [Center_TlCcn, Radius_TlCcn, ErrorDist] = sphereFit(TlCcnAS1.incenter) ;
+sph_RMSEFinal_tibcalcn = mean(abs(ErrorDist));
+disp(['  Step #5: fit sphere to talo-calcn artic surf (RMSE: ',num2str(sph_RMSEFinal_tibcalcn), ' mm)']);
 % stlWrite('AS2.stl', TlCcnAS1.ConnectivityList, TlCcnAS1.Points)
 
 %% 4. Compute the "subtalar-axis"
+disp('  Step #6: compute subtalar axis');
 u_SubtalarAxis = normalizeV(Center_TlNvc-Center_TlCcn);
 
 
