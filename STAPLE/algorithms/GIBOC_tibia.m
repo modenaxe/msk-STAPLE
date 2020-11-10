@@ -151,9 +151,11 @@ EpiTibArtSurfTri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
 if nargout>3
-    ArtSurf.epi_tibia   = EpiTibTri;
-    ArtSurf.tib_plateau = EpiTibArtSurfTri;
-    ArtSurf.ankle_sup   = AnkleArtSurfTri;
+    ArtSurf.(['prox_tibia_', side])         = EpiTibTri;
+    ArtSurf.(['plateau_', side])       = EpiTibArtSurfTri;
+    ArtSurf.(['plateau_med_', side])   = EpiTibASMedTri;
+    ArtSurf.(['plateau_lat_', side])   = EpiTibASLatTri;
+    ArtSurf.(['tibiotalar_', side])        = AnkleArtSurfTri;
 end
 
 % debug plots

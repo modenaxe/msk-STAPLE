@@ -21,7 +21,7 @@
 %
 %   result_plots - 
 %
-%   debug_plots - 
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
 %       
 %   in_mm - (optional) indicates if the provided geometries are given in mm
 %       (value: 1) or m (value: 0). Please note that all tests and analyses
@@ -140,11 +140,11 @@ end
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
 if nargout>3
-%     ArtSurf.hip       = FemHeadTri;
-%     ArtSurf.med_cond  = fullCondyle_Med_Tri;
-%     ArtSurf.lat_cond  = fullCondyle_Lat_Tri;
-    ArtSurf.epiphysis = EpiFemTri;
-    ArtSurf.condyles  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
+    ArtSurf.(['hip_', side])       = FemHeadTri;
+    ArtSurf.(['med_cond_', side])  = fullCondyle_Med_Tri;
+    ArtSurf.(['lat_cond_', side])  = fullCondyle_Lat_Tri;
+    ArtSurf.(['dist_femur_', side]) = EpiFemTri;
+    ArtSurf.(['condyles_', side])  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
 end
 
 % extract patellar grooves
@@ -154,6 +154,9 @@ end
 
 % how to compute the joint axes
 switch fit_method
+%     case 'artic_surf_only'
+%         [CS, JCS, FemurBL] = deal([], [], []);
+%         return
     case 'spheres'
         % Fit two spheres on articular surfaces of posterior condyles
         [CS, JCS] = CS_femur_SpheresOnCondyles(postCondyle_Lat_Tri, postCondyle_Med_Tri, CS, side);
@@ -164,7 +167,8 @@ switch fit_method
         % Fit the entire condyles with an ellipsoid
         [CS, JCS] = CS_femur_EllipsoidsOnCondyles(fullCondyle_Lat_Tri, fullCondyle_Med_Tri, CS, side);
     otherwise
-        error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.')
+        error('GIBOC_femur.m ''method'' input has value: ''spheres'', ''cylinder'' or ''ellipsoids''.');%,...
+%             'To extract the articular surfaces without calculating joint parameters you can use ''artic_surf_only''.'])
 end
 
 % joint names (extracted from JCS defined in the fit_methods)
