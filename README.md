@@ -83,25 +83,24 @@ To batch process, you can use most of the provided scripts if you organised your
 `
 study_folder --|
 			   |- dataset_1_folder --|
-									|- tri --|
-											 |- pelvis_no_sacrum.mat
-											 |- femur_r.mat
-											 |- etc.
-										
-									|- stl --|
-											 |- pelvis_no_sacrum.stl
-											 |- femur_r.stl
-											 |- etc.
+									 |- tri --|
+											  |- pelvis_no_sacrum.mat
+											  |- femur_r.mat
+											  |- etc.
+									 |- stl --|
+											  |- pelvis_no_sacrum.stl
+											  |- femur_r.stl
+											  |- etc.
 			   |- dataset_2_folder --|
-									|- tri --|
-											 |- pelvis_no_sacrum.mat
-											 |- femur_r.mat
-											 |- etc.
+									 |- tri --|
+											  |- pelvis_no_sacrum.mat
+											  |- femur_r.mat
+											  |- etc.
 										
-									|- stl --|
-											 |- pelvis_no_sacrum.stl
-											 |- femur_r.stl
-											 |- etc.
+									 |- stl --|
+											  |- pelvis_no_sacrum.stl
+											  |- femur_r.stl
+											  |- etc.
 `
 where:
 * `study_folder` is the main folder of the current study
