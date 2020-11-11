@@ -25,7 +25,7 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function [CS, JCS] = STAPLE_talus(talusTri, side, result_plots,  debug_plots, in_mm)
+function [CS, JCS, ArtSurf] = STAPLE_talus(talusTri, side, result_plots,  debug_plots, in_mm)
 
 % NOTE: CS contains multiple sets of axes:
 % * X0-Y0-Z0 : talus axes
@@ -132,6 +132,14 @@ disp('Processing talocrural joint artic surfaces:')
                                              alt_TlNeck_start,...
                                              alt_TlTib_start,...
                                              CoeffMorpho);
+
+% exporting articular surfaces
+if nargout>2
+    disp('Storing articular surfaces for export...')
+    ArtSurf.(['talar_trochlea_', side_raw])       = TalTrochAS;
+    ArtSurf.(['talo_calcn', side_raw])  = Talocalcn_AS;
+    ArtSurf.(['talo_navic', side_raw])  = Talonavic_AS;
+end
 
 % segment reference system
 % NOTE: CS contains multiple sets of axes:
