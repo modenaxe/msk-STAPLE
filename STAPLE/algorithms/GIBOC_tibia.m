@@ -179,11 +179,12 @@ EpiTibArtSurfTri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
 % commenting out the parts of interest
 if nargout>3
     disp('Storing articular surfaces for export...')
-    ArtSurf.(['prox_tibia_', side_raw])         = EpiTibTri;
+    ArtSurf.(['prox_tibia_', side_raw])    = ProxTibTri;
+    ArtSurf.(['dist_tibia_', side_raw])    = DistTibTri;
     ArtSurf.(['plateau_', side_raw])       = EpiTibArtSurfTri;
     ArtSurf.(['plateau_med_', side_raw])   = EpiTibASMedTri;
     ArtSurf.(['plateau_lat_', side_raw])   = EpiTibASLatTri;
-    ArtSurf.(['tibiotalar_', side_raw])        = AnkleArtSurfTri;
+    ArtSurf.(['tibiotalar_', side_raw])    = AnkleArtSurfTri;
 end
 
 % debug plots
