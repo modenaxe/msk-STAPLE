@@ -49,6 +49,8 @@ The following table includes the methods currently available in STAPLE.
 * **Partial models**: they are a subset of a complete model and include any meaningful combination of the previous bones. 
 For example models of hip, knee and ankle joints can be created as individual models.
 
+![partial_models](./images/partial_osim_models.png)
+
 # How to use STAPLE
 The workflow consists in:
 1. segmenting bone geometries from medical images, tipically computed tomography (CT) or magnetic resonance imaging (MRI) scans. 
