@@ -15,7 +15,7 @@ Miranda2010_*ACS.m
 # folders
 __*
 /_old
-test_geometries/
+#test_geometries/
 OpenSim_models/
 docs/*.html
 docs/*.m

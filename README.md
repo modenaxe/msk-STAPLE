@@ -80,7 +80,7 @@ As a general guidelines, in plots the colors are generally used as follows:
 * green: not compartimentalised anatomical structures - basically the rest.
 
 To batch process, you can use most of the provided scripts if you organised your folders and files as follows:
-```
+```bash
 study_folder --|
 			   |- dataset_1_folder --|
 									 |- tri --|
