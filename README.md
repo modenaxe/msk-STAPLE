@@ -70,6 +70,22 @@ Individual bones are also grouped at this stage, for example the surface meshes 
 ### Overview of STAPLE internal workflow
 ![STAPLE_workflow](./images/STAPLE_overview.png)
 
+### Detailed steps to setup a STAPLE workflow
+This is a checklist to fullfill for setting up a functioning workflow using STAPLE:
+- [ ] define dataset
+- [ ] define cell array with names of bones to process. The same names will be used for the rigid bodies
+- [ ] define body side if not evident from bone names.
+- [ ] decide the workflow to use for joint definitions
+- [ ] use `createTriGeomSet.m` for crearing a set of triangulated objects 
+- [ ] use `writeModelGeometriesFolder.m` to the visualization geometries for your model. You can specify the format (`obj` preferred) and the level of subsampling of the original surface models.
+- [ ] use `initializeOpenSimModel.m` to start building the OpenSim model.
+- [ ] use `addBodiesFromTriGeomBoneSet` to create bodies corresponding to the fields of the `TriGeomSet` structure created using `createTriGeomSet.m`. These bodies will be added to the OpenSim model, but will not be connected by joints. If you write the model at this stage all bodies will be connected to `Ground`. **NOTE:** the bodies will have mass properties calculated from the bone geometries using a bone density of 1.42 g/cm^3 as in [Dumas et al. (2015)](https://doi.org/10.1109/TBME.2005.855711). 
+- [ ] use `processTriGeomBoneSet.m` to process the bone geometries using the available algorithms and extract body coordinate systems, joint coordinate systems and bone landmarks. This step does not rely on the OpenSim API and consists of a morphological analysis of the bone shapes.
+- [ ] use `createLowerLimbJoints.m` to connect the OpenSim rigid bodies using joints defined by the reference systems identified by `processTriGeomBoneSet.m`. The joint reference systems can be used in different ways to create a lower limb model. We provide two options: `Modenese2018` based on a previous publication of [Modenese et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.03.039) and a default approach. The main difference is that `Modenese2018` does not use axis from the tibia bones, while the default approach does.
+- [ ] (optional) use `assignMassPropsToSegments.m` to update the mass properties of the segment based on the actual anthropometry of the subject that you are modelling. **NOTE:** this feature is still basic and in development.
+- [ ] (optional) use `addBoneLandmarksAsMarkers.m` to include in the OpenSim model also the bony landmarks identified automatically during the morphological analyses.
+- [ ] finalise the OpenSim model using the standard `osimModel.finalizeConnections()` method.
+
 ### Reference System Conventions [WIP]
 The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
 

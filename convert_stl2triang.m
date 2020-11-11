@@ -1,11 +1,11 @@
 %-------------------------------------------------------------------------%
-% Copyright (c) 2019 Modenese L.                                          %
+% Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
 %    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 % This script should be run after a dataset of stl geometries has been
-% refined and has the purposes of reducing the size of files for storage
+% refined with the purposes of reducing the size of files for storage
 % and distribution, e.g. in GitHub.
 % ----------------------------------------------------------------------- %
 clear; clc
@@ -13,14 +13,12 @@ addpath(genpath('STAPLE'))
 
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
-% dataset_folder = './bone_geometries/VAKHUM_S6_CT';
+% dataset_folder = './bone_geometries/VAKHUM_CT';
 % dataset_folder = './bone_geometries/TLEM2';
-% dataset_folder = './bone_geometries/GC4';
 % dataset_folder = './bone_geometries/ICL_MRI';
 % dataset_folder = './bone_geometries/JIA_MRI';
-% dataset_folder = './bone_geometries/ULB_VM';
-% dataset_folder = './bone_geometries/GIBOC_CT';
 dataset_folder = './bone_geometries/JIA_ANKLE_MRI';
+
 % folder where to store the resulting triangulations
 triang_folder = [dataset_folder, filesep, 'tri'];
 %---------------------------------------------------
