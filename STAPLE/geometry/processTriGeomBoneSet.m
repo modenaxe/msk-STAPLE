@@ -87,12 +87,12 @@ disp('-----------------------------------')
 disp('Processing provided bone geometries')
 disp('-----------------------------------')
 disp('ALGORITHMS:')
-disp(['pelvis : ', algo_pelvis]);
-disp(['femur  : ', algo_femur]);
-disp(['tibia  : ', algo_tibia]);
-% disp(['patella: ', algo_patella]);
-disp(['talus  : ', 'STAPLE']);
-disp(['foot   : ', 'STAPLE']);
+disp(['  pelvis : ', algo_pelvis]);
+disp(['  femur  : ', algo_femur]);
+disp(['  tibia  : ', algo_tibia]);
+% disp(['  patella: ', algo_patella]);
+disp(['  talus  : ', 'STAPLE']);
+disp(['  foot   : ', 'STAPLE']);
 
 % ---- PELVIS -----
 if isfield(geom_set,'pelvis')
