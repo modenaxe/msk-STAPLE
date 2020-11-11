@@ -225,7 +225,7 @@ end
 
 label_switch = 1;
 if result_plots == 1
-    figure('Name', ['tibia_', side_low]);
+    figure('Name', ['GIBOC | bone: tibia | fit: ', fit_method,' | side: ', side_low])
     
     % plot entire tibia 
     subplot(2,2,[1,3])
@@ -245,7 +245,7 @@ if result_plots == 1
         case 'ellipse'
             quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
             quickPlotRefSystem(JCS.(knee_name))
-            title('GIBOC Tibia - Ellipse fitting')
+%             title('GIBOC Tibia - Ellipse fitting')
         case 'centroids'
             quickPlotTriang(EpiTibASMedTri,'r', 0, alpha_ArtSurf );
             quickPlotTriang(EpiTibASLatTri,'b',0, alpha_ArtSurf);
@@ -253,11 +253,11 @@ if result_plots == 1
             plotDot(CS.Centroid_AS_med, 'r', 4);
             plotCylinder((CS.Centroid_AS_lat-CS.Centroid_AS_med)', 3, (CS.Centroid_AS_lat+CS.Centroid_AS_med)/2,...
                 1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
-            title('GIBOC Tibia - Centroids')
+%             title('GIBOC Tibia - Centroids')
         case 'plateau'
             quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
             quickPlotRefSystem(JCS.(knee_name))
-            title('GIBOC Tibia - Plateau')
+%             title('GIBOC Tibia - Plateau')
     end
 
     % plot distal tibia

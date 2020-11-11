@@ -163,7 +163,7 @@ PelvisBL.LPS      = LPS;
 % debug plot
 label_switch = 1;
 if result_plots == 1
-    figure('Name','Kai2014 Pelvis')
+    figure('Name', ['Kai2014 | bone: pelvis | side: ', side_low])
     plotTriangLight(pelvisTri, CS, 0); hold on
 %     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);

@@ -205,7 +205,7 @@ FemurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
 % result plot
 label_switch=1;
 if result_plots == 1
-    figure('Name',['femur_',side_low]);
+    figure('Name', ['GIBOC | bone: femur | fit: ',fit_method,' | side: ', side_low])
     alpha = 0.5;
     
     % plot full femur and final JCSs

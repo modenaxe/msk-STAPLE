@@ -136,9 +136,9 @@ disp('Processing talocrural joint artic surfaces:')
 % exporting articular surfaces
 if nargout>2
     disp('Storing articular surfaces for export...')
-    ArtSurf.(['talar_trochlea_', side_raw])       = TalTrochAS;
-    ArtSurf.(['talo_calcn', side_raw])  = Talocalcn_AS;
-    ArtSurf.(['talo_navic', side_raw])  = Talonavic_AS;
+    ArtSurf.(['talar_trochlea_', side_low])       = TalTrochAS;
+    ArtSurf.(['talo_calcn', side_low])  = Talocalcn_AS;
+    ArtSurf.(['talo_navic', side_low])  = Talonavic_AS;
 end
 
 % segment reference system
@@ -178,7 +178,7 @@ if paper_figure == 1
 end
 
 if result_plots == 1
-    figure('Name', 'talus_r')
+    figure('Name', ['STAPLE | bone: talus | side: ', side_low])
     % plot talus and ref systems
     subplot(2,2,[1,3]);
     plotTriangLight(talusTri, CS, 0, 0.7);

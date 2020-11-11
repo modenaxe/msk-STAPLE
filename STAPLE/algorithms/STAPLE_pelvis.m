@@ -136,7 +136,7 @@ PelvisBL.SYMP     = SYMP;
 % debug plot
 label_switch = 1;
 if result_plots == 1
-    figure('Name', 'STAPLE pelvis')
+    figure('Name', ['GIBOC | bone: pelvis | side: ', side_low])
     plotTriangLight(Pelvis, CS, 0); hold on
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.ground_pelvis);

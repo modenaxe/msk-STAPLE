@@ -133,7 +133,7 @@ FemurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
 % result plot
 label_switch=1;
 if result_plots == 1
-    figure
+    figure('Name', ['Kai2014 | bone: femur | side: ', side_low])
     alpha = 0.5;
     subplot(2,2,[1,3]);
     plotTriangLight(femurTri, CS, 0)

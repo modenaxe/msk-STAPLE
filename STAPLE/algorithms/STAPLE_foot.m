@@ -264,7 +264,7 @@ if paper_figure == 1
 end
 
 if result_plots == 1
-    figure('Name', ['foot_',side_low]);
+    figure('Name', ['STAPLE | bone: foot | side: ', side_low])
     % plot the calcn triangulation
     plotTriangLight(calcnTri, CS, 0)
     % Plot the inertia Axis & Volumic center

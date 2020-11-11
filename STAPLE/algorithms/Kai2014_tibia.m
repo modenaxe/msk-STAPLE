@@ -182,7 +182,7 @@ label_switch = 1;
 % plot reference systems
 if result_plots == 1
     % plot tibia and reference systems
-    figure('Name','Tibia-Kai2014')
+    figure('Name', ['Kai2014 | bone: tibia | side: ', side_low])
     plotTriangLight(tibiaTri, CS, 0);
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.(joint_name));
