@@ -13,7 +13,7 @@
 % Inputs:
 %   femurTri - MATLAB triangulation object of the entire femoral geometry.
 %
-%   side - 
+%   side_raw - 
 %
 %   result_plots - enable plots of final fittings and reference systems. 
 %       Value: 1 (default) or 0.
@@ -31,17 +31,17 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
-function [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side, result_plots, debug_plots, in_mm)
+function [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side_raw, result_plots, debug_plots, in_mm)
 
 % result plots on by default, debug off
-if nargin<2;    side = 'r';       end
+if nargin<2;    side_raw = 'r';   end
 if nargin<3;    result_plots = 1; end
 if nargin<4;    debug_plots = 0;  end
 if nargin<5;    in_mm = 1;        end
 if in_mm == 1;  dim_fact = 0.001; else;  dim_fact = 1; end
 
 % get sign correspondent to body side
-[side_sign, side_low] = bodySide2Sign(side);
+[side_sign, side_low] = bodySide2Sign(side_raw);
 
 % joint names
 hip_name = ['hip_',side_low];

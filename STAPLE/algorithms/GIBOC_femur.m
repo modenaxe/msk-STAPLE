@@ -14,8 +14,8 @@
 % Inputs:
 %   femurTri - a MATLAB triangulation object representing a femur.
 %
-%   side - a string indicating the body side. Valid options: 'R', 'r' for 
-%       the right side, 'L' and 'l' for the left side.
+%   side_raw - a string indicating the body side. Valid options: 'R', 'r'  
+%       for the right side, 'L' and 'l' for the left side.
 %
 %   fit_method - a string indicating the name to assign to the OpenSim body.
 %

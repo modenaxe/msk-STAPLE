@@ -25,7 +25,11 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function [CS, JCS, ArtSurf] = STAPLE_talus(talusTri, side_raw, result_plots,  debug_plots, in_mm)
+function [CS, JCS, ArtSurf] = STAPLE_talus(talusTri,...
+                                           side_raw,...
+                                           result_plots,...
+                                           debug_plots,...
+                                           in_mm)
 
 % NOTE: CS contains multiple sets of axes:
 % * X0-Y0-Z0 : talus axes
@@ -33,7 +37,7 @@ function [CS, JCS, ArtSurf] = STAPLE_talus(talusTri, side_raw, result_plots,  de
 % * X2-Y2-Z2 : talocrural joint axes
 
 % result plots on by default, debug off
-if nargin<2;    side_raw = 'r';              end
+if nargin<2;    side_raw = 'r';          end
 if nargin<3;    result_plots = 1;        end
 if nargin<4;    debug_plots = 0;         end
 if nargin<5;    in_mm = 1;               end

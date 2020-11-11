@@ -15,9 +15,9 @@
 %    Author: Luca Modenese                                                %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
-function [ CS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, side, result_plots, debug_plots, in_mm)
+function [ CS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, side_raw, result_plots, debug_plots, in_mm)
 
-if nargin<2;    side = 'r';       end
+if nargin<2;    side_raw = 'r';    end
 if nargin<3;    result_plots=1;    end
 if nargin<4;    debug_plots = 0;   end
 if nargin<5;    in_mm = 1;         end
@@ -25,7 +25,7 @@ if in_mm == 1;  dim_fact = 0.001;  else;  dim_fact = 1; end
 
 % get side id correspondent to body side (used for hip joint parent)
 % no need for sign, left and right rf are identical
-[~, side_low] = bodySide2Sign(side);
+[~, side_low] = bodySide2Sign(side_raw);
 
 disp('---------------------')
 disp('   STAPLE - PELVIS   '); 

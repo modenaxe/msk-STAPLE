@@ -23,19 +23,19 @@
 % This implementation includes several non-obvious checks to ensure that
 % the bone geometry is always sliced in the correct direction.
 % ----------------------------------------------------------------------- %
-function [CS, JCS, TibiaBL] = Kai2014_tibia(tibiaTri, side, result_plots, debug_plots, in_mm)
+function [CS, JCS, TibiaBL] = Kai2014_tibia(tibiaTri, side_raw, result_plots, debug_plots, in_mm)
 
 % Slices 1 mm apart as in Kai et al. 2014
 slices_thickness = 1;
 
 % default behaviour of results/debug plots
-if nargin<2;     side='r';  end
+if nargin<2;     side_raw='r';      end
 if nargin<3;     result_plots = 1;  end
-if nargin<4;     debug_plots = 0;  end
-if nargin<5;     in_mm = 1;  end %placeholder
+if nargin<4;     debug_plots = 0;   end
+if nargin<5;     in_mm = 1;         end %placeholder
 
 % get sign correspondent to body side
-[side_sign, side_low] = bodySide2Sign(side);
+[side_sign, side_low] = bodySide2Sign(side_raw);
 
 % inform user about settings
 disp('---------------------')
