@@ -93,7 +93,7 @@ disp('  Step #4: fit cylinder to artic surf');
                             rn, 0.001, 0.001);
                         
 % ankle axis
-disp('  Step #4: compute talocrural (ankle) axis');
+disp('  Step #5: compute talocrural (ankle) axis');
 ankleAxis =  normalizeV(an);
 
 % align Z2 with -Y1, which is Z in ISB conventions (see debug plot)

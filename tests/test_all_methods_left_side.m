@@ -10,10 +10,10 @@
 %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));
 
 %--------------------------------------
-bone_geometries_folder = 'test_geometries';
+bone_geometries_folder = '../bone_datasets';
 dataset_set = {'TLEM2_CT'};
 bones_list = {'pelvis_no_sacrum','femur_l','tibia_l','patella_l','talus_l', 'calcn_l'};
 in_mm = 1;
@@ -69,4 +69,4 @@ for n_d = 1:numel(dataset_set)
 end
 
 % remove paths
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));

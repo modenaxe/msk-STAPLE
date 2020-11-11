@@ -20,13 +20,13 @@ output_models_folder = 'Opensim_models';
 % set output model name
 output_model_file_name = 'example_ankle_joint.osim';
 
+% folder where the various datasets (and their geometries) are located.
+datasets_folder = 'bone_datasets';
+
 % dataset(s) that you would like to process specified as cell array. 
 % If you add multiple datasets they will be batched processed but you will
 % have to adapt the folder and file namings below.
 dataset_set = {'JIA_ANKLE_MRI'};
-
-% folder where the various datasets (and their geometries) are located.
-datasets_folder = 'test_geometries';
 
 % cell array with the name of the bone geometries to process
 bones_list = {'tibia_r','talus_r','calcn_r'};

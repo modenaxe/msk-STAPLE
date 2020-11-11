@@ -12,11 +12,13 @@ addpath(genpath('STAPLE'));
 %----------
 output_models_folder = 'Opensim_models';
 
+% folder where the various datasets (and their geometries) are located.
+datasets_folder = 'bone_datasets';
+
 % datasets that you would like to process
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 
 % cell array with the bone geometries that you would like to process
-datasets_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 
 % visualization geometry format (options: 'stl' or 'obj')
@@ -38,7 +40,7 @@ for n_d = 1:numel(dataset_set)
     cur_dataset = dataset_set{n_d};
     
     % folder from which triangulations will be read
-    tri_folder = fullfile(datasets_geometries_folder, cur_dataset,'tri');
+    tri_folder = fullfile(datasets_folder, cur_dataset,'tri');
     
     % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);

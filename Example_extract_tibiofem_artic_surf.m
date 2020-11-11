@@ -24,8 +24,8 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
-% folders where the bone geometries are stored
-bone_geometries_folder = 'test_geometries';
+% folder where the various datasets (and their geometries) are located.
+datasets_folder = 'bone_datasets';
 
 % name of the datasets to process
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI'};
@@ -43,7 +43,7 @@ for n_d = 1:numel(dataset_set)
     dataset_name = dataset_set{n_d};
     
     % folder of the bone geometries in MATLAB format ('tri'/'stl')
-    tri_folder = fullfile(bone_geometries_folder, dataset_set{n_d},'tri');
+    tri_folder = fullfile(datasets_folder, dataset_set{n_d},'tri');
 
     % create geometry set structure for the entire dataset
     geom_set = createTriGeomSet(bones_list, tri_folder);

@@ -5,18 +5,18 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));
 
 %----------
 % SETTINGS 
 %----------
-output_models_folder = 'Opensim_models';
+output_models_folder = 'models_from_tests';
 
 % datasets that you would like to process
 dataset_set = {'JIA_ANKLE_MRI'};
 
 % cell array with the bone geometries that you would like to process
-bone_geometries_folder = 'test_geometries';
+bone_geometries_folder = '../bone_datasets';
 bones_list = {'tibia_r','talus_r','calcn_r'};
 in_mm = 1;
 
@@ -105,4 +105,4 @@ for n_d = 1:numel(dataset_set)
 end
 
 % remove paths
-rmpath(genpath('msk-STAPLE/STAPLE'));
+rmpath(genpath('../STAPLE'));

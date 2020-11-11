@@ -9,16 +9,16 @@
 %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));
 
 %--------------------------------------
-bone_geometries_folder = 'test_geometries';
+bone_geometries_folder = '../bone_datasets';
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI', 'VAKHUM_CT',};
 
 sides = {'r', 'l'};
 in_mm = 1;
 %--------------------------------------
-for n_side = 1%:2
+for n_side = 1:2
     side = sides{n_side};
     % bone names
     femur_name = ['femur_', side];     tibia_name = ['tibia_', side];
@@ -40,31 +40,32 @@ for n_side = 1%:2
         % create geometry set structure for the entire dataset
         geom_set = createTriGeomSet(bones_list, tri_folder);
         
-        %     [JCS, BL, CS] = analyzeBoneGeometries(geom_set);
+%         % process all geometries at once
+%         [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
         
         %---- PELVIS -----
         if isfield(geom_set, 'pelvis_no_sacrum')
-%             [PelvisRS1, PelvisJCS1, PelvisBL1] = STAPLE_pelvis (geom_set.pelvis_no_sacrum, side);
-%             [PelvisRS2, PelvisJCS2, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum, side);
+            [PelvisRS1, PelvisJCS1, PelvisBL1] = STAPLE_pelvis (geom_set.pelvis_no_sacrum, side);
+            [PelvisRS2, PelvisJCS2, PelvisBL2] = Kai2014_pelvis(geom_set.pelvis_no_sacrum, side);
         end
         
         %---- FEMUR -----
         if isfield(geom_set, femur_name)
             %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.(femur_name));
-%             [FemurCS1, FemurJCS1] = Kai2014_femur(geom_set.(femur_name), side);
-%             [FemurCS2, FemurJCS2] = GIBOC_femur(geom_set.(femur_name), side, 'spheres');
-%             [FemurCS3, FemurJCS3] = GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids');
-%             [FemurCS4, FemurJCS4] = GIBOC_femur(geom_set.(femur_name), side, 'cylinder');
+            [FemurCS1, FemurJCS1] = Kai2014_femur(geom_set.(femur_name), side);
+            [FemurCS2, FemurJCS2] = GIBOC_femur(geom_set.(femur_name), side, 'spheres');
+            [FemurCS3, FemurJCS3] = GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids');
+            [FemurCS4, FemurJCS4] = GIBOC_femur(geom_set.(femur_name), side, 'cylinder');
         end
         
         %---- TIBIA -----
-%         if isfield(geom_set, tibia_name)
-%             %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.(tibia_name));
-%             [TibiaCS1, TibiaJCS1] = Kai2014_tibia(geom_set.(tibia_name), side);
-%             [TibiaCS2, TibiaJCS2] = GIBOC_tibia(geom_set.(tibia_name), side, 'plateau');
-%             [TibiaCS3, TibiaJCS3] = GIBOC_tibia(geom_set.(tibia_name), side, 'ellipse');
-%             [TibiaCS4, TibiaJCS4] = GIBOC_tibia(geom_set.(tibia_name), side, 'centroids');
-%         end
+        if isfield(geom_set, tibia_name)
+            %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.(tibia_name));
+            [TibiaCS1, TibiaJCS1] = Kai2014_tibia(geom_set.(tibia_name), side);
+            [TibiaCS2, TibiaJCS2] = GIBOC_tibia(geom_set.(tibia_name), side, 'plateau');
+            [TibiaCS3, TibiaJCS3] = GIBOC_tibia(geom_set.(tibia_name), side, 'ellipse');
+            [TibiaCS4, TibiaJCS4] = GIBOC_tibia(geom_set.(tibia_name), side, 'centroids');
+        end
         
         % %---- PATELLA -----
 %         if isfield(geom_set, patella_name)
@@ -75,18 +76,18 @@ for n_side = 1%:2
 %         end
         
 %         %---- TALUS/ANKLE -----
-%         if isfield(geom_set, talus_name)
-%             [TalusCS, TalusJCS] = STAPLE_talus(geom_set.(talus_name), side);
-%         end
+        if isfield(geom_set, talus_name)
+            [TalusCS, TalusJCS] = STAPLE_talus(geom_set.(talus_name), side);
+        end
 %         
 %         %---- CALCANEUS/SUBTALAR -----
-%         if isfield(geom_set, calcn_name)
+        if isfield(geom_set, calcn_name)
             [FootCS, FootJCS] = STAPLE_foot(geom_set.(calcn_name), side);
-%         end
+        end
         
         %     close all
     end
     
 end
 % remove paths
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));

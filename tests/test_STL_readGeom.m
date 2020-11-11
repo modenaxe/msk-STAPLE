@@ -5,18 +5,18 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('STAPLE'));
+addpath(genpath('../STAPLE'));
 
 %----------
 % SETTINGS 
 %----------
-output_models_folder = 'Opensim_models';
+output_models_folder = 'models_from_tests';
 
 % datasets that you would like to process
 dataset_set = {'TLEM2'};
 
 % cell array with the bone geometries that you would like to process
-bone_geometries_folder = 'test_geometries';
+bone_geometries_folder = '../bone_datasets';
 bones_list = {'pelvis','femur_r','tibia_r','talus_r', 'calcn_r'};
 in_mm = 1;
 
@@ -24,7 +24,7 @@ in_mm = 1;
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2020'; % method = 'Modenese2018';
+modelling_method = 'Modenese2020';
 %--------------------------------------
 
 tic
@@ -84,4 +84,4 @@ for n_d = 1
 end
 
 % remove paths
-rmpath(genpath('STAPLE'));
+rmpath(genpath('../STAPLE'));

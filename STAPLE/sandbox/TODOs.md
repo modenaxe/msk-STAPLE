@@ -1,6 +1,7 @@
 # STAPLE TASKS BEFORE RELEASE
 
-## Functions to integrate to have bones with ISB reference systems
+## Functions to integrate to have bones with ISB reference systems. 
+This must be done after fixing CS for all segments.
 - [ ] transformTriGeomSet needs testing
 - [ ] writeTransformedBoneGeom needs integration in pipeline
 

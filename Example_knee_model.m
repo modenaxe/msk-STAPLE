@@ -16,11 +16,11 @@ output_models_folder = 'Opensim_models';
 % set output model name
 output_model_file_name = 'example_knee_joint_model.osim';
 
+% folder where the various datasets (and their geometries) are located.
+datasets_folder = 'bone_datasets';
+
 % datasets that you would like to process
 dataset_set = {'ICL_MRI'};
-
-% folder where the various datasets (and their geometries) are located.
-datasets_folder = 'test_geometries';
 
 % cell array with the name of the bone geometries to process
 bones_list = {'femur_r', 'tibia_r'};
