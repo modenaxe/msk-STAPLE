@@ -15,12 +15,13 @@ Miranda2010_*ACS.m
 # folders
 __*
 /_old
-#test_geometries/
+bone_datasets/
 OpenSim_models/
 docs/*.html
 docs/*.m
-
+tests/models_from_tests/
 *.zip
+/*_safe/
 
 # openSim files
 *.log
