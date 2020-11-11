@@ -5,7 +5,7 @@
 - [ ] writeTransformedBoneGeom needs integration in pipeline
 
 ## Priority: make a consistent interface for functions
-- [ ] process left side
+- [x] process left side
 - [ ] uniform variable names, they are still changing across scripts.
 - [ ] landmarkTriGeomBone: requires a check AFTER the dimensionality of Origin is decided.
 - [ ] Dimensionality of Origin: same as OpenSim

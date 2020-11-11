@@ -127,7 +127,7 @@ label_switch = 1;
 
 % plot reference systems
 if result_plots == 1
-    figure('Name','tibia_r')
+    figure('Name', ['STAPLE | bone: tibia | side: ', side_low])
     PlotTriangLight(Tibia, CS, 0);
     quickPlotRefSystem(CS);
     quickPlotRefSystem(JCS.knee_r);

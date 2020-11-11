@@ -18,7 +18,7 @@ dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI', 'VAKHUM_CT',};
 sides = {'r', 'l'};
 in_mm = 1;
 %--------------------------------------
-for n_side = 1:2
+for n_side = 1%:2
     side = sides{n_side};
     % bone names
     femur_name = ['femur_', side];     tibia_name = ['tibia_', side];
@@ -51,7 +51,7 @@ for n_side = 1:2
         %---- FEMUR -----
         if isfield(geom_set, femur_name)
             %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.(femur_name));
-            [FemurCS1, FemurJCS1] = Kai2014_femur(geom_set.(femur_name), side);
+%             [FemurCS1, FemurJCS1] = Kai2014_femur(geom_set.(femur_name), side);
 %             [FemurCS2, FemurJCS2] = GIBOC_femur(geom_set.(femur_name), side, 'spheres');
 %             [FemurCS3, FemurJCS3] = GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids');
 %             [FemurCS4, FemurJCS4] = GIBOC_femur(geom_set.(femur_name), side, 'cylinder');
@@ -81,7 +81,7 @@ for n_side = 1:2
 %         
 %         %---- CALCANEUS/SUBTALAR -----
 %         if isfield(geom_set, calcn_name)
-%             [FootCS, FootJCS] = STAPLE_foot(geom_set.(calcn_name), side);
+            [FootCS, FootJCS] = STAPLE_foot(geom_set.(calcn_name), side);
 %         end
         
         %     close all
