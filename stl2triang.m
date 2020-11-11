@@ -10,16 +10,17 @@
 % ----------------------------------------------------------------------- %
 clear; clc
 addpath(genpath('STAPLE'))
+
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
-% dataset_folder = './test_geometries/VAKHUM_S6_CT';
-% dataset_folder = './test_geometries/TLEM2';
-% dataset_folder = './test_geometries/GC4';
-% dataset_folder = './test_geometries/ICL_MRI';
-% dataset_folder = './test_geometries/JIA_MRI';
-% dataset_folder = './test_geometries/ULB_VM';
-% dataset_folder = './test_geometries/GIBOC_CT';
-dataset_folder = './test_geometries/JIA_ANKLE_MRI';
+% dataset_folder = './bone_geometries/VAKHUM_S6_CT';
+% dataset_folder = './bone_geometries/TLEM2';
+% dataset_folder = './bone_geometries/GC4';
+% dataset_folder = './bone_geometries/ICL_MRI';
+% dataset_folder = './bone_geometries/JIA_MRI';
+% dataset_folder = './bone_geometries/ULB_VM';
+% dataset_folder = './bone_geometries/GIBOC_CT';
+dataset_folder = './bone_geometries/JIA_ANKLE_MRI';
 % folder where to store the resulting triangulations
 triang_folder = [dataset_folder, filesep, 'tri'];
 %---------------------------------------------------
@@ -29,14 +30,14 @@ if isempty(triang_folder) || strcmp(triang_folder,'')
     triang_folder = [dataset_folder, filesep, 'tri'];
 end
 
-% check if triang folder exists, if it doesn't create it
-if ~isfolder(triang_folder);    mkdir(triang_folder);  end
+% check if triang folder exists, if it doesn't then create it
+if ~isfolder(triang_folder); mkdir(triang_folder);  end
 
 % getting list of stl files from the specified folder
 stl_folder = fullfile(dataset_folder, 'stl');
 list_of_stl = dir([stl_folder, filesep, '*.stl']);
 
-% number of trials N
+% total number of stl files
 N_stl = size(list_of_stl,1); 
 
 % looping through all the stl files found in folder
@@ -57,8 +58,10 @@ for n = 1:N_stl
     
     % transform it in triangulation
     try
-        curr_triang = readstl(fullfile(stl_folder, curr_stl_name));
+        curr_triang = stlread(fullfile(stl_folder, curr_stl_name));
     catch
+        % if Matlab version <2018b then ReadMesh from GIBOC-Core will be
+        % used.
         curr_triang = ReadMesh(fullfile(stl_folder, curr_stl_name));
     end
     
@@ -75,4 +78,4 @@ disp('-------------------')
 disp('DONE')
 
 % remove paths
-rmpath(genpath('STAPLE'))
+rmpath(genpath('../STAPLE'))
