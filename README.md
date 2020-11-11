@@ -52,6 +52,8 @@ For example models of hip, knee and ankle joints can be created as individual mo
 ![partial_models](./images/partial_osim_models.png)
 
 # How to use STAPLE
+
+## Quick guide 
 The typical STAPLE workflow consists in:
 1. **segmenting bone geometries** from medical images, normally computed tomography (CT) or magnetic resonance imaging (MRI) scans. 
 This step is not performed using in STAPLE but using third-party segmentation software, of which you can find a list at [this link](https://github.com/modenaxe/awesome-biomechanics#segmentation-of-medical-images-art).
@@ -61,9 +63,13 @@ Individual bones are also grouped at this stage, for example the surface meshes 
 3. **renaming bone geometries (optional)**: the surface meshes are renamed following the typical names of standard OpenSim models. This is an optional step, if not performed then you will have to modify some of the low level function settings.
 4. **convert geometries to MATLAB triangulations (optional)**: this step is suggested to reduce the size of files and increase speed of input reading. STAPLE can also read `stl` file in input.
 5. **store bone geometries**and saved in a folder with an appropriate name. The last step is especially important for batch processing, please see folder setup in the provided examples.
-4. **Check the provided examples** illustrating the use closer to what you want to do. You can use the example as starting point for setup your workflow.
+6. **Check the provided examples** demonstrating the use or functionality closer to what you want to do. You can probably use the example as starting point for setting up your own workflow.
 
-## Examples of use
+## Detailed explanation
+
+![STAPLE_workflow](./images/STAPLE_overview.png)
+
+## Provided examples
 Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
 * creating full lower limb models (monolateral)
 * creating partial models
