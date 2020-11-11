@@ -1,7 +1,7 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
 %                                                                         %
-%    Author:   Luca Modenese, April 2018                                  %
+%    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 clear; clc; close all
@@ -16,13 +16,14 @@ output_models_folder = 'Opensim_models';
 dataset_set = {'TLEM2_CT'};
 
 % cell array with the bone geometries that you would like to process
-bone_geometries_folder = 'test_geometries';
+datasets_geometries_folder = 'test_geometries';
 bones_list = {'pelvis_no_sacrum','femur_l','tibia_l','talus_l', 'calcn_l'};
 
-% visualization geometry format
-vis_geom_format = 'obj'; % options: 'stl'/'obj'
+% visualization geometry format (options: 'stl' or 'obj')
+vis_geom_format = 'obj';
 
 % choose the definition of the joint coordinate systems (see documentation)
+% options: 'Modenese2018' or 'auto2020'
 workflow = 'Modenese2018';
 %--------------------------------------
 
@@ -33,22 +34,21 @@ if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
 for n_d = 1%:numel(dataset_set)
     
-    % dataset being processed
+    % current dataset being processed
     cur_dataset = dataset_set{n_d};
     
-    % options to read stl or mat(tri) files
-    % tri_folder = fullfile(main_ds_folder,'stl');
-    tri_folder = fullfile(bone_geometries_folder, cur_dataset,'tri');
+    % folder from which triangulations will be read
+    tri_folder = fullfile(datasets_geometries_folder, cur_dataset,'tri');
     
     % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);
     
-    % get the body side
+    % get the body side (can also be specified by user as input to funcs)
     side = inferBodySideFromAnatomicStruct(triGeom_set);
     
     % model and model file naming
-    model_name = ['auto',workflow,'_',dataset_set{n_d}];
-    model_file_name = [model_name, '_', side, '.osim'];
+    model_name = ['auto_',dataset_set{n_d},'_',upper(side)];
+    model_file_name = [model_name, '.osim'];
     
     % create bone geometry folder for visualization
     geometry_folder_name = [model_name, '_',side,'_Geometry'];
@@ -64,7 +64,7 @@ for n_d = 1%:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set);
+    [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
     createLowerLimbJoints(osimModel, JCS, workflow);
