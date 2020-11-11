@@ -52,32 +52,35 @@ For example models of hip, knee and ankle joints can be created as individual mo
 ![partial_models](./images/partial_osim_models.png)
 
 # How to use STAPLE
-The workflow consists in:
-1. segmenting bone geometries from medical images, tipically computed tomography (CT) or magnetic resonance imaging (MRI) scans. 
-This step is not done in STAPLE but using third-party segmentation software, of which you can find a list at [this link](https://github.com/modenaxe/awesome-biomechanics#segmentation-of-medical-images-art-wip).
+The typical STAPLE workflow consists in:
+1. **segmenting bone geometries** from medical images, normally computed tomography (CT) or magnetic resonance imaging (MRI) scans. 
+This step is not performed using in STAPLE but using third-party segmentation software, of which you can find a list at [this link](https://github.com/modenaxe/awesome-biomechanics#segmentation-of-medical-images-art).
 The bone geometries are normally exported as surface models in [STL format](https://en.wikipedia.org/wiki/STL_(file_format)).
-2. Cleaning and improving the quality of the obtained surface models, normally running filters for improving the topology. Also in this case, there are several options to process the geometries (a list of software is available at at [this link](https://github.com/modenaxe/awesome-biomechanics#manipulation-processing-and-comparison-of-surface-meshes)).
+2. **improving the quality of the segmentated bone geometries**, normally running filters on the surface models to improve their quality and topology. Also in this case, there are several options to process the geometries and a list of software is available at at [this link](https://github.com/modenaxe/awesome-biomechanics#manipulation-processing-and-comparison-of-surface-meshes).
 Individual bones are also grouped at this stage, for example the surface meshes of tibia and fibula can be joined using the `flatten mesh layers` filter in [MeshLab](https://www.meshlab.net/).
-3. Bone geometries are renamed according to the typical names of the OpenSim models and saved in a folder with an appropriate name. The last step is especially important for batch processing, please see folder setup in the provided examples.
-4. Check the provided example more similar to what you want to do, as it will most likely provide a good idea of the setup steps.
+3. **renaming bone geometries (optional)**: the surface meshes are renamed following the typical names of standard OpenSim models. This is an optional step, if not performed then you will have to modify some of the low level function settings.
+4. **convert geometries to MATLAB triangulations (optional)**: this step is suggested to reduce the size of files and increase speed of input reading. STAPLE can also read `stl` file in input.
+5. **store bone geometries**and saved in a folder with an appropriate name. The last step is especially important for batch processing, please see folder setup in the provided examples.
+4. **Check the provided examples** illustrating the use closer to what you want to do. You can use the example as starting point for setup your workflow.
 
 ## Examples of use
-
-Examples of possible modelling scenarios are provided in the main STAPLE folder. 
-You can run the example the examples and adapt them to your own study or data.
-More examples will be added in time.
-
-
+Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
+* creating full lower limb models (monolateral)
+* creating partial models
+* extracting articular surfaces
+ 
 ## Bone geometries for testing and examples
-Test geometries are available in the "test_geometries" directory:
-* LHDL (CT)
-* TLEM2 (MRI)
-* TLEM2 (CT)
-* JIA (MRI)
-* ICL (MRI)
-* VAKHUM (CT)
-* ULB_VM (CT)
-* JIA_ANKLE (MRI)
+Bone geometries of public domain are available in the "test_geometries" directory for testing and development purposes:
+* LHDL-CT
+* TLEM2: there are 3 version of this dataset:
+    * TLEM2-MRI
+	* TLEM2-CT
+	* TLEM2: lower limb bones released with the TLEM2 musculoskeletal model of [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034).
+* JIA-MRI
+* JIA-ANKLE-MRI
+* ICL-MRI
+* VAKHUM-CT
+
 
 # Further Development
 * Segment mass properties and degrees of freedom of the joint models can easily be customised. 
