@@ -1,18 +1,18 @@
 %% Initial Set up 
-function [CS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side, result_plots, debug_plots, in_mm)
+function [CS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side_raw, result_plots, debug_plots, in_mm)
 
 % depends on
 % TriangleClosestPointPair
 % pl3t
 
 % results/debug plot default
-if nargin<3;  result_plots =1;  end
-if nargin<4;  debug_plots = 0;  end
-if nargin<5;     in_mm = 1;  end
-if in_mm == 1;     dim_fact = 0.001;  else;  dim_fact = 1; end
+if nargin<3;     result_plots =1;  end
+if nargin<4;     debug_plots = 0;  end
+if nargin<5;     in_mm = 1;        end
+if in_mm == 1;   dim_fact = 0.001; else;  dim_fact = 1; end
 
 % get sign correspondent to body side
-[sign_side, side_low] = bodySide2Sign(side);
+[sign_side, side_low] = bodySide2Sign(side_raw);
 
 % joint names
 toes_name     = ['toes_', side_low];
@@ -41,6 +41,8 @@ Z0 = cross(X0,Y0);
 
 %% Convex hull approach with prior deleting of the phalanges
 disp('Computing convex hull...')
+
+% TODO: polish here: this line is used only for plotting
 [x, y, z] = deal(calcnTri.Points(:,1), calcnTri.Points(:,2), calcnTri.Points(:,3));
 
 % In the vast majority of cases, the reference system at the foot is
@@ -62,10 +64,20 @@ if debug_plots == 1
     trisurf(K,x,y,z,'Facecolor','c','FaceAlpha',.2,'edgecolor','k');
 end
 
+% remove indices not in the triangulation anymore (LM)
+Kold2new(sort(unique(K(:)))) = 1:length(sort(unique(K(:))));
+Pts_sorted = calcnTri.Points(sort(unique(K(:))),:);
 % Convert the convexHull to triangulation object
-% remove indices not in the triangulation anymore
-% keep_ind = unique(K);
-Foot2_CH = triangulation(K,x,y,z);
+Foot2_CH = triangulation(Kold2new(K), Pts_sorted);
+
+% JB-version
+% % % Convert the convexHull to triangulation object
+% Foot2_CH = triangulation(K,x,y,z);
+
+% verify differences (JB version keeps all points!)
+% plot3(Foot2_CH1.Points(:,1), Foot2_CH1.Points(:,2), Foot2_CH1.Points(:,3), 'r.'); hold on
+% plot3(Foot2_CH.Points(:,1), Foot2_CH.Points(:,2), Foot2_CH.Points(:,3), 'b.')
+
 [V_all_CH, CenterVol_CH] = TriInertiaPpties( Foot2_CH );
 
 % Get a vector superior to inferior from the center of the foot and its
@@ -111,8 +123,10 @@ IdxPtsPair(EdgesLength < 0.8*maxEdgeLength, :) = [];
 
 % Verify that the points are below a plan parallel to the triangle
 % offsetted 5% superiorly
-
-GoodEdges = Foot2_CH.Points(IdxPtsPair,:)*triangleNrml < ...
+% JB option: discarded no sense using triangulation to store all points
+% GoodEdges = Foot2_CH.Points(IdxPtsPair,:)*triangleNrml < ...
+%     ( mean(trianglePts)*triangleNrml + 0.5 * FootISHeigth);
+GoodEdges = calcnTri.Points(IdxPtsPair,:)*triangleNrml < ...
     ( mean(trianglePts)*triangleNrml + 0.5 * FootISHeigth);
 
 GoodEdges = GoodEdges(1:2:end-1,:) + GoodEdges(2:2:end,:);
@@ -124,13 +138,15 @@ IgoodEdges = find(GoodEdges == 2);
 GoodIdxPointPair = IdxPtsPair(IgoodEdges, :);
 
 GoodPointIdx = unique( GoodIdxPointPair(:) );
-CandidatePoints = Foot2_CH.Points(GoodPointIdx,:);
+
+% JB option: discarded no sense using triangulation to store all points
+% CandidatePoints = Foot2_CH.Points(GoodPointIdx,:);
+CandidatePoints = calcnTri.Points(GoodPointIdx,:);
 
 % Keep the metarsus points (not too close to the heel) 
 notHeelPtsID = find( sqrt(sum(bsxfun(@minus, CandidatePoints, heelPt).^2, 2))>...
     0.5*maxEdgeLength) ;
 metaCandidatePoints = CandidatePoints(notHeelPtsID,:);
-
 
 %   2.  Cluster the points defining the largest edges in 3 clusters
 [clusterIdx, clusterCentroids] = kmeans(metaCandidatePoints, 2);
@@ -228,11 +244,22 @@ CalcnBL.([side_up,'1MGROUND' ]) = PtMetaMed;
 CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat;
 CalcnBL.([side_up,'HEEGROUND']) = heelPt;
 
+% sometimes the simple landmarking gets incorrect detection of D5M.
+% Attempting to correct.
 if norm(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'5MGROUND' ]))>10
     disp(['  Dubious identification of ',side_up,'D5M...Renamed ', side_up,'5MPROX.'])
     disp(['  Appending alternative ', side_up,'D5M.'])
     CalcnBL.([side_up,'5MPROX']) = CalcnBL.([side_up,'D5M']);
     CalcnBL.([side_up,'D5M'])    = CalcnBL.([side_up,'5MGROUND' ]);
+end
+
+% sometimes the simple landmarking gets incorrect detection of D1M.
+% Attempting to correct.
+if norm(CalcnBL.([side_up,'D1M'])-CalcnBL.([side_up,'1MGROUND' ]))>10
+    disp(['  Dubious identification of ',side_up,'D1M...Renamed ', side_up,'1MPROX.'])
+    disp(['  Appending alternative ', side_up,'D1M.'])
+    CalcnBL.([side_up,'1MPROX']) = CalcnBL.([side_up,'D1M']);
+    CalcnBL.([side_up,'D1M'])    = CalcnBL.([side_up,'1MGROUND' ]);
 end
 
 % calcn currently does not have a real child joint, but JCS structure is created for
