@@ -6,9 +6,9 @@ enabling researchers in the biomechanical field to build models of the lower ext
 with minimum effort, ideally just clicking `RUN` on a script.
 
 STAPLE requires three-dimensional bone geometries as an input, which are normally segmented from medical images.
-It can create models of entire legs or few joints, depending on the available data. 
+It can create models of entire legs or few joints, depending on the available data or research intent. 
 
-Currently the tool creates skeletal models but will soon be extended with complete musculoskeletal capabilities.
+Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
 
 ## Summary of available methods on STAPLE
 
@@ -28,12 +28,12 @@ The following table includes the methods currently available in STAPLE.
 | Tibia+Fibula         | tibia           | knee child              | Kai-Tibia        |
 |                      |                 |                         | GIBOC-Ellipse    |
 |                      |                 |                         | GIBOC-Plateau    |
-|                      |                 | ankle parent            | uses child CS    |
+|                      |                 | ankle parent            | uses child JCS   |
 | Patella              | patella         | TBA                     | TBA |
 | Talus                | talus           | ankle child             | STAPLE-Talus     |
 |                      |                 | subtalar parent         | STAPLE-Talus     |
-| Foot bones           | calcn           | subtalar child          | uses parent CS   |
-|                      |                 | foot (auxiliary)        | STAPLE-Calcaneus |
+| Foot bones           | calcn           | subtalar child          | uses parent JCS  |
+|                      |                 | foot (auxiliary)        | STAPLE-Foot      |
 | Foot Phalanges       | toes            | TBA                     | TBA |
 
 ## Requirements
@@ -41,23 +41,27 @@ The following table includes the methods currently available in STAPLE.
 * OpenSim v4.0 or higher, downloadable from this [website](https://simtk.org/projects/opensim)
 
 ## Preliminary settings
-* You should ensure that the OpenSim Application Programming Interface (API) for MATLAB are installed and working.
-* Add the `STAPLE` folder to your MATLAB path.
+* OpenSim (v4.0 or higher) Application Programming Interface (API) for MATLAB must be installed and working. Please refer to the [OpenSim documentation](https://simtk-confluence.stanford.edu/display/OpenSim/Scripting+with+Matlab) for instructions about installation.
+* Add the `STAPLE` folder, normally locate in `msk-STAPLE\STAPLE` to your MATLAB path.
 
 # Models you can generate using STAPLE
-Currently with STAPLE you can generate two kind of models:
-1. full lower limb (monolateral) models: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges)
-2. partial models: they include any meaningful combination of the previous bones. For example models of hip, knee and ankle joints can be created as individual models.
+* **Monolateral complete models**: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges)
+* **Partial models**: they are a subset of a complete model and include any meaningful combination of the previous bones. 
+For example models of hip, knee and ankle joints can be created as individual models.
 
 # How to use STAPLE
 The workflow consists in:
-1. segmenting bone geometries from images
-2. ensuring that you group them as required (for example using the `flatten mesh layers` filter in MeshLab)
-3. 
+1. segmenting bone geometries from medical images, tipically computed tomography (CT) or magnetic resonance imaging (MRI) scans. 
+This step is not done in STAPLE but using third-party segmentation software, of which you can find a list at [this link](https://github.com/modenaxe/awesome-biomechanics#segmentation-of-medical-images-art-wip).
+The bone geometries are normally exported as surface models in [STL format](https://en.wikipedia.org/wiki/STL_(file_format)).
+2. Cleaning and improving the quality of the obtained surface models, normally running filters for improving the topology. Also in this case, there are several options to process the geometries (a list of software is available at at [this link](https://github.com/modenaxe/awesome-biomechanics#manipulation-processing-and-comparison-of-surface-meshes)).
+Individual bones are also grouped at this stage, for example the surface meshes of tibia and fibula can be joined using the `flatten mesh layers` filter in [MeshLab](https://www.meshlab.net/).
+3. Bone geometries are renamed according to the typical names of the OpenSim models and saved in a folder with an appropriate name. The last step is especially important for batch processing, please see folder setup in the provided examples.
+4. Check the provided example more similar to what you want to do, as it will most likely provide a good idea of the setup steps.
 
 ## Examples of use
 
-Examples of possible modelling sccenarios are provided in the main STAPLE folder. 
+Examples of possible modelling scenarios are provided in the main STAPLE folder. 
 You can run the example the examples and adapt them to your own study or data.
 More examples will be added in time.
 
