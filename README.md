@@ -65,9 +65,48 @@ Individual bones are also grouped at this stage, for example the surface meshes 
 5. **store bone geometries**and saved in a folder with an appropriate name. The last step is especially important for batch processing, please see folder setup in the provided examples.
 6. **Check the provided examples** demonstrating the use or functionality closer to what you want to do. You can probably use the example as starting point for setting up your own workflow.
 
-## Detailed explanation
+## Detailed explanations
 
+### Overview of STAPLE internal workflow
 ![STAPLE_workflow](./images/STAPLE_overview.png)
+
+### Reference System Conventions [WIP]
+The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
+
+### Other tips
+As a general guidelines, in plots the colors are generally used as follows:
+* red: medial
+* blue: lateral
+* green: not compartimentalised anatomical structures - basically the rest.
+
+To batch process, you can use most of the provided scripts if you organised your folders and files as follows:
+`
+study_folder --|
+			   |- dataset_1_folder --|
+									|- tri --|
+											 |- pelvis_no_sacrum.mat
+											 |- femur_r.mat
+											 |- etc.
+										
+									|- stl --|
+											 |- pelvis_no_sacrum.stl
+											 |- femur_r.stl
+											 |- etc.
+			   |- dataset_2_folder --|
+									|- tri --|
+											 |- pelvis_no_sacrum.mat
+											 |- femur_r.mat
+											 |- etc.
+										
+									|- stl --|
+											 |- pelvis_no_sacrum.stl
+											 |- femur_r.stl
+											 |- etc.
+`
+where:
+* `study_folder` is the main folder of the current study
+* `dataset_1_folder` is where the bone geometries for the first dataset/partecipant data are stored
+* `dataset_2_folder` is where the bone geometries for the second dataset/partecipant data are stored, and so on.
 
 ## Provided examples
 Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
