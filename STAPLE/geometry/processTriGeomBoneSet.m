@@ -67,7 +67,6 @@
 % so that all params that has been processed here are immediately available
 %--------------------------------------------------------------------------
 
-
 function [JCS, BL, CS] = processTriGeomBoneSet(geom_set, side_raw, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
 
 % setting defaults
@@ -77,16 +76,23 @@ else
     % get sign correspondent to body side
     [~, side] = bodySide2Sign(side_raw);
 end
-if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
-if nargin<4; algo_femur = ''; algo_tibia = 'Kai'; in_mm = 1; end
-if nargin<5; algo_tibia = 'Kai'; in_mm = 1; end
+if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; in_mm = 1; end
+if nargin<4;                         algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; in_mm = 1; end
+if nargin<5;                                                        algo_tibia = 'Kai2014'; in_mm = 1; end
 if nargin<6; result_plots = 1; end
-if nargin<7; debug_plots = 0; end
+if nargin<7; debug_plots = 0;  end
 if nargin<8; in_mm = 1; end
 
 disp('-----------------------------------')
 disp('Processing provided bone geometries')
 disp('-----------------------------------')
+disp('ALGORITHMS:')
+disp(['pelvis : ', algo_pelvis]);
+disp(['femur  : ', algo_femur]);
+disp(['tibia  : ', algo_tibia]);
+% disp(['patella: ', algo_patella]);
+disp(['talus  : ', 'STAPLE']);
+disp(['foot   : ', 'STAPLE']);
 
 % ---- PELVIS -----
 if isfield(geom_set,'pelvis')
@@ -94,7 +100,7 @@ if isfield(geom_set,'pelvis')
         case 'STAPLE'
             [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 STAPLE_pelvis(geom_set.pelvis, side, result_plots, debug_plots, in_mm);
-        case 'Kai'
+        case 'Kai2014'
             [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 Kai2014_pelvis(geom_set.pelvis, side, result_plots, debug_plots, in_mm);
     end
@@ -103,7 +109,7 @@ elseif isfield(geom_set,'pelvis_no_sacrum')
         case 'STAPLE'
             [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 STAPLE_pelvis(geom_set.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
-        case 'Kai'
+        case 'Kai2014'
             [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 Kai2014_pelvis(geom_set.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
     end
@@ -115,7 +121,7 @@ if isfield(geom_set, femur_name)
     switch algo_femur
 %         case 'Miranda'
 %             [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = Miranda2010_buildfACS(geom_set.(femur_name));
-        case 'Kai'
+        case 'Kai2014'
             [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
                 Kai2014_femur(geom_set.(femur_name), side);
         case 'GIBOC-spheres'
@@ -139,7 +145,7 @@ if isfield(geom_set, tibia_name)
     switch algo_tibia
 %         case 'Miranda' % same as Kai but using inertia
 %             [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
-        case 'Kai'
+        case 'Kai2014'
             [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
                 Kai2014_tibia(geom_set.(tibia_name), side, result_plots, debug_plots, in_mm);
         case 'GIBOC-plateau'
