@@ -80,7 +80,7 @@ As a general guidelines, in plots the colors are generally used as follows:
 * green: not compartimentalised anatomical structures - basically the rest.
 
 To batch process, you can use most of the provided scripts if you organised your folders and files as follows:
-`
+```
 study_folder --|
 			   |- dataset_1_folder --|
 									 |- tri --|
@@ -101,7 +101,7 @@ study_folder --|
 											  |- pelvis_no_sacrum.stl
 											  |- femur_r.stl
 											  |- etc.
-`
+```
 where:
 * `study_folder` is the main folder of the current study
 * `dataset_1_folder` is where the bone geometries for the first dataset/partecipant data are stored
