@@ -1,7 +1,7 @@
-# STAPLE: Shared Tools for Automatic Personalised Lower Extremity models <!-- omit in toc -->
+# STAPLE: Shared Tools for Automatic Personalised Lower Extremity modelling <!-- omit in toc -->
 
 # Table of contents <!-- omit in toc -->
-- [Overview](#overview)
+- [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
 - [Requirements and set up](#requirements-and-set-up)
 - [How to use the STAPLE toolbox](#how-to-use-the-staple-toolbox)
@@ -16,13 +16,11 @@
 - [Current limitations](#current-limitations)
 - [Acknowledgements](#acknowledgements)
 
-## Overview
-This repository contains a computational tool called STAPLE that we created for 
-enabling researchers in the biomechanical field to build models of the lower extremity 
-with minimum effort, ideally just clicking `RUN` on a script.
+## What is STAPLE?
+This repository contains a computational tool called STAPLE, which stays for _Shared Tools for Automatic Personalised Lower Extremity modelling_, that we created for 
+enabling researchers in the biomechanical field to build models of the lower extremity with minimum effort, ideally just clicking `RUN` on a script. STAPLE is a MATLAB toolbox consisting of scripts and algorithms to achieve this aim. 
 
-STAPLE requires three-dimensional bone geometries as an input, which are normally segmented from medical images.
-It can create models of entire legs or few joints, depending on the available data or research intent. 
+STAPLE requires three-dimensional bone geometries as an input, which are normally segmented from medical images. It can create models of entire legs or few joints, depending on the available data or research intent. 
 
 Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
 
@@ -197,12 +195,17 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 
 ### Further notes on STAPLE
 
-* Reference System Conventions: The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
+These notes are provided to offer a minimal guidance to anyone that will investigate the code in details:
 
-* Plots colors: As a general guidelines, in plots the colors are generally used as follows:
-   * red: medial
-   * blue: lateral
-   * green: not compartimentalised anatomical structures - basically the rest.
+* Reference system conventions: the output reference systems of all STAPLE scripts are always consistent with conventions of the International Society of Biomechanics, but internally this is not always the case. In many algorithms, technical reference systems mutuated from GIBOC-core are used. These reference systems are defined according to the following convention: 
+    * `X` directed in anterior-posterior direction, pointing posteriorly, 
+    * 'Y' directed in medio-lateral direction, pointing laterally for the right leg, 
+    * 'Z' directed in proximal-distal direction, pointing cranially.
+
+* When an error or some unexplained interruption of the scripts happens during a morphological analysis, it is always possible to enable `debug_plots` and reconstruct step-by-step what the algorithm of interest is doing. As a general guidelines (**not always respected**), the colors of points, surfaces etc. were generally decided following the following convention:
+   * `red`: medial
+   * `blue`: lateral
+   * `green`: not compartimentalised anatomical structures (basically the rest).
 
 
 ## How to contribute, request features and report bugs
