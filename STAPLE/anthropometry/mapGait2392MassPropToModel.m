@@ -16,6 +16,7 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
+
 function osimModel = mapGait2392MassPropToModel(osimModel)
 
 % import libraries

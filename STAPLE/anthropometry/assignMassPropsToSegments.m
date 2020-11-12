@@ -30,8 +30,7 @@
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-%
-% TODO: remove dependance from osimVec3FromArray of the API
+
 
 function osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass, side_raw)
 
