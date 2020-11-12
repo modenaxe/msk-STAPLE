@@ -64,24 +64,27 @@ Individual bones are also grouped at this stage, for example the surface meshes 
 5. **store bone geometries** and saved them in folders with an appropriate name. The last step is especially important for batch processing. The provided scripts are organised as follows:
 ```bash
 study_folder
-		|- dataset_1_folder
-						|- tri
-							|- pelvis_no_sacrum.mat
-							|- femur_r.mat
-							|- etc.
-						|- stl
-						  |- pelvis_no_sacrum.stl
-						  |- femur_r.stl
-						  |- etc.
-		|- dataset_2_folder
-						|- tri
-						  |- pelvis_no_sacrum.mat
-						  |- femur_r.mat
-						  |- etc.
-						|- stl
-						  |- pelvis_no_sacrum.stl
-						  |- femur_r.stl
-						  |- etc.
+        |- dataset_1_folder
+                        |- tri
+                            |- pelvis_no_sacrum.mat
+                            |- femur_r.mat
+                            |- etc.
+							
+                        |- stl
+                            |- pelvis_no_sacrum.stl
+                            |- femur_r.stl
+                            |- etc.
+							
+        |- dataset_2_folder
+                        |- tri
+                            |- pelvis_no_sacrum.mat
+                            |- femur_r.mat
+                            |- etc.
+							
+                        |- stl
+                            |- pelvis_no_sacrum.stl
+                            |- femur_r.stl
+                            |- etc.
 ```
 where:
 * `study_folder` is the main folder of the current study
