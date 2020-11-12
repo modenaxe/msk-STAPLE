@@ -96,8 +96,8 @@ where:
 
 ### Detailed steps to setup a STAPLE workflow
 
-This is a checklist to fullfill for setting up a functioning workflow using STAPLE:
-- [ ] define dataset to process
+This is a checklist for setting up a functioning workflow using STAPLE:
+- [ ] define the dataset to process after 
 - [ ] define a cell array with names of bones to process. The same names will be used for the rigid bodies
 - [ ] define body side if not evident from bone names.
 - [ ] decide the joint definitions (`workflow` variable in the examples).
@@ -111,12 +111,11 @@ This is a checklist to fullfill for setting up a functioning workflow using STAP
 - [ ] (optional) use `addBoneLandmarksAsMarkers.m` to add to the OpenSim models the bony landmarks identified automatically during the morphological analyses.
 - [ ] finalise the OpenSim model using the `osimModel.finalizeConnections()`  API method.
 - [ ] (optional) print the OpenSim model using the `osimModel.print(model_path\model_name.osim)` API method.
-
+- [ ] use the obtained model for your biomechanical analyses.
 
 ### Available algorithms for bone morphological analysis
 
-STAPLE collects some algorithms from the literature and others that we developed _ad hoc_.
-The following table lists the algorithms currently available in this repository.
+STAPLE collects some algorithms described in the literature and others that we developed _ad hoc_. The following table lists the algorithms currently available in this repository.
 
 
 | Bone                 | Rigid Body Name | Joint Coordinate System | Algorithms       |  
@@ -140,30 +139,45 @@ The following table lists the algorithms currently available in this repository.
 |                      |                 | foot (auxiliary)        | STAPLE-Foot      |
 | Foot Phalanges       | toes            | TBA                     | TBA |
 
+The details of the algorithms are described in the following publications:
+* GIBOC-algorithms: [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028)
+* Kai algorithms: [Kai et al. (2014)](https://doi.org/10.1016/j.jbiomech.2013.12.013)
+* STAPLE algorithms: [Modenese and Renault (2020)](https://doi.org/10.1101/2020.06.23.162727) 
+
+Please note that STAPLE includes a minimal version of `GIBOC`, renamed `GIBOC-core`. You can download or inspect the original GIBOC-knee toolbox published by [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028) at [this link](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System).
+
 ### Provided examples
+
 Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
-* creating full lower limb models (monolateral)
-* creating partial models
-* extracting articular surfaces
+
+| Script name | Script action | Demonstrated feature |
+| --- | --- | --- |
+| Example_create_kinetic_models.m | creates automatically OpenSim model using the bone geometries in the `dataset_geometries` folder. These are kinetic models. | Same datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
+| Example_full_leg_left.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
+| Example_full_leg_right.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
+| Example_hip_model.m | creates a hip joint model | Partial model (hip). |
+| Example_knee_model.m | creates a knee joint model | Partial model (knee). |
+| Example_ankle_model.m | creates an ankle joint model | Partial model (ankle). Based on JIA-MRI data. |
+| Example_extract_tibiofem_artic_surf.m | extracts tibiofemoral articular surfaces | Articular surface extraction. | 
+| Example_extract_ankle_artic_surf.m | extracts talocrural and subtalar articular surfaces | Articular surface extraction. | 
+
 
 ### Datasets available for testing
-Bone geometries of public domain are available in the "test_geometries" directory for testing and development purposes:
-Age	Height
-[m]	Mass
-[kg]	MSK conditions	Imaging type	Details of medical images 	Bone segmentation [approach: time]	Quality of bone geometry	Reference publication (R)/
-previous use in the authors’ work (U)
+
+Datasets of bone geometries available in the "datasets_folder" directory for testing and development purposes are listed in the following table. Details describing the data and, when specified, its license, are included in each dataset folders.
 
 
 | Dataset       | Gender | Age | Height |  Mass | Mesh Quality | Reference publication   | Notes |
 | ---           | ---    | --- | ---    |---    |---           |---                      |---
 | LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | [Viceconti et al. (2008)](https://doi.org/10.2170/physiolsci.RP009908) |  |
 | TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Released with the TLEM2 musculoskeletal model. |
-| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's MRI scans |
-| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's CT scans |
+| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's MRI scans. Bilateral |
+| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's CT scans. Bilateral. |
 | ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727)  |  |
 | JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | [Montefiori et al. 2019a](https://link.springer.com/article/10.1007/s10439-019-02287-0) |  |
-| JIA-ANKLE-MRI |   M    |   ? |  ?     | ?     |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials |
-| VAKHUM-CT		|   M    |   ? | ?      | ?     |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Skeleton obtained from two CT scans. | 
+| JIA-ANKLE-MRI |   M    | N/A |  N/A   | N/A   |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials |
+| VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE cannot create a full lower limb. | 
+
 
 ### Other details [WIP]
 
@@ -186,4 +200,3 @@ previous use in the authors’ work (U)
 # Current limitations 
 * The STAPLE toolbox is still in strong development, so some key documentation might be missing. Please refer to the examples included the main STAPLE repository for now.
 * The lower limb models currently include a patella rigidly attached to the tibia. An articulated patellofemoral joint is under development. 
-* 
