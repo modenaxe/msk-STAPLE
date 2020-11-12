@@ -195,12 +195,12 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 
 ### Further notes on STAPLE
 
-These notes are provided to offer a minimal guidance to anyone that will investigate the code in details:
+These notes are provided to offer a minimal guidance to anyone that will investigate the STAPLE code in details:
 
-* Reference system conventions: the output reference systems of all STAPLE scripts are always consistent with conventions of the International Society of Biomechanics, but internally this is not always the case. In many algorithms, technical reference systems mutuated from GIBOC-core are used. These reference systems are defined according to the following convention: 
+* Reference system conventions: the output reference systems of all STAPLE scripts have axes consistent with [conventions of the International Society of Biomechanics](https://doi.org/10.1016/0021-9290(95)00017-C), but internally this is not always the case. In many algorithms, technical reference systems mutuated from GIBOC-core are used. These reference systems are defined according to the following convention: 
     * `X` directed in anterior-posterior direction, pointing posteriorly, 
-    * 'Y' directed in medio-lateral direction, pointing laterally for the right leg, 
-    * 'Z' directed in proximal-distal direction, pointing cranially.
+    * `Y` directed in medio-lateral direction, pointing laterally for the right leg, 
+    * `Z` directed in proximal-distal direction, pointing cranially.
 
 * When an error or some unexplained interruption of the scripts happens during a morphological analysis, it is always possible to enable `debug_plots` and reconstruct step-by-step what the algorithm of interest is doing. As a general guidelines (**not always respected**), the colors of points, surfaces etc. were generally decided following the following convention:
    * `red`: medial
