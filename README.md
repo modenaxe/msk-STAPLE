@@ -1,4 +1,20 @@
-# STAPLE: Shared Tools for Automatic Personalised Lower Extremity models
+# STAPLE: Shared Tools for Automatic Personalised Lower Extremity models <!-- omit in toc -->
+
+# Table of contents <!-- omit in toc -->
+- [Overview](#overview)
+- [What can I do with STAPLE?](#what-can-i-do-with-staple)
+- [Requirements and set up](#requirements-and-set-up)
+- [How to use the STAPLE toolbox](#how-to-use-the-staple-toolbox)
+  - [Overview of STAPLE workflow to generate subject-specific models](#overview-of-staple-workflow-to-generate-subject-specific-models)
+  - [Preliminary steps and data preparation](#preliminary-steps-and-data-preparation)
+  - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
+  - [Available algorithms for bone morphological analysis](#available-algorithms-for-bone-morphological-analysis)
+  - [Provided examples](#provided-examples)
+  - [Datasets available for testing](#datasets-available-for-testing)
+  - [Further notes on STAPLE](#further-notes-on-staple)
+- [How to contribute, request features and report bugs](#how-to-contribute-request-features-and-report-bugs)
+- [Current limitations](#current-limitations)
+- [Acknowledgements](#acknowledgements)
 
 ## Overview
 This repository contains a computational tool called STAPLE that we created for 
@@ -179,7 +195,7 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 | VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE cannot create a full lower limb. | 
 
 
-### Other details [WIP]
+### Further notes on STAPLE
 
 * Reference System Conventions: The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
 
@@ -188,7 +204,9 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
    * blue: lateral
    * green: not compartimentalised anatomical structures - basically the rest.
 
-## How to contribute, request features and report bugs [WIP]
+
+## How to contribute, request features and report bugs
+
 * To **report a bug**, or anomalous behaviour of the toolbox, please open an issue [on this page](https://github.com/modenaxe/msk-STAPLE/issues). Ideally, if you could make the issue reproducile with some data that you can share with us.
 * To **contributing to the project with new code** please use a standard [GitHub workflow](https://guides.github.com/activities/forking/):
    1. fork this repository
@@ -197,6 +215,9 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
    4. we will review your code and potentially include it in the main repository. 
 * To propose **feature requests**, please open an issue [on this page](https://github.com/modenaxe/msk-STAPLE/issues), label it as `feature request` using the `Labels` panel on the right and describe your desired new feature. We will review the proposal regularly but work on them depending on the planned development. 
 
-# Current limitations 
+## Current limitations 
 * The STAPLE toolbox is still in strong development, so some key documentation might be missing. Please refer to the examples included the main STAPLE repository for now.
 * The lower limb models currently include a patella rigidly attached to the tibia. An articulated patellofemoral joint is under development. 
+
+## Acknowledgements
+LM was supported by an Imperial College Research Fellowship granted by Imperial College London and by an Academy of Medical Sciences Springboard Grant [SBF004\1056] supported by the Academy of Medical Sciences, the British Heart Foundation, Diabetes UK, the Global Challenges Research Fund, the Government Department for Business, Energy and Industrial Strategy and the Wellcome Trust.
