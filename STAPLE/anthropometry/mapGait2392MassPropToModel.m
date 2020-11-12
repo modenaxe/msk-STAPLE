@@ -44,7 +44,7 @@ for n_b = 0:N_bodies-1
     upd_inertia = Inertia(xx , yy , zz , xy , xz , yz);
     % set inertia
     curr_body.setInertia(upd_inertia);
-    disp(['Updated inertia of body: ', char(curr_body_name)])
+    disp([  'Mapped on body: ', char(curr_body_name)])
 end
 
 end
