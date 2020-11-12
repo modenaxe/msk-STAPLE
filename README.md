@@ -38,8 +38,8 @@ git clone https://github.com/modenaxe/msk-STAPLE
 ```
 4. add the `STAPLE` folder, normally locate in `msk-STAPLE\STAPLE` to your MATLAB path. This is optional as long as you are using the provided examples.
 
-## How to use the STAPLE toolbox
 
+## How to use the STAPLE toolbox
 
 ### Overview of STAPLE workflow to generate subject-specific models
 
@@ -88,13 +88,14 @@ study_folder
 ```
 where:
 * `study_folder` is the main folder of the current study
-* `dataset_1_folder` is where the bone geometries for the first dataset/partecipant data are stored
-* `dataset_2_folder` is where the bone geometries for the second dataset/partecipant data are stored, and so on. 
+* `dataset_1_folder` is where the bone geometries for the first partecipant data are stored
+* `dataset_2_folder` is where the bone geometries for the second partecipant data are stored, and so on. 
 
 6. **implement your own workflow** based on the checklist below. If there is a provided example demonstrating a use similar to your intended one, probably you can use it as starting point.
 
 
 ### Detailed steps to setup a STAPLE workflow
+
 This is a checklist to fullfill for setting up a functioning workflow using STAPLE:
 - [ ] define dataset to process
 - [ ] define a cell array with names of bones to process. The same names will be used for the rigid bodies
@@ -139,25 +140,13 @@ The following table lists the algorithms currently available in this repository.
 |                      |                 | foot (auxiliary)        | STAPLE-Foot      |
 | Foot Phalanges       | toes            | TBA                     | TBA |
 
-
-### Reference System Conventions [WIP]
-The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
-
-### Other tips
-As a general guidelines, in plots the colors are generally used as follows:
-* red: medial
-* blue: lateral
-* green: not compartimentalised anatomical structures - basically the rest.
-
-
-
-## Provided examples
+### Provided examples
 Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
 * creating full lower limb models (monolateral)
 * creating partial models
 * extracting articular surfaces
- 
-## Bone geometries for testing and examples
+
+### Datasets available for testing
 Bone geometries of public domain are available in the "test_geometries" directory for testing and development purposes:
 * LHDL-CT
 * TLEM2: there are 3 version of this dataset:
@@ -169,7 +158,29 @@ Bone geometries of public domain are available in the "test_geometries" director
 * ICL-MRI
 * VAKHUM-CT
 
+### Other details [WIP]
 
-# Further Development
-* Segment mass properties and degrees of freedom of the joint models can easily be customised. 
-* The sagittal profile of femoral condyles is available and could be used to personalized knee joint models like Yamaguchi's knee in combination with the automated slope estimation presented by Amirtharaj et al. (2018).
+* Reference System Conventions: The final reference systems are always consistent with ISB but the internal ones not necessarily because they rely on the external functions taken from GIBOC-core.
+
+* Plots colors: As a general guidelines, in plots the colors are generally used as follows:
+   * red: medial
+   * blue: lateral
+   * green: not compartimentalised anatomical structures - basically the rest.
+
+## How to contribute, request features and report bugs [WIP]
+* **bug reporting**: please report bugs or errors in the `Issue` sections.
+* **contributing with new code**: feel free of contributing as by standard [GitHub workflow](https://guides.github.com/activities/forking/):
+   1. forking this repository
+   2. creating your own branch, where you make your modifications and improvements
+   3. once you are happy with the new feature you have implemented create a pull request
+   4. we will review your code and, if required
+* **feature requests**: please open an issue.
+* **urgent feature requests**: see point 2.
+
+# Current limitations 
+* The STAPLE toolbox is still in strong development, so some key documentation might be missing. 
+Please refer to the examples included the main STAPLE repository for now.
+
+* The lower limb models are missing an articulated patello-femoral joint. This is in development. 
+
+* 
