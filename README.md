@@ -154,26 +154,16 @@ Age	Height
 previous use in the authors’ work (U)
 
 
-| Dataset       | Gender | Age | Height |  Mass | Mesh Quality | Reference publication   | 
-| ---           | ---    | --- | ---    |---    |---           |---                      |
-| LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | Viceconti et al. (2008) | 
-| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
-| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
-| TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
-| ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | Modenese et al. (2020)  | 
-| JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | Montefiori et al. 2019b | 
-| JIA-ANKLE-MRI |   M    |   ? |  ?     | ?     |  Low         | Montefiori et al. 2019b | 
-| VAKHUM-CT		|   M    |   ? | ?      | ?     |  Fair        | van Sint et al.         | 
-
-* LHDL-CT
-* TLEM2: there are 3 version of this dataset:
-    * TLEM2-MRI
-	* TLEM2-CT
-	* TLEM2: lower limb bones released with the TLEM2 musculoskeletal model of [Carbone et al. (2015)]
-* JIA-MRI
-* JIA-ANKLE-MRI
-* ICL-MRI
-* VAKHUM-CT
+| Dataset       | Gender | Age | Height |  Mass | Mesh Quality | Reference publication   | Notes |
+| ---           | ---    | --- | ---    |---    |---           |---                      |---
+| LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | [Viceconti et al. (2008)](https://doi.org/10.2170/physiolsci.RP009908) |  |
+| TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Released with the TLEM2 musculoskeletal model. |
+| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's MRI scans |
+| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's CT scans |
+| ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727)  |  |
+| JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | [Montefiori et al. 2019a](https://link.springer.com/article/10.1007/s10439-019-02287-0) |  |
+| JIA-ANKLE-MRI |   M    |   ? |  ?     | ?     |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials |
+| VAKHUM-CT		|   M    |   ? | ?      | ?     |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Skeleton obtained from two CT scans. | 
 
 ### Other details [WIP]
 
@@ -185,19 +175,15 @@ previous use in the authors’ work (U)
    * green: not compartimentalised anatomical structures - basically the rest.
 
 ## How to contribute, request features and report bugs [WIP]
-* To **report a bug**, or anomalous behaviour of the toolbox, please open an issue in the repository page. It would be ideal if you could make the issue reproducile with some data that you can share with us.
+* To **report a bug**, or anomalous behaviour of the toolbox, please open an issue [on this page](https://github.com/modenaxe/msk-STAPLE/issues). Ideally, if you could make the issue reproducile with some data that you can share with us.
 * To **contributing to the project with new code** please use a standard [GitHub workflow](https://guides.github.com/activities/forking/):
-   1. forking this repository
-   2. creating your own branch, where you make your modifications and improvements
-   3. once you are happy with the new feature you have implemented create a pull request
-   4. we will review your code and, if required
-* **feature requests**: please open an issue.
-* **urgent feature requests**: see point 2.
+   1. fork this repository
+   2. create your own branch, where you make your modifications and improvements
+   3. once you are happy with the new feature that you have implemented you can create a pull request
+   4. we will review your code and potentially include it in the main repository. 
+* To propose **feature requests**, please open an issue [on this page](https://github.com/modenaxe/msk-STAPLE/issues), label it as `feature request` using the `Labels` panel on the right and describe your desired new feature. We will review the proposal regularly but work on them depending on the planned development. 
 
 # Current limitations 
-* The STAPLE toolbox is still in strong development, so some key documentation might be missing. 
-Please refer to the examples included the main STAPLE repository for now.
-
-* The lower limb models are missing an articulated patello-femoral joint. This is in development. 
-
+* The STAPLE toolbox is still in strong development, so some key documentation might be missing. Please refer to the examples included the main STAPLE repository for now.
+* The lower limb models currently include a patella rigidly attached to the tibia. An articulated patellofemoral joint is under development. 
 * 
