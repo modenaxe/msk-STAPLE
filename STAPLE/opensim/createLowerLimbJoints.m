@@ -2,7 +2,7 @@
 % joint coordinate systems stored in a structure and adds them to an
 % existing OpenSim model.
 %
-% createLowerLimbJoints(osimModel, JCS, method)
+% createLowerLimbJoints(osimModel, JCS, method, side_raw)
 %
 % Inputs:
 %   osimModel - an OpenSim model of the lower limb to which we want to add
@@ -21,6 +21,9 @@
 %       use the tibial JCS as well. See Modenese and Renault, JBiomech 2020
 %       for details.
 %
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left'
+%       and 'l' are accepted inputs, both lower and upper cases.
+% 
 % Outputs:
 %   none - the joints are added to the input OpenSim model.
 %
@@ -33,7 +36,7 @@
 %
 % TODO add switches for adding custom workflows
 
-function createLowerLimbJoints(osimModel, JCS, workflow, side)
+function createLowerLimbJoints(osimModel, JCS, workflow, side_raw)
 
 % if not specified, method is auto. Other option is Modenese2018.
 % This only influences ankle and subtalar joint.
@@ -43,7 +46,7 @@ if nargin<4
     side_low = inferBodySideFromAnatomicStruct(JCS);
 else
     % get sign correspondent to body side
-    [~, side_low] = bodySide2Sign(side);
+    [~, side_low] = bodySide2Sign(side_raw);
 end
 
 % printout

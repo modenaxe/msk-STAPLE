@@ -3,11 +3,11 @@
 % 1) having a standard side label
 % 2) adjust the reference systems to the body side.
 %
-%   [sign_side, side_low] = bodySide2Sign(side)
+%   [sign_side, side_low] = bodySide2Sign(side_raw)
 %
 % Inputs:
-%   side - generic string identifying a body side. 'right', 'r', 'left' and
-%       'l' are accepted inputs, both lower and upper cases.
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
+%       and 'l' are accepted inputs, both lower and upper cases.
 %
 % Outputs:
 %   sign_side - sign to adjust reference systems based on body side. Value:
@@ -23,19 +23,19 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-function [sign_side, side_low] = bodySide2Sign(side)
+function [sign_side, side_low] = bodySide2Sign(side_raw)
 
-side_low = lower(side);
+side_low = lower(side_raw(1));
 
 switch side_low
     case 'r'
         sign_side = 1;
-    case 'right'
-        sign_side = 1;
+%     case 'right'
+%         sign_side = 1;
     case 'l'
         sign_side = -1;
-    case 'left'
-        sign_side = -1;
+%     case 'left'
+%         sign_side = -1;
     otherwise
         error 'bodySide2Sign.m Error: specify right ''r'' or left ''r'''
 end

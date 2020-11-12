@@ -24,12 +24,20 @@
 %       using the function createTriGeomSet. See that function for more
 %       details.
 % 
-%   method_pelvis - the algorithm selected to process the pelvis geometry.
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
+%       and 'l' are accepted inputs, both lower and upper cases.
+%
+%   algo_pelvis - the algorithm selected to process the pelvis geometry.
 % 
-%   method_femur - the algorithm selected to process the femur geometry.
+%   algo_femur - the algorithm selected to process the femur geometry.
 % 
-%   method_tibia - the algorithm selected to process the tibial geometry.
-%       
+%   algo_tibia - the algorithm selected to process the tibial geometry.
+%
+%   result_plots - enable plots of final fittings and reference systems. 
+%       Value: 1 (default) or 0.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default). 
+%
 %   in_mm - (optional) indicates if the provided geometries are given in mm
 %       (value: 1) or m (value: 0). Please note that all tests and analyses
 %       done so far were performed on geometries expressed in mm, so this

@@ -7,18 +7,24 @@
 % feature through slicing the bone geometry with planes perpendicular to
 % the longitudinal axis and anterior-posterior axis respectively.
 %
-%   [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side, result_plots, ...
+%   [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side_raw, result_plots, ...
 %                                      debug_plots, in_mm)
 %
 % Inputs:
 %   femurTri - MATLAB triangulation object of the entire femoral geometry.
 %
-%   side_raw - 
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
+%       and 'l' are accepted inputs, both lower and upper cases.
 %
 %   result_plots - enable plots of final fittings and reference systems. 
 %       Value: 1 (default) or 0.
 %
 %   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+%   in_mm - (optional) indicates if the provided geometries are given in mm
+%       (value: 1) or m (value: 0). Please note that all tests and analyses
+%       done so far were performed on geometries expressed in mm, so this
+%       option is more a placeholder for future adjustments.
 %
 % Outputs:
 %   CS - update input structure including radii and centres of the spheres

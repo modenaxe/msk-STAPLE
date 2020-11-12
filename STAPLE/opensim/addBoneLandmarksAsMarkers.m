@@ -37,12 +37,18 @@ if in_mm == 1; dim_fact = 0.001; else; dim_fact = 1; end
 % OpenSim classes
 import org.opensim.modeling.*
 
+disp('------------------------')
+disp('     ADDING MARKERS     ')
+disp('------------------------')
+disp('Attaching bony landmarks to model bodies:')
+
 % loop through the bodies specified in BLStruct
 body_list = fields(BLStruct);
 Nb = numel(body_list);
 for nb = 1:Nb
     % body name
     cur_body_name = body_list{nb};
+    disp(['  ', cur_body_name,':'])
     % check that cur_body_name actually corresponds to a body
     if osimModel.getBodySet().getIndex(cur_body_name)<0
         warndlg(['Markers assigned to body ',cur_body_name,' cannot be added to the model. Body is not in BodySet.']);
@@ -66,6 +72,12 @@ for nb = 1:Nb
         osimModel.addMarker(marker);
         % clear coordinates as precaution
         clear Loc
+        % display
+%         disp(['  Attached: ', cur_marker_name, '(', cur_body_name,')']);
+        disp(['    * ', cur_marker_name]);
     end
 end
+
+disp('Done.')
+
 end

@@ -1,5 +1,5 @@
 Applied filter Compute Geometric Measures in 127 msec 
-Opened mesh C:/Users/Luca M/Documents/MATLAB/INSIGNEO-git/AutoDetectBonyLandmarks/5_test_Mirtich_triangular/R_Femur_6m.stl in 170 msec
+Opened mesh R_Femur_6m.stl in 170 msec
 All files opened in 1393 msec
 Mesh Bounding Box Size 241.386642 136.565460 188.835693
 Mesh Bounding Box Diag 335.524323 
