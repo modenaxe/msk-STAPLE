@@ -15,9 +15,14 @@
 %    Author:   Luca Modenese,  2020                                       %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
-% This example demonstrates how to setup a STAPLE workflow to 
-% automatically generate a complete model of the left legs of the TLEM_CT
-% and TLEM2_MRI datasets included in the bone_datasets folder.
+% This script automatically creates the kinetic models used for analysis 
+% in the manuscript:
+% Modenese, Luca, and Jean-Baptiste Renault. "Automatic Generation of 
+% Personalised Skeletal Models of the Lower Limb from Three-Dimensional 
+% Bone Geometries." bioRxiv (2020).
+% https://www.biorxiv.org/content/10.1101/2020.06.23.162727v2
+% from the available datasets using a STAPLE workflow that uses the joint
+% definitions of Modenese et al. J.Biomech. (2018).
 % ----------------------------------------------------------------------- %
 clear; clc; close all
 addpath(genpath('STAPLE'));
@@ -25,26 +30,27 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
-output_models_folder = 'Opensim_models';
+output_models_folder = 'opensim_models';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
-dataset_set = {'TLEM2_CT', 'TLEM2_MRI'};
+dataset_set  = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
+
+% mass of individuals required for segment estimation
+subj_mass_set = [  64,         45,        87,        76.5];
 
 % cell array with the bone geometries that you would like to process
-bones_list = {'pelvis_no_sacrum','femur_l','tibia_l','talus_l', 'calcn_l'};
+bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 
-% visualization geometry format (options: 'stl' or 'obj')
-vis_geom_format = 'obj';
+% visualization geometry format
+vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-% options: 'Modenese2018' or 'auto2020'
-workflow = 'Modenese2018';
+modelling_method = 'Modenese2018';
 %--------------------------------------
 
-tic
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
@@ -60,31 +66,39 @@ for n_d = 1:numel(dataset_set)
     % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);
     
-    % get the body side (can also be specified by user as input to funcs)
+    % infer the body side (can also be specified by user as input to funcs)
     side = inferBodySideFromAnatomicStruct(triGeom_set);
     
     % model and model file naming
-    model_name = ['auto_',dataset_set{n_d},'_',upper(side)];
+    model_name = ['automatic_',dataset_set{n_d}];
     model_file_name = [model_name, '.osim'];
     
     % create bone geometry folder for visualization
-    geometry_folder_name = [model_name, '_',side,'_Geometry'];
+    geometry_folder_name = [model_name, '_Geometries'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     
     % convert geometries in chosen format (30% of faces for faster visualization)
     writeModelGeometriesFolder(triGeom_set, geometry_folder_path, vis_geom_format,0.3);
-    
+      
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(model_name);
     
     % create bodies
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
     
+    % add patella to tibia (this will be replaced by a proper joint and
+    % dealt with the other joints in the future).
+    attachPatellaGeom(osimModel, side, tri_folder, geometry_folder_path, geometry_folder_name, vis_geom_format)
+    
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, workflow);
+    createLowerLimbJoints(osimModel, JCS, modelling_method);
+    
+    % update mass properties to those estimated using a scale version of
+    % gait2392 with COM based on Winters's book.
+    osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass_set(n_d));
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
@@ -96,10 +110,10 @@ for n_d = 1:numel(dataset_set)
     osimModel.print(fullfile(output_models_folder, model_file_name));
     
     % inform the user about time employed to create the model
-    disp('-------------------------')
+    disp('------------------------')
     disp(['Model generated in ', num2str(toc)]);
-    disp(['Saved as ', fullfile(output_models_folder, model_file_name),'.']);
-    disp('-------------------------')
+    disp('------------------------')
+    close all
 end
 
 % remove paths
