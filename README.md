@@ -22,7 +22,7 @@ For example models of hip, knee and ankle joints can be created as individual mo
 
 * **Extract the articular surfaces of the lower limb joints**: some of the algorithms included in STAPLE can identify the articular surfaces of the lower limb joints and export them for you.
 
-![complete_models](./images/artic_surfaces.png)
+![articular_surfaces](./images/artic_surfaces.png)
 
 * **Basic identification of bony landmarks**: certain bony landmarks can be easily identified following the morphological analysis of the bone surfaces. These landmarks are intended as first guess for registration with gait analysis data.
 
@@ -148,11 +148,28 @@ Examples of possible modelling scenarios are provided in the main STAPLE folder.
 
 ### Datasets available for testing
 Bone geometries of public domain are available in the "test_geometries" directory for testing and development purposes:
+Age	Height
+[m]	Mass
+[kg]	MSK conditions	Imaging type	Details of medical images 	Bone segmentation [approach: time]	Quality of bone geometry	Reference publication (R)/
+previous use in the authors’ work (U)
+
+
+| Dataset       | Gender | Age | Height |  Mass | Mesh Quality | Reference publication   | 
+| ---           | ---    | --- | ---    |---    |---           |---                      |
+| LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | Viceconti et al. (2008) | 
+| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
+| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
+| TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | 
+| ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | Modenese et al. (2020)  | 
+| JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | Montefiori et al. 2019b | 
+| JIA-ANKLE-MRI |   M    |   ? |  ?     | ?     |  Low         | Montefiori et al. 2019b | 
+| VAKHUM-CT		|   M    |   ? | ?      | ?     |  Fair        | van Sint et al.         | 
+
 * LHDL-CT
 * TLEM2: there are 3 version of this dataset:
     * TLEM2-MRI
 	* TLEM2-CT
-	* TLEM2: lower limb bones released with the TLEM2 musculoskeletal model of [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034).
+	* TLEM2: lower limb bones released with the TLEM2 musculoskeletal model of [Carbone et al. (2015)]
 * JIA-MRI
 * JIA-ANKLE-MRI
 * ICL-MRI
@@ -168,8 +185,8 @@ Bone geometries of public domain are available in the "test_geometries" director
    * green: not compartimentalised anatomical structures - basically the rest.
 
 ## How to contribute, request features and report bugs [WIP]
-* **bug reporting**: please report bugs or errors in the `Issue` sections.
-* **contributing with new code**: feel free of contributing as by standard [GitHub workflow](https://guides.github.com/activities/forking/):
+* To **report a bug**, or anomalous behaviour of the toolbox, please open an issue in the repository page. It would be ideal if you could make the issue reproducile with some data that you can share with us.
+* To **contributing to the project with new code** please use a standard [GitHub workflow](https://guides.github.com/activities/forking/):
    1. forking this repository
    2. creating your own branch, where you make your modifications and improvements
    3. once you are happy with the new feature you have implemented create a pull request
