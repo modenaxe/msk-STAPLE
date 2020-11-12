@@ -11,11 +11,11 @@ It can create models of entire legs or few joints, depending on the available da
 Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
 
 ## What can I do with STAPLE?
-* **Creating complete skeletal models of the lower limb**: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges)
+* **Creating complete skeletal models of the lower limb from segmented bone geometries**: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges for now).
 
-![complete_models](./images/complete_osim_models.png)
+![complete_model](./images/complete_osim_model.png)
 
-* **Creating partial skeletal models of the lower limb**: they are a subset of a complete model and include any meaningful combination of the previous bones. 
+* **Creating partial skeletal models of the lower limb**: they are a subset of a complete lower limb model and include any meaningful combination of bones listed for the complete model. 
 For example models of hip, knee and ankle joints can be created as individual models.
 
 ![partial_models](./images/partial_osim_models.png)
