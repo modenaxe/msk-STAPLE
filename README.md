@@ -17,10 +17,9 @@
 - [Acknowledgements](#acknowledgements)
 
 ## What is STAPLE?
-This repository contains a computational tool called STAPLE, which stays for _Shared Tools for Automatic Personalised Lower Extremity modelling_, that we created for 
-enabling researchers in the biomechanical field to build models of the lower extremity with minimum effort, ideally just clicking `RUN` on a script. STAPLE is a MATLAB toolbox consisting of scripts and algorithms to achieve this aim. 
+STAPLE, acronym for _Shared Tools for Automatic Personalised Lower Extremity modelling_, is a MATLAB toolbox that aims to enable researchers in the biomechanical field to create models of the lower extremity from subject-specific bone geometries with minimum effort, ideally just running a script where few settings are specified, and in negligible processing time. 
 
-STAPLE requires three-dimensional bone geometries as an input, which are normally segmented from medical images. It can create models of entire legs or few joints, depending on the available data or research intent. 
+STAPLE requires three-dimensional bone geometries as an input, which are normally surface models segmented from medical images like magnetic resonance imaging (MRI) or computed tomography (CT) scans. It can create models of entire legs or few joints, depending on the available data or the research intent. 
 
 Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
 
