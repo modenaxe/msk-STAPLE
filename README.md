@@ -34,6 +34,7 @@ Currently the tool creates kinematic and kinetic skeletal models but will soon b
 ```
 
 ## What can I do with STAPLE?
+
 * **Creating complete skeletal models of the lower limb from segmented bone geometries**: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges for now).
 
 ![complete_model](./images/complete_osim_model.png)
@@ -64,7 +65,9 @@ git clone https://github.com/modenaxe/msk-STAPLE
 
 ## How to use the STAPLE toolbox
 
-### Overview of STAPLE workflow to generate subject-specific models
+### Workflow to generate subject-specific lower limb models
+
+The figure below presents a possible workflow for the generation of subject-specific (or patient-specific) lower limb models. The operations handled by the STAPLE toolbox are grouped within the red box. 
 
 ![STAPLE_workflow](./images/STAPLE_overview.png)
 
