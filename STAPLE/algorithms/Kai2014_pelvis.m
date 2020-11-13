@@ -31,7 +31,7 @@ disp('----------------------')
 disp('   KAI2014 - PELVIS   '); 
 disp('----------------------')
 disp(['* Hip Joint   : ', upper(side_low)]);
-disp(['* Method      : ', 'N/A']);
+disp(['* Method      : ', 'Princ Axes Inertia + Geometry']);
 disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
 disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
 disp(['* Triang Units: ', 'mm']);
