@@ -1,3 +1,8 @@
+
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_patella_VolumeRidge(CS, U, in_mm, debug_plots)
 
 % check units

@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 %%  Identify the ant-post axis (GIBOK Z axis) based on 'circularity'
 % Test for circularity, because on one face the surface is spherical and on the arular surface it's
 % more like a Hyperbolic Paraboloid, the countour od the cross section have

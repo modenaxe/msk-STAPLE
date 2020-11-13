@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ CSs, TrObjects ] = RPatellaFun( Patella )
 % Fit an ACS to the Patella
 

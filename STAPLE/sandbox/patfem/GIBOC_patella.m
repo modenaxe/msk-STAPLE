@@ -1,4 +1,7 @@
-% modified by LM in 2020
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ CS, JCS, PatellaBL_r] = GIBOC_patella( Patella, algorithm, result_plots, in_mm, debug_plots)
 % depends on
 % LSSLFitPatellaRidge

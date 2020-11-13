@@ -1,7 +1,10 @@
 
 
 
-
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS, ArtSurf] = CS_patella_PIAAS(Patella, CS, Uridge, LowestPoints_CS0, CoeffMorpho, in_mm)
 
 % check units

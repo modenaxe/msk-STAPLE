@@ -1,3 +1,7 @@
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_patella_RidgeLine(CS, Uridge, LowestPoints_CS0, in_mm, debug_plots)
 
 % check units

@@ -21,9 +21,7 @@ STAPLE, acronym for _Shared Tools for Automatic Personalised Lower Extremity mod
 
 STAPLE requires three-dimensional bone geometries as an input, which are normally surface models segmented from medical images like magnetic resonance imaging (MRI) or computed tomography (CT) scans. It can create models of entire legs or few joints, depending on the available data or the research intent. 
 
-Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
-
-The toolbox is described in the following preprint:
+Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities. The STAPLE toolbox and some of its applications are described in the following preprint:
 
 ```bibtex
 @article{Modenese2020auto,
@@ -31,7 +29,6 @@ The toolbox is described in the following preprint:
   author={Modenese, Luca and Renault, Jean-Baptiste},
   journal={bioRxiv},
   year={2020},
-  publisher={}
   doi={https://doi.org/10.1101/2020.06.23.162727}
 }
 ```

@@ -1,4 +1,8 @@
-function [ CS, TrObjects ] = MSK_patella_Rainbow2013( Patella )
+% ------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ CS, TrObjects ] = GIBOC_Rainbow2013_patella( Patella )
 % It is assumed here that the patella is in a standard position in the
 % imaging device, so that Z0 point toward Superior direction
 
