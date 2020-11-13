@@ -1,7 +1,7 @@
-% ----------------------------------------------------------------------- %
-%    Author:   Luca Modenese, Feb 2020                                    %
-%    email:    l.modenese@imperial.ac.uk                                  % 
-% ----------------------------------------------------------------------- %
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function addPatFemJointCoordCouplerConstraint(osimModel, side)
 
 % OpenSim libraries

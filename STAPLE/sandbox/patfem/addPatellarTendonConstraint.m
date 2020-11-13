@@ -1,4 +1,7 @@
-
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 % add patellofemoral constraint
 function addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
 

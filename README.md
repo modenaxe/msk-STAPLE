@@ -23,6 +23,19 @@ STAPLE requires three-dimensional bone geometries as an input, which are normall
 
 Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities.
 
+The toolbox is described in the following preprint:
+
+```bibtex
+@article{Modenese2020auto,
+  title={Automatic Generation of Personalized Skeletal Models of the Lower Limb from Three-Dimensional Bone Geometries},
+  author={Modenese, Luca and Renault, Jean-Baptiste},
+  journal={bioRxiv},
+  year={2020},
+  publisher={}
+  doi={https://doi.org/10.1101/2020.06.23.162727}
+}
+```
+
 ## What can I do with STAPLE?
 * **Creating complete skeletal models of the lower limb from segmented bone geometries**: they include pelvis, femur, tibia and fibula, talus, calcaneus and foot bones (excluded phalanges for now).
 

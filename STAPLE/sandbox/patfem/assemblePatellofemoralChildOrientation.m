@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function PatellaCS = assemblePatellofemoralChildOrientation(FemurCS, PatellaCS)
 
 %TODO: correct using tibia offset
