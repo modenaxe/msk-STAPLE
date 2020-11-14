@@ -238,7 +238,8 @@ The algorithms collected in the STAPLE toolbox were proposed in publications tha
 
 ## Current limitations 
 * The STAPLE toolbox is still in strong development, so some key documentation might be missing. Please refer to the examples included the main STAPLE repository for now.
-* The lower limb models currently include a patella rigidly attached to the tibia. An articulated patellofemoral joint is under development. 
+* STAPLE cannot create models from bones reconstructed from images that have more than one reference system (see provided VAKHUM_CT dataset as an example). This is due to the fact that each STAPLE morphological analysis is local to the bone where it is performed and therefore the only information about the relative position of the bones comes from the medical scans resting pose. It is possible to implement workarounds to this issue, e.g. using an _a priori_ model of the joints for which the resting pose is not avaible.
+* The lower limb models currently include a patella rigidly attached to the tibia. An articulated patellofemoral joint is under development.
 
 ## Acknowledgements
 Luca Modenese was supported by an Imperial College Research Fellowship granted by Imperial College London and by an Academy of Medical Sciences Springboard Grant [SBF004\1056] supported by the Academy of Medical Sciences, the British Heart Foundation, Diabetes UK, the Global Challenges Research Fund, the Government Department for Business, Energy and Industrial Strategy and the Wellcome Trust.
