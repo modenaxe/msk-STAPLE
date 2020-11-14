@@ -5,24 +5,24 @@
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
 - [Requirements and set up](#requirements-and-set-up)
 - [How to use the STAPLE toolbox](#how-to-use-the-staple-toolbox)
-  - [Overview of STAPLE workflow to generate subject-specific models](#overview-of-staple-workflow-to-generate-subject-specific-models)
+  - [Workflow to generate subject-specific lower limb models](#workflow-to-generate-subject-specific-lower-limb-models)
   - [Preliminary steps and data preparation](#preliminary-steps-and-data-preparation)
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
   - [Available algorithms for bone morphological analysis](#available-algorithms-for-bone-morphological-analysis)
   - [Provided examples](#provided-examples)
   - [Datasets available for testing](#datasets-available-for-testing)
   - [Further notes on STAPLE](#further-notes-on-staple)
+- [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
 - [How to contribute, request features and report bugs](#how-to-contribute-request-features-and-report-bugs)
 - [Current limitations](#current-limitations)
 - [Acknowledgements](#acknowledgements)
 
 ## What is STAPLE?
-STAPLE, acronym for _Shared Tools for Automatic Personalised Lower Extremity modelling_, is a MATLAB toolbox that aims to enable researchers in the biomechanical field to create models of the lower extremity from subject-specific bone geometries with minimum effort, ideally just running a script where few settings are specified, and in negligible processing time. 
+STAPLE, acronym for _Shared Tools for Automatic Personalised Lower Extremity modelling_, is a MATLAB toolbox that aims to enable researchers in the biomechanical field to create models of the lower extremity from subject-specific bone geometries with minimum effort in negligible processing time, ideally just running a script where few settings are specified.
 
-STAPLE requires three-dimensional bone geometries as an input, which are normally surface models segmented from medical images like magnetic resonance imaging (MRI) or computed tomography (CT) scans. It can create models of entire legs or few joints, depending on the available data or the research intent. 
+STAPLE requires three-dimensional bone geometries as an input. These geometries are normally surface models segmented from medical images like magnetic resonance imaging (MRI) or computed tomography (CT) scans. STAPLE performs morphological analyses on the bone geometries and defines reference systems used to create models of entire legs or few joints, depending on the available data or the research intent. Currently the toolbox creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities. 
 
-Currently the tool creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities. The STAPLE toolbox and some of its applications are described in the following preprint:
-
+The STAPLE toolbox and some of its applications are described in [the following preprint](https://doi.org/10.1101/2020.06.23.162727):
 ```bibtex
 @article{Modenese2020auto,
   title={Automatic Generation of Personalized Skeletal Models of the Lower Limb from Three-Dimensional Bone Geometries},
@@ -32,6 +32,8 @@ Currently the tool creates kinematic and kinetic skeletal models but will soon b
   doi={https://doi.org/10.1101/2020.06.23.162727}
 }
 ```
+The models, simulations and results of the publication can be fully reproduced using the scripts and datasets available in [this GitHub repository](https://github.com/modenaxe/auto-lowerlimb-models-paper).
+
 
 ## What can I do with STAPLE?
 
@@ -56,7 +58,8 @@ In order to use the STAPLE toolbox you will need:
 1. MATLAB R2018b or more recent installed in your machine.
 2. [OpenSim 4.1](https://simtk.org/projects/opensim) installed in your machine.
 3. the OpenSim 4.1 API for MATLAB correctly setup and working. Required to run the provided scripts. Please refer to the [OpenSim documentation](https://simtk-confluence.stanford.edu/display/OpenSim/Scripting+with+Matlab) for instructions about installation.
-* download the repository or, if you want to contribute to its development, clone it using git:
+* download the latest version of STAPLE from [the SimTK project page](https://simtk.org/projects/msk-staple).
+* (optional) if you want to contribute to the development of the toolbox, you can clone the GitHub repository using [Git](https://git-scm.com/):
 ```bash
 git clone https://github.com/modenaxe/msk-STAPLE
 ```
@@ -219,6 +222,9 @@ These notes are provided to offer a minimal guidance to anyone that will investi
    * `blue`: lateral
    * `green`: not compartimentalised anatomical structures (basically the rest).
 
+## Does STAPLE work only with OpenSim?
+
+The algorithms collected in the STAPLE toolbox were proposed in publications that did not have modelling focus, and can be applied in broader contexts, such as reference system definition for orthopaedics applications or modelling in other platforms. Similarly, the outputs of a STAPLE workflow, e.g. from `processTriGeomBoneSet.m`, include all the necessary information to create a kinematic or kinetic model in any biomechanical modelling workflow. All our modelling examples, however, rely on OpenSim.
 
 ## How to contribute, request features and report bugs
 
