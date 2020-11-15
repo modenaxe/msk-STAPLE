@@ -29,10 +29,10 @@
 
 % TODO: written in train, needs proper testing!
 
-function updTriGeomSet = transformTriGeomSet(triGeomSet, CoordSystSet)
+function updTriGeomSet = transformTriGeomSet(triGeomSet, CS_set)
 
 geom_names = fields(triGeomSet);
-body_names = fields(CoordSystSet);
+body_names = fields(CS_set);
 
 % check that the structures of bones and coord syst are compatible
 if ~isequal(geom_names, body_names)
@@ -44,7 +44,7 @@ Nf = numel(geom_names);
 for nb = 1:Nf
     cur_triGeomName = geom_names{nb};
     cur_tri = triGeomSet.(cur_triGeomName);
-    cur_CS  = CoordSystSet.(body_names{nb});
+    cur_CS  = CS_set.(body_names{nb});
     updTriGeomSet.(cur_triGeomName) = TriChangeCS(cur_tri, cur_CS.V, cur_CS.Origin);
 end
 

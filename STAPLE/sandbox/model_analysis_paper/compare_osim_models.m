@@ -21,6 +21,7 @@
 % 2) angular differences between corresponding axes
 % The results are reported in Table 3 of the manuscript.
 % ----------------------------------------------------------------------- %
+% Script modified from compare_osim_model.m in the paper.
 clearvars;  close all
 addpath('support_functions');
 
