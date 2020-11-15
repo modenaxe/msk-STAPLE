@@ -29,3 +29,11 @@ frame2_tr = osimVec3ToArray(osimJoint.get_frames(1).get_translation);
 frame2_or = osimVec3ToArray(osimJoint.get_frames(1).get_orientation);
 child= [[orientation2MatRot(frame2_or), frame2_tr']; [0 0 0 1]];
 end
+
+function matVec = osimVec3ToArray(aVec3)
+
+import org.opensim.modeling.*
+
+matVec = [aVec3.get(0), aVec3.get(1), aVec3.get(2)];
+
+end
