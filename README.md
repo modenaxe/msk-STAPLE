@@ -13,7 +13,7 @@
   - [Datasets available for testing](#datasets-available-for-testing)
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
-- [How to contribute](#how-to-contributing)
+- [How to contribute](#how-to-contribute)
 - [Current limitations](#current-limitations)
 - [Acknowledgements](#acknowledgements)
 
