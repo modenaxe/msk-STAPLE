@@ -11,7 +11,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'Opensim_models';
+output_models_folder = 'opensim_models';
 
 % set output model name
 output_model_file_name = 'example_knee_joint_model.osim';
