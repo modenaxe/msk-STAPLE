@@ -1,5 +1,7 @@
 # STAPLE: Shared Tools for Automatic Personalised Lower Extremity modelling <!-- omit in toc -->
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4275285.svg)](https://doi.org/10.5281/zenodo.4275285) <!-- omit in toc -->
+
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
