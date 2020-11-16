@@ -232,7 +232,7 @@ The algorithms collected in the STAPLE toolbox were proposed in publications tha
 * **STAPLE cannot create models from bones reconstructed from images that have more than one reference system** (see provided VAKHUM_CT dataset as an example). This is due to the fact that each STAPLE morphological analysis is local to the bone where it is performed and therefore the only information about the relative position of the bones comes from the medical scans resting pose. It is possible to implement workarounds to this issue, e.g. using an _a priori_ model of the joints for which the resting pose is not avaible.
 * The lower limb models currently include a patella rigidly attached to the tibia. An articulated **patellofemoral joint is under development**.
 
-## How-to-contribute
+## How to contribute
 We welcome any contribution from the biomechanical and open source community, in any form. You can report a bug, submit code implementing a new feature or fixing an issue or share your ideas about new functionalities that you would like to see included in STAPLE. See below few tips for contributing:
 * To **report a bug**, or anomalous behaviour of the toolbox, please open an issue [on this page](https://github.com/modenaxe/msk-STAPLE/issues). Ideally, if you could make the issue reproducile with some data that you can share with us.
 * To **contributing to the project with new code** please use a standard [GitHub workflow](https://guides.github.com/activities/forking/):
