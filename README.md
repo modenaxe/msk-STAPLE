@@ -222,6 +222,14 @@ These notes are provided to offer a minimal guidance to anyone that will investi
    * `red`: medial
    * `blue`: lateral
    * `green`: not compartimentalised anatomical structures (basically the rest).
+   
+## Common troubleshooting
+It will happen that you have issues processing some of your datasets. It could be a bug, but it could also be an issue related to the input data.
+Before informing us (see [the contributing guidelines](/CONTRIBUTING.md) please go through the following troubleshooting checklist first:
+- [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
+- [ ] ensure that the quality of your bone geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes.
+- [ ] if possible, try running an alternative algorithm in order to establish if your bone mesh is processable or if you have encounter a proper bug in the algorithm.
+- [ ] verify that your desired application or processing of your dataset is not limited because of the [current limitations](#current-limitations) of the STAPLE toolbox.
 
 ## Does STAPLE work only with OpenSim?
 

@@ -23,7 +23,7 @@ clearvars;  close all
 
 % import opensim libraries
 import org.opensim.modeling.*
-addpath(genpath('../STAPLE'));
+addpath(genpath('../STAPLE/sandbox'));
 
 % create models as in the paper (assumes examples have not been run)
 run('../Example_create_kinetic_models.m');
@@ -119,7 +119,7 @@ for n_file = 1:length(model_list)
     % clear variables
     clear jc_offset ang_offset_child ang_offset_parent cur_res_table jc_offset_norm
 end
-rmpath(genpath('../STAPLE'));
+rmpath(genpath('../STAPLE/sandbox'));
 % clc
 % % display all tables of results
 % for nt = 1:length(model_set)
