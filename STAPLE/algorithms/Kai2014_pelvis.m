@@ -2,15 +2,23 @@
 % reference system of the pelvis described in the following publication: 
 % Kai, Shin, et al. Journal of biomechanics 47.5 (2014):1229-1233. 
 % https://doi.org/10.1016/j.jbiomech.2013.12.013
-% The algorithm creates a reference system from the centre of the femoral 
-% head and the centres of the femoral condyles, after identifying these
-% feature through slicing the bone geometry with planes perpendicular to
-% the longitudinal axis and anterior-posterior axis respectively.
+% The algorithm creates a reference system based on principal axes of
+% inertia and geometrical considerations as described in the original
+% publication. Please note that:
+% 1. the original implementation includes the sacrum, here excluded because
+% difficult to segment from MRI scans.
+% 2. the original publication defines the pelvis reference system
+% differently from the reccomendations of the International Society of
+% Biomechanics.
+% 3. The robustness of the Kai2014 algorithm with respect to different
+% global reference systems is ensured, in our experience, only through the
+% further checks implemented in the pelvis_guess_CS.m function developed
+% for STAPLE_pelvis.
 %
 %   [CS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
-%                                      side_raw,...
-%                                      result_plots, ...
-%                                      debug_plots, in_mm)
+%                                        side_raw,...
+%                                        result_plots, ...
+%                                        debug_plots, in_mm)
 %
 % Inputs:
 %   pelvisTri - MATLAB triangulation object of the entire pelvic geometry.

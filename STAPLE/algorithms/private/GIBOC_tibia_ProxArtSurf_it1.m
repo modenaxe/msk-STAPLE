@@ -40,7 +40,7 @@ if ~isempty(EpiTibCenterRidgeMed) || ~isempty(EpiTibCenterRidgeLat)
 end
 
 
-%% Refine and separete medial and lateral AS region
+%% Refine and separate medial and lateral AS region
 % Compute seed points to get a patch of AS on each condyle
 MedPtsInit = mean(ellipsePts) + 2/3*ELP1.b*ELP1.Yel';
 LatPtsInit = mean(ellipsePts) - 2/3*ELP1.b*ELP1.Yel';

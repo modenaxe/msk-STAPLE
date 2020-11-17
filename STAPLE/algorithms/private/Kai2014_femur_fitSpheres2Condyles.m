@@ -43,7 +43,6 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
-
 function CS = Kai2014_femur_fitSpheres2Condyles(DistFemTri, CS, debug_plots, debug_prints)
 
 % main plots are in the main method function. 
