@@ -40,7 +40,7 @@
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese, loosely based on GIBOK prototype. 
-%  Copyright 2020 Luca Modenese
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
 

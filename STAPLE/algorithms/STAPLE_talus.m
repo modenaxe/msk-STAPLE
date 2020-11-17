@@ -22,8 +22,8 @@
 % See also .
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese
-%  Copyright 2020 Luca Modenese
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [CS, JCS, ArtSurf] = STAPLE_talus(talusTri,...
                                            side_raw,...

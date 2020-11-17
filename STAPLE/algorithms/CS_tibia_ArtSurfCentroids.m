@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 %Reference system built from the centroids of the articular surfaces
 function [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMed, EpiTibASLat, CS, side)
 

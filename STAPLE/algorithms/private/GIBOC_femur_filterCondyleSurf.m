@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function Condyle_end = GIBOC_femur_filterCondyleSurf(EpiFem, CSs, PtsCondyle, Pts_0_C, CoeffMorpho)
 
 

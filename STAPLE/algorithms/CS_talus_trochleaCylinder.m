@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 % NOTE: uses axis computed in the subtalar analysis
 function [CS, TalTrochAS] = CS_talus_trochleaCylinder(Talus, side, CS, alt_TlNeck_start, alt_TlTib_start, CoeffMorpho)
 

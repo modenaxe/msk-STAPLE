@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [ Z0 ] = tibia_guess_CS(Tibia, debug_plots)
 % Function to test putting back together a correct orientation of the femur
 % Inputs :

@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, TlCcnAS1, TlNvc_AS] = CS_talus_subtalarSpheres(Talus, side, CS, alt_TlNvc_start, alt_TlNeck_start, CoeffMorpho)
 
 % get sign correspondent to body side

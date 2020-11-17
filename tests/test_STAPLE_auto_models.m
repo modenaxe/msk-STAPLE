@@ -19,6 +19,8 @@
 % are identical, within a tolerance, to those created for the 2020 paper.
 % the models are built using the Modenese2018 joints definition.
 % ----------------------------------------------------------------------- %
+
+%% TEST: paper models
 clearvars;  close all
 
 % import opensim libraries

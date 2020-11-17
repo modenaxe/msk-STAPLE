@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS, in_mm, debug_plots)
 
 % check units

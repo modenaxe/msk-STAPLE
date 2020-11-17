@@ -53,8 +53,8 @@
 % ELLIPSOIDS
 % ellipsoid_fit
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese
-%  Copyright 2020 Luca Modenese
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [CS, JCS, FemurBL, ArtSurf] = GIBOC_femur(femurTri,...
                                                    side_raw,...

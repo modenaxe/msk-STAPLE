@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm, tolp, tolg)
 
 % NOTE: depend on CS_femur_SpheresOnCondyles

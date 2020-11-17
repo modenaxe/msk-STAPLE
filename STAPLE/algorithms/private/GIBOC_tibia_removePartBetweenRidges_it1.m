@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function EpiTibCenterRidge = GIBOC_tibia_removePartBetweenRidges_it1(ProxTib, EpiTib, CSs, CoeffMorpho, ELP1, Ztp , is_medial)
 
 Z0 = CSs.Z0;

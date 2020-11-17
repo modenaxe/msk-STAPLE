@@ -1,4 +1,7 @@
-%% Initial Set up 
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side_raw, result_plots, debug_plots, in_mm)
 
 % depends on

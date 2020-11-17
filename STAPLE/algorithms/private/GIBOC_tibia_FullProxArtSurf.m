@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [EpiTibAS, oLSP,Ztp] = GIBOC_tibia_FullProxArtSurf(EpiTib, CSs, CoeffMorpho, angle_thresh, curv_quartile)
 
 % 1) identify surface

@@ -1,8 +1,6 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
 %    Author:   Luca Modenese                                              %
-%    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 function ProxTibNoFib = removeFibulaFromProxTibia(ProxTib, funcNameForWarning)
 % remove fibula

@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [RotPseudoISB2Glob, LargestTriangle, BL] = pelvis_guess_CS(Pelvis, debug_plots)
 % Function to test putting back together a correct orientation of the
 % pelvis

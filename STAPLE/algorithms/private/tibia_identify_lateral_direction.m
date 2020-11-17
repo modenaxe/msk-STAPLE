@@ -1,9 +1,7 @@
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese                                              %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [U_tmp, MostDistalMedialPt, just_tibia] = tibia_identify_lateral_direction(DistTib, Z0)
 
 % slice at centroid of distal tibia

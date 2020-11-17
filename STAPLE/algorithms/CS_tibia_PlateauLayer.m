@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_tibia_PlateauLayer(EpiTib, EpiTibAS, CS, side)
 
 % Compute the inertial axis of a slice of the tp plateau

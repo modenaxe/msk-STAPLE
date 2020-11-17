@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese & Jean-Baptiste Renault. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, JCS] = CS_femur_EllipsoidsOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm)
 
 % default behaviour: do not plot

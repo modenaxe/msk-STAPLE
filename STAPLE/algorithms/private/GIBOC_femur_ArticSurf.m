@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault & Luca Modenese
+%  Created by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [DesiredArtSurfMed_Tri, DesiredArtSurfLat_Tri, CSs] = GIBOC_femur_ArticSurf(EpiFem, CSs, CoeffMorpho, art_surface, debug_plots)
 
 if nargin<5;    debug_plots = 0;         end

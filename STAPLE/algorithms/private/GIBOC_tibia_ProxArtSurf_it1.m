@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function EpiTibAS = GIBOC_tibia_ProxArtSurf_it1(ProxTib, EpiTib, EpiTibAS, CSs, Ztp , oLSP, CoeffMorpho)
 
 Z0 = CSs.Z0;

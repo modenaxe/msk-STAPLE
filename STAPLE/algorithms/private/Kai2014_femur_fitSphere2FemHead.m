@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, loosely based on GIBOK prototype. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots, debug_prints)
 
 

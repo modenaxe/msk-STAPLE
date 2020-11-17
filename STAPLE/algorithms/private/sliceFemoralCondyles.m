@@ -32,7 +32,7 @@
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese, loosely based on GIBOK prototype. 
-%  Copyright 2020 Luca Modenese
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [CS, FC_Med_Pts, FC_Lat_Pts] = sliceFemoralCondyles(DistFemTri, CS, debug_plots, debug_prints)
 

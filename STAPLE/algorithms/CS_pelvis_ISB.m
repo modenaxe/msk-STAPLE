@@ -1,9 +1,7 @@
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
-%    Author:   Luca Modenese, April 2018                                  %
-%    email:    l.modenese@imperial.ac.uk                                  %
-% ----------------------------------------------------------------------- %
+%  Author:   Luca Modenese 
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS)
 % defining the ref system (global)
 % with origin at midpoint fo ASIS

@@ -1,3 +1,7 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault & Luca Modenese. 
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function EpiTri = GIBOC_isolate_epiphysis(TriObj, Z0, prox_epi)
 
 % First 0.5 mm in Start and End are not accounted for, for stability.

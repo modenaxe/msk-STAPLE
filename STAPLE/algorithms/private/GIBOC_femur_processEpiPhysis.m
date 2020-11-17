@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function [IdCdlPts, U_Axes, med_lat_ind] = GIBOC_femur_processEpiPhysis(EpiFem, CSs, Inertia_Vects, edge_threshold, axes_dev_thresh)
 
 debug_plots = 0;

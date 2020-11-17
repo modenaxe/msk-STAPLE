@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault. 
+%  Modified by Luca Modenese based on GIBOC-knee prototype.
+%  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function AnkleArtSurf = GIBOC_tibia_DistArtSurf(DistTib, Z0, V_all, CoeffMorpho)
 
 % Get mean curvature of Distal Tibia
