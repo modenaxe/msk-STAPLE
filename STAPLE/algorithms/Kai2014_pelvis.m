@@ -7,13 +7,13 @@
 % feature through slicing the bone geometry with planes perpendicular to
 % the longitudinal axis and anterior-posterior axis respectively.
 %
-%   [CS, JCS, pelvisBL] = Kai2014_femur(pelvisTri,...
+%   [CS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
 %                                      side_raw,...
 %                                      result_plots, ...
 %                                      debug_plots, in_mm)
 %
 % Inputs:
-%   pelvisTri - MATLAB triangulation object of the entire femoral geometry.
+%   pelvisTri - MATLAB triangulation object of the entire pelvic geometry.
 %
 %   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
 %       and 'l' are accepted inputs, both lower and upper cases.

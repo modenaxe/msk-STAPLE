@@ -1,8 +1,54 @@
+% KAI2014_TIBIA Custom implementation of the method for 
+% defining a reference system of the tibia described in the following 
+% publication: Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 
+% 1229-1233. https://doi.org/10.1016/j.jbiomech.2013.12.013.
+% The algorithm slices the tibia along the vertical axis identified via
+% principal component analysis, identifies the largest section and fits an
+% ellips to it. It finally uses the ellipse axes to define the reference
+% system. This implementation includes several non-obvious checks to ensure 
+% that the bone geometry is always sliced in the correct direction.
+%
+% [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem,...
+%                                                       CS,...
+%                                                       debug_plots,...
+%                                                       debug_prints)
+% 
+% Inputs:
+%   ProxFem - MATLAB triangulation object of the proximal femoral geometry.
+%
+%   CS - MATLAB structure containing preliminary information about the bone
+%       morphology. This function requires the following fields:
+%       * CS.Z0: an estimation of the proximal-distal direction.
+%       * CS.CentreVol: estimation of the centre of the volume (for
+%                       plotting).
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+%   debug_prints - enable prints for debugging. Value: 1 or 0 (default).
+%
+% Outputs:
+%   CS - updated MATLAB structure with the following fields:
+%       * CS.Z0: axis pointing cranially.
+%       * CS.Y0: axis pointing medially
+%       * CS.X0: axis perpendicular to the previous two.
+%       * CS.CentreVol: coords of the "centre of mass" of the triangulation
+%       * CS.CenterFH_Kai: coords of the centre of the sphere fitted 
+%                          to the centre of the femoral head.
+%       * CS.RadiusFH_Kai: radius of the sphere fitted to the centre of the
+%                          femoral head.
+%   MostProxPoint - coordinates of the most proximal point of the femur,
+%       located on the femoral head.
+%
+% See also KAI2014_FEMUR, TRIPLANINTERSECT, SPHEREFIT.
+%
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese, loosely based on GIBOK prototype. 
+%  Author:   Luca Modenese (loosely based on GIBOK prototype). 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots, debug_prints)
+function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem,...
+                                                               CS,...
+                                                               debug_plots,...
+                                                               debug_prints)
 
 
 % main plots are in the main method function. 
