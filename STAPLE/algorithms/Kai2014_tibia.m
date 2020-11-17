@@ -1,16 +1,57 @@
+% KAI2014_TIBIA Custom implementation of the method for 
+% defining a reference system of the tibia described in the following 
+% publication: Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 
+% 1229-1233. https://doi.org/10.1016/j.jbiomech.2013.12.013.
+% The algorithm slices the tibia along the vertical axis identified via
+% principal component analysis, identifies the largest section and fits an
+% ellips to it. It finally uses the ellipse axes to define the reference
+% system. This implementation includes several non-obvious checks to ensure 
+% that the bone geometry is always sliced in the correct direction.
+%
+%   [CS, JCS, tibiaBL] = Kai2014_tibia(tibiaTri,...
+%                                      side_raw,...
+%                                      result_plots, ...
+%                                      debug_plots, in_mm)
+%
+% Inputs:
+%   tibiaTri - MATLAB triangulation object of the entire tibial geometry.
+%
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
+%       and 'l' are accepted inputs, both lower and upper cases.
+%
+%   result_plots - enable plots of final fittings and reference systems. 
+%       Value: 1 (default) or 0.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+%   in_mm - (optional) indicates if the provided geometries are given in mm
+%       (value: 1) or m (value: 0). Please note that all tests and analyses
+%       done so far were performed on geometries expressed in mm, so this
+%       option is more a placeholder for future adjustments.
+%
+% Outputs:
+%   CS - MATLAB structure containing body reference system and other 
+%       geometrical features identified by the algorithm.
+%
+%   JCS - MATLAB structure containing the joint reference systems connected
+%       to the bone being analysed. These might NOT be sufficient to define
+%       a joint of the musculoskeletal model yet.
+%
+%   femurBL - MATLAB structure containing the bony landmarks identified 
+%       on the bone geometries based on the defined reference systems. Each
+%       field is named like a landmark and contain its 3D coordinates.
+%
+% See also KAI2014_FEMUR, KAI2014_PELVIS, TRISLICEOBJALONGAXIS.
+%
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-% Custom implementation of the method for defining a reference system of
-% the tibia described in the following publication: 
-% Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 1229-1233.
-% https://doi.org/10.1016/j.jbiomech.2013.12.013
-%
-% This implementation includes several non-obvious checks to ensure that
-% the bone geometry is always sliced in the correct direction.
-% ----------------------------------------------------------------------- %
-function [CS, JCS, TibiaBL] = Kai2014_tibia(tibiaTri, side_raw, result_plots, debug_plots, in_mm)
+function [CS, JCS, tibiaBL] = Kai2014_tibia(tibiaTri,...
+                                            side_raw,...
+                                            result_plots,...
+                                            debug_plots,...
+                                            in_mm)
 
 % Slices 1 mm apart as in Kai et al. 2014
 slices_thickness = 1;
@@ -160,9 +201,9 @@ JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.(joint_name).V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_',side_low]);
+tibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_',side_low]);
 if just_tibia == 0
-    TibiaBL.RLM = MostDistalMedialPt;
+    tibiaBL.RLM = MostDistalMedialPt;
 end
 label_switch = 1;
 
@@ -175,7 +216,7 @@ if result_plots == 1
     quickPlotRefSystem(JCS.(joint_name));
     
     % plot markers and labels
-    plotBoneLandmarks(TibiaBL, label_switch)
+    plotBoneLandmarks(tibiaBL, label_switch)
 
     % plot largest section
     plot3(maxAreaSection.Pts(:,1), maxAreaSection.Pts(:,2), maxAreaSection.Pts(:,3),'r-', 'LineWidth',2); hold on

@@ -1,4 +1,4 @@
-% KAI2014_FEMUR Implement a custom implementation of the method for 
+% KAI2014_FEMUR Custom implementation of the method for 
 % defining a reference system of the femur described in the following 
 % publication: Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 
 % 1229-1233. https://doi.org/10.1016/j.jbiomech.2013.12.013
@@ -7,7 +7,9 @@
 % feature through slicing the bone geometry with planes perpendicular to
 % the longitudinal axis and anterior-posterior axis respectively.
 %
-%   [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side_raw, result_plots, ...
+%   [CS, JCS, femurBL] = Kai2014_femur(femurTri,...
+%                                      side_raw,...
+%                                      result_plots, ...
 %                                      debug_plots, in_mm)
 %
 % Inputs:
@@ -27,8 +29,16 @@
 %       option is more a placeholder for future adjustments.
 %
 % Outputs:
-%   CS - update input structure including radii and centres of the spheres
-%       fitted to the femoral condyles identified by the algorithm.
+%   CS - MATLAB structure containing body reference system and other 
+%       geometrical features identified by the algorithm.
+%
+%   JCS - MATLAB structure containing the joint reference systems connected
+%       to the bone being analysed. These might NOT be sufficient to define
+%       a joint of the musculoskeletal model yet.
+%
+%   femurBL - MATLAB structure containing the bony landmarks identified 
+%       on the bone geometries based on the defined reference systems. Each
+%       field is named like a landmark and contain its 3D coordinates.
 %
 % See also KAI2014_FEMUR, KAI2014_FEMUR_FITSPHERE2FEMHEAD.
 %
@@ -37,7 +47,11 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
-function [CS, JCS, FemurBL] = Kai2014_femur(femurTri, side_raw, result_plots, debug_plots, in_mm)
+function [CS, JCS, femurBL] = Kai2014_femur(femurTri,...
+                                            side_raw,...
+                                            result_plots,...
+                                            debug_plots,...
+                                            in_mm)
 
 % result plots on by default, debug off
 if nargin<2;    side_raw = 'r';   end
@@ -134,7 +148,7 @@ JCS.(knee_name).Origin = CS.KneeCenter;
 
 % landmark bone according to CS (only Origin and CS.V are used)
 disp('Landmarking...')
-FemurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
+femurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
 
 % result plot
 label_switch=1;
@@ -148,7 +162,7 @@ if result_plots == 1
     quickPlotRefSystem(JCS.(knee_name));
     
     % plot markers and labels
-    plotBoneLandmarks(FemurBL, label_switch)
+    plotBoneLandmarks(femurBL, label_switch)
     
     subplot(2,2,2); % femoral head
     plotTriangLight(ProxFem, CS, 0); hold on

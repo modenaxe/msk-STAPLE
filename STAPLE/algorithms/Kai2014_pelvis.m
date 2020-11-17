@@ -1,8 +1,56 @@
+% KAI2014_PELVIS Custom implementation of the method for defining a 
+% reference system of the pelvis described in the following publication: 
+% Kai, Shin, et al. Journal of biomechanics 47.5 (2014):1229-1233. 
+% https://doi.org/10.1016/j.jbiomech.2013.12.013
+% The algorithm creates a reference system from the centre of the femoral 
+% head and the centres of the femoral condyles, after identifying these
+% feature through slicing the bone geometry with planes perpendicular to
+% the longitudinal axis and anterior-posterior axis respectively.
+%
+%   [CS, JCS, pelvisBL] = Kai2014_femur(pelvisTri,...
+%                                      side_raw,...
+%                                      result_plots, ...
+%                                      debug_plots, in_mm)
+%
+% Inputs:
+%   pelvisTri - MATLAB triangulation object of the entire femoral geometry.
+%
+%   side_raw - generic string identifying a body side. 'right', 'r', 'left' 
+%       and 'l' are accepted inputs, both lower and upper cases.
+%
+%   result_plots - enable plots of final fittings and reference systems. 
+%       Value: 1 (default) or 0.
+%
+%   debug_plots - enable plots used in debugging. Value: 1 or 0 (default).
+%
+%   in_mm - (optional) indicates if the provided geometries are given in mm
+%       (value: 1) or m (value: 0). Please note that all tests and analyses
+%       done so far were performed on geometries expressed in mm, so this
+%       option is more a placeholder for future adjustments.
+%
+% Outputs:
+%   CS - MATLAB structure containing body reference system and other 
+%       geometrical features identified by the algorithm.
+%
+%   JCS - MATLAB structure containing the joint reference systems connected
+%       to the bone being analysed. These might NOT be sufficient to define
+%       a joint of the musculoskeletal model yet.
+%
+%   pelvisBL - MATLAB structure containing the bony landmarks identified 
+%       on the bone geometries based on the defined reference systems. Each
+%       field is named like a landmark and contain its 3D coordinates.
+%
+% See also KAI2014_FEMUR, KAI2014_TIBIA.
+%
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [ CS, JCS, PelvisBL] = Kai2014_pelvis(pelvisTri, side_raw, result_plots, debug_plots, in_mm)
+function [ CS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
+                                               side_raw,...
+                                               result_plots,...
+                                               debug_plots,...
+                                               in_mm)
 
 if nargin<2;    side_raw = 'r';   end
 if nargin<3;    result_plots=1;   end
@@ -140,12 +188,12 @@ hip_name = ['hip_', side_low];
 JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(CS.V);
 
 % Export bone landmarks(pelvis ref system)
-PelvisBL.RASI     = RASIS;
-PelvisBL.LASI     = LASIS;
-PelvisBL.RPSI     = RPSIS;
-PelvisBL.LPSI     = LPSIS;
-PelvisBL.RPS      = RPS;
-PelvisBL.LPS      = LPS;
+pelvisBL.RASI     = RASIS;
+pelvisBL.LASI     = LASIS;
+pelvisBL.RPSI     = RPSIS;
+pelvisBL.LPSI     = LPSIS;
+pelvisBL.RPS      = RPS;
+pelvisBL.LPS      = LPS;
 
 % debug plot
 label_switch = 1;
@@ -158,7 +206,7 @@ if result_plots == 1
         'edgecolor','k');
 
     % plot markers and labels
-    plotBoneLandmarks(PelvisBL, label_switch)
+    plotBoneLandmarks(pelvisBL, label_switch)
 end
 
 % final printout
