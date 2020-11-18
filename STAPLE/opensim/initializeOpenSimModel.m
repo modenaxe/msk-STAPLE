@@ -36,6 +36,6 @@ osimModel.setGravity(Vec3(0, -9.8081, 0));
 osimModel.setName(aModelNameString);
 
 % set credits
-osimModel.set_credits('Luca Modenese, Jean-Baptist Renault 2020. Model created using the STAPLE (Shared Tools for Automatic Personalised Lower Extremity) modelling toolbox. GitHub page: https://github.com/modenaxe/msk-STAPLE.')
+osimModel.set_credits('Luca Modenese, Jean-Baptiste Renault 2020. Model created using the STAPLE (Shared Tools for Automatic Personalised Lower Extremity) modelling toolbox. GitHub page: https://github.com/modenaxe/msk-STAPLE.')
 
 end
