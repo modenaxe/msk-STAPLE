@@ -14,6 +14,7 @@
   - [Provided examples](#provided-examples)
   - [Datasets available for testing](#datasets-available-for-testing)
   - [Further notes on STAPLE](#further-notes-on-staple)
+- [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
 - [Current limitations](#current-limitations)
 - [How to contribute](#how-to-contribute)
@@ -225,13 +226,14 @@ These notes are provided to offer a minimal guidance to anyone that will investi
    * `blue`: lateral
    * `green`: not compartimentalised anatomical structures (basically the rest).
    
-## Common troubleshooting
-It will happen that you have issues processing some of your datasets. It could be a bug, but it could also be an issue related to the input data.
-Before informing us (see [the contributing guidelines](/CONTRIBUTING.md) please go through the following troubleshooting checklist first:
+## Troubleshooting your workflow
+
+It can happen that you have issues processing some of your datasets. It could be a bug, but it could also be an issue related to the input data.
+Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.md), please go through the following troubleshooting checklist first:
 - [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
-- [ ] ensure that the quality of your bone geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes.
-- [ ] if possible, try running an alternative algorithm in order to establish if your bone mesh is processable or if you have encounter a proper bug in the algorithm.
-- [ ] verify that your desired application or processing of your dataset is not limited because of the [current limitations](#current-limitations) of the STAPLE toolbox.
+- [ ] ensure that the quality of your bone surface geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes. You can have an idea of what we mean by "good mesh" consulting the table that describes the datasets provided with STAPLE. If necessary, use the filters and tools available on software like [MeshLab](https://www.meshlab.net/) to improve your dataset.
+- [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
+- [ ] verify that processing of your dataset is not failing because of the [current limitations](#current-limitations) of the STAPLE toolbox.
 
 ## Does STAPLE work only with OpenSim?
 
