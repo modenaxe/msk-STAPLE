@@ -93,7 +93,7 @@ for n_d = 1:numel(dataset_set)
     quickPlotTriang(ArtSurfTib.(['plateau_lat_',side]), 'b');
     title({'Proximal tibia (plateau)'; 'red: medial - blue: lateral'})
     
-    % save the triangulations as STL files
+    % save the triangulations as binary STL files
     % create folder
     curr_artic_surf_folder = fullfile(output_artic_surf_folder, dataset_name);
     if ~isfolder(curr_artic_surf_folder); mkdir(curr_artic_surf_folder); end

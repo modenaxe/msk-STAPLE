@@ -68,7 +68,7 @@ for n_d = 1:numel(dataset_set)
     model_file_name = [model_name, '.osim'];
     
     % create bone geometry folder for visualization
-    geometry_folder_name = [model_name, '_',side,'_Geometry'];
+    geometry_folder_name = [model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     
     % convert geometries in chosen format (30% of faces for faster visualization)

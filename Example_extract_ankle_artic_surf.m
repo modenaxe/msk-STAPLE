@@ -92,7 +92,7 @@ for n_d = 1:numel(dataset_set)
     quickPlotTriang(ArtSurfTalus.(['talo_navic',side]), 'g');
     title({'Ankle Complex'; 'talar trochlea (blue); talar-calcn (red) - talonav (green)'})
     
-    % save the triangulations as STL files
+    % save the triangulations as binary STL files
     % create folder
     curr_artic_surf_folder = fullfile(output_artic_surf_folder, dataset_name);
     if ~isfolder(curr_artic_surf_folder); mkdir(curr_artic_surf_folder); end
