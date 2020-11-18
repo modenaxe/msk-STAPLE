@@ -103,11 +103,12 @@ switch joint_name
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.rotationAxes        = 'zxy';
     case 'free_to_ground'
-        cb                                    = childBodyStruct.free_to_ground.child; % current bone
+        cb                                    = childBodyStruct.free_to_ground.child; % cb = current bone (for brevity)
         JointParamsStruct.name                = ['ground_',cb];
         JointParamsStruct.parent              = 'ground';
         JointParamsStruct.child               = cb;
-        JointParamsStruct.coordsNames         = {[cb,'_tilt'],[cb,'_list'],[cb,'_rotation'], [cb,'_tx'],[cb,'_ty'], [cb,'_tz']};
+        JointParamsStruct.coordsNames         = {['ground_', cb,'_rz'],['ground_', cb,'_rx'],['ground_', cb,'_ry'],...
+                                                 ['ground_', cb,'_tx'],['ground_', cb,'_ty'],['ground_', cb,'_tz']};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.rotationAxes        = 'zxy';  
     case ['hip_', side]
