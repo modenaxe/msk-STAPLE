@@ -14,7 +14,7 @@ addpath(genpath('STAPLE'));
 output_models_folder = 'opensim_models';
 
 % set output model name
-output_model_file_name = 'example_knee_joint_model.osim';
+output_model_file_name = 'example_knee_joint.osim';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -94,8 +94,8 @@ for n_d = 1:numel(dataset_set)
     
     % inform the user about time employed to create the model
     disp('-------------------------')
-    disp(['Model generated in ', num2str(toc)]);
-    disp(['Model file save as: ', fullfile(output_models_folder, output_model_file_name),'.']);
+    disp(['Model generated in ', sprintf('%.1f', toc), ' s']);
+    disp(['Save as: ', fullfile(output_models_folder, output_model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
 end
