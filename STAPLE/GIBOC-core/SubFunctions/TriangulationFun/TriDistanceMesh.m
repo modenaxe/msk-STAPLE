@@ -31,8 +31,8 @@ PtsOn = P - (P*TRfix.faceNormal(facesID,:))*TRfix.faceNormal(facesID,:)';
 for facesID = 1:length(Face)
     
     
-    v0 = TRfix.Points(TRfix.VertexConnectivity(facesID,3) - TRfix.Points(TRfix.VertexConnectivity(facesID,1));
-    v1 = TRfix.Points(TRfix.VertexConnectivity(facesID,2) - TRfix.Points(TRfix.VertexConnectivity(facesID,1));
+    v0 = TRfix.Points(TRfix.VertexConnectivity(facesID,3)) - TRfix.Points(TRfix.VertexConnectivity(facesID,1));
+    v1 = TRfix.Points(TRfix.VertexConnectivity(facesID,2)) - TRfix.Points(TRfix.VertexConnectivity(facesID,1));
     v2 = PtsOn - TRfix.Points(TRfix.VertexConnectivity(facesID,1));
     
     dot00 = dot(v0, v0);

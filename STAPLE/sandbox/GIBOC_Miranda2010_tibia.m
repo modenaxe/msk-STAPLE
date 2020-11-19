@@ -71,5 +71,5 @@ Results.Miranda.Xend = V_TPTib(:,2);
 Results.Miranda.Zend = V_TPTib(:,3);
 Results.Miranda.CenterKnee = TPTib_Center';
 
-end
+% end
 

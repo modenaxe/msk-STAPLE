@@ -59,7 +59,9 @@ For example models of hip, knee and ankle joints can be created as individual mo
 ## Requirements and set up
 
 In order to use the STAPLE toolbox you will need:
-1. MATLAB R2018b or more recent installed in your machine.
+1. MATLAB R2018b or more recent installed in your machine with the following toolboxes:
+    * Curve Fitting Toolbox
+	* Statistics and Machine Learning Toolbox
 2. [OpenSim 4.1](https://simtk.org/projects/opensim) installed in your machine.
 3. the OpenSim 4.1 API for MATLAB correctly setup and working. Required to run the provided scripts. Please refer to the [OpenSim documentation](https://simtk-confluence.stanford.edu/display/OpenSim/Scripting+with+Matlab) for instructions about installation.
 * download the latest version of STAPLE from [the SimTK project page](https://simtk.org/projects/msk-staple).
