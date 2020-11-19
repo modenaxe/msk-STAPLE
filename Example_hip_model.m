@@ -86,7 +86,7 @@ for n_d = 1:numel(dataset_set)
     % inform the user about time employed to create the model
     disp('-------------------------')
     disp(['Model generated in ', sprintf('%.1f', toc), ' s']);
-    disp(['Save as: ', fullfile(output_models_folder, output_model_file_name),'.']);
+    disp(['Saved as ', fullfile(output_models_folder, output_model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
 end
