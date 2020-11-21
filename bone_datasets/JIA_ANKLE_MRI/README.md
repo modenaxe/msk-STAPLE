@@ -1,5 +1,5 @@
 # Data 
-These bone geometries are named `P2` in the repeatability study of Montefiori et al. (2019).
+These bone geometries are taken from the model named `P1_m12.osim` in the publication of Montefiori et al. (2019).
 The bone geometries are available as supplementary materials.
 
 The reference publication is:
