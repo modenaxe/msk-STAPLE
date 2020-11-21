@@ -27,6 +27,7 @@ function     attachPatellaGeom(osimModel, side, tri_folder, geometry_folder_path
 
 % OpenSim libraries
 dim_fact = 0.001;
+if nargin<6; vis_geom_format='obj';end
 
 % opensim libraries
 import org.opensim.modeling.*
