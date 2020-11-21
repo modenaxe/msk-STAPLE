@@ -16,7 +16,7 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
 % This example demonstrates how to setup a simple STAPLE workflow to 
-% automatically create a model of the ankle joint from the JIA-MRI-ANKLE
+% automatically create models of the ankle joint from the JIA-MRI-ANKLE
 % dataset included in the bone_datasets folder.
 % ----------------------------------------------------------------------- %
 clear; clc; close all
@@ -60,9 +60,8 @@ for n_side = 1:2
     output_model_file_name = [cur_model_name,'.osim'];
     
     % log printout
-    log_filepath = fullfile(output_models_folder, [cur_model_name, '.log']);
-    fopen(log_filepath,'w+'); fclose all; % cleaning file (otherwise it appends)
-    diary(log_filepath);
+    log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
+    logConsolePrintout('on', log_file)
         
     % cell array with the name of the bone geometries to process
     bones_list = {['tibia_', cur_side], ['talus_', cur_side],['calcn_', cur_side]};
@@ -152,7 +151,7 @@ for n_side = 1:2
     disp(['Saved as ', fullfile(output_models_folder, output_model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
-    diary off
+    logConsolePrintout('off')
 end
 
 % remove paths
