@@ -28,50 +28,61 @@ addpath(genpath('STAPLE'));
 % set output folder
 output_models_folder = 'opensim_models';
 
-% set output model name
-output_model_file_name = 'example_ankle_joint.osim';
-
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
 
 % dataset(s) that you would like to process specified as cell array. 
-% If you add multiple datasets they will be batched processed but you will
-% have to adapt the folder and file namings below.
-dataset_set = {'JIA_ANKLE_MRI'};
-
-% cell array with the name of the bone geometries to process
-bones_list = {'tibia_r','talus_r','calcn_r'};
+dataset = 'JIA_ANKLE_MRI';
 
 % format of visualization geometry (obj preferred - smaller files)
 vis_geom_format = 'obj';
 
 % choose the definition of the joint coordinate systems (see documentation)
 method = 'auto';
-%--------------------------------------
 
+% body sides
+sides = {'r', 'l'};
+%--------------------------------------
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
 % setup for batch processing
-for n_d = 1:numel(dataset_set)
+for n_side = 1:2
     
-    % dataset id used to name OpenSim model and setup folders
-    cur_dataset = dataset_set{n_d};
+    % current side
+    [sign_side, cur_side] = bodySide2Sign(sides{n_side});
     
     % model name
-    model_name = [dataset_set{n_d},'_auto'];
+    cur_model_name = ['example_ankle_joint_', upper(cur_side)];
+    
+    % set output model name
+    output_model_file_name = [cur_model_name,'.osim'];
+    
+    % log printout
+    log_filepath = fullfile(output_models_folder, [cur_model_name, '.log']);
+    fopen(log_filepath,'w+'); fclose all; % cleaning file (otherwise it appends)
+    diary(log_filepath);
+        
+    % cell array with the name of the bone geometries to process
+    bones_list = {['tibia_', cur_side], ['talus_', cur_side],['calcn_', cur_side]};
+    
+    % tibia and knee names including side
+    tibia_name = bones_list{1};
+    knee_name  = ['knee_', cur_side];
+    
+    % opensim model name
+    model_name = [dataset,'_', upper(cur_side), '_auto'];
     
     % folder including the bone geometries in MATLAB format (triangulations)
-    tri_folder = fullfile(datasets_folder, cur_dataset,'tri');
+    tri_folder = fullfile(datasets_folder, dataset,'tri');
     
     % create TriGeomSet structure for the specified geometries
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
-    % geometry_folder_name = [cur_dataset, '_Geometry'];
-    geometry_folder_name = 'example_ankle_joint_Geometry';
-    geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
+    geometry_folder_name = [cur_model_name, '_Geometry'];
+    geometry_folder_path = fullfile(output_models_folder, geometry_folder_name);
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
@@ -81,7 +92,7 @@ for n_d = 1:numel(dataset_set)
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
     
     % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(geom_set, 'r');
+    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
     %-----------------------------------
     % SPECIAL SECTION FOR PARTIAL MODELS
@@ -94,17 +105,20 @@ for n_d = 1:numel(dataset_set)
     % You can read the description of Kai_tibia algorithm in:
     % Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 1229-1233.
     % https://doi.org/10.1016/j.jbiomech.2013.12.013
-    JCS.tibia_r.knee_r.V(:,2) = -JCS.tibia_r.knee_r.V(:,2);
-    % Z axis is ok, as based on the detection of fibula.
-    % X axis needs to be inverted
-    JCS.tibia_r.knee_r.V(:,1) = normalizeV(cross(JCS.tibia_r.knee_r.V(:,2), JCS.tibia_r.knee_r.V(:,3)));
+    JCS.(tibia_name).(knee_name).V(:,2) = -JCS.(tibia_name).(knee_name).V(:,2);
+    % Z axis is ok, (detects fibula and corrected forbody  side internally)
+    % X axis follows as cross-product.
+    JCS.(tibia_name).(knee_name).V(:,1) = normalizeV(cross(...
+                                        JCS.(tibia_name).(knee_name).V(:,2),...
+                                        JCS.(tibia_name).(knee_name).V(:,3)));
     % creating an ad hoc body and joint for connecting with ground
-    JCS.proxbody.free_to_ground.child = 'tibia_r';
+    JCS.proxbody.free_to_ground.child = tibia_name;
     % bone geometries are in mm, but model parameters will be in m
-    JCS.proxbody.free_to_ground.child_location = CS.tibia_r.Origin/1000;
+    JCS.proxbody.free_to_ground.child_location = CS.(tibia_name).Origin/1000;
     % using computeXYZAngleSeq to transform the rotation matrix in OpenSim
     % joint orientation.
-    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(JCS.tibia_r.knee_r.V);
+    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(...
+                                        JCS.(tibia_name).(knee_name).V);
     %----------------------------------------------------------------------
     
     % create joints
@@ -115,7 +129,7 @@ for n_d = 1:numel(dataset_set)
     %----------------------------------
     % remove markers found by Kai2014 at the tibia, as they will be
     % incorrect.
-    BL = rmfield(BL,'tibia_r');
+    BL = rmfield(BL, tibia_name);
     % add markers to the bones.
     %---------
     % WARNING
@@ -138,6 +152,7 @@ for n_d = 1:numel(dataset_set)
     disp(['Saved as ', fullfile(output_models_folder, output_model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
+    diary off
 end
 
 % remove paths
