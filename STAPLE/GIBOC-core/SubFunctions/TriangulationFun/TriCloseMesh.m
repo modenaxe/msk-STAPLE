@@ -21,7 +21,8 @@
 %          white pixels in binary image morphological operation.
 %   nbElmts - The number of layer of triangles to add then substract around
 %             TRin boundaries. Analogous to number of pixel in binary image
-%             morphological operation.
+%             morphological operation. If the number is not an integer it 
+%             will be rounded up to the next integer.
 %   
 % Outputs:
 %   TRout - The triangulation object in the new coordinate system

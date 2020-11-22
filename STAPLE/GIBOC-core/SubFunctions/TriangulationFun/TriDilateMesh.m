@@ -10,7 +10,8 @@
 %          are included in TRsup even if they don't share the same numberings
 %          of vertices and elements.
 %   nbElmts - The number of neigbour elements/facets that will be dilated 
-%             (analog to the number of pixel of the dilation)
+%             (analog to the number of pixel of the dilation). If the number
+%             is not an integer it will be rounded up to the next integer
 %   
 % Outputs:
 %   TRout - The dilated triangulation
