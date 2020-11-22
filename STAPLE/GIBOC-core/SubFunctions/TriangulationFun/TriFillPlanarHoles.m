@@ -1,6 +1,15 @@
-% TRIFILLPLANARHOLES Fill planar convex holes in the triangulation
-%   For now the holes have to be planar
-%   FOR NOW WORKS WITH ONLY ONE HOLE
+% TRIFILLPLANARHOLES Fill planar convex holes in the triangulation.
+% The hole have to be planar
+% WORKS WITH ONLY ONE HOLE
+%
+% [ TRout ] = TriFillPlanarHoles( TRin)
+%
+% Inputs:
+%   TRin - A triangulation object with a planar hole to be filled
+%   
+% Outputs:
+%   TRout - TRin with the planar hole filled
+%
 % ------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
