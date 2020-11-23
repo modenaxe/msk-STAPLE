@@ -54,6 +54,6 @@ if isempty(triGeomSet)
     error('createTriGeomSet.m No triangulations were read in input.')
 else
     % tell user all went well
-    disp(['Set of triangulated geometries created in ', num2str(toc), ' s']);
+    disp(['Set of triangulated geometries created in ', sprintf('%.1f', toc), ' s']);
 end
 end
