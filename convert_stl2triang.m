@@ -9,15 +9,15 @@
 % and distribution, e.g. in GitHub.
 % ----------------------------------------------------------------------- %
 clear; clc
-addpath(genpath('STAPLE'))
+addpath(genpath('./STAPLE'))
 
 %---------------- USER'S SETTINGS ------------------
 % folder where to look for STL files
-% dataset_folder = './bone_geometries/VAKHUM_CT';
-% dataset_folder = './bone_geometries/TLEM2';
-% dataset_folder = './bone_geometries/ICL_MRI';
-% dataset_folder = './bone_geometries/JIA_MRI';
-dataset_folder = './bone_geometries/JIA_ANKLE_MRI';
+% dataset_folder = './bone_datasets/VAKHUM_CT';
+% dataset_folder = './bone_datasets/TLEM2';
+% dataset_folder = './bone_datasets/ICL_MRI';
+% dataset_folder = './bone_datasets/JIA_MRI';
+dataset_folder = './bone_datasets/JIA_ANKLE_MRI2';
 
 % folder where to store the resulting triangulations
 triang_folder = [dataset_folder, filesep, 'tri'];
@@ -76,4 +76,4 @@ disp('-------------------')
 disp('DONE')
 
 % remove paths
-rmpath(genpath('../STAPLE'))
+rmpath(genpath('./STAPLE'))
