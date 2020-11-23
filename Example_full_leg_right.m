@@ -36,10 +36,15 @@ output_models_folder = 'opensim_models';
 datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
-dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
+datasets = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
+
+% body sides
+sides = {'r', 'l'};
 
 % cell array with the bone geometries that you would like to process
-bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
+bones_list = {'pelvis_no_sacrum',  ['femur_', cur_side],...
+              ['tibia_', cur_side],['talus_', cur_side],...
+              ['calcn_', cur_side]};
 
 % visualization geometry format (options: 'stl' or 'obj')
 vis_geom_format = 'obj';
@@ -54,13 +59,16 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1:numel(dataset_set)
+for n_side = 1:2
+    [~ , cur_side] = bodySide2Sign(sides{n_side})
+
+for n_d = 1:numel(datasets)
     
     % current dataset being processed
-    cur_dataset = dataset_set{n_d};
+    cur_dataset = datasets{n_d};
     
     % folder from which triangulations will be read
-    tri_folder = fullfile(datasets_folder, cur_dataset,'tri');
+    tri_folder = fullfile(datasets_folder, cur_dataset, 'tri');
     
     % create geometry set structure for all 3D bone geometries in the dataset
     triGeom_set = createTriGeomSet(bones_list, tri_folder);
@@ -69,7 +77,7 @@ for n_d = 1:numel(dataset_set)
     side = inferBodySideFromAnatomicStruct(triGeom_set);
     
     % model and model file naming
-    model_name = ['auto_',dataset_set{n_d},'_',upper(side)];
+    model_name = ['auto_',datasets{n_d},'_',upper(side)];
     model_file_name = [model_name, '.osim'];
     
     % create bone geometry folder for visualization
@@ -106,6 +114,7 @@ for n_d = 1:numel(dataset_set)
     disp(['Saved as ', fullfile(output_models_folder, model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
+    logConsolePrintout('off');
 end
 
 % remove paths

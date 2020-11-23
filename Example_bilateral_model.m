@@ -75,7 +75,7 @@ for n_d = 1:numel(datasets)
         
         % log printout
         log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
-        logConsolePrintout('on', log_file)
+        logConsolePrintout('on', log_file);
         
         % create geometry set structure for all 3D bone geometries in the dataset
         triGeom_set = createTriGeomSet(bones_list, tri_folder);
@@ -116,12 +116,12 @@ for n_d = 1:numel(datasets)
         disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
         disp('-------------------------')
         clear triGeom_set JCS BL CS
-        logConsolePrintout('off')
+        logConsolePrintout('off');
         % store model file (with path) for merging
         osim_model_set(n_side) = {osim_model_file}; %#ok<SAGROW>
     end
     % merge the two sides
-    merged_model_file = fullfile(output_models_folder,[cur_dataset,'_bilateral.osim'])
+    merged_model_file = fullfile(output_models_folder,[cur_dataset,'_bilateral.osim']);
     mergeOsimModels(osim_model_set{1}, osim_model_set{2}, merged_model_file);
 
 end

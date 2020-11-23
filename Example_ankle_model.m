@@ -61,7 +61,7 @@ for n_side = 1:2
     
     % log printout
     log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
-    logConsolePrintout('on', log_file)
+    logConsolePrintout('on', log_file);
         
     % cell array with the name of the bone geometries to process
     bones_list = {['tibia_', cur_side], ['talus_', cur_side],['calcn_', cur_side]};

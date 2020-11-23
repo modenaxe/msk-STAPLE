@@ -49,7 +49,11 @@ for n_d = 1:numel(dataset_set)
     cur_dataset = dataset_set{n_d};
     
     % model name
-    model_name = [dataset_set{n_d},'_auto'];
+    cur_model_name = [dataset_set{n_d},'_auto'];
+    
+    % log printout
+    log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
+    logConsolePrintout('on', log_file);
     
     % folder including the bone geometries in MATLAB format ('tri'/'stl')
     tri_folder = fullfile(datasets_folder, cur_dataset, 'tri');
@@ -63,7 +67,7 @@ for n_d = 1:numel(dataset_set)
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
     % initialize OpenSim model
-    osimModel = initializeOpenSimModel(model_name);
+    osimModel = initializeOpenSimModel(cur_model_name);
     
     % create bodies
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
@@ -89,6 +93,7 @@ for n_d = 1:numel(dataset_set)
     disp(['Saved as ', fullfile(output_models_folder, output_model_file_name),'.']);
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
+    logConsolePrintout('off');
 end
 
 % remove paths

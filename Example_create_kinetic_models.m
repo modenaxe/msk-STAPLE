@@ -70,18 +70,22 @@ for n_d = 1:numel(dataset_set)
     side = inferBodySideFromAnatomicStruct(triGeom_set);
     
     % model and model file naming
-    model_name = ['automatic_',dataset_set{n_d}];
-    model_file_name = [model_name, '.osim'];
+    cur_model_name = ['automatic_',dataset_set{n_d}];
+    model_file_name = [cur_model_name, '.osim'];
+    
+    % log printout
+    log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
+    logConsolePrintout('on', log_file);
     
     % create bone geometry folder for visualization
-    geometry_folder_name = [model_name, '_Geometries'];
+    geometry_folder_name = [cur_model_name, '_Geometries'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     
     % convert geometries in chosen format (30% of faces for faster visualization)
     writeModelGeometriesFolder(triGeom_set, geometry_folder_path, vis_geom_format,0.3);
       
     % initialize OpenSim model
-    osimModel = initializeOpenSimModel(model_name);
+    osimModel = initializeOpenSimModel(cur_model_name);
     
     % create bodies
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
@@ -116,6 +120,7 @@ for n_d = 1:numel(dataset_set)
     disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
     close all
+    logConsolePrintout('off');
 end
 
 % remove paths
