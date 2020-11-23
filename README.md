@@ -190,6 +190,7 @@ Examples of possible modelling scenarios are provided in the main STAPLE folder.
 | Example_create_kinetic_models.m | creates automatically OpenSim model using the bone geometries in the `dataset_geometries` folder. These are kinetic models. | Same datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
 | Example_full_leg_left.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
 | Example_full_leg_right.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
+| Example_bilateral_model.m | creates bilateral OpenSim models | Merge models; full workflow; batch processing |
 | Example_hip_model.m | creates a hip joint model | Partial model (hip). |
 | Example_knee_model.m | creates a knee joint model | Partial model (knee). |
 | Example_ankle_model.m | creates an ankle joint model | Partial model (ankle). Based on JIA-MRI data. |
