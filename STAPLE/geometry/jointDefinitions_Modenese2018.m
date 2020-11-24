@@ -75,7 +75,7 @@ Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
 Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
 Xparent  = normalizeV(cross(Ytemp, Zparent));
 % assigning pose matrix and parent orientation
-jointStruct.parent_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
+jointStruct.(ankle_name).parent_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
 
 % Knee child orientation
 % take Z from knee joint (axis of rotation)
