@@ -18,7 +18,7 @@ if in_mm == 1;   dim_fact = 0.001; else;  dim_fact = 1; end
 [sign_side, side_low] = bodySide2Sign(side_raw);
 
 % joint names
-toes_name     = ['toes_', side_low];
+toes_name     = ['mtp_', side_low];
 
 % inform user about settings
 disp('---------------------')
@@ -267,8 +267,9 @@ end
 
 % calcn currently does not have a real child joint, but JCS structure is created for
 % consistency
-JCS = CS;
-JCS.Origin = heelPt';
+% only joints in JCS!
+% JCS = CS;
+% JCS.Origin = heelPt';
 
 % define toes joint
 Z = normalizeV(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'D1M']))*sign_side;
