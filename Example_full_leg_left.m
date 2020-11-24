@@ -49,7 +49,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1:numel(dataset_set)
+for n_d = 1%:numel(dataset_set)
     
     % current dataset being processed
     cur_dataset = dataset_set{n_d};
@@ -88,7 +88,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, workflow);
+    createOpenSimModelJoints(osimModel, JCS, workflow);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
