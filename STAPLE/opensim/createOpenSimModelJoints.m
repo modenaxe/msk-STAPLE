@@ -35,6 +35,14 @@
 
 function createOpenSimModelJoints(osimModel, JCS, workflow)
 
+if nargin<3;     workflow = 'auto';   end
+
+% printout
+disp('---------------------');
+disp('   CREATING JOINTS   ')
+disp('---------------------');
+disp(['Workflow for joint definitions: ', workflow])
+
 % add ground body to JCS together with standard ground_pelvis joint.
 % if model is partial, it will be modified.
 JCS.ground.ground_pelvis.parentName = 'ground';
@@ -61,26 +69,27 @@ for n = 1:length(bodies_list)
 end
 
 % complete the joints parameters
+disp('Checking joint parameters completeness:')
 for ncj = 1:length(joint_list)
     cur_joint_name = joint_list{ncj};
     jointStructTemp = getJointParams(cur_joint_name);
-        % check that the joint can be built:
-        % needs parent/child_location
-    % needs parent/child_location
-    % parent/child)orientation
-    
-    % STEP1: definition of parent and child 
-%     checkBodies()
-    if ~isfield(JCS, jointStructTemp.parentName)
-        if isfield(JCS, jointStructTemp.childName)
-            disp('Partial model detected...')
-            child_name = jointStructTemp.childName;
-            disp(['Connecting ', child_name, ' to ground'])
+
+    % STEP1: check if parent and child body are available
+    parent_name = jointStructTemp.parentName;
+    child_name  = jointStructTemp.childName;
+    % the assumption is that if, given a joint from the analysis, parent is
+    % missing, that's because the model is partial proximally and will be 
+    % connected to ground. If child is missing, instead, the model if
+    % partial distally and the chain will be interrupted there.
+    if ~isfield(JCS, parent_name)
+        if isfield(JCS, child_name)
+            disp('Partial model detected proximally:')
             % get appropriate parameters for the new joint
             jointStructTemp = getJointParams('free_to_ground', child_name);
             % adjusting joint parameters
             old_joint_name = cur_joint_name;
             cur_joint_name = jointStructTemp.jointName;
+            disp(['   * Connecting ', child_name, ' to ground with ', cur_joint_name, ' free joint.'])
             % defines the new joints for parent/child location and
             % orientation
             JCS.ground.(cur_joint_name)  = JCS.ground.ground_pelvis;
@@ -90,14 +99,34 @@ for ncj = 1:length(joint_list)
         end
     end
     if ~isfield(JCS, jointStructTemp.childName)
-        disp('Partial model detected...')
-        disp(['deleting incomplete ', cur_joint_name, ' joint.' ])
+        disp('Partial model detected distally...')
+        disp(['   * Deleting incomplete joint ''', cur_joint_name,'''']);
         continue
     end
     
     % STEP2: check parameters and fill missing
-    Pars.parent = JCS.(jointStructTemp.parentName).(cur_joint_name);
-    Pars.child  = JCS.(jointStructTemp.childName).(cur_joint_name);
+    if isfield(JCS.(parent_name), cur_joint_name)
+        Pars.parent = JCS.(parent_name).(cur_joint_name);
+    else
+        % detect is there is a side
+        if strcmp(cur_joint_name(end-1:end), '_r') || strcmp(cur_joint_name(end-1:end), '_l')
+            cur_joint_name_short = cur_joint_name(1:end-2);
+        end
+        % deal with non present reference system. In lower limb should be
+        % just the ankle
+        switch cur_joint_name_short
+            case 'ankle'
+                JCS.(parent_name).(cur_joint_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
+                 Pars.parent = JCS.(parent_name).(cur_joint_name);
+            otherwise
+                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please hardcode a solution!']);
+        end
+    end
+    if isfield(JCS.(child_name), cur_joint_name)
+        Pars.child  = JCS.(child_name).(cur_joint_name);
+    end
+    
+    % STEP3: if both exist then check completeness
     % implementing the simple completing rule: 
     % if parent/child_location is unavailable use child/parent_location
     % if parent/child_orientation is unavailable use child/parent_orientation
@@ -110,7 +139,7 @@ for ncj = 1:length(joint_list)
             other_side_req_filed = [opt_set{ns+1}, required_fields{nf}];
             % fill missing fields of child with parent
             if max(strcmp(fields(Pars.(cur_joint_side)), cur_req_field))==0
-                disp(['missing field ', cur_req_field])
+                disp(['   * ',cur_joint_name,': assign missing ''', cur_req_field, ''' taken from ''', other_side_req_filed,''''])
                 jointStructTemp.(cur_req_field) = Pars.(opt_set{ns+1}).(other_side_req_filed);
             else
                 jointStructTemp.(cur_req_field) = Pars.(cur_joint_side).(cur_req_field);
@@ -120,11 +149,6 @@ for ncj = 1:length(joint_list)
     
     % store the resulting parameters for each joint
     jointStruct.(cur_joint_name) = jointStructTemp;
-
-%     JointParamsStruct.parent_location
-%     JointParamsStruct.parent_orientation
-%     JointParamsStruct.child_location
-%     JointParamsStruct.child_orientation
 
 end
 
@@ -140,65 +164,12 @@ for ncj = 1:length(available_joints)
     % display what has been created
     disp(['   * ', cur_joint_name]);
 end
-    
-% % if not specified, method is auto. Other option is Modenese2018.
-% % This only influences ankle and subtalar joint.
-% if nargin<3;     error('createLowerLimbJoints.m Error: you need to specify a body side.');   end
-% if nargin<3;     workflow = 'auto';   end
-% if nargin<4
-%     side_low = inferBodySideFromAnatomicStruct(JCS);
-% else
-%     % get sign correspondent to body side
-%     [~, side_low] = bodySide2Sign(side_raw);
-% end
 
-% % printout
-% disp('---------------------');
-% disp('   CREATING JOINTS   ')
-% disp('---------------------');
-% disp(['Workflow for joint definitions: ', workflow])
-% 
-% % joint names
-% hip_name      = ['hip_',side_low];
-% knee_name     = ['knee_',side_low];
-% ankle_name    = ['ankle_',side_low];
-% subtalar_name = ['subtalar_',side_low];
-% % patellofemoral_name = ['patellofemoral_',side_low];
-% 
-% % segment names
-% femur_name      = ['femur_',side_low];
-% tibia_name      = ['tibia_',side_low];
-% % patella_name    = ['patella_',side_low];
-% talus_name      = ['talus_',side_low];
-% calcn_name      = ['calcn_',side_low];
-% 
-% disp('Adding joints to model:')
-% 
-% % ground_pelvis joint
-% %---------------------
-% if isfield(JCS, 'pelvis')
-%     JointParams = getJointParams('ground_pelvis', [], JCS.pelvis, side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp('   * ground_pelvis');
-% else
-%     % this allows to create a free body with ground using any segment
-%     % requires definition of fields child, child_orientation and
-%     % child_location in JCS.free_to_ground (as subfields).
-%     disp('Partial model detected (attaching proxbody to ground).')
-%     JointParams = getJointParams('free_to_ground', [], JCS.proxbody, side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp('   * free_to_ground');
-% end
-% 
-% 
-% % hip joint
-% %-------------
-% if isfield(JCS, 'pelvis') && isfield(JCS, femur_name)
-%     JointParams = getJointParams(hip_name, JCS.pelvis, JCS.(femur_name), side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp(['   * ', hip_name]);
-% end
-% 
+disp('Done.')
+
+end
+    
+
 % 
 % % knee joint
 % %-------------
@@ -247,8 +218,6 @@ end
 %         end
 %     end
 %     JointParams = getJointParams(subtalar_name, JCS.(talus_name), JCS.(calcn_name), side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp(['   * ', subtalar_name]);
 % end 
 % 
 % 
@@ -263,7 +232,3 @@ end
 % %     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
 % % disp(['   * ', patellofemoral_name]);
 % % end
-% 
-% disp('Done.')
-% 
-% end
