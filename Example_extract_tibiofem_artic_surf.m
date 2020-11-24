@@ -45,7 +45,7 @@ dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI'};
 bones_list = {'femur_r','tibia_r'};
 
 % folder where the articulalar surfaces will be stored
-output_artic_surf_folder = './articular_surfaces/example_tibiofem';
+output_artic_surf_folder = './articular_surfaces/example_tibiofem-branch';
 %--------------------------------------
 
 for n_d = 1:numel(dataset_set)

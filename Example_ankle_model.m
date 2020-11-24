@@ -26,7 +26,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models-branch';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -121,7 +121,7 @@ for n_side = 1:2
     %----------------------------------------------------------------------
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createOpenSimModelJoints(osimModel, JCS, method);
     
     %----------------------------------
     % SPECIAL PART FOR PARTIAL MODELS

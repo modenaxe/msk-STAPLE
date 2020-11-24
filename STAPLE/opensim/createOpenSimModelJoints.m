@@ -72,6 +72,7 @@ for ncj = 1:length(joint_list)
             % adjusting joint parameters
             old_joint_name = cur_joint_name;
             cur_joint_name = jointStructTemp.jointName;
+            parent_name = jointStructTemp.parentName;
             disp(['   * Connecting ', child_name, ' to ground with ', cur_joint_name, ' free joint.'])
             % defines the new joints for parent/child location and
             % orientation

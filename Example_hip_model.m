@@ -15,7 +15,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models-branch';
 
 % set output model name
 output_model_file_name = 'example_hip_joint.osim';
@@ -76,7 +76,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
 
     % create joints
-    createLowerLimbJoints(osimModel, JCS, workflow);
+    createOpenSimModelJoints(osimModel, JCS, workflow);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

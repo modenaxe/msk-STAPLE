@@ -55,7 +55,7 @@ CalcnStruct = JCS.(calcn_name);
 % take Z from ankle joint (axis of rotation)
 Zchild  = normalizeV(TalusStruct.(ankle_name).V(:,3));
 % take X ant-post axis of the calcaneus
-Xtemp = CalcnStruct.mtp_l.V(:,1);
+Xtemp = CalcnStruct.(mtp_name).V(:,1);
 % make X and Z orthogonal
 Xchild = normalizeV(Xtemp - Zchild* dot(Zchild,Xtemp)/norm(Zchild));
 Ychild  = normalizeV(cross(Zchild, Xtemp));
