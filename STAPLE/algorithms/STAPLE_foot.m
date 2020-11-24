@@ -237,6 +237,7 @@ Y3 = normalizeV(cross(Z3, X3));
 CS.X = X3; % Distal proximal
 CS.Y = Z3; % Lateral to medial
 CS.Z = -Y3; % Ventral to dorsal
+% THIS IS USED IN jointDefinitions_Modenese2018.m
 CS.V = [X3, Z3, -Y3];
 CS.Origin = CenterVol;
 
