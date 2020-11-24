@@ -75,8 +75,7 @@ disp('Adding joints to model:')
 %---------------------
 if isfield(JCS, 'pelvis')
     JointParams = getJointParams('ground_pelvis', [], JCS.pelvis, side_low);
-    pelvis_ground_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(pelvis_ground_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp('   * ground_pelvis');
 else
     % this allows to create a free body with ground using any segment
@@ -84,8 +83,7 @@ else
     % child_location in JCS.free_to_ground (as subfields).
     disp('Partial model detected (attaching proxbody to ground).')
     JointParams = getJointParams('free_to_ground', [], JCS.proxbody, side_low);
-    free_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(free_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp('   * free_to_ground');
 end
 
@@ -94,8 +92,7 @@ end
 %-------------
 if isfield(JCS, 'pelvis') && isfield(JCS, femur_name)
     JointParams = getJointParams(hip_name, JCS.pelvis, JCS.(femur_name), side_low);
-    hip_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(hip_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp(['   * ', hip_name]);
 end
 
@@ -111,8 +108,7 @@ if isfield(JCS, femur_name) && isfield(JCS, tibia_name)
         end
     end
     JointParams = getJointParams(knee_name, JCS.(femur_name), JCS.(tibia_name), side_low);
-    knee_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(knee_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp(['   * ', knee_name]);
 end
 
@@ -131,8 +127,7 @@ if isfield(JCS, tibia_name) && isfield(JCS, talus_name)
         end
     end
     JointParams = getJointParams(ankle_name, JCS.(tibia_name), JCS.(talus_name), side_low);
-    ankle_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(ankle_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp(['   * ', ankle_name]);
 end
 
@@ -149,8 +144,7 @@ if isfield(JCS, talus_name) && isfield(JCS, calcn_name)
         end
     end
     JointParams = getJointParams(subtalar_name, JCS.(talus_name), JCS.(calcn_name), side_low);
-    subtalar_joint = createCustomJointFromStruct(osimModel, JointParams);
-    osimModel.addJoint(subtalar_joint);
+    createCustomJointFromStruct(osimModel, JointParams);
     disp(['   * ', subtalar_name]);
 end 
 
@@ -160,7 +154,7 @@ end
 % if isfield(JCS, patella_name) && isfield(JCS, femur_name)
 %     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.(femur_name), JCS.(patella_name));
 %     JointParams = getJointParams(patellofemoral_name, JCS.(femur_name), JCS.(patella_name), side_low);
-%     patfem_joint = createCustomJointFromStruct(osimModel, JointParams);
+%     createCustomJointFromStruct(osimModel, JointParams);
 %     osimModel.addJoint(patfem_joint);
 %     addPatFemJointCoordCouplerConstraint(osimModel, side)
 %     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)

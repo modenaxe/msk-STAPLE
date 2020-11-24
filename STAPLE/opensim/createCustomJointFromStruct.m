@@ -1,5 +1,5 @@
-% CREATECUSTOMJOINTFROMSTRUCT Create a CustomJoint using the parameters
-% defined in the structure given as input. 
+% CREATECUSTOMJOINTFROMSTRUCT Create and add to model a CustomJoint using 
+% the parameters defined in the structure given as input. 
 %
 %   myCustomJoint = createCustomJointFromStruct(model, struct)
 %
@@ -68,5 +68,23 @@ myCustomJoint= CustomJoint(jointName,...
              location_in_child,...
              orientation_in_child,...
              jointSpatialTransf);
+
+
+% add joint to model
+model.addJoint(myCustomJoint)
+
+% update coordinates range of motion, if specified
+if isfield(struct, 'coordRanges')
+    for n_coord = 1:length(struct.coordsNames)
+        curr_coord = myCustomJoint.get_coordinates(n_coord-1);
+        curr_ROM = struct.coordRanges{n_coord};
+        if strcmp(struct.coordsTypes{n_coord}, 'rotational')
+            curr_ROM = curr_ROM/180*pi;
+        end
+        % set the range of motion for the coordinate
+        curr_coord.setRangeMin(curr_ROM(1));
+        curr_coord.setRangeMax(curr_ROM(2));
+    end
+end
 
 end
