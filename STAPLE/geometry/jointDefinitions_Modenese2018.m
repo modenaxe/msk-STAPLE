@@ -1,3 +1,32 @@
+% ASSEMBLEANKLECHILDORIENTATIONMODENESE2018 Define the orientation of
+% lower limb joints as in Modenese et al. JBiomech 2018.
+% Required for the comparison presented in Modenese and Renault, JBiomech
+% 2020.
+%
+%   jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct)
+%
+% Inputs:
+%   JCS - structure with the joint parameters produced by the morphological 
+%       analyses of processTriGeomBoneSet.m. Not all listed joints are
+%       actually modellable, in the sense that the parent and child
+%       reference systems might not be present, the model might be
+%       incomplete etc.
+%
+%   jointStruct - structure with the joint parameters ready to be passed to
+%       createCustomJointFromStruct.m for creating the OpenSim CustomJoints
+%
+% Outputs:
+%   jointStruct - updated jointStruct with the joints defined as in
+%       Modenese2018, rather than connected directly using the joint
+%       coordinate system computed in processTriGeomBoneSet.m.
+%
+% See also  CREATEOPENSIMMODELJOINTS, CREATECUSTOMJOINTFROMSTRUCT,
+%           PROCESSTRIGEOMBONESET.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese
+%  Copyright 2020 Luca Modenese
+%-------------------------------------------------------------------------%
 function jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct)
 
 side_low = inferBodySideFromAnatomicStruct(JCS);
