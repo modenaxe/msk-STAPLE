@@ -86,7 +86,7 @@ for n_d = 1:numel(dataset_set)
     % add patella to tibia (this will be replaced by a proper joint and
     % dealt with the other joints in the future).
     side = inferBodySideFromAnatomicStruct(geom_set);
-    improve!
+%     improve!
     attachPatellaGeom(osimModel, side, tri_folder, geometry_folder_path, geometry_folder_name, vis_geom_format)
     
     % add markers to the bones

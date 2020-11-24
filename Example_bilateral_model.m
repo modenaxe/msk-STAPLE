@@ -122,7 +122,7 @@ for n_d = 1:numel(datasets)
     end
     % merge the two sides
     merged_model_file = fullfile(output_models_folder,[cur_dataset,'_bilateral.osim']);
-    mergeOsimModels(osim_model_set{1}, osim_model_set{2}, merged_model_file);
+    mergeOpenSimModels(osim_model_set{1}, osim_model_set{2}, merged_model_file);
 
 end
 % remove paths
