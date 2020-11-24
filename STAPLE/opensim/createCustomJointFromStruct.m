@@ -35,9 +35,9 @@ function myCustomJoint = createCustomJointFromStruct(model, struct)
 import org.opensim.modeling.*
 
 % extract names
-jointName   = struct.name;
-parentName  = struct.parent;
-childName   = struct.child;
+jointName   = struct.jointName;
+parentName  = struct.parentName;
+childName   = struct.childName;
 
 % transform offsets in Vec3
 location_in_parent    = ArrayDouble.createVec3(struct.parent_location);
