@@ -41,7 +41,6 @@ if nargin<3;     workflow = 'auto';   end
 disp('---------------------');
 disp('   CREATING JOINTS   ')
 disp('---------------------');
-disp(['Workflow for joint definitions: ', workflow])
 
 % add ground body to JCS together with standard ground_pelvis joint.
 % if model is partial, it will be modified.
@@ -50,23 +49,7 @@ JCS.ground.ground_pelvis.parent_location     = [0.0000	0.0000	0.0000];
 JCS.ground.ground_pelvis.parent_orientation  = [0.0000	0.0000	0.0000];
     
 % based on JCS make a list of bodies and joints
-bodies_list = fields(JCS)';
-joint_list = {};
-n_unique_j = 1;
-for n = 1:length(bodies_list)
-    cur_body = bodies_list{n};
-    % get a temp joint list
-    temp_joint_list = fields(JCS.(cur_body));
-    % get the complete joint list available from morphological analysis
-    for nj = 1:length(temp_joint_list)
-        cur_joint = temp_joint_list{nj};
-        if sum(strcmp(cur_joint, joint_list))==0
-            % list of unique joints mentioned in JCSs
-            joint_list{n_unique_j} = cur_joint;
-            n_unique_j = n_unique_j+1;
-        end
-    end
-end
+joint_list = compileListOfJointsInJCSStruct(JCS);
 
 % complete the joints parameters
 disp('Checking joint parameters completeness:')
@@ -105,26 +88,41 @@ for ncj = 1:length(joint_list)
     end
     
     % STEP2: check parameters and fill missing
+    % detecting missing reference systems on both side of joints
     if isfield(JCS.(parent_name), cur_joint_name)
         Pars.parent = JCS.(parent_name).(cur_joint_name);
     else
+        disp(['Parent ref system of ', cur_joint_name, ' joint missing. does not have child info'])
         % detect is there is a side
         if strcmp(cur_joint_name(end-1:end), '_r') || strcmp(cur_joint_name(end-1:end), '_l')
             cur_joint_name_short = cur_joint_name(1:end-2);
         end
-        % deal with non present reference system. In lower limb should be
-        % just the ankle
+        % deal with absent reference system. Just the ankle in lower limb.
         switch cur_joint_name_short
             case 'ankle'
-                JCS.(parent_name).(cur_joint_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
+                JCS.(parent_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
                  Pars.parent = JCS.(parent_name).(cur_joint_name);
             otherwise
-                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please hardcode a solution!']);
+                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please implement the joint reference system.']);
         end
     end
     if isfield(JCS.(child_name), cur_joint_name)
         Pars.child  = JCS.(child_name).(cur_joint_name);
+    else 
+        disp(['Child ref system of ', cur_joint_name, ' joint missing. does not have child info'])
+        % detect is there is a side
+        if strcmp(cur_joint_name(end-1:end), '_r') || strcmp(cur_joint_name(end-1:end), '_l')
+            cur_joint_name_short = cur_joint_name(1:end-2);
+        end
+        % deal with non present child reference system. Subtalar in leg models. 
+        switch cur_joint_name_short
+            case 'subtalar'
+                 Pars.child = Pars.parent;
+            otherwise
+                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please implement the joint reference system.']);
+        end
     end
+    
     
     % STEP3: if both exist then check completeness
     % implementing the simple completing rule: 
@@ -149,7 +147,17 @@ for ncj = 1:length(joint_list)
     
     % store the resulting parameters for each joint
     jointStruct.(cur_joint_name) = jointStructTemp;
+    clear Pars
+end
 
+% WORKFLOW IMPLEMENTATION
+switch workflow
+    case 'Modenese2018'
+        disp(['Applying joint definitions: ', workflow])
+        upd_jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct);
+        % case 'YourDefinition'
+    otherwise
+        %do nothing, everything else for now uses the default approach
 end
 
 disp('Adding joints to model:')
@@ -170,65 +178,6 @@ disp('Done.')
 end
     
 
-% 
-% % knee joint
-% %-------------
-% if isfield(JCS, femur_name) && isfield(JCS, tibia_name)
-%     if strcmp(workflow, 'Modenese2018')
-%         if isfield(JCS, talus_name)
-%             JCS.(tibia_name) = assembleKneeChildOrientationModenese2018(JCS.(femur_name), JCS.(tibia_name), JCS.(talus_name));
-%         else
-%             warndlg('JCS structure does not have a talus_r field required for Modenese 2018 knee joint definition. Defining joint as auto2020.')
-%         end
-%     end
-%     JointParams = getJointParams(knee_name, JCS.(femur_name), JCS.(tibia_name), side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp(['   * ', knee_name]);
-% end
-% 
-% 
-% % ankle joint
-% %-------------
-% if isfield(JCS, tibia_name) && isfield(JCS, talus_name) 
-%     JCS.(tibia_name) = assembleAnkleParentOrientation(JCS.(tibia_name), JCS.(talus_name));
-%     % in case you want to replicate the modelling from Modenese et al. 2018
-%     if strcmp(workflow, 'Modenese2018')
-%         if isfield(JCS, calcn_name)
-%             JCS.(tibia_name) = assembleAnkleParentOrientationModenese2018(JCS.(tibia_name), JCS.(talus_name));
-%             JCS.(talus_name) = assembleAnkleChildOrientationModenese2018(JCS.(talus_name), JCS.(calcn_name));
-%         else
-%             warndlg('JCS structure does not have a calcn_r field required for Modenese 2018 ankle definition. Defining joint as auto2020.')
-%         end
-%     end
-%     JointParams = getJointParams(ankle_name, JCS.(tibia_name), JCS.(talus_name), side_low);
-%     createCustomJointFromStruct(osimModel, JointParams);
-%     disp(['   * ', ankle_name]);
-% end
-% 
-% 
-% % subtalar joint
-% %----------------
-% if isfield(JCS, talus_name) && isfield(JCS, calcn_name)
-%     % in case you want to replicate the modelling from Modenese et al. 2018
-%     if strcmp(workflow, 'Modenese2018')
-%         if isfield(JCS, femur_name)
-%             JCS.(talus_name) = assembleSubtalarParentOrientationModenese2018(JCS.(femur_name), JCS.(talus_name));
-%         else
-%             warndlg(['JCS structure does not have a ', femur_name,' field required for Modenese 2018 subtalar definition. Defining joint as auto2020.'])
-%         end
-%     end
-%     JointParams = getJointParams(subtalar_name, JCS.(talus_name), JCS.(calcn_name), side_low);
-% end 
-% 
-% 
-% % patella joint
-% %---------------
-% % if isfield(JCS, patella_name) && isfield(JCS, femur_name)
-% %     JCS.patella_r = assemblePatellofemoralParentOrientation(JCS.(femur_name), JCS.(patella_name));
-% %     JointParams = getJointParams(patellofemoral_name, JCS.(femur_name), JCS.(patella_name), side_low);
-% %     createCustomJointFromStruct(osimModel, JointParams);
-% %     osimModel.addJoint(patfem_joint);
-% %     addPatFemJointCoordCouplerConstraint(osimModel, side)
-% %     addPatellarTendonConstraint(osimModel, TibiaRBL, PatellaRBL, side, in_mm)
-% % disp(['   * ', patellofemoral_name]);
-% % end
+
+
+
