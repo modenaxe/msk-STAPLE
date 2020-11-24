@@ -96,6 +96,14 @@ for n_d = 1:numel(dataset_set)
     % create folder
     curr_artic_surf_folder = fullfile(output_artic_surf_folder, dataset_name);
     if ~isfolder(curr_artic_surf_folder); mkdir(curr_artic_surf_folder); end
+    
+    %----------------------------------------------------------------------
+    % NOTE that writing stl files relies on stlwrite, available on MATLAB
+    % 2018b or more recent. If your MATLAB is older, then you can use 
+    % stlWrite from GIBOC-core/SubFunctions/MeshReadFun/stlTools.
+    % e.g. > stlWrite(stl_path, triObj.ConnectivityList, triObj.Points)
+    %----------------------------------------------------------------------
+    
     % export talar surfaces
     talus_str_fields = fields(ArtSurfTalus);
     for n = 1:length(talus_str_fields)

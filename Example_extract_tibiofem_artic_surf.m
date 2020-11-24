@@ -93,6 +93,13 @@ for n_d = 1:numel(dataset_set)
     quickPlotTriang(ArtSurfTib.(['plateau_lat_',side]), 'b');
     title({'Proximal tibia (plateau)'; 'red: medial - blue: lateral'})
     
+    %----------------------------------------------------------------------
+    % NOTE that writing stl files relies on stlwrite, available on MATLAB
+    % 2018b or more recent. If your MATLAB is older, then you can use 
+    % stlWrite from GIBOC-core/SubFunctions/MeshReadFun/stlTools.
+    % e.g. > stlWrite(stl_path, triObj.ConnectivityList, triObj.Points)
+    %----------------------------------------------------------------------
+    
     % save the triangulations as binary STL files
     % create folder
     curr_artic_surf_folder = fullfile(output_artic_surf_folder, dataset_name);
