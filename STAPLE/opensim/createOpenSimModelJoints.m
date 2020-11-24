@@ -155,7 +155,7 @@ end
 switch workflow
     case 'Modenese2018'
         disp(['Applying joint definitions: ', workflow])
-        upd_jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct);
+        jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct);
         % case 'YourDefinition'
     otherwise
         %do nothing, everything else for now uses the default approach
