@@ -40,7 +40,7 @@ function createLowerLimbJoints(osimModel, JCS, workflow, side_raw)
 
 % if not specified, method is auto. Other option is Modenese2018.
 % This only influences ankle and subtalar joint.
-if nargin<3;     error('createLowerLimbJoints.m Error: you need to specify a body side.');   end
+% if nargin<3;     error('createLowerLimbJoints.m Error: you need to specify a body side.');   end
 if nargin<3;     workflow = 'auto';   end
 if nargin<4
     side_low = inferBodySideFromAnatomicStruct(JCS);

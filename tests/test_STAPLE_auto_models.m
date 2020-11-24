@@ -28,7 +28,7 @@ import org.opensim.modeling.*
 addpath(genpath('../STAPLE/sandbox'));
 
 % create models as in the paper (assumes examples have not been run)
-run('../Example_create_kinetic_models.m');
+% run('../Example_create_kinetic_models.m');
 
 % where the model created using the current version of STAPLE are (created
 % with the previous run(../Example...)
