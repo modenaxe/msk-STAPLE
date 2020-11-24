@@ -39,7 +39,7 @@ datasets_folder = 'bone_datasets';
 datasets = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
 
 % body sides
-sides = {'r', 'l'};
+cur_side = 'r';
 
 % cell array with the bone geometries that you would like to process
 bones_list = {'pelvis_no_sacrum',  ['femur_', cur_side],...
@@ -58,9 +58,6 @@ tic
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
-
-for n_side = 1:2
-    [~ , cur_side] = bodySide2Sign(sides{n_side})
 
 for n_d = 1:numel(datasets)
     
