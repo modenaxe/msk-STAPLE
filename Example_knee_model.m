@@ -29,7 +29,7 @@ bones_list = {'femur_r', 'tibia_r'};
 vis_geom_format = 'obj'; 
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto';
+method = 'auto20';
 %--------------------------------------
 
 % create model folder if required

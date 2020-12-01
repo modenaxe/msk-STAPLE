@@ -36,7 +36,7 @@ vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see
 % documentation). For hip joint creation this option has no effect.
-workflow = 'auto';
+workflow = 'auto2020';
 %--------------------------------------
 
 % create model folder if required

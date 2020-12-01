@@ -38,7 +38,7 @@ dataset = 'JIA_ANKLE_MRI';
 vis_geom_format = 'obj';
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto';
+method = 'auto2020';
 
 % body sides
 sides = {'r', 'l'};
