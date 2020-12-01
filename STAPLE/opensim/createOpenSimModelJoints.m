@@ -33,9 +33,9 @@
 %
 % TODO add switches for adding custom workflows
 
-function createOpenSimModelJoints(osimModel, JCS, workflow)
+function createOpenSimModelJoints(osimModel, JCS, jointDefs)
 
-if nargin<3;     workflow = 'auto';   end
+if nargin<3;     jointDefs = 'auto2020';   end
 
 % printout
 disp('---------------------');
@@ -88,6 +88,8 @@ for ncj = 1:length(joint_list)
             error(['Incorrect definition of joint ', jointStructTemp.jointName, ': missing both parent and child bones from analysis.'])
         end
     end
+    % if there is a parent but not a child body then the model is partial
+    % distally, i.e. it is missing some distal body/bodies.
     if ~isfield(JCS, child_name)
         if isfield(JCS, parent_name)
             disp('Partial model detected distally...')
@@ -104,6 +106,7 @@ for ncj = 1:length(joint_list)
     disp(['   - child: ', child_name])
     
     % create an appropriate jointStructTemp from the info available in JCS
+    % ? is this worth its own function JCS2jointStruct?
     body_list = fields(JCS);
     for nb = 1:length(body_list)
         cur_body_name = body_list{nb};
@@ -123,8 +126,8 @@ for ncj = 1:length(joint_list)
 end
 
 % JOINT DEFINITIONS
-disp(['Applying joint definitions: ', workflow])
-switch workflow
+disp(['Applying joint definitions: ', jointDefs])
+switch jointDefs
     case 'auto2020'
         jointStruct = jointDefinitions_auto2020(JCS, jointStruct);
     case 'Modenese2018'
