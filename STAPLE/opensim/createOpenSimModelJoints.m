@@ -6,9 +6,9 @@
 %
 % Inputs:
 %   osimModel - an OpenSim model of the lower limb to which we want to add
-%       the lower limb joints. 
+%       the lower limb joints.
 %
-%   JCS - a MATLAB structure created using the function 
+%   JCS - a MATLAB structure created using the function
 %       createLowerLimbJoints(). This structure includes as fields the
 %       elements to generate a CustomJoint using the
 %       createCustomJointFromStruct function. See these functions for
@@ -20,7 +20,7 @@
 %       described in Modenese et al. J Biomech (2018), or 'auto', that will
 %       use the tibial JCS as well. See Modenese and Renault, JBiomech 2020
 %       for details.
-% 
+%
 % Outputs:
 %   none - the joints are added to the input OpenSim model.
 %
@@ -47,7 +47,7 @@ disp('---------------------');
 JCS.ground.ground_pelvis.parentName = 'ground';
 JCS.ground.ground_pelvis.parent_location     = [0.0000	0.0000	0.0000];
 JCS.ground.ground_pelvis.parent_orientation  = [0.0000	0.0000	0.0000];
-    
+
 % based on JCS make a list of bodies and joints
 joint_list = compileListOfJointsInJCSStruct(JCS);
 
@@ -56,12 +56,12 @@ disp('Checking joint parameters completeness:')
 for ncj = 1:length(joint_list)
     cur_joint_name = joint_list{ncj};
     jointStructTemp = getJointParams(cur_joint_name);
-
+    
     % STEP1: check if parent and child body are available
     parent_name = jointStructTemp.parentName;
     child_name  = jointStructTemp.childName;
     % the assumption is that if, given a joint from the analysis, parent is
-    % missing, that's because the model is partial proximally and will be 
+    % missing, that's because the model is partial proximally and will be
     % connected to ground. If child is missing, instead, the model if
     % partial distally and the chain will be interrupted there.
     if ~isfield(JCS, parent_name)
@@ -90,61 +90,44 @@ for ncj = 1:length(joint_list)
     
     % STEP2: check parameters and fill missing
     % detecting missing reference systems on both side of joints
-    if isfield(JCS.(parent_name), cur_joint_name)
+    if isfield(JCS.(parent_name), cur_joint_name) && isfield(JCS.(child_name), cur_joint_name)
+        
         Pars.parent = JCS.(parent_name).(cur_joint_name);
-    else
-        disp(['Parent ref system of ', cur_joint_name, ' joint missing. does not have child info'])
-        % detect is there is a side
-        if strcmp(cur_joint_name(end-1:end), '_r') || strcmp(cur_joint_name(end-1:end), '_l')
-            cur_joint_name_short = cur_joint_name(1:end-2);
-        end
-        % deal with absent reference system. Just the ankle in lower limb.
-        switch cur_joint_name_short
-            case 'ankle'
-                JCS.(parent_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
-                 Pars.parent = JCS.(parent_name).(cur_joint_name);
-            otherwise
-                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please implement the joint reference system.']);
-        end
-    end
-    if isfield(JCS.(child_name), cur_joint_name)
-        Pars.child  = JCS.(child_name).(cur_joint_name);
-    else 
-        disp(['Child ref system of ', cur_joint_name, ' joint missing. does not have child info'])
-        % detect is there is a side
-        if strcmp(cur_joint_name(end-1:end), '_r') || strcmp(cur_joint_name(end-1:end), '_l')
-            cur_joint_name_short = cur_joint_name(1:end-2);
-        end
-        % deal with non present child reference system. Subtalar in leg models. 
-        switch cur_joint_name_short
-            case 'subtalar'
-                 Pars.child = Pars.parent;
-            otherwise
-                error(['Parameters of joint ', cur_joint_name, ' are not defined. Please implement the joint reference system.']);
-        end
-    end
-    
-    
-    % STEP3: if both exist then check completeness
-    % implementing the simple completing rule: 
-    % if parent/child_location is unavailable use child/parent_location
-    % if parent/child_orientation is unavailable use child/parent_orientation
-    opt_set = {'parent', 'child', 'parent'};
-    for ns = 1:2
-        cur_joint_side = opt_set{ns};
-        required_fields = {'_location', '_orientation'};
-        for nf = 1:length(required_fields)
-            cur_req_field = [cur_joint_side, required_fields{nf}];
-            other_side_req_filed = [opt_set{ns+1}, required_fields{nf}];
-            % fill missing fields of child with parent
-            if max(strcmp(fields(Pars.(cur_joint_side)), cur_req_field))==0
-                disp(['   * ',cur_joint_name,': assign missing ''', cur_req_field, ''' taken from ''', other_side_req_filed,''''])
-                jointStructTemp.(cur_req_field) = Pars.(opt_set{ns+1}).(other_side_req_filed);
-            else
-                jointStructTemp.(cur_req_field) = Pars.(cur_joint_side).(cur_req_field);
+        Pars.child = JCS.(child_name).(cur_joint_name);
+        
+        % STEP3: if both exist then check completeness
+        % implementing the simple completing rule:
+        % if parent/child_location is unavailable use child/parent_location
+        % if parent/child_orientation is unavailable use child/parent_orientation
+        opt_set = {'parent', 'child', 'parent'};
+        for ns = 1:2
+            cur_joint_side = opt_set{ns};
+            required_fields = {'_location', '_orientation'};
+            for nf = 1:length(required_fields)
+                cur_req_field = [cur_joint_side, required_fields{nf}];
+                other_side_req_filed = [opt_set{ns+1}, required_fields{nf}];
+                % fill missing fields of child with parent
+                if max(strcmp(fields(Pars.(cur_joint_side)), cur_req_field))==0
+                    disp(['   * ',cur_joint_name,': assign missing ''', cur_req_field, ''' taken from ''', other_side_req_filed,''''])
+                    jointStructTemp.(cur_req_field) = Pars.(opt_set{ns+1}).(other_side_req_filed);
+                else
+                    jointStructTemp.(cur_req_field) = Pars.(cur_joint_side).(cur_req_field);
+                end
             end
         end
+        
+    else
+        if ~isfield(JCS.(parent_name), cur_joint_name)
+            JCS.(parent_name).(cur_joint_name) = [];
+        end
+        if ~isfield(JCS.(child_name), cur_joint_name)
+            JCS.(child_name).(cur_joint_name) = [];
+        end
+        jointStructTemp = 
     end
+    
+    
+    
     
     % store the resulting parameters for each joint
     jointStruct.(cur_joint_name) = jointStructTemp;
@@ -153,6 +136,8 @@ end
 
 % WORKFLOW IMPLEMENTATION
 switch workflow
+    case 'auto'
+        JCS.(parent_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
     case 'Modenese2018'
         disp(['Applying joint definitions: ', workflow])
         jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct);
@@ -165,7 +150,7 @@ disp('Adding joints to model:')
 available_joints =  fields(jointStruct);
 for ncj = 1:length(available_joints)
     cur_joint_name = available_joints{ncj};
-%     JointParamsStruct = getJointParams(cur_joint_name);
+    %     JointParamsStruct = getJointParams(cur_joint_name);
     
     % create the joint
     createCustomJointFromStruct(osimModel, jointStruct.(cur_joint_name));
@@ -177,7 +162,7 @@ end
 disp('Done.')
 
 end
-    
+
 
 
 
