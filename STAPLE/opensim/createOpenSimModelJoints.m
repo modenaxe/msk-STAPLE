@@ -51,8 +51,10 @@ JCS.ground.ground_pelvis.parent_orientation  = [0.0000	0.0000	0.0000];
 % based on JCS make a list of bodies and joints
 joint_list = compileListOfJointsInJCSStruct(JCS);
 
+%% TRANSFORM THE JCS FROM MORPHOLOGYCAL ANALYSIS IN JOINT DEFINITION
 % complete the joints parameters
 disp('Checking joint parameters completeness:')
+
 for ncj = 1:length(joint_list)
     cur_joint_name = joint_list{ncj};
     jointStructTemp = getJointParams(cur_joint_name);
@@ -60,6 +62,7 @@ for ncj = 1:length(joint_list)
     % STEP1: check if parent and child body are available
     parent_name = jointStructTemp.parentName;
     child_name  = jointStructTemp.childName;
+
     % the assumption is that if, given a joint from the analysis, parent is
     % missing, that's because the model is partial proximally and will be
     % connected to ground. If child is missing, instead, the model if
@@ -82,12 +85,20 @@ for ncj = 1:length(joint_list)
             error(['Incorrect definition of joint ', jointStructTemp.jointName, ': missing both parent and child bones from analysis.'])
         end
     end
-    if ~isfield(JCS, jointStructTemp.childName)
-        disp('Partial model detected distally...')
-        disp(['   * Deleting incomplete joint ''', cur_joint_name,'''']);
-        continue
+    if ~isfield(JCS, child_name)
+        if isfield(JCS, parent_name)
+            disp('Partial model detected distally...')
+            disp(['   * Deleting incomplete joint ''', cur_joint_name,'''']);
+            continue
+        else
+            error(['Incorrect definition of joint ', jointStructTemp.jointName, ': missing both parent and child bones from analysis.'])
+        end
     end
-    
+    % display joint details
+    disp(['* ', cur_joint_name]);
+    disp(['   - parent: ',parent_name])
+    disp(['   - child: ', child_name])
+
     % STEP2: check parameters and fill missing
     % detecting missing reference systems on both side of joints
     if isfield(JCS.(parent_name), cur_joint_name) && isfield(JCS.(child_name), cur_joint_name)
@@ -99,18 +110,31 @@ for ncj = 1:length(joint_list)
         % implementing the simple completing rule:
         % if parent/child_location is unavailable use child/parent_location
         % if parent/child_orientation is unavailable use child/parent_orientation
-        opt_set = {'parent', 'child', 'parent'};
+        
+        child_or_parent = {'parent', 'child', 'parent'};
+        location_or_orientation = {'_location', '_orientation'};
+%         for ns = 1:2
+%           for nf = 1:2
+%               cur_req_field = [cur_joint_side, required_fields{nf}];
+%               if isfield(Pars.(opt_set{ns}), cur_req_field)==0
+%                   disp(['   - ',cur_req_field, ' present.'])
+%               else
+%                   disp(['   - ',cur_req_field, ' missing.'])
+%               end
+%           end
+%         end
+                  
         for ns = 1:2
-            cur_joint_side = opt_set{ns};
-            required_fields = {'_location', '_orientation'};
-            for nf = 1:length(required_fields)
-                cur_req_field = [cur_joint_side, required_fields{nf}];
-                other_side_req_filed = [opt_set{ns+1}, required_fields{nf}];
+            cur_joint_side = child_or_parent{ns};
+            for nf = 1:length(location_or_orientation)
+                cur_req_field = [cur_joint_side, location_or_orientation{nf}];
+                other_side_req_filed = [child_or_parent{ns+1}, location_or_orientation{nf}];
                 % fill missing fields of child with parent
-                if max(strcmp(fields(Pars.(cur_joint_side)), cur_req_field))==0
-                    disp(['   * ',cur_joint_name,': assign missing ''', cur_req_field, ''' taken from ''', other_side_req_filed,''''])
-                    jointStructTemp.(cur_req_field) = Pars.(opt_set{ns+1}).(other_side_req_filed);
+                if isfield(Pars.(cur_joint_side), cur_req_field)==0
+                    disp(['   - ',cur_req_field, ' missing: copied from ''', other_side_req_filed,'''.'])
+                    jointStructTemp.(cur_req_field) = Pars.(child_or_parent{ns+1}).(other_side_req_filed);
                 else
+                    disp(['   - ',cur_req_field, ' present.'])
                     jointStructTemp.(cur_req_field) = Pars.(cur_joint_side).(cur_req_field);
                 end
             end
@@ -118,34 +142,51 @@ for ncj = 1:length(joint_list)
         
     else
         if ~isfield(JCS.(parent_name), cur_joint_name)
-            JCS.(parent_name).(cur_joint_name) = [];
+            disp(['   - WARNING: joint not defined in ', parent_name])
         end
         if ~isfield(JCS.(child_name), cur_joint_name)
-            JCS.(child_name).(cur_joint_name) = [];
+            disp(['   - WARNING: joint not defined in ', child_name])
         end
-        jointStructTemp = 
     end
     
-    
-    
-    
-    % store the resulting parameters for each joint
+    % store the resulting parameters for each joint to the final struct
     jointStruct.(cur_joint_name) = jointStructTemp;
     clear Pars
 end
 
 % WORKFLOW IMPLEMENTATION
+disp(['Applying joint definitions: ', workflow])
 switch workflow
     case 'auto'
-        JCS.(parent_name) = assembleAnkleParentOrientation(JCS.(parent_name), JCS.(child_name));
+        jointStruct = jointDefinitions_auto2020(JCS, jointStruct);
     case 'Modenese2018'
-        disp(['Applying joint definitions: ', workflow])
+        % joint definitions of Modenese et al.
         jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct);
-        % case 'YourDefinition'
     otherwise
-        %do nothing, everything else for now uses the default approach
+        error('createOpenSimModelJoints.m You need to define joint definitions')
 end
+% completeJoints(jointStruct)
 
+% check that all joints are completed
+nF = fields(jointStruct);
+fields_to_check = {'jointName', 'parentName', 'parent_location', 'parent_orientation', ...
+                   'childName', 'child_location', 'child_orientation',...
+                   'coordsNames', 'coordsTypes', 'rotationAxes'};
+for nf = 1:length(nF)
+    cur_joint = nF{nf};
+    defined_joint_params = isfield(jointStruct.(cur_joint),fields_to_check);
+    if min(defined_joint_params)~=1
+        disp([cur_joint, ' definition incomplete. Missing fields:']);
+        error_printout = fields_to_check(~defined_joint_params);
+        for nerr = 1:length(error_printout)
+            disp(['   -> ', error_printout{nerr}])
+        end
+%         error('createOpenSimModelJoints.m Incorrect Joint Definition. See above.');
+    end
+end
+disp('All joints verified.')
+
+% after the verification joints can be added
 disp('Adding joints to model:')
 available_joints =  fields(jointStruct);
 for ncj = 1:length(available_joints)
