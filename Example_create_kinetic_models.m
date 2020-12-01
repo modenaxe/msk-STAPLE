@@ -48,14 +48,14 @@ bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2018';
+modelling_method = 'Modenese2018';%'auto2020';
 %--------------------------------------
 
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 3%1:numel(dataset_set)
+for n_d = 1:numel(dataset_set)
     
     % current dataset being processed
     cur_dataset = dataset_set{n_d};
