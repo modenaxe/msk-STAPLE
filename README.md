@@ -9,9 +9,9 @@
 - [How to use the STAPLE toolbox](#how-to-use-the-staple-toolbox)
   - [Workflow to generate subject-specific lower limb models](#workflow-to-generate-subject-specific-lower-limb-models)
   - [Preliminary steps and data preparation](#preliminary-steps-and-data-preparation)
+  - [Quick start guide: common workflows ready to use](#quick-start-guide-common-workflows-ready-to-use)
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
   - [Available algorithms for bone morphological analysis](#available-algorithms-for-bone-morphological-analysis)
-  - [Provided examples](#provided-examples)
   - [Datasets available for testing](#datasets-available-for-testing)
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
@@ -126,7 +126,23 @@ where:
 * `dataset_1_folder` is where the bone geometries for the first partecipant data are stored
 * `dataset_2_folder` is where the bone geometries for the second partecipant data are stored, and so on. 
 
-6. **implement your own workflow** based on the checklist below. If there is a provided example demonstrating a use similar to your intended one, probably you can use it as starting point.
+6. **use an available workflow or implement your own** based on the instructions below. If there is a provided example demonstrating a use similar to your intended one, probably you can use it as starting point.
+
+### Quick start guide: common workflows ready to use
+
+The examples provide implementations of common workflows that can be adapted and run with minimum effort. In most cases, running a similar workflow will be as easy as modify the input folders or dataset names. More examples will be added in time.
+
+| Script name | Script action | Demonstrated feature |
+| --- | --- | --- |
+| Example_create_kinetic_models.m | creates automatically OpenSim model using the bone geometries in the `dataset_geometries` folder. These are kinetic models. | Same datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
+| Example_full_leg_left.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
+| Example_full_leg_right.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
+| Example_bilateral_model.m | creates bilateral OpenSim models | Merge models; full workflow; batch processing |
+| Example_hip_model.m | creates a hip joint model | Partial model (hip). |
+| Example_knee_model.m | creates a knee joint model | Partial model (knee). |
+| Example_ankle_model.m | creates an ankle joint model | Partial model (ankle). Based on JIA-MRI data. |
+| Example_extract_tibiofem_artic_surf.m | extracts tibiofemoral articular surfaces | Articular surface extraction. | 
+| Example_extract_ankle_artic_surf.m | extracts talocrural and subtalar articular surfaces | Articular surface extraction. | 
 
 
 ### Detailed steps to setup a STAPLE workflow
@@ -181,22 +197,6 @@ The details of the algorithms are described in the following publications:
 
 Please note that STAPLE includes a minimal version of `GIBOC`, renamed `GIBOC-core`. You can download or inspect the original GIBOC-knee toolbox published by [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028) at [this link](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System).
 
-### Provided examples
-
-Examples of possible modelling scenarios are provided in the main STAPLE folder. You can run the examples and adapt them to your own study or data. Additional examples will be added in time.
-
-| Script name | Script action | Demonstrated feature |
-| --- | --- | --- |
-| Example_create_kinetic_models.m | creates automatically OpenSim model using the bone geometries in the `dataset_geometries` folder. These are kinetic models. | Same datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
-| Example_full_leg_left.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
-| Example_full_leg_right.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
-| Example_bilateral_model.m | creates bilateral OpenSim models | Merge models; full workflow; batch processing |
-| Example_hip_model.m | creates a hip joint model | Partial model (hip). |
-| Example_knee_model.m | creates a knee joint model | Partial model (knee). |
-| Example_ankle_model.m | creates an ankle joint model | Partial model (ankle). Based on JIA-MRI data. |
-| Example_extract_tibiofem_artic_surf.m | extracts tibiofemoral articular surfaces | Articular surface extraction. | 
-| Example_extract_ankle_artic_surf.m | extracts talocrural and subtalar articular surfaces | Articular surface extraction. | 
-
 
 ### Datasets available for testing
 
@@ -234,6 +234,7 @@ These notes are provided to offer a minimal guidance to anyone that will investi
 It can happen that you have issues processing some of your datasets. It could be a bug, but it could also be an issue related to the input data.
 Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.md), please go through the following troubleshooting checklist first:
 - [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
+- [ ] if you are using one of the workflows from the examples, ensure that you are using the correct names for the bone geometries, e.g. `pelvis_no_sacrum`, `femur_r`, `tibia_r`, etc.
 - [ ] ensure that the quality of your bone surface geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes. You can have an idea of what we mean by "good mesh" consulting the table that describes the datasets provided with STAPLE. If necessary, use the filters and tools available on software like [MeshLab](https://www.meshlab.net/) to improve your dataset.
 - [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
 - [ ] verify that processing of your dataset is not failing because of the [current limitations](#current-limitations) of the STAPLE toolbox.
