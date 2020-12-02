@@ -44,15 +44,17 @@ knee_name = ['knee_', side_low];
 % from the morphological analysis
 
 % take Z from ankle joint (axis of rotation)
-Zpar  = normalizeV(JCS.(talus_name).(ankle_name).V(:,3));
-% take vertical axis of the tibia
-Ytemp = JCS.(tibia_name).(knee_name).V(:,2);
-
-% Y and Z orthogonal
-Ypar = normalizeV(Ytemp - Zpar* dot(Zpar,Ytemp)/norm(Zpar));
-Xpar = normalizeV(cross(Ytemp, Zpar));
-
-% assigning pose matrix and parent orientation
-jointStruct.(ankle_name).V = [Xpar Ypar Zpar];
-jointStruct.(ankle_name).parent_orientation = computeXYZAngleSeq(jointStruct.(ankle_name).V);
+if isfield(JCS, talus_name) && isfield(JCS, tibia_name)
+    Zpar  = normalizeV(JCS.(talus_name).(ankle_name).V(:,3));
+    Ytemp = JCS.(tibia_name).(knee_name).V(:,2);
+    % Y and Z orthogonal
+    Ypar = normalizeV(Ytemp - Zpar* dot(Zpar,Ytemp)/norm(Zpar));
+    Xpar = normalizeV(cross(Ytemp, Zpar));
+    
+    % assigning pose matrix and parent orientation
+    jointStruct.(ankle_name).V = [Xpar Ypar Zpar];
+    jointStruct.(ankle_name).parent_orientation = computeXYZAngleSeq(jointStruct.(ankle_name).V);
+else
+    return
+end
 end

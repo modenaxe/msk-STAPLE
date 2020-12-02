@@ -53,6 +53,27 @@ TibiaStruct = JCS.(tibia_name);
 TalusStruct = JCS.(talus_name);
 CalcnStruct = JCS.(calcn_name);
 
+% Knee child orientation
+%---------------------
+% Z aligned like the medio-lateral femoral joint, e.g. axis of cylinder
+% Y aligned with the tibial axis (v betw origin of ankle and knee)
+% X from cross product
+%---------------------
+% take Z from knee joint (axis of rotation)
+Zparent  = FemurStruct.(knee_name).V(:,3);
+% take line joining talus and knee centres
+TibiaStruct.(knee_name).Origin = makeRowVec(FemurStruct.(knee_name).Origin)';
+% vertical axis joining knee and ankle joint centres (same used for ankle
+% parent)
+Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
+    norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
+% make Y and Z orthogonal
+Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
+Xparent  = normalizeV(cross(Ytemp, Zparent));
+% assigning pose matrix and child orientation
+jointStruct.(knee_name).child_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
+
+
 % Ankle child orientation:
 %---------------------
 % Z aligned like the cilinder of the talar throclear
@@ -78,7 +99,7 @@ jointStruct.(ankle_name).child_orientation = computeXYZAngleSeq([Xchild Ychild Z
 % take Z from ankle joint (axis of rotation)
 Zparent  = Zchild;
 % take line joining talus and knee centres
-TibiaStruct.(knee_name).Origin = makeRowVec(TibiaStruct.(knee_name).Origin);
+TibiaStruct.(knee_name).Origin = makeRowVec(TibiaStruct.(knee_name).Origin)';
 Ytibia = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
     norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
 % make Y and Z orthogonal
@@ -87,24 +108,6 @@ Xparent  = normalizeV(cross(Ytibia, Zparent));
 % assigning pose matrix and parent orientation
 jointStruct.(ankle_name).parent_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
 
-% Knee child orientation
-%---------------------
-% Z aligned like the medio-lateral femoral joint, e.g. axis of cylinder
-% Y aligned with the tibial axis (v betw origin of ankle and knee)
-% X from cross product
-%---------------------
-% take Z from knee joint (axis of rotation)
-Zparent  = FemurStruct.(knee_name).V(:,3);
-% take line joining talus and knee centres
-TibiaStruct.(knee_name).Origin = makeRowVec(FemurStruct.(knee_name).Origin);
-% vertical axis joining knee and ankle joint centres (same used for ankle
-% parent)
-Ytemp = Ytibia;
-% make Y and Z orthogonal
-Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
-Xparent  = normalizeV(cross(Ytemp, Zparent));
-% assigning pose matrix and child orientation
-jointStruct.(knee_name).child_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
 
 
 % Subtalar parent orientation 
