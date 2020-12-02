@@ -1,4 +1,4 @@
-function compareModelsInFolders(models_folder, ref_models_folder, table_on)
+function test_pass = compareModelsInFolders(models_folder, ref_models_folder, table_on)
 
 if nargin<3; table_on = 0; end
     
@@ -6,6 +6,9 @@ if nargin<3; table_on = 0; end
 model_list = dir(ref_models_folder);
 
 nm = 1;
+
+test_pass = 1;
+
 for n_file = 1:length(model_list)
     
     if isfolder(model_list(n_file).name)
@@ -40,9 +43,12 @@ for n_file = 1:length(model_list)
         auto_child_loc = STAPLE_model.(cur_joint_name).child(1:3,4);
         ref_child_loc = reference_model.(cur_joint_name).child(1:3,4);
         % they should be identical between papers and STAPLE
-        assert(norm(auto_child_loc-ref_child_loc)<0.000001,...
-            ['Joint centres of joint ', cur_joint_name, ' in models ', model_name, ' are different.']);
-        disp('  - same joint centres');
+        if norm(auto_child_loc-ref_child_loc)<0.000001
+            disp('  - same joint centres');
+        else
+            disp(['---WARNING: Joint centres of joint ', cur_joint_name, ' in models ', model_name, ' are different.']);
+            test_pass = 0;
+        end
         % store for debugging if they are not [in mm]
         jc_offset(n, :) = (auto_child_loc - ref_child_loc)*1000; %#ok<*SAGROW>
         jc_offset_norm(n,1) = norm(jc_offset(n, :));
@@ -51,9 +57,13 @@ for n_file = 1:length(model_list)
         auto_child_orient = STAPLE_model.(cur_joint_name).child(1:3,1:3);
         ref_child_orient  = reference_model.(cur_joint_name).child(1:3,1:3);
         % they should be identical between papers and STAPLE
-        assert(max(max(auto_child_orient-ref_child_orient))<0.000001, ...
-            ['child_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.'])
-        disp('  - same child_orientation');
+        if max(max(auto_child_orient-ref_child_orient))<0.000001
+            disp('  - same child_orientation');
+        else
+            disp(['---WARNING: child_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.']);
+            disp(['            max diff: ', num2str(180/pi*max(max(auto_child_orient-ref_child_orient))),' deg'])
+            test_pass = 0;
+        end
         % store for debugging if they are not
         ang_offset_child(n,:) = acosd(diag(auto_child_orient'*ref_child_orient));
         
@@ -61,9 +71,13 @@ for n_file = 1:length(model_list)
         auto_parent_orient = STAPLE_model.(cur_joint_name).parent(1:3,1:3);
         ref_parent_orient  = reference_model.(cur_joint_name).parent(1:3,1:3);
         % they should be identical between papers and STAPLE
-        assert(max(max(auto_parent_orient-ref_parent_orient))<0.000001, ...
-            ['parent_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.'])
-        disp('  - same parent_orientation');
+        if max(max(auto_parent_orient-ref_parent_orient))<0.000001
+            disp('  - same parent_orientation');
+        else
+            disp(['---WARNING: parent_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.'])
+            disp(['            max diff: ', num2str(180/pi*max(max(auto_parent_orient-ref_parent_orient))),' deg'])
+            test_pass = 0;
+        end
         % store for debugging if they are not
         ang_offset_parent(n,:) = acosd(diag(auto_parent_orient'*ref_parent_orient));
     end
@@ -88,4 +102,5 @@ for n_file = 1:length(model_list)
     % clear variables
     clear jc_offset ang_offset_child ang_offset_parent cur_res_table jc_offset_norm
 end
+
 end

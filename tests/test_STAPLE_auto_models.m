@@ -28,17 +28,18 @@ import org.opensim.modeling.*
 addpath(genpath('../STAPLE'));
 
 % create models as in the paper (assumes examples have not been run)
-run('../Example_create_kinetic_models.m');
+% run('../Example_create_kinetic_models.m');
 
 % where the model created using the current version of STAPLE are (created
 % with the previous run(../Example...)
-osim_model_folder = '../opensim_models';
+models_folder = '../opensim_models_example';
 
 % where the models created for the paper have been stored
 ref_models_folder = 'ref_models/paper';
 
-% compare models
-compareModelsInFolders(osim_model_folder, ref_models_folder, 0)
-
+% compare models with reference ones
+assert(compareModelsInFolders(models_folder, ref_models_folder, 0)==1)
 disp('------------')
 disp('Test passed.')
+
+rmpath(genpath('../STAPLE'));
