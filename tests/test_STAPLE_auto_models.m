@@ -22,10 +22,7 @@
 
 %% TEST: paper models
 clearvars;  close all
-
-% import opensim libraries
-import org.opensim.modeling.*
-addpath(genpath('../STAPLE'));
+addpath('./support_funcs');
 
 % create models as in the paper (assumes examples have not been run)
 % run('../Example_create_kinetic_models.m');
@@ -42,4 +39,4 @@ assert(compareModelsInFolders(models_folder, ref_models_folder, 0)==1)
 disp('------------')
 disp('Test passed.')
 
-rmpath(genpath('../STAPLE'));
+rmpath('./support_funcs');

@@ -1,11 +1,6 @@
 %% TEST: paper models
 clearvars;  close all
-
-% import opensim libraries
-import org.opensim.modeling.*
-addpath(genpath('../STAPLE'));
-addpath(genpath('../STAPLE/sandbox'));
-
+addpath('./support_funcs');
 
 % set folders
 models_folder = '../opensim_models_examples';
@@ -16,4 +11,4 @@ assert(compareModelsInFolders(models_folder, ref_models_folder, 0)==1)
 disp('------------')
 disp('Test passed.')
 
-rmpath(genpath('../STAPLE'));
+rmpath('./support_funcs');
