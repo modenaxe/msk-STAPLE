@@ -30,7 +30,7 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
-output_models_folder = 'opensim_models_example';
+output_models_folder = 'opensim_models_bioRxiv';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';

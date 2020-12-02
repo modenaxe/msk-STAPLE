@@ -32,7 +32,7 @@ addpath(genpath('../STAPLE'));
 
 % where the model created using the current version of STAPLE are (created
 % with the previous run(../Example...)
-models_folder = '../opensim_models_example';
+models_folder = '../opensim_models_bioRxiv';
 
 % where the models created for the paper have been stored
 ref_models_folder = 'ref_models/paper';
