@@ -53,7 +53,7 @@ calcn_name = ['calcn_', side];
 hip_name   = ['hip_',side];
 knee_name  = ['knee_',side];
 ankle_name = ['ankle_', side];
-toes_name  = ['toes_',side];
+toes_name  = ['mtp_',side];
 
 disp('------------------------');
 disp('  UPDATING MASS PROPS   ')

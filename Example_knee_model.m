@@ -11,7 +11,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models_examples';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -27,6 +27,7 @@ vis_geom_format = 'obj';
 
 % choose the definition of the joint coordinate systems (see documentation)
 joint_defs = 'auto2020';
+
 %--------------------------------------
 
 % create model folder if required
@@ -70,20 +71,9 @@ for n_d = 1:numel(dataset_set)
     % process bone geometries (compute joint parameters and identify markers)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
     
-    %------------------------------------
-    % SPECIAL SECTION FOR PARTIAL MODELS
-    %------------------------------------
-    % creating an ad hoc body and joint for connecting with ground
-    % femur will be aligned with ground using its proximal JCS
-    JCS.proxbody.free_to_ground.child = 'femur_r';
-    % convert origin of hip joint in metres
-    JCS.proxbody.free_to_ground.child_location = JCS.femur_r.hip_r.Origin/1000; %in m
-    % transform rotation matrix in OpenSim orientation
-    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(JCS.femur_r.hip_r.V);
-    %----------------------------------------------------------------------
-    
     % create joints
-    createLowerLimbJoints(osimModel, JCS, joint_defs);
+    createOpenSimModelJoints(osimModel, JCS, joint_defs);
+
     
     % add patella to tibia (this will be replaced by a proper joint and
     % dealt with the other joints in the future).

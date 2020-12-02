@@ -26,7 +26,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models_examples';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -96,6 +96,7 @@ for n_side = 1:2
     %-----------------------------------
     % SPECIAL SECTION FOR PARTIAL MODELS
     %-----------------------------------
+    % NOTES:
     % Using Kai2014 on the proximal tibia identifies the largest section
     % (near the ankle joint). Importantly, the reference system is aligned
     % with the principal components of the geometry, so roughly with the
@@ -104,25 +105,32 @@ for n_side = 1:2
     % You can read the description of Kai_tibia algorithm in:
     % Kai, Shin, et al. Journal of biomechanics 47.5 (2014): 1229-1233.
     % https://doi.org/10.1016/j.jbiomech.2013.12.013
-    JCS.(tibia_name).(knee_name).V(:,2) = -JCS.(tibia_name).(knee_name).V(:,2);
-    % Z axis is ok, (detects fibula and corrected forbody  side internally)
-    % X axis follows as cross-product.
-    JCS.(tibia_name).(knee_name).V(:,1) = normalizeV(cross(...
-                                        JCS.(tibia_name).(knee_name).V(:,2),...
-                                        JCS.(tibia_name).(knee_name).V(:,3)));
-    % creating an ad hoc body and joint for connecting with ground
-    JCS.proxbody.free_to_ground.child = tibia_name;
-    % bone geometries are in mm, but model parameters will be in m
-    JCS.proxbody.free_to_ground.child_location = CS.(tibia_name).Origin/1000;
-    % using computeXYZAngleSeq to transform the rotation matrix in OpenSim
-    % joint orientation.
-    JCS.proxbody.free_to_ground.child_orientation = computeXYZAngleSeq(...
-                                        JCS.(tibia_name).(knee_name).V);
+    %
+    % createOpenSimModelJoints will recognize the model as incomplete and
+    % copy the joint parameters (child_orientation and child_location) 
+    % to a ground-tibia joint.
+    % The ankle joint cannot be defined based just on morphological
+    % analysis of separated joints without specifying a joint_defs
+    % variable, and will use the V matrix, which also needs update.
+    %-----------------------------------
+    % STEP1 
+    % define the matrix for Y-axis rotation of 180 deg around Z
+    % Z is pointing in the correct direction because detected using the
+    % fibula.
+    R = [-1 0 0; 0 -1 0; 0 0 1]; % 180 deg rotation around z
+    % STEP2: rotate pose matrix (used by joint_defs)
+    JCS.(tibia_name).(knee_name).V = JCS.(tibia_name).(knee_name).V*R;
+    % STEP3: update child_orientation
+    JCS.(tibia_name).(knee_name).child_orientation =...
+        computeXYZAngleSeq(JCS.(tibia_name).(knee_name).V);
+    % STEP4: update child location 
+    % we want it approx at the centroid of the partial tibia 
+    JCS.(tibia_name).(knee_name).child_location = CS.(tibia_name).Origin/1000;
     %----------------------------------------------------------------------
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, joint_defs);
-    
+    createOpenSimModelJoints(osimModel, JCS, joint_defs);
+
     %----------------------------------
     % SPECIAL PART FOR PARTIAL MODELS
     %----------------------------------

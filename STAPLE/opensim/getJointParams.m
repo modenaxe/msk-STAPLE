@@ -34,9 +34,9 @@
 %       structure are the following: name, parent, child, coordsNames,
 %       coordsTypes, ROM and rotationAxes. An example of JointParamsStruct is
 %       the following:
-%         JointParamsStruct.name                = 'hip_r';
-%         JointParamsStruct.parent              = 'pelvis';
-%         JointParamsStruct.child               = 'femur_r';
+%         JointParamsStruct.jointName           = 'hip_r';
+%         JointParamsStruct.parentName          = 'pelvis';
+%         JointParamsStruct.childName           = 'femur_r';
 %         JointParamsStruct.coordsNames         = {'hip_flexion_r','hip_adduction_r','hip_rotation_r'};
 %         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational'};
 %         JointParamsStruct.coordRanges         = {[-120 120], [-120 120], [-120 120]};% in degrees 
@@ -49,110 +49,83 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-function JointParamsStruct = getJointParams(joint_name, parentBodyStruct, childBodyStruct, side)
+function JointParamsStruct = getJointParams(joint_name, root_body)
 
-%% Ensure that location and orientation are set on both parent and child
-% empty input as parentBodyCS means all set to zero
-if isempty(parentBodyStruct)
-    parentBodyStruct.(joint_name).parent_location     = [0.0000	0.0000	0.0000];
-    parentBodyStruct.(joint_name).parent_orientation  = [0.0000	0.0000	0.0000];
-end
-% if joint_name is unavailable set it to empty (child)
-if ~isfield(childBodyStruct, joint_name)
-    childBodyStruct.(joint_name) = [];
-end
-% if joint_name is unavailable set it to empty (parent)
-if ~isfield(parentBodyStruct, joint_name)
-    parentBodyStruct.(joint_name) = [];
-end
 
-% if child_location is unavailable use parent
-if isfield(childBodyStruct.(joint_name), 'child_location')
-    JointParamsStruct.child_location   = childBodyStruct.(joint_name).child_location;
-else
-    JointParamsStruct.child_location   = parentBodyStruct.(joint_name).parent_location;
-end
+if nargin<2; root_body='root_body'; end
 
-% if parent_location is unavailable use child
-if isfield(parentBodyStruct.(joint_name), 'parent_location')
-    JointParamsStruct.parent_location   = parentBodyStruct.(joint_name).parent_location;
-else
-    JointParamsStruct.parent_location   = childBodyStruct.(joint_name).child_location;
-end
-
-% if child_orientation is unavailable use parent
-if isfield(childBodyStruct.(joint_name), 'child_orientation')
-    JointParamsStruct.child_orientation   = childBodyStruct.(joint_name).child_orientation;
-else
-    JointParamsStruct.child_orientation   = parentBodyStruct.(joint_name).parent_orientation;
-end
-
-% if parent_orientation is unavailable use child
-if isfield(parentBodyStruct.(joint_name), 'parent_orientation')
-    JointParamsStruct.parent_orientation  = parentBodyStruct.(joint_name).parent_orientation;
-else
-    JointParamsStruct.parent_orientation  = childBodyStruct.(joint_name).child_orientation;
+% detect side from bone names
+if strcmp(joint_name(end-1:end), '_r') || strcmp(joint_name(end-1:end), '_l')
+    side = joint_name(end);
 end
 
 %% assign the parameters required to create a CustomJoint
 switch joint_name
     case 'ground_pelvis'
-        JointParamsStruct.name                = 'ground_pelvis';
-        JointParamsStruct.parent              = 'ground';
-        JointParamsStruct.child               = 'pelvis';
+        JointParamsStruct.jointName           = 'ground_pelvis';
+        JointParamsStruct.parentName          = 'ground';
+        JointParamsStruct.childName           = 'pelvis';
         JointParamsStruct.coordsNames         = {'pelvis_tilt','pelvis_list','pelvis_rotation', 'pelvis_tx','pelvis_ty', 'pelvis_tz'};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.coordRanges         = {[-90 90], [-90 90] , [-90 90], [-10, 10] , [-10, 10] , [-10, 10]};
         JointParamsStruct.rotationAxes        = 'zxy';
     case 'free_to_ground'
-        cb                                    = childBodyStruct.free_to_ground.child; % cb = current bone (for brevity)
-        JointParamsStruct.name                = ['ground_',cb];
-        JointParamsStruct.parent              = 'ground';
-        JointParamsStruct.child               = cb;
+        cb                                    = root_body; % cb = current bone (for brevity)
+        JointParamsStruct.jointName           = ['ground_',cb];
+        JointParamsStruct.parentName          = 'ground';
+        JointParamsStruct.childName           = cb;
         JointParamsStruct.coordsNames         = {['ground_', cb,'_rz'],['ground_', cb,'_rx'],['ground_', cb,'_ry'],...
                                                  ['ground_', cb,'_tx'],['ground_', cb,'_ty'],['ground_', cb,'_tz']};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational', 'translational', 'translational','translational'};
         JointParamsStruct.coordRanges         = {[-120 120], [-120 120] , [-120 120], [-10, 10] , [-10, 10] , [-10, 10]};
         JointParamsStruct.rotationAxes        = 'zxy';  
     case ['hip_', side]
-        JointParamsStruct.name                = ['hip_', side];
-        JointParamsStruct.parent              = 'pelvis';
-        JointParamsStruct.child               = ['femur_', side];
+        JointParamsStruct.jointName           = ['hip_', side];
+        JointParamsStruct.parentName          = 'pelvis';
+        JointParamsStruct.childName           = ['femur_', side];
         JointParamsStruct.coordsNames         = {['hip_flexion_', side],['hip_adduction_', side],['hip_rotation_', side]};
         JointParamsStruct.coordsTypes         = {'rotational', 'rotational', 'rotational'};
         JointParamsStruct.coordRanges         = {[-120 120], [-120 120], [-120 120]};
         JointParamsStruct.rotationAxes        = 'zxy';
     case ['knee_', side]
-        JointParamsStruct.name               = ['knee_', side];
-        JointParamsStruct.parent             = ['femur_', side];
-        JointParamsStruct.child              = ['tibia_', side];
+        JointParamsStruct.jointName          = ['knee_', side];
+        JointParamsStruct.parentName         = ['femur_', side];
+        JointParamsStruct.childName          = ['tibia_', side];
         JointParamsStruct.coordsNames        = {['knee_angle_', side]};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.coordRanges        = {[-120 10]};
         JointParamsStruct.rotationAxes       = 'zxy';   
     case ['ankle_', side]
-        JointParamsStruct.name               = ['ankle_', side];
-        JointParamsStruct.parent             = ['tibia_', side];
-        JointParamsStruct.child              = ['talus_', side];
+        JointParamsStruct.jointName          = ['ankle_', side];
+        JointParamsStruct.parentName         = ['tibia_', side];
+        JointParamsStruct.childName          = ['talus_', side];
         JointParamsStruct.coordsNames        = {['ankle_angle_', side]};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.coordRanges        = {[-90 90]};
         JointParamsStruct.rotationAxes       = 'zxy';
     case ['subtalar_', side]
-        JointParamsStruct.name               = ['subtalar_', side];
-        JointParamsStruct.parent             = ['talus_', side];
-        JointParamsStruct.child              = ['calcn_', side];
+        JointParamsStruct.jointName          = ['subtalar_', side];
+        JointParamsStruct.parentName         = ['talus_', side];
+        JointParamsStruct.childName          = ['calcn_', side];
         JointParamsStruct.coordsNames        = {['subtalar_angle_', side]};
         JointParamsStruct.coordsTypes        = {'rotational'};
         JointParamsStruct.coordRanges        = {[-90 90]};
         JointParamsStruct.rotationAxes       = 'zxy';
     case 'patellofemoral_r'
-        JointParamsStruct.name               = ['patellofemoral_', side];
-        JointParamsStruct.parent             = ['femur_', side];
-        JointParamsStruct.child              = ['patella_', side];
+        JointParamsStruct.jointName          = ['patellofemoral_', side];
+        JointParamsStruct.parentName         = ['femur_', side];
+        JointParamsStruct.childName          = ['patella_', side];
         JointParamsStruct.coordsNames        = {['knee_angle_',side,'_beta']};
         JointParamsStruct.coordsTypes        = {'rotational'};
 %         JointParamsStruct.coordRanges            = {[-90 90]};
+        JointParamsStruct.rotationAxes       = 'zxy';
+    case ['mtp_', side]
+        JointParamsStruct.jointName          = ['toes_', side];
+        JointParamsStruct.parentName         = ['calcn_', side];
+        JointParamsStruct.childName          = ['toes_', side];
+        JointParamsStruct.coordsNames        = {['mtp_angle_',side]};
+        JointParamsStruct.coordsTypes        = {'rotational'};
+        JointParamsStruct.coordRanges        = {[-90 90]};
         JointParamsStruct.rotationAxes       = 'zxy';
     otherwise
         error(['getJointParams.m Unsupported joint ',joint_name ,'.']);
