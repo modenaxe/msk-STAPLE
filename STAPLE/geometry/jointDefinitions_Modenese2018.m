@@ -1,6 +1,7 @@
 % JOINTDEFINITIONS_MODENESE2018 Define the orientation of
-% lower limb joints as in Modenese et al. JBiomech 2018.
-% Required for the comparison presented in Modenese and Renault, JBiomech
+% lower limb joints as in Modenese et al. JBiomech 2018, 17;73:108-118
+% https://doi.org/10.1016/j.jbiomech.2018.03.039
+% Required for the comparisons presented in Modenese and Renault, JBiomech
 % 2020.
 %
 %   jointStruct = jointDefinitions_Modenese2018(JCS, jointStruct)

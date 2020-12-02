@@ -18,7 +18,8 @@
 % Outputs:
 %   none
 %
-% See also JOINTDEFINITIONS_AUTO2020, JOINTDEFINITIONS_MODENESE2018.
+% See also ASSEMBLEJOINTSTRUCT, JOINTDEFINITIONS_AUTO2020, 
+% JOINTDEFINITIONS_MODENESE2018.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese 

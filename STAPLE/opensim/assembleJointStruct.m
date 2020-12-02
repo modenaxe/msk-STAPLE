@@ -19,7 +19,8 @@
 %   updJointStruct - updated jointStruct with the joints with fields
 %       completed as discussed above.
 %
-% See also JOINTDEFINITIONS_AUTO2020, JOINTDEFINITIONS_MODENESE2018.
+% See also VERIFYJOINTSTRUCTCOMPLETENESS, JOINTDEFINITIONS_AUTO2020,...
+% JOINTDEFINITIONS_MODENESE2018.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese 
