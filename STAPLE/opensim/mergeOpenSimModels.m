@@ -1,4 +1,4 @@
-% MERGEOSIMMODELS Merge two specified OpenSim models and print the
+% MERGEOPENSIMMODELS Merge two specified OpenSim models and print the
 % resulting model in the specified file. The BodySets, JointSets and
 % MarkerSets of the models are merged to generate the mergedOsimModel that
 % will be printed.

@@ -30,7 +30,7 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models_example';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -50,7 +50,6 @@ vis_geom_format = 'obj'; % options: 'stl'/'obj'
 % choose the definition of the joint coordinate systems (see documentation)
 joint_defs = 'Modenese2018';
 %--------------------------------------
-
 
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
@@ -98,7 +97,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, joint_defs);
+    createOpenSimModelJoints(osimModel, JCS, joint_defs);
     
     % update mass properties to those estimated using a scale version of
     % gait2392 with COM based on Winters's book.

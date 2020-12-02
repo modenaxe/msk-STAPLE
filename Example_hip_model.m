@@ -15,7 +15,7 @@ addpath(genpath('STAPLE'));
 % SETTINGS %
 %----------%
 % set output folder
-output_models_folder = 'opensim_models';
+output_models_folder = 'opensim_models_examples';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -79,7 +79,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
 
     % create joints
-    createLowerLimbJoints(osimModel, JCS, joint_defs);
+    createOpenSimModelJoints(osimModel, JCS, joint_defs);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

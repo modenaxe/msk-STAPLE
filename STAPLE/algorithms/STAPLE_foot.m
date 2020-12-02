@@ -18,7 +18,7 @@ if in_mm == 1;   dim_fact = 0.001; else;  dim_fact = 1; end
 [sign_side, side_low] = bodySide2Sign(side_raw);
 
 % joint names
-toes_name     = ['toes_', side_low];
+toes_name     = ['mtp_', side_low];
 
 % inform user about settings
 disp('---------------------')
@@ -237,6 +237,7 @@ Y3 = normalizeV(cross(Z3, X3));
 CS.X = X3; % Distal proximal
 CS.Y = Z3; % Lateral to medial
 CS.Z = -Y3; % Ventral to dorsal
+% THIS IS USED IN jointDefinitions_Modenese2018.m
 CS.V = [X3, Z3, -Y3];
 CS.Origin = CenterVol;
 
@@ -267,8 +268,9 @@ end
 
 % calcn currently does not have a real child joint, but JCS structure is created for
 % consistency
-JCS = CS;
-JCS.Origin = heelPt';
+% only joints in JCS!
+% JCS = CS;
+% JCS.Origin = heelPt';
 
 % define toes joint
 Z = normalizeV(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'D1M']))*sign_side;
