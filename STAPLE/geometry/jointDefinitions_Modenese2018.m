@@ -1,4 +1,4 @@
-% ASSEMBLEANKLECHILDORIENTATIONMODENESE2018 Define the orientation of
+% JOINTDEFINITIONS_MODENESE2018 Define the orientation of
 % lower limb joints as in Modenese et al. JBiomech 2018.
 % Required for the comparison presented in Modenese and Renault, JBiomech
 % 2020.
@@ -18,7 +18,8 @@
 % Outputs:
 %   jointStruct - updated jointStruct with the joints defined as in
 %       Modenese2018, rather than connected directly using the joint
-%       coordinate system computed in processTriGeomBoneSet.m.
+%       coordinate system computed in processTriGeomBoneSet.m plus the
+%       default joint definition available in jointDefinitions_auto2020.m
 %
 % See also  CREATEOPENSIMMODELJOINTS, CREATECUSTOMJOINTFROMSTRUCT,
 %           PROCESSTRIGEOMBONESET.
@@ -41,17 +42,22 @@ subtalar_name = ['subtalar_',side_low];
 % segment names
 femur_name      = ['femur_',side_low];
 tibia_name      = ['tibia_',side_low];
-% patella_name    = ['patella_',side_low];
 talus_name      = ['talus_',side_low];
 calcn_name      = ['calcn_',side_low];
 mtp_name        = ['mtp_', side_low];
+% patella_name    = ['patella_',side_low];
 
 FemurStruct = JCS.(femur_name);
 TibiaStruct = JCS.(tibia_name);
 TalusStruct = JCS.(talus_name);
 CalcnStruct = JCS.(calcn_name);
 
-% Ankle child orientation
+% Ankle child orientation:
+%---------------------
+% Z aligned like the cilinder of the talar throclear
+% X like calcaneus, but perpendicular to Z
+% Y from cross product
+%---------------------
 % take Z from ankle joint (axis of rotation)
 Zchild  = normalizeV(TalusStruct.(ankle_name).V(:,3));
 % take X ant-post axis of the calcaneus
@@ -63,32 +69,36 @@ Ychild  = normalizeV(cross(Zchild, Xtemp));
 jointStruct.(ankle_name).child_orientation = computeXYZAngleSeq([Xchild Ychild Zchild]);
 
 % Ankle parent orientation
+%---------------------
+% Z aligned like the cilinder of the talar throclear
+% Y aligned with the tibial axis (v betw origin of ankle and knee)
+% X from cross product
+%---------------------
 % take Z from ankle joint (axis of rotation)
 Zparent  = Zchild;
 % take line joining talus and knee centres
-if isequal(size(TibiaStruct.(knee_name).Origin), [1, 3])
-    TibiaStruct.(knee_name).Origin = TibiaStruct.(knee_name).Origin';
-end
-Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
+TibiaStruct.(knee_name).Origin = makeRowVec(TibiaStruct.(knee_name).Origin);
+Ytibia = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
     norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
 % make Y and Z orthogonal
-Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
-Xparent  = normalizeV(cross(Ytemp, Zparent));
+Yparent = normalizeV(Ytibia - Zparent* dot(Zparent,Ytibia)/norm(Zparent));
+Xparent  = normalizeV(cross(Ytibia, Zparent));
 % assigning pose matrix and parent orientation
 jointStruct.(ankle_name).parent_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
 
 % Knee child orientation
+%---------------------
+% Z aligned like the medio-lateral femoral joint, e.g. axis of cylinder
+% Y aligned with the tibial axis (v betw origin of ankle and knee)
+% X from cross product
+%---------------------
 % take Z from knee joint (axis of rotation)
 Zparent  = FemurStruct.(knee_name).V(:,3);
 % take line joining talus and knee centres
-if isequal(size(FemurStruct.(knee_name).Origin), [1, 3])
-    TibiaStruct.(knee_name).Origin = FemurStruct.(knee_name).Origin';
-else
-    TibiaStruct.(knee_name).Origin = FemurStruct.(knee_name).Origin;
-end
-% vertical axis joining knee and ankle joint centres
-Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
-    norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
+TibiaStruct.(knee_name).Origin = makeRowVec(FemurStruct.(knee_name).Origin);
+% vertical axis joining knee and ankle joint centres (same used for ankle
+% parent)
+Ytemp = Ytibia;
 % make Y and Z orthogonal
 Yparent = normalizeV(Ytemp - Zparent* dot(Zparent,Ytemp)/norm(Zparent));
 Xparent  = normalizeV(cross(Ytemp, Zparent));
@@ -97,6 +107,11 @@ jointStruct.(knee_name).child_orientation = computeXYZAngleSeq([Xparent Yparent 
 
 
 % Subtalar parent orientation 
+%---------------------
+% Z is the subtalar axis of rotation
+% Y from centre of subtalar joint points to femur joint centre
+% X from cross product
+%---------------------
 % take Z from subtalar joint (axis of rotation)
 Zparent  = TalusStruct.(subtalar_name).V(:,3);
 % take Y pointing to the knee joint centre
@@ -108,4 +123,14 @@ Xparent  = normalizeV(cross(Yparent, Zparent));
 % assigning parent orientation
 jointStruct.(subtalar_name).parent_orientation = computeXYZAngleSeq([Xparent Yparent Zparent]);
 
+end
+
+function row_v = makeRowVec(v)
+if isequal(size(v), [3,1])
+    row_v = v';
+elseif isequal(size(v), [1,3])
+    row_v = v;
+else 
+    error('provided vector has not 3 components.')
+end
 end
