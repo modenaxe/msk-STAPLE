@@ -13,9 +13,6 @@ addpath(genpath('STAPLE'));
 % set output folder
 output_models_folder = 'opensim_models';
 
-% set output model name
-output_model_file_name = 'example_knee_joint.osim';
-
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
 
@@ -29,7 +26,7 @@ bones_list = {'femur_r', 'tibia_r'};
 vis_geom_format = 'obj'; 
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto';
+joint_defs = 'auto2020';
 %--------------------------------------
 
 % create model folder if required
@@ -40,8 +37,14 @@ for n_d = 1:numel(dataset_set)
     % setup folders
     cur_dataset = dataset_set{n_d};
     
+    % infer body side
+    cur_side = inferBodySideFromAnatomicStruct(bones_list);
+    
     % model name
-    cur_model_name = [dataset_set{n_d},'_auto'];
+    cur_model_name = ['example_', joint_defs,'_knee_', upper(cur_side)];
+    
+    % set output model name
+    output_model_file_name = [cur_model_name,'.osim'];
     
     % log printout
     log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
@@ -54,8 +57,7 @@ for n_d = 1:numel(dataset_set)
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
-    % geometry_folder_name = [cur_dataset, '_Geometry'];
-    geometry_folder_name = 'example_knee_joint_Geometry';
+    geometry_folder_name = [cur_model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
@@ -81,7 +83,7 @@ for n_d = 1:numel(dataset_set)
     %----------------------------------------------------------------------
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createLowerLimbJoints(osimModel, JCS, joint_defs);
     
     % add patella to tibia (this will be replaced by a proper joint and
     % dealt with the other joints in the future).

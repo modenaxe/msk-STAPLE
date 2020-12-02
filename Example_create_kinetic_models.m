@@ -48,7 +48,7 @@ bones_list = {'pelvis_no_sacrum','femur_r','tibia_r','talus_r', 'calcn_r'};
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-modelling_method = 'Modenese2018';
+joint_defs = 'Modenese2018';
 %--------------------------------------
 
 
@@ -98,7 +98,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, side);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, modelling_method);
+    createLowerLimbJoints(osimModel, JCS, joint_defs);
     
     % update mass properties to those estimated using a scale version of
     % gait2392 with COM based on Winters's book.

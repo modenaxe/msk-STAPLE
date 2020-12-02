@@ -36,7 +36,7 @@ output_models_folder = 'opensim_models';
 datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
-datasets = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI'};
+datasets = {'LHDL_CT', 'TLEM2_CT'};%, 'ICL_MRI', 'JIA_MRI'};
 
 % body sides
 cur_side = 'r';

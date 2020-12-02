@@ -38,7 +38,7 @@ dataset = 'JIA_ANKLE_MRI';
 vis_geom_format = 'obj';
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto';
+joint_defs = 'auto2020';
 
 % body sides
 sides = {'r', 'l'};
@@ -54,7 +54,7 @@ for n_side = 1:2
     [sign_side, cur_side] = bodySide2Sign(sides{n_side});
     
     % model name
-    cur_model_name = ['example_ankle_joint_', upper(cur_side)];
+    cur_model_name = ['example_', joint_defs,'_ankle_', upper(cur_side)];
     
     % set output model name
     output_model_file_name = [cur_model_name,'.osim'];
@@ -121,7 +121,7 @@ for n_side = 1:2
     %----------------------------------------------------------------------
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createLowerLimbJoints(osimModel, JCS, joint_defs);
     
     %----------------------------------
     % SPECIAL PART FOR PARTIAL MODELS

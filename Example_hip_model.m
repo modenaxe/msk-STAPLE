@@ -17,9 +17,6 @@ addpath(genpath('STAPLE'));
 % set output folder
 output_models_folder = 'opensim_models';
 
-% set output model name
-output_model_file_name = 'example_hip_joint.osim';
-
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
 
@@ -29,14 +26,14 @@ datasets_folder = 'bone_datasets';
 dataset_set = {'LHDL_CT'};
 
 % cell array with the name of the bone geometries to process.
-bones_list = {'pelvis_no_sacrum','femur_r'};
+bones_list = {'pelvis_no_sacrum', 'femur_r'};
 
 % format of visualization geometry (obj preferred - smaller files)
 vis_geom_format = 'obj'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see
 % documentation). For hip joint creation this option has no effect.
-workflow = 'auto';
+joint_defs = 'auto2020';
 %--------------------------------------
 
 % create model folder if required
@@ -48,8 +45,14 @@ for n_d = 1:numel(dataset_set)
     % dataset id used to name OpenSim model and setup folders
     cur_dataset = dataset_set{n_d};
     
+    % infer body side
+    cur_side = inferBodySideFromAnatomicStruct(bones_list);
+    
     % model name
-    cur_model_name = [dataset_set{n_d},'_auto'];
+    cur_model_name = ['example_', joint_defs,'_hip_', upper(cur_side)];
+    
+    % set output model name
+    output_model_file_name = [cur_model_name,'.osim'];
     
     % log printout
     log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
@@ -62,7 +65,7 @@ for n_d = 1:numel(dataset_set)
     geom_set = createTriGeomSet(bones_list, tri_folder);
     
     % create bone geometry folder for visualization
-    geometry_folder_name = 'example_hip_joint_Geometry';
+    geometry_folder_name = [cur_model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
@@ -76,7 +79,7 @@ for n_d = 1:numel(dataset_set)
     [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
 
     % create joints
-    createLowerLimbJoints(osimModel, JCS, workflow);
+    createLowerLimbJoints(osimModel, JCS, joint_defs);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
