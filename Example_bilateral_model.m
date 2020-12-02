@@ -42,8 +42,7 @@ vis_geom_format = 'obj';
 % body sides
 sides = {'r', 'l'};
 % choose the definition of the joint coordinate systems (see documentation)
-% options: 'Modenese2018' or 'auto2020'
-workflow = 'Modenese2018';
+joint_defs = 'Modenese2018';
 %--------------------------------------
 
 tic
@@ -97,7 +96,7 @@ for n_d = 1:numel(datasets)
         [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, cur_side);
         
         % create joints
-        createLowerLimbJoints(osimModel, JCS, workflow);
+        createLowerLimbJoints(osimModel, JCS, joint_defs);
         
         % add markers to the bones
         addBoneLandmarksAsMarkers(osimModel, BL);
