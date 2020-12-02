@@ -138,7 +138,7 @@ switch jointDefs
 end
 
 % completeJoints(jointStruct)
-jointStruct = finalizeJointStruct(jointStruct);
+jointStruct = assembleJointStruct(jointStruct);
 
 % check that all joints are completed
 verifyJointStructCompleteness(jointStruct)
