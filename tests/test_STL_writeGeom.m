@@ -24,7 +24,7 @@ in_mm = 1;
 vis_geom_format = 'stl'; % options: 'stl'/'obj'
 
 % choose the definition of the joint coordinate systems (see documentation)
-method = 'auto2020';
+joint_defs = 'auto2020';
 %--------------------------------------
 
 
@@ -80,7 +80,7 @@ for n_d = 1:numel(dataset_set)
     %----------------------------------------------------------------------
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, method);
+    createOpenSimModelJoints(osimModel, JCS, joint_defs);
     
     %----------------------------------
     % SPECIAL PART FOR PARTIAL MODELS
@@ -100,7 +100,9 @@ for n_d = 1:numel(dataset_set)
     
     % inform the user about time employed to create the model
     disp('-------------------------')
-    disp(['Model generated in ', num2str(toc)]);
+    disp(['Model generated in ', sprintf('%.1f', toc), ' s']);
+    disp(['Saved as ', fullfile(output_models_folder, output_model_file_name),'.']);
+    disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
     disp('-------------------------')
 end
 
