@@ -6,7 +6,7 @@
 % ----------------------------------------------------------------------- %
 clear; clc; close all
 addpath(genpath('../STAPLE'));
-
+addpath('./support');
 %----------
 % SETTINGS 
 %----------
@@ -66,7 +66,7 @@ for n_d = 1
     [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set);
     
     % create joints
-    createLowerLimbJoints(osimModel, JCS, modelling_method);
+%     createLowerLimbJoints(osimModel, JCS, modelling_method);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
@@ -85,3 +85,4 @@ end
 
 % remove paths
 rmpath(genpath('../STAPLE'));
+rmpath('./support');
