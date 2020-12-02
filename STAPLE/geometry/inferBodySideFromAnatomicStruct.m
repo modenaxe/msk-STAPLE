@@ -21,8 +21,15 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function guessed_side = inferBodySideFromAnatomicStruct(anat_struct)
-% check using the bone names
-fields_side = fields(anat_struct);
+
+if isstruct(anat_struct)
+    % check using the bone names
+    fields_side = fields(anat_struct);
+elseif iscell(anat_struct)
+    fields_side = anat_struct;
+else
+    error('inferBodySideFromAnatomicStruct.m  Input must be structure or cell array.')
+end
 body_set = {'femur', 'tibia', 'talus', 'calcn'};
 ng_b = 1;
 guess_side_b = '';
@@ -50,8 +57,8 @@ for nj = 1:length(joint_set)
     else
         continue
     end
-end
 
+end
 % composed vectors
 combined_guessed = [guess_side_b, guess_side_j];
 
