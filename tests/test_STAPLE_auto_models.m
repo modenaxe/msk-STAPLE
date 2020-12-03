@@ -35,7 +35,8 @@ models_folder = '../opensim_models_bioRxiv';
 ref_models_folder = 'ref_models/paper';
 
 % compare models with reference ones
-assert(compareModelsInFolders(models_folder, ref_models_folder, 0)==1)
+tol = 0.000001; table_on = 0;
+assert(compareModelsInFolders(models_folder, ref_models_folder, tol, table_on)==1)
 disp('------------')
 disp('Test passed.')
 

@@ -1,6 +1,12 @@
-function test_pass = compareModelsInFolders(models_folder, ref_models_folder, table_on)
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
+function test_pass = compareModelsInFolders(models_folder, ref_models_folder, tol, table_on)
 
-if nargin<3; table_on = 0; end
+if nargin <3; tol = 0.000001; table_on = 0; end
+if nargin <4; table_on = 0; end
     
 % list ref models
 model_list = dir(ref_models_folder);
@@ -43,7 +49,7 @@ for n_file = 1:length(model_list)
         auto_child_loc = STAPLE_model.(cur_joint_name).child(1:3,4);
         ref_child_loc = reference_model.(cur_joint_name).child(1:3,4);
         % they should be identical between papers and STAPLE
-        if norm(auto_child_loc-ref_child_loc)<0.000001
+        if norm(auto_child_loc-ref_child_loc)<tol
             disp('  - same joint centres');
         else
             disp(['---WARNING: Joint centres of joint ', cur_joint_name, ' in models ', model_name, ' are different.']);
@@ -57,7 +63,7 @@ for n_file = 1:length(model_list)
         auto_child_orient = STAPLE_model.(cur_joint_name).child(1:3,1:3);
         ref_child_orient  = reference_model.(cur_joint_name).child(1:3,1:3);
         % they should be identical between papers and STAPLE
-        if max(max(auto_child_orient-ref_child_orient))<0.000001
+        if max(max(auto_child_orient-ref_child_orient))<tol
             disp('  - same child_orientation');
         else
             disp(['---WARNING: child_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.']);
@@ -71,7 +77,7 @@ for n_file = 1:length(model_list)
         auto_parent_orient = STAPLE_model.(cur_joint_name).parent(1:3,1:3);
         ref_parent_orient  = reference_model.(cur_joint_name).parent(1:3,1:3);
         % they should be identical between papers and STAPLE
-        if max(max(auto_parent_orient-ref_parent_orient))<0.000001
+        if max(max(auto_parent_orient-ref_parent_orient))<tol
             disp('  - same parent_orientation');
         else
             disp(['---WARNING: parent_orientation of joint ', cur_joint_name, ' in models ', model_name, ' are different.'])

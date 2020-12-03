@@ -1,1 +1,1 @@
-runtests
+test_results = runtests;

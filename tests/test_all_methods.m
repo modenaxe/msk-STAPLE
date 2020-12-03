@@ -1,6 +1,5 @@
 %-------------------------------------------------------------------------%
 % Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
 %    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
@@ -13,6 +12,9 @@ addpath(genpath('../STAPLE'));
 
 %--------------------------------------
 bone_geometries_folder = '../bone_datasets';
+
+% testing on one good and one bad quality dataset, bilaterally and
+% monolaterally.
 dataset_set = {'LHDL_CT', 'TLEM2_CT', 'ICL_MRI', 'JIA_MRI', 'VAKHUM_CT',};
 
 sides = {'r', 'l'};

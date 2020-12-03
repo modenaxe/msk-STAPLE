@@ -1,3 +1,8 @@
+%-------------------------------------------------------------------------%
+% Copyright (c) 2020 Modenese L.                                          %
+%    Author:   Luca Modenese                                              %
+%    email:    l.modenese@imperial.ac.uk                                  %
+% ----------------------------------------------------------------------- %
 %% TEST: paper models
 clearvars;  close all
 addpath('./support_funcs');
@@ -7,7 +12,8 @@ models_folder = '../opensim_models_examples';
 ref_models_folder = './ref_models/bilateral';
 
 % compare models with reference ones
-assert(compareModelsInFolders(models_folder, ref_models_folder, 0)==1)
+tol = 0.000001; table_on = 0;
+assert(compareModelsInFolders(models_folder, ref_models_folder, tol, table_on)==1)
 disp('------------')
 disp('Test passed.')
 
