@@ -4,29 +4,23 @@
 % generating the joint for the automatic OpenSim model using 
 % createCustomJointFromStruct. It is assumed that the inputs will contain
 % enough information (location and orientation) to define the joint
-% reference system. NOTE: A body is connected to ground with a 
-% free_to_ground joint if no other specifics are provided, please see
-% examples on partial models for a practical example.
+% reference system. 
+% NOTE: 
+% A body is connected to ground with a free_to_ground joint if no other 
+% specifics are provided, please see examples on partial models for 
+% practical examples.
 % IMPORTANT: modifying the values of the fields of JointParamsStruct output
 % structure allows to modify the joint model according to the preferences
-% of the researcher.
+% of the researcher. See advanced examples.
 %
-% JointParamsStruct = getJointParams(joint_name, parentBodyStruct, childBodyStruct)
+% JointParamsStruct = getJointParams(joint_name, root_body)
 %
 % Inputs:
 %   joint_name - name of the lower limb joint for which we want to create
 %       the structure containing all parameters (string).
 %
-%   parentBodyStruct - a MATLAB structure collecting the information
-%       derived from analysing the parent bone. This structure normally is
-%       organised as
-%       parentBodyStruct.aJointName.parent/child_location/orientation and
-%       it is produced by using the algorithms to analyse the bone
-%       geometries.
-%
-%   childBodyStruct - exactly the same as parentBodyStruct, but for the
-%       structure obtained analysing the bone geometry that serves as child
-%       of the joint.
+%   root_body - a string specifying the name of the body attached to ground
+%       in the case it is not the default (pelvis).
 %
 % Outputs:
 %   JointParamsStruct - a structure collecting all the information required

@@ -2,7 +2,7 @@
 % joint coordinate systems stored in a structure and adds them to an
 % existing OpenSim model.
 %
-% createOpenSimModelJoints(osimModel, JCS, method)
+% createOpenSimModelJoints(osimModel, JCS, jointDefs, jointParamFile)
 %
 % Inputs:
 %   osimModel - an OpenSim model of the lower limb to which we want to add
@@ -14,28 +14,48 @@
 %       createCustomJointFromStruct function. See these functions for
 %       details.
 %
-%   method - optional input specifying the final arrangements of location
-%       and orientation of the CustomJoint. Valid values are
-%       'Modenese2018', which will define the same reference systems
-%       described in Modenese et al. J Biomech (2018), or 'auto', that will
-%       use the tibial JCS as well. See Modenese and Renault, JBiomech 2020
-%       for details.
+%   jointDefs - optional input specifying the joint definitions used for
+%       arranging and finalizing the partial reference systems obtained
+%       from morphological analysis of the bones. Valid values:
+%         - 'Modenese2018': define the same reference systems described in 
+%                           Modenese et al. J Biomech (2018).
+%         - 'auto2020': use the reference systems from morphological 
+%                       analysis as much as possible. See 
+%                       Modenese and Renault, JBiomech 2020 for a
+%                       comparison.
+%         - any definition you want to add. You just need to write a
+%           function and include it in the "switch" structure where joints
+%           are defined. Your implementation will be check for completeness
+%           by the verifyJointStructCompleteness.m function.
+%
+% jointParamFile - optional input specifying the name of a MATLAB function
+%       including the parameters of the joints to build. Default value is:
+%           - 'getJointParams.m': same joint parameters as the gait2392
+%                                 standard model.
+%           - 'getJointParams3DoFKnee.m': file available from the advanced
+%                                 examples, shows how to create a 3 dof
+%                                 knee joint
+%           - any other joint parameters you want to implement. Be careful
+%             because joint definitions and input bone will have to match:
+%             for example you cannot create a 2 dof ankle joint and
+%             exclude a subtalar joint if you are providing a talus and
+%             calcn segments, as otherwise they would not have any joint.
 %
 % Outputs:
 %   none - the joints are added to the input OpenSim model.
 %
-% See also GETJOINTPARAMS, CREATECUSTOMJOINTFROMSTRUCT, CREATELOWERLIMBJOINTS.
+% See also GETJOINTPARAMS, CREATECUSTOMJOINTFROMSTRUCT, 
+%          VERIFYJOINTSTRUCTCOMPLETENESS, CREATEOPENSIMMODELJOINTS.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-%
-% TODO add switches for adding custom workflows
 
-function createOpenSimModelJoints(osimModel, JCS, jointDefs)
+function createOpenSimModelJoints(osimModel, JCS, jointDefs, jointParamFile)
 
 if nargin<3;     jointDefs = 'auto2020';   end
+if nargin<4;     jointParamFile = 'getJointParams.m';   end
 
 % printout
 disp('---------------------');
@@ -58,9 +78,19 @@ disp('Checking parameters from morphological analysis:')
 % useful list
 fields_v = {'parent_location','parent_orientation','child_location', 'child_orientation'};
     
+if exist(jointParamFile, 'file') == 2
+    jointParamFuncName = jointParamFile(1:end-2);
+else
+    disp(['WARNING: Specified function ''', jointParamFile,''' for joint parameters was not found. Using default ''getJointParams.m''']);
+    jointParamFuncName = 'getJointParams';
+end
+
 for ncj = 1:length(joint_list)
+    % current joint name
     cur_joint_name = joint_list{ncj};
-    jointStructTemp = getJointParams(cur_joint_name);
+    
+    % getting joint parameters using the desired joint param function
+    eval(['jointStructTemp = ',jointParamFuncName,'(cur_joint_name);'])
     
     % STEP1: check if parent and child body are available
     parent_name = jointStructTemp.parentName;
