@@ -185,24 +185,7 @@ This is a checklist for setting up a functioning workflow using STAPLE:
 - [ ] use `writeModelGeometriesFolder.m` to write the visualization geometry files for your model from the `TriGeomSet` structure. You can specify the format (`obj` preferred, as more compact) and the level of subsampling of the original surface models (30% by default, usually required or OpenSim will struggle to visualize them).
 - [ ] use `initializeOpenSimModel.m` to start building the OpenSim model.
 - [ ] use `addBodiesFromTriGeomBoneSet` to create bodies corresponding to the fields of the `TriGeomSet` structure. These bodies will be added to the OpenSim model, but are not yet connected by joints. If you print the model at this stage all bodies will be connected to `Ground` with free joints. **NOTE:** At thi stage the assigned segment mass properties are calculated from the bone geometries using a bone density of 1.42 g/cm^3 as in [Dumas et al. (2015)](https://doi.org/10.1109/TBME.2005.855711). 
-- [ ] use `processTriGeomBoneSet.m` to process the bone geometries using the available algorithms and extract body coordinate systems (`CS`), joint coordinate systems (`JCS`) and bone landmarks (`BL`). This step does not rely on the OpenSim API and consists of a morphological analysis of the bone shapes performed using the algorithms available in STAPLE and listed in the Table below. This step could be run before initializing the OpenSim model, if you prefer to keep the morphological analysis clearly separated from the modelling operations.
-
-
-| STAPLE Input Name    | (Grouped) Segmented Bone Geometries |  
-| ---                  | ---             | 
-| `pelvis_no_sacrum`   | <ul><li>right iliacus</li><li>left iliacus</li></ul> | 
-| `femur_r`            | right femur     | 
-| `femur_l`            | left femur     | 
-| `tibia_r`			   | <ul><li>right tibia</li><li>right fibula</li></ul> | 
-| `tibia_l`			   | <ul><li>left tibia</li><li>left fibula</li></ul> | 
-| `patella_r` 	       | right patella | 
-| `patella_l` 	       | left patella | 
-| `talus_r` 	       | right talus  | 
-| `talus_l` 	       | left talus   | 
-| `calcn_r` 	       | <ul><li>right calcaneus</li><li>right foot bones excluded phalanges</li></ul> | 
-| `calcn_l` 	       | <ul><li>left calcaneus</li><li>left foot bones excluded phalanges</li></ul> | 
-| `toes_r` 	           | right foot phalanges  | 
-| `toes_l` 	           | left foot phalanges  | 
+- [ ] use `processTriGeomBoneSet.m` to process the bone geometries using the available algorithms and compute body coordinate systems (`CS`), joint coordinate systems (`JCS`) and bone landmarks (`BL`). This step does not rely on the OpenSim API and consists of a morphological analysis of the bone shapes performed using the algorithms available in STAPLE and listed in the Table below. This step could be run before initializing the OpenSim model, if you prefer to keep the morphological analysis clearly separated from the modelling operations.
 
 | STAPLE Input Geometry | Joint Coordinate Systems | Algorithms       |  
 | ---                   | ---                     | ---              |
@@ -218,6 +201,7 @@ This is a checklist for setting up a functioning workflow using STAPLE:
 |                       | mtp parent              | STAPLE-Foot      |
 | toes                  | mtp child               | uses parent `JCS` |
 
+
 - [ ] use `createOpenSimModelJoints.m` to complete the definitions of the joints connecting the OpenSim rigid bodies and add them to the initialised model. Joints are defined starting from the `JCS` reference systems identified by `processTriGeomBoneSet.m` and finalised using specific joint definitions. Currently we provide two options: 
 1. `Modenese2018` based on a previous publication of [Modenese et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.03.039) that does not rely on anatomical axes calculated from the tibia bone.
 2. a default approach named `auto2020`, which connect bones using as much information as possible from the bone morphological analysis.
@@ -227,38 +211,17 @@ This is a checklist for setting up a functioning workflow using STAPLE:
 - [ ] print the OpenSim model using the `osimModel.print(model_path\model_name.osim)` API method.
 - [ ] use the obtained model for your biomechanical analyses.
 
-### Available algorithms for bone morphological analysis
+### Algorithms for bone morphological analysis
 
-STAPLE collects some algorithms described in the literature and others that we developed _ad hoc_. The following table lists the algorithms currently available in this repository.
+STAPLE collects some algorithms described in the literature and others that we have developed _ad hoc_. The following table lists the algorithms currently available in this repository.
 
+| Family of Algorithms | Bones of interest                                           | Reference publication   |
+| ---                  | ---                                                         | ---                     |
+| Kai2014              | <ul><li>pelvis</li><li>femur</li><li>tibia</li></ul>        | [Kai et al. (2014)](https://doi.org/10.1016/j.jbiomech.2013.12.013)      |
+| GIBOC                | <ul><li>femur</li><li>tibia</li><li>patella</li></ul>       | [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028)  |
+| STAPLE               | <ul><li>pelvis</li><li>talus</li><li>foot bones</li></ul>   | [Modenese and Renault (2020)](https://doi.org/10.1101/2020.06.23.162727) |
 
-| Bone                 | Rigid Body Name | Joint Coordinate System | Algorithms       |  
-| ---                  | ---             | ---                     | ---              |
-| Pelvis               | pelvis          | ground-pelvis           | STAPLE-Pelvis    |
-|                      |                 |                         | Kai-Pelvis       |
-| Femur                | femur           | hip child               | Kai-Femur        |
-|                      |                 |                         | GIBOC-Femur      |
-|					   |                 | knee parent             | Kai-Femur        |
-|					   |                 |                         | GIBOC-Spheres    |
-|					   |                 |                         | GIBOC-Ellipsoids |
-|					   |                 |                         | GIBOC-Cylinder   |
-| Tibia+Fibula         | tibia           | knee child              | Kai-Tibia        |
-|                      |                 |                         | GIBOC-Ellipse    |
-|                      |                 |                         | GIBOC-Plateau    |
-|                      |                 | ankle parent            | uses child JCS   |
-| Patella              | patella         | TBA                     | TBA |
-| Talus                | talus           | ankle child             | STAPLE-Talus     |
-|                      |                 | subtalar parent         | STAPLE-Talus     |
-| Foot bones           | calcn           | subtalar child          | uses parent JCS  |
-|                      |                 | foot (auxiliary)        | STAPLE-Foot      |
-| Foot Phalanges       | toes            | TBA                     | TBA |
-
-The details of the algorithms are described in the following publications:
-* GIBOC-algorithms: [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028)
-* Kai algorithms: [Kai et al. (2014)](https://doi.org/10.1016/j.jbiomech.2013.12.013)
-* STAPLE algorithms: [Modenese and Renault (2020)](https://doi.org/10.1101/2020.06.23.162727) 
-
-Please note that STAPLE includes a minimal version of `GIBOC`, renamed `GIBOC-core`. You can download or inspect the original GIBOC-knee toolbox published by [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028) at [this link](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System).
+Please note that STAPLE toolbox includes a minimal version of `GIBOC`, renamed `GIBOC-core`. You can download or inspect the original GIBOC-knee toolbox published by [Renault et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.08.028) at [this link](https://github.com/renaultJB/GIBOC-Knee-Coordinate-System).
 
 
 ### Datasets available for testing
