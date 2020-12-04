@@ -4,6 +4,7 @@
 *.msh
 *.vtk
 *.iv
+*.obj
 
 # MAF files
 .msf
