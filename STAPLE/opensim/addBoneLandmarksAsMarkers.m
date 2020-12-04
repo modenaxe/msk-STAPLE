@@ -56,25 +56,30 @@ for nb = 1:Nb
     end
     % loop through the markers
     cur_body_markers = BLStruct.(cur_body_name);
-    % the actual markers are fields of the cur_body_markers variable
-    markers_list = fields(cur_body_markers);
-    N_markers = numel(markers_list);
-    for nm = 1:N_markers
-        % define the markers
-        cur_marker_name = markers_list{nm};
-        % get body
-        cur_phys_frame = osimModel.getBodySet.get(cur_body_name);
-        Loc = cur_body_markers.(cur_marker_name)*dim_fact;
-        marker = Marker(cur_marker_name,...
-                        cur_phys_frame,...
-                        Vec3(Loc(1), Loc(2), Loc(3)));
-        % add current marker to model
-        osimModel.addMarker(marker);
-        % clear coordinates as precaution
-        clear Loc
-        % display
-%         disp(['  Attached: ', cur_marker_name, '(', cur_body_name,')']);
-        disp(['    * ', cur_marker_name]);
+    % skip markers if the structure is empty, otherwise process it
+    if isempty(cur_body_markers)
+        continue
+    else
+        % the actual markers are fields of the cur_body_markers variable
+        markers_list = fields(cur_body_markers);
+        N_markers = numel(markers_list);
+        for nm = 1:N_markers
+            % define the markers
+            cur_marker_name = markers_list{nm};
+            % get body
+            cur_phys_frame = osimModel.getBodySet.get(cur_body_name);
+            Loc = cur_body_markers.(cur_marker_name)*dim_fact;
+            marker = Marker(cur_marker_name,...
+                cur_phys_frame,...
+                Vec3(Loc(1), Loc(2), Loc(3)));
+            % add current marker to model
+            osimModel.addMarker(marker);
+            % clear coordinates as precaution
+            clear Loc
+            % display
+            %         disp(['  Attached: ', cur_marker_name, '(', cur_body_name,')']);
+            disp(['    * ', cur_marker_name]);
+        end
     end
 end
 
