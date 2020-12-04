@@ -52,7 +52,7 @@ for n_side = 1:2
     logConsolePrintout('on', log_file);
         
     % cell array with the name of the bone geometries to process
-    bones_list = {['tibia_', cur_side], ['talus_', cur_side],['calcn_', cur_side]};
+    bones_list = {['tibia_', cur_side], ['talus_', cur_side],['calcn_', cur_side], ['toes_', cur_side]};
     
     % tibia and knee names including side
     tibia_name = bones_list{1};

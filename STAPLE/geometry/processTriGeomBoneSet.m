@@ -92,11 +92,12 @@ if nargin<7; debug_plots = 0;  end
 if nargin<8; in_mm = 1; end
 
 % names of the segments
-femur_name = ['femur_', side];
-tibia_name = ['tibia_', side];
+femur_name   = ['femur_', side];
+tibia_name   = ['tibia_', side];
 patella_name = ['patella_', side];
-talus_name = ['talus_', side];
-calcn_name = ['calcn_', side];
+talus_name   = ['talus_', side];
+calcn_name   = ['calcn_', side];
+toes_name    = ['toes_', side];
 
 disp('-----------------------------------')
 disp('Processing provided bone geometries')
@@ -112,6 +113,7 @@ if isfield(triGeomBoneSet, tibia_name);disp( ['  tibia  : ', algo_tibia]);  end
 if isfield(triGeomBoneSet,patella_name);disp(['  patella: ', algo_patella]);end
 if isfield(triGeomBoneSet,talus_name); disp( ['  talus  : ', 'STAPLE']);    end
 if isfield(triGeomBoneSet,calcn_name); disp( ['  foot   : ', 'STAPLE']);    end
+if isfield(triGeomBoneSet,toes_name);  disp( ['  toes   : ', 'N/A']);    end
 
 % ---- PELVIS -----
 if isfield(triGeomBoneSet,'pelvis')
@@ -208,6 +210,12 @@ end
 if isfield(triGeomBoneSet,calcn_name)
     [CS.(calcn_name), JCS.(calcn_name), BL.(calcn_name)] =...
         STAPLE_foot(triGeomBoneSet.(calcn_name), side, result_plots,  debug_plots, in_mm);
+end
+
+%---- TOES -----
+if isfield(triGeomBoneSet,toes_name)
+    [CS.(toes_name), JCS.(toes_name), BL.(toes_name)] =...
+        STAPLE_toes(triGeomBoneSet.(toes_name), side, result_plots,  debug_plots, in_mm);   
 end
 
 end

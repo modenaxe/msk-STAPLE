@@ -25,7 +25,7 @@ disp('---------------------')
 disp('   STAPLE - FOOT     '); 
 disp('---------------------')
 disp(['* Body Side   : ', upper(side_low)]);
-disp(['* Fit Method  : ', 'sphere & cylinder']);
+disp(['* Method      : ', 'convex hull']);
 disp(['* Result Plots: ', convertBoolean2OnOff(result_plots)]);
 disp(['* Debug  Plots: ', convertBoolean2OnOff(debug_plots)]);
 disp(['* Triang Units: ', 'mm']);
