@@ -57,7 +57,6 @@ function [CS, JCS, tibiaBL] = Kai2014_tibia(tibiaTri,...
 slices_thickness = 1;
 
 % default behaviour of results/debug plots
-if nargin<2;     side_raw='r';      end
 if nargin<3;     result_plots = 1;  end
 if nargin<4;     debug_plots = 0;   end
 if nargin<5;     in_mm = 1;         end %placeholder
