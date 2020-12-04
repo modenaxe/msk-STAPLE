@@ -5,13 +5,14 @@
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
-- [Requirements and set up](#requirements-and-set-up)
+- [Requirements](#requirements)
+- [Installation](#installation)
 - [How to use the STAPLE toolbox](#how-to-use-the-staple-toolbox)
   - [Workflow to generate subject-specific lower limb models](#workflow-to-generate-subject-specific-lower-limb-models)
-  - [Preliminary steps and data preparation](#preliminary-steps-and-data-preparation)
-  - [Quick start guide: common workflows ready to use](#quick-start-guide-common-workflows-ready-to-use)
+  - [Before using STAPLE: data preparation](#before-using-staple-data-preparation)
+  - [Quick start guide: provided workflows](#quick-start-guide-provided-workflows)
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
-  - [Available algorithms for bone morphological analysis](#available-algorithms-for-bone-morphological-analysis)
+  - [Algorithms for bone morphological analysis](#algorithms-for-bone-morphological-analysis)
   - [Datasets available for testing](#datasets-available-for-testing)
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
@@ -102,9 +103,7 @@ The bone geometries are normally exported as surface models in [STL format](http
 
 2. **improving the quality of the segmentated bone geometries**, normally running filters on the surface models to improve their quality and topology. Also in this case, there are several options to process the geometries and a list of software is available at at [this link](https://github.com/modenaxe/awesome-biomechanics#manipulation-processing-and-comparison-of-surface-meshes).
 
-3. **renaming bone geometries**: the surface meshes are renamed following the typical names of standard OpenSim models, presented in the table below. Individual bones are also grouped at this stage, for example the surface meshes of tibia and fibula can be joined using the `flatten mesh layers` filter in [MeshLab](https://www.meshlab.net/). 
-
-**NOTE:** This is actually an optional step, but if not performed then you will not be able to use the provided workflows straight away. 
+3. **renaming bone geometries**: the surface meshes are renamed following the typical names of standard OpenSim models, presented in the table below. Individual bones are also grouped at this stage, for example the surface meshes of tibia and fibula can be joined using the `flatten mesh layers` filter in [MeshLab](https://www.meshlab.net/). **NOTE:** This is actually an optional step, but if not performed then you will not be able to use the provided workflows straight away. 
 
 | STAPLE Input Name    | (Grouped) Segmented Bone Geometries |  
 | ---                  | ---             | 
@@ -154,37 +153,38 @@ where:
 * `dataset_1_folder` is where the bone geometries for the first partecipant data are stored
 * `dataset_2_folder` is where the bone geometries for the second partecipant data are stored, and so on. 
 
-6. At this point you should be able to **use an available workflow or implement your own** based on the instructions below. If a provided example demonstrates a use similar to your intended one, you can use it as starting point.
+
+At this point you should be able to **use one of the available workflows or implement your own** based on the instructions below. If a provided example demonstrates a use similar to your intended one, you can use it as starting point.
 
 ### Quick start guide: provided workflows
 
-The examples scripts provide implementations of common workflows that can be adapted and run with minimum effort. In most cases, running a similar workflow will be as easy as modify the input folders or dataset names. More examples will be added in time.
+The examples scripts provide implementations of common workflows that can be adapted and run with minimum effort for processing new datasets. In most cases, adapting a script will be as easy as modifying the input folders or dataset names. More examples will be added in time.
 
-| Script name | Script action | Demonstrated feature |
+| Script name | Workflow  | Description and notes |
 | --- | --- | --- |
-| Example_create_kinetic_models.m | creates automatically OpenSim model using the bone geometries in the `dataset_geometries` folder. These are kinetic models. | Same datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
-| Example_full_leg_left.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
-| Example_full_leg_right.m | creates OpenSim model of the right lower limb from datasets | Full workflow; batch processing. |
-| Example_bilateral_model.m | creates bilateral OpenSim models | Merge models; full workflow; batch processing |
-| Example_hip_model.m | creates a hip joint model | Partial model (hip). |
-| Example_knee_model.m | creates a knee joint model | Partial model (knee). |
-| Example_ankle_model.m | creates an ankle joint model | Partial model (ankle). Based on JIA-MRI data. |
-| Example_extract_tibiofem_artic_surf.m | extracts tibiofemoral articular surfaces | Articular surface extraction. | 
-| Example_extract_ankle_artic_surf.m | extracts talocrural and subtalar articular surfaces | Articular surface extraction. | 
+| Example_create_kinetic_models.m | Full workflow | Creates ipsilateral kinetic models. Same models and datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
+| Example_full_leg_left.m         | Ipsilateral workflow (left side) | Creates models of the lefs lower limb. Batch processing. |
+| Example_full_leg_right.m        | Ipsilateral workflow (right side) | Creates models of the right lower limb. Batch processing. |
+| Example_bilateral_model.m       | Bilateral workflow | Merges ipsilateral models. Batch processing |
+| Example_hip_model.m             | Partial model workflow | Creates a hip joint model. |
+| Example_knee_model.m            | Partial model workflow | Creates a knee joint model. |
+| Example_ankle_model.m           | Partial model workflow | Partial model Creates an ankle joint model. |
+| Example_extract_tibiofem_artic_surf.m | Articular surface extraction workflow  | Extracts hip and tibiofemoral articular surfaces. | 
+| Example_extract_ankle_artic_surf.m    | Articular surface extraction workflow | Extracts talocrural and subtalar articular surfaces. | 
 
 
 ### Detailed steps to setup a STAPLE workflow
 
 This is a checklist for setting up a functioning workflow using STAPLE:
-- [ ] have your data prepared as described [in the previous section](#before-using-STAPLE-data-preparation) 
-- [ ] define the dataset(s) to process 
-- [ ] define a cell array with names of bones to process. The same names will be used for the rigid bodies
-- [ ] define a body side if not evident from bone names. Otherwise STAPLE will take care of this.
-- [ ] decide the joint definitions (`joint_defs` variable in the examples).
+- [ ] ensure that have your data prepared as described [in this previous section](#before-using-STAPLE-data-preparation).
+- [ ] define the dataset(s) to process.
+- [ ] define a cell array with names of bones to process. The same names will be used for the rigid bodies.
+- [ ] define a body side if not evident from bone names. Otherwise STAPLE can take care of this in most processing function using the function `inferBodySideFromAnatomicStruct.m`.
+- [ ] decide the joint definitions (`joint_defs` variable in the examples), meaning how incomplete joint reference systems will be completed. You can refer to the functions `jointDefinitions_auto2020.m` and `jointDefinitions_Modenese2018.m` as two examples.
 - [ ] use `createTriGeomSet.m` for creating a set of MATLAB triangulation objects (`TriGeomSet` structure).
 - [ ] use `writeModelGeometriesFolder.m` to write the visualization geometry files for your model from the `TriGeomSet` structure. You can specify the format (`obj` preferred, as more compact) and the level of subsampling of the original surface models (30% by default, usually required or OpenSim will struggle to visualize them).
 - [ ] use `initializeOpenSimModel.m` to start building the OpenSim model.
-- [ ] use `addBodiesFromTriGeomBoneSet` to create bodies corresponding to the fields of the `TriGeomSet` structure. These bodies will be added to the OpenSim model, but are not yet connected by joints. If you print the model at this stage all bodies will be connected to `Ground` with free joints. **NOTE:** At thi stage the assigned segment mass properties are calculated from the bone geometries using a bone density of 1.42 g/cm^3 as in [Dumas et al. (2015)](https://doi.org/10.1109/TBME.2005.855711). 
+- [ ] use `addBodiesFromTriGeomBoneSet` to create bodies corresponding to the fields of the `TriGeomSet` structure. These bodies will be added to the OpenSim model, but are not yet connected by joints. If you print the model at this stage all bodies will be connected to `Ground` with free joints. **NOTE:** At this stage the assigned segment mass properties are calculated from the bone geometries using a bone density of 1.42 g/cm^3 as in [Dumas et al. (2015)](https://doi.org/10.1109/TBME.2005.855711). If you are building a kinetic model, you need to use `assignMassPropsToSegments.m` to update the inertial properties after creating the model joints (see below). 
 - [ ] use `processTriGeomBoneSet.m` to process the bone geometries using the available algorithms and compute body coordinate systems (`CS`), joint coordinate systems (`JCS`) and bone landmarks (`BL`). This step does not rely on the OpenSim API and consists of a morphological analysis of the bone shapes performed using the algorithms available in STAPLE and listed in the Table below. This step could be run before initializing the OpenSim model, if you prefer to keep the morphological analysis clearly separated from the modelling operations.
 
 | STAPLE Input Geometry | Joint Coordinate Systems | Algorithms       |  
@@ -202,9 +202,12 @@ This is a checklist for setting up a functioning workflow using STAPLE:
 | toes                  | mtp child               | uses parent `JCS` |
 
 
-- [ ] use `createOpenSimModelJoints.m` to complete the definitions of the joints connecting the OpenSim rigid bodies and add them to the initialised model. Joints are defined starting from the `JCS` reference systems identified by `processTriGeomBoneSet.m` and finalised using specific joint definitions. Currently we provide two options: 
-1. `Modenese2018` based on a previous publication of [Modenese et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.03.039) that does not rely on anatomical axes calculated from the tibia bone.
-2. a default approach named `auto2020`, which connect bones using as much information as possible from the bone morphological analysis.
+- [ ] use `createOpenSimModelJoints.m` to complete the definitions of the joints connecting the OpenSim rigid bodies and add them to the initialised model. This is the step where more adjustments can be made. Joints are created using:
+* the information from the `JCS` reference systems identified by `processTriGeomBoneSet.m` during the morphological analysis
+* parameters defined in the `getJointParams.m` function: joint name, parent and child body names, coordinates, order of rotations, etc. Currently we provide a standard joint definition in the main STAPLE folder and an example of a customization of joint definition in the advanced examples.
+* instructions on how to finalise incomplete `JCS` given in the script indicated by `joint_defs`. Currently we provide two options for completing the `JCS`: 
+     1. `Modenese2018` based on a previous publication of [Modenese et al. (2018)](https://doi.org/10.1016/j.jbiomech.2018.03.039) that does not rely on anatomical axes calculated from the tibia bone.
+     2. a default approach named `auto2020`, which connect bones using as much information as possible from the bone morphological analysis.
 - [ ] (optional) use `assignMassPropsToSegments.m` to update the mass properties of the segment using the the actual anthropometry of the subject that you are modelling. Segment masses and inertias of the lower limb are scaled from those of the standard `gait2392` OpenSim model, which are identical to those of the more recent Rajagopal full body model. **NOTE:** this feature is still very basic in its implementation and will be further developed.
 - [ ] (optional) use `addBoneLandmarksAsMarkers.m` to add to the OpenSim models the bony landmarks identified automatically during the morphological analyses.
 - [ ] finalise the OpenSim model using the `osimModel.finalizeConnections()`  API method.
@@ -238,7 +241,7 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 | ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727)  |  |
 | JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | [Montefiori et al. 2019a](https://link.springer.com/article/10.1007/s10439-019-02287-0) |  |
 | JIA-ANKLE-MRI |   M    | N/A |  N/A   | N/A   |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials |
-| VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE cannot create a full lower limb (yet). | 
+| VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE **cannot** create a full lower limb (yet). | 
 
 
 ### Further notes on STAPLE
@@ -262,7 +265,7 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 - [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
 - [ ] if you are using one of the workflows from the examples, ensure that you are using the correct names for the bone geometries, e.g. `pelvis_no_sacrum`, `femur_r`, `tibia_r`, etc.
 - [ ] ensure that the quality of your bone surface geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes. You can have an idea of what we mean by "good mesh" consulting the table that describes the datasets provided with STAPLE. If necessary, use the filters and tools available on software like [MeshLab](https://www.meshlab.net/) to improve your dataset.
-- [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
+- [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable in the first place or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
 - [ ] verify that processing of your dataset is not failing because of the [current limitations](#current-limitations) of the STAPLE toolbox.
 
 ## Does STAPLE work only with OpenSim?

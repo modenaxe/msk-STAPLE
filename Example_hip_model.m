@@ -68,14 +68,14 @@ for n_d = 1:numel(dataset_set)
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
     writeModelGeometriesFolder(geom_set, geometry_folder_path, vis_geom_format);
     
+    % process bone geometries (compute joint parameters and identify markers)
+    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
+    
     % initialize OpenSim model
     osimModel = initializeOpenSimModel(cur_model_name);
     
     % create bodies
     osimModel = addBodiesFromTriGeomBoneSet(osimModel, geom_set, geometry_folder_name, vis_geom_format);
-    
-    % process bone geometries (compute joint parameters and identify markers)
-    [JCS, BL, CS] = processTriGeomBoneSet(geom_set);
 
     % create joints
     createOpenSimModelJoints(osimModel, JCS, joint_defs);
