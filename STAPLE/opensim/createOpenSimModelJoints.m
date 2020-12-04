@@ -14,7 +14,7 @@
 %       createCustomJointFromStruct function. See these functions for
 %       details.
 %
-%   jointDefs - optional input specifying the joint definitions used for
+%   joint_defs - optional input specifying the joint definitions used for
 %       arranging and finalizing the partial reference systems obtained
 %       from morphological analysis of the bones. Valid values:
 %         - 'Modenese2018': define the same reference systems described in 
@@ -52,9 +52,9 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-function createOpenSimModelJoints(osimModel, JCS, jointDefs, jointParamFile)
+function createOpenSimModelJoints(osimModel, JCS, joint_defs, jointParamFile)
 
-if nargin<3;     jointDefs = 'auto2020';   end
+if nargin<3;     joint_defs = 'auto2020';   end
 if nargin<4;     jointParamFile = 'getJointParams.m';   end
 
 % printout
@@ -156,8 +156,8 @@ for ncj = 1:length(joint_list)
 end
 
 % JOINT DEFINITIONS
-disp(['Applying joint definitions: ', jointDefs])
-switch jointDefs
+disp(['Applying joint definitions: ', joint_defs])
+switch joint_defs
     case 'auto2020'
         jointStruct = jointDefinitions_auto2020(JCS, jointStruct);
     case 'Modenese2018'
