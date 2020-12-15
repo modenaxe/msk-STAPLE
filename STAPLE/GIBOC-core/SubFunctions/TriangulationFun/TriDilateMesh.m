@@ -1,4 +1,4 @@
-% TRIDILATEMESH
+% TRIDILATEMESH Dilate a mesh on a support mesh
 % This function is analog to a dilate function performed on binary images 
 % (https://en.wikipedia.org/wiki/Mathematical_morphology)
 %

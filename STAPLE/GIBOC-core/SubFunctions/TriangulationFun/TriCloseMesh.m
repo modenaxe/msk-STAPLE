@@ -25,10 +25,10 @@
 %             will be rounded up to the next integer.
 %   
 % Outputs:
-%   TRout - The triangulation object in the new coordinate system
+%   TRout - The closed triangulation object
 %
 %
-% See also TRIDILATEMESH, TRIERODEMESH
+% See also TRIDILATEMESH, TRIERODEMESH, TRIOPENMESH
 %
 % ------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
