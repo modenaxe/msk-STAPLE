@@ -36,7 +36,7 @@ output_models_folder = 'opensim_models-branch';
 datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
-datasets = {'LHDL_CT', 'TLEM2_CT'};%, 'ICL_MRI', 'JIA_MRI'};
+datasets = {'TLEM2_CT'};%, 'LHDL_CT', 'ICL_MRI', 'JIA_MRI'};
 
 % body sides
 cur_side = 'r';
@@ -44,7 +44,7 @@ cur_side = 'r';
 % cell array with the bone geometries that you would like to process
 bones_list = {'pelvis_no_sacrum',  ['femur_', cur_side],...
               ['tibia_', cur_side],['talus_', cur_side],...
-              ['calcn_', cur_side]};
+              ['calcn_', cur_side],['toes_', cur_side]};
 
 % visualization geometry format (options: 'stl' or 'obj')
 vis_geom_format = 'obj';
@@ -59,7 +59,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1%:numel(datasets)
+for n_d = 1:numel(datasets)
     
     % current dataset being processed
     cur_dataset = datasets{n_d};
