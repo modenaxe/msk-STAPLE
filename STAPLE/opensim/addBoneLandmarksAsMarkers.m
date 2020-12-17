@@ -58,6 +58,7 @@ for nb = 1:Nb
     cur_body_markers = BLStruct.(cur_body_name);
     % skip markers if the structure is empty, otherwise process it
     if isempty(cur_body_markers)
+        disp(['    NO LANDMARKS AVAILABLE']);
         continue
     else
         % the actual markers are fields of the cur_body_markers variable
