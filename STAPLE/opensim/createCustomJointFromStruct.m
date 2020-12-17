@@ -15,12 +15,16 @@
 %       function to add it to the OpenSim model.
 %
 % Example of structure to provide as input:
-% JointParamsStruct.name               = 'knee_r';
-% JointParamsStruct.parent             = 'femur_r';
-% JointParamsStruct.child              = 'tibia_r';
+% JointParamsStruct.jointName          = 'knee_r';
+% JointParamsStruct.parentName         = 'femur_r';
+% JointParamsStruct.childName          = 'tibia_r';
 % JointParamsStruct.coordsNames        = {'knee_angle_r'};
 % JointParamsStruct.coordsTypes        = {'rotational'};
 % JointParamsStruct.rotationAxes       = 'zxy';
+% JointParamsStruct.parent_location    = [x y z];
+% JointParamsStruct.parent_orientation = [x y z];
+% JointParamsStruct.child_location     = [x y z];
+% JointParamsStruct.child_orientation  = [x y z];
 %
 % See also CREATESPATIALTRANSFORMFROMSTRUCT, GETJOINTPARAMS.
 %
