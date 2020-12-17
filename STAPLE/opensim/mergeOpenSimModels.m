@@ -25,21 +25,26 @@
 %  Author:   Luca Modenese 
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
-function mergeOpenSimModels(baseOsimModel_file, osimModelToMerge_file, mergedOsimModel_file)
+function mergeOpenSimModels(baseOsimModel, osimModelToMerge, mergedOsimModel)
+
+if nargin<3; mergedOsimModel = []; end
 
 % import libraries
 import org.opensim.modeling.*
 
 % read the model files
-baseOsimModel    = Model(baseOsimModel_file);
-osimModelToMerge = Model(osimModelToMerge_file);
-
+if ischar(baseOsimModel)
+    baseOsimModel    = Model(baseOsimModel);
+end
+if ischar(osimModelToMerge)
+    osimModelToMerge = Model(osimModelToMerge);
+end
 % inform user
 disp('---------------------');
 disp('   MERGING MODELS    ');
 disp('---------------------');
-disp(['Base    model: ', baseOsimModel_file]);
-disp(['Merging model: ', osimModelToMerge_file]);
+disp(['Base    model: ', char(baseOsimModel.getName())]);
+disp(['Merging model: ', char(osimModelToMerge.getName())]);
 disp('---------------------');
 
 disp('Updating BodySet:')
@@ -59,7 +64,16 @@ mergeOpenSimSets(baseMarkerSet, mergeMarkerSet);
 disp('Done.')
 
 % write final model
-baseOsimModel.print(mergedOsimModel_file);
-disp('-------------------------')
-disp(['Merged model saved as ', mergedOsimModel_file,'.']);
-disp('-------------------------')
+baseOsimModel.finalizeConnections()
+% mergedOsimModel = baseOsimModel.clone(); 
+
+if ischar(mergedOsimModel)
+    baseOsimModel.print(mergedOsimModel);
+    disp('-------------------------')
+    disp(['Merged model saved as ', mergedOsimModel,'.']);
+    disp('-------------------------')
+else
+    return
+end
+
+end
