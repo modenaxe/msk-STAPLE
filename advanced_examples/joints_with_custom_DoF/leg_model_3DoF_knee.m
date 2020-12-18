@@ -3,8 +3,9 @@
 %    email:    l.modenese@imperial.ac.uk                                  %
 %    Copyright (c) 2020 Modenese L.                                       %
 % ----------------------------------------------------------------------- %
-% This script automatically demonstrates how to automatically create a
-% lower limb model with a 3 degrees of freedom knee.
+% DESCRIPTION
+% This script demonstrates how to automatically create a lower limb model 
+% with a 3 degrees of freedom knee.
 %
 % IMPORTANT:
 % The example and resulting model are provided for illustrating an
