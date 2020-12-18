@@ -18,9 +18,11 @@
 % JointParamsStruct.jointName          = 'knee_r';
 % JointParamsStruct.parentName         = 'femur_r';
 % JointParamsStruct.childName          = 'tibia_r';
-% JointParamsStruct.coordsNames        = {'knee_angle_r'};
-% JointParamsStruct.coordsTypes        = {'rotational'};
-% JointParamsStruct.rotationAxes       = 'zxy';
+% JointParamsStruct.coordsNames        = {'knee_angle_r', 'knee_tx_r'};
+% JointParamsStruct.coordsTypes        = {'rotational', 'translational'};
+% JointParamsStruct.rotationAxes       = 'zxy'; % OPTIONAL: default xyz; ALWAYS 3 COMP 
+% JointParamsStruct.translationAxes    = 'xyz'; % OPTIONAL: default xyz; ALWAYS 3 COMP
+% JointParamsStruct.coordRanges        = {[-10 90], [-3 3]}; % OPTIONAL (deg/metres)
 % JointParamsStruct.parent_location    = [x y z];
 % JointParamsStruct.parent_orientation = [x y z];
 % JointParamsStruct.child_location     = [x y z];
