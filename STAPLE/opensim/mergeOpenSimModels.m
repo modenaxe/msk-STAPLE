@@ -17,7 +17,8 @@
 %       merged OpenSim model will be saved.
 %
 % Outputs:
-%   None - a merged model is printed.
+%   None - a merged model is printed OR baseOsimModel is updated and
+%       becomes the printed model.
 %
 % See also MERGEOPENSIMSETS.
 %
