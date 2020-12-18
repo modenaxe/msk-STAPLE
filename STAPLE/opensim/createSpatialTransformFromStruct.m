@@ -34,7 +34,6 @@ import org.opensim.modeling.*
 % creating coordinates
 coordsNames   = struct.coordsNames;
 coordsTypes   = struct.coordsTypes;
-rotationAxes  = struct.rotationAxes;
 
 % rotational coordinates
 nr_rot = sum(strcmp(coordsTypes,'rotational'));
@@ -59,19 +58,37 @@ if N_str~=(nr_trans+nr_rot)
 end
 
 % extracting the vectors associated with the order of rotation
+% if rotationAxes is specified they will be updated otherwise will stay
+% eye(3).
 v = eye(3);
-if ischar(rotationAxes)
-    for ind = 1:3
-        v(ind,1:3) = getAxisVecFromStringLabel(rotationAxes(ind));
-    end
-else
-    for ind = 1:nr_rot
-        v(ind,1:3) = rotationAxes(ind, :);
+if isfield(struct, 'rotationAxes')
+    rotationAxes  = struct.rotationAxes;
+    if ischar(rotationAxes)
+        for ind = 1:3
+            v(ind,1:3) = getAxisVecFromStringLabel(rotationAxes(ind));
+        end
+    else
+        for ind = 1:nr_rot
+            v(ind,1:3) = rotationAxes(ind, :);
+        end
     end
 end
 
 % translations are always along the axes XYZ (in this order)
 v(4:6,1:3) = eye(3);
+if isfield(struct, 'translationAxes')
+    translationAxes  = struct.translationAxes;
+    if ischar(translationAxes)
+        % loops through the labels
+        for ind = 1:3
+            v(3+ind,1:3) = getAxisVecFromStringLabel(translationAxes(ind));
+        end
+    else
+        for ind = 1:nr_rot
+            v(3+ind,1:3) = translationAxes(ind, :);
+        end
+    end
+end
 
 % create spatial transform
 jointSpatialTransf = SpatialTransform();
