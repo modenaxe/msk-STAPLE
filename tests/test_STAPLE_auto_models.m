@@ -29,7 +29,7 @@ addpath('./support_funcs');
 
 % where the model created using the current version of STAPLE are (created
 % with the previous run(../Example...)
-models_folder = '../opensim_models_bioRxiv';
+models_folder = '../opensim_models_JBiomech';
 
 % where the models created for the paper have been stored
 ref_models_folder = 'ref_models/paper';
