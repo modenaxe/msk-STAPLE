@@ -15,7 +15,6 @@
 %   TRout - A triangulation object.
 %           The closest to InitialPt connected subset of TR.
 %
-%
 % ------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
