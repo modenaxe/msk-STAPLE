@@ -29,19 +29,18 @@
 
 STAPLE requires three-dimensional bone geometries as an input. These geometries are normally surface models segmented from medical images like magnetic resonance imaging (MRI) or computed tomography (CT) scans. STAPLE performs morphological analyses on the provided bone geometries and defines reference systems used to create models of entire legs or few joints, depending on the available data or the research intent. Currently the toolbox creates kinematic and kinetic skeletal models but will soon be extended with complete musculoskeletal capabilities. 
 
-The STAPLE toolbox and some of its applications are described in [the following preprint](https://doi.org/10.1101/2020.06.23.162727):
+The STAPLE toolbox and some of its applications are described in [the following publication](https://doi.org/10.1016/j.jbiomech.2020.110186) (also available as [preprint](https://doi.org/10.1101/2020.06.23.162727)):
 ```bibtex
-@article{Modenese2020auto,
+@article{Modenese2021auto,
   title={Automatic Generation of Personalized Skeletal Models of the Lower Limb from Three-Dimensional Bone Geometries},
   author={Modenese, Luca and Renault, Jean-Baptiste},
-  journal={bioRxiv},
-  year={2020},
-  doi={https://doi.org/10.1101/2020.06.23.162727}
+  journal={Journal of Biomechanics},
+  year={2021, in press},
+  doi={https://doi.org/10.1016/j.jbiomech.2020.110186}
 }
 ```
 
 The models, simulations and results of the publication can be fully reproduced using the scripts and datasets available in [this GitHub repository](https://github.com/modenaxe/auto-lowerlimb-models-paper).
-_The link will be made active upon acceptance of the manuscript_.
 
 
 ## What can I do with STAPLE?
