@@ -61,7 +61,7 @@ For example, models of hip, knee and ankle joints can be created as individual m
 
 * **Merging subject-specific and generic models**: STAPLE includes some basic utilities to merge partial subject-specific skeletal models (obtainable from localized MRI scans) with generic musculoskeletal models. See the provided [advanced examples](./advanced_examples).
   
-[!merged_model](./images/STAPLEfoot_gait2392_merged.png)
+![merged_model](./images/STAPLEfoot_gait2392_merged.png)
 
 ## Requirements
 
