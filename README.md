@@ -59,6 +59,10 @@ For example, models of hip, knee and ankle joints can be created as individual m
 
 * **Basic identification of bony landmarks**: certain bony landmarks can be easily identified following the morphological analysis of the bone surfaces. These landmarks are intended as first guess for registration with gait analysis data.
 
+* **Merging subject-specific and generic models**: STAPLE includes some basic utilities to merge partial subject-specific skeletal models (obtainable from localized MRI scans) with generic musculoskeletal models. See the provided [advanced examples](./advanced_examples).
+  
+[!merged_model](./images/STAPLEfoot_gait2392_merged.png)
+
 ## Requirements
 
 In order to use the STAPLE toolbox you will need:
@@ -292,7 +296,6 @@ Please refer to the [code of conduct](/CODE_OF_CONDUCT.md). In brief, be a nice 
 
 ## License
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
-
 Uses beyond those permitted by the license must be discussed with the authors.
 
 ## Acknowledgements
