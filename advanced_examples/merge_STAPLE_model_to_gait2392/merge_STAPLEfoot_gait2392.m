@@ -19,7 +19,7 @@ addpath(genpath('../../STAPLE'))
 % SETTINGS %
 %----------%
 % generic model to use as baseline model
-generic_osimModel_file = 'gait2392_scaled_0.85.osim';
+generic_osimModel_file = 'gait2392_scaled_0.82.osim';
 % STAPLE generated modelthat we want to merge with the generic baseline
 MRI_osimModel_file = 'example_auto2020_ankle_R.osim';
 %-----------------------------------------------
@@ -52,7 +52,7 @@ MRI_weld_child_frame = STAPLE_jointSet.get('ground_tibia_r').get_frames(1);
 JointParamsStruct.jointName          = 'merge_joint';
 JointParamsStruct.parentName         = 'tibia_r';
 JointParamsStruct.childName          = 'tibia_MRI_r';
-JointParamsStruct.coordsNames        = {'merge_adj_tz', 'merge_adj_rotz'};
+JointParamsStruct.coordsNames        = {'merge_adj_transY', 'merge_adj_rotZ'};
 JointParamsStruct.coordsTypes        = {'translational', 'rotational'};
 JointParamsStruct.rotationAxes       = 'zxy';
 JointParamsStruct.translationAxes    = 'yxz';
@@ -83,6 +83,9 @@ mergeOpenSimModels(generic_osimModel, STAPLE_osimModel);
 % create the CustomJoint defined above: tibia_r and tibia_MRI_r will be
 % connected once we finaliseConnections()
 createCustomJointFromStruct(generic_osimModel, JointParamsStruct);
+
+% change name of the model
+generic_osimModel.setName('merged_STAPLEfoot_gait2392');
 
 % finalise connections and print
 generic_osimModel.finalizeConnections();
