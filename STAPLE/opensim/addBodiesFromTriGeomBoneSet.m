@@ -64,7 +64,9 @@ import org.opensim.modeling.*
 if nargin<4; vis_geom_format = 'obj';end
 if nargin<6; in_mm = 1; end
 if in_mm == 1; dim_fact = 0.001; else; dim_fact = 1; end
-if nargin<5; body_density = 1420*dim_fact;end % bone density by default (Dumas 2005)
+
+% bone density by default (Dumas 2005)
+if nargin<5; body_density = 1420*dim_fact^3;end 
 
 % add the individual bodies to the model
 body_list = fields(geom_set);

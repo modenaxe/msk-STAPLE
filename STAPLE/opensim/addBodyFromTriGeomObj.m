@@ -51,22 +51,23 @@ import org.opensim.modeling.*
 % defaults and dimensional scales
 if nargin<6; in_mm = 1; end
 if in_mm == 1; dim_fact = 0.001; else; dim_fact = 1; end
-if nargin<5; body_density = 1420*dim_fact;end % bone density by default (Dumas 2005)
+% bone density is defined in addBodiesFromTriGeomBoneSet
+% if nargin<5; body_density = 1420*dim_fact^3;end % bone density by default (Dumas 2005)
 
 % compute mass properties
 % NOTE: when creating automated models this initial mass properties are
 % overwritten by mapping proper segment inertial properties and scaling
 % them.
 boneMassProps= computeMassProperties_Mirtich1996(triGeom.Points, triGeom.ConnectivityList);
-bone_mass    = boneMassProps.mass * body_density;
-bone_COP     = boneMassProps.COM  * dim_fact;
-bone_inertia = boneMassProps.Ivec * (body_density * dim_fact^2.0); 
+bone_mass    = boneMassProps.mass * body_density; % vol [mm^3] * density [kg/mm^3] 
+bone_COP     = boneMassProps.COM  * dim_fact; 
+bone_inertia = boneMassProps.Ivec * body_density; % Ivec [mm^3 * mm^2] * density [kg/mm^3] 
 
 % create opensim body
 osim_body    =  Body( body_name,...
                 bone_mass,... 
                 ArrayDouble.createVec3(bone_COP),...
-                Inertia(bone_inertia(1), bone_inertia(2), bone_inertia(3),...
+                Inertia(bone_inertia(1), bone_inertia(2), bone_inertia(3),... 
                         bone_inertia(4), bone_inertia(5), bone_inertia(6))...
                );
 
