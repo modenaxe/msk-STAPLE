@@ -1,6 +1,5 @@
 %-------------------------------------------------------------------------%
-% Copyright (c) 2020 Modenese L.                                          %
-%                                                                         %
+% Copyright (c) 2021 Modenese L.                                          %
 %    Author:   Luca Modenese, April 2018                                  %
 %    email:    l.modenese@imperial.ac.uk                                  %
 % ----------------------------------------------------------------------- %
