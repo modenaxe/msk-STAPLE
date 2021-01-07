@@ -2,8 +2,6 @@
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4275285.svg)](https://doi.org/10.5281/zenodo.4275285)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. <!-- omit in toc -->
-
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
@@ -22,6 +20,7 @@
 - [Current limitations](#current-limitations)
 - [How to contribute](#how-to-contribute)
 - [Code of conduct](#code-of-conduct)
+- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 ## What is STAPLE?
@@ -290,6 +289,11 @@ We welcome any contribution from the biomechanical and open source community, in
 
 ## Code of conduct
 Please refer to the [code of conduct](/CODE_OF_CONDUCT.md). In brief, be a nice person.
+
+## License
+<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+
+Uses beyond those permitted by the license must be discussed with the authors.
 
 ## Acknowledgements
 Luca Modenese was supported by an Imperial College Research Fellowship granted by Imperial College London and by an Academy of Medical Sciences Springboard Grant [SBF004\1056] supported by the Academy of Medical Sciences, the British Heart Foundation, Diabetes UK, the Global Challenges Research Fund, the Government Department for Business, Energy and Industrial Strategy and the Wellcome Trust.
