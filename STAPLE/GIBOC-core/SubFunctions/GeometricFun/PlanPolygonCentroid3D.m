@@ -3,6 +3,12 @@ function [ Centroid, Area ] = PlanPolygonCentroid3D( Pts )
 %boundary ( a close curve) in a 3D space.
 % Works with arbitrary shapes (convex or not)
 
+if isequal(size(Pts), [0, 0])
+    warning('PlanPolygonCentroid3D.m Empty Pts variable.')
+    Centroid = nan;
+    Area = nan;
+    return
+end
 
 if Pts(1,:) ~= Pts(end,:)
     Pts(end+1,:) = Pts(1,:);
