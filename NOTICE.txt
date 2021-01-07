@@ -2,27 +2,31 @@
 % ---------------------------------------------------------------------------
 %
 % The STAPLE (Shared Tools for Automatic Personalized Lower Extremity 
-% modelling) MATLAB package uses the open source Apache 2.0 license 
-% (below), making it suitable for any use commercial, government, academic,
-% or personal. Please see the notes below the license for more information 
-% about how to acknowledge us.
+% modelling) MATLAB package uses the CC BY-NC 4.0 International license. 
 %
 % -------------------------------------------------------------------------- %
 % STAPLE: Shared Tools for Automatic Personalized Lower Extremity modelling  %
 %                          MATLAB package                                    %
 % -------------------------------------------------------------------------- %
 %                                                                            %
-% Copyright (c) 2020 Modenese L., Renault J.-B.   				             %
+% Copyright (c) 2020-2021 Modenese L., Renault J.-B.   				         %
 %                                                                            %
-% Licensed under the Apache License, Version 2.0 (the "License").            % 
-% You may not use this toolbox except in compliance with the License. You may%
-% obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.%
-%                                                                            %
-% Unless required by applicable law or agreed to in writing, software        %
-% distributed under the License is distributed on an "AS IS" BASIS,          %
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   %
-% See the License for the specific language governing permissions and        %
-% limitations under the License.                                             %
+% Attribution-NonCommercial 4.0 International License 
+% You are free to:
+%   * Share — copy and redistribute the material in any medium or format
+%   * Adapt — remix, transform, and build upon the material
+% (The licensor cannot revoke these freedoms as long as you follow the license terms.)
+% Under the following terms:
+%   * Attribution — You must give appropriate credit, provide a link to 
+%                    the license, and indicate if changes were made. 
+%                    You may do so in any reasonable manner, but not in any
+%                    way that suggests the licensor endorses you or your use.
+%   * NonCommercial — You may not use the material for commercial purposes.
+%   * No additional restrictions — You may not apply legal terms or 
+%                                   technological measures that legally 
+%                                   restrict others from doing anything the 
+%                                   license permits.
+% See details at https://creativecommons.org/licenses/by-nc/4.0.
 % -------------------------------------------------------------------------- %
 
 How to Acknowledge Us
@@ -31,6 +35,6 @@ If you use this toolbox, or the functions included in this package, please
 acknowledge us by citing the following pre-print until we have it published
 on a peer-reviewed journal.
 
-Modenese, Luca, and Jean-Baptiste Renault. "Automatic Generation of 
+Modenese, Luca, and Jean-Baptiste Renault (2021). "Automatic Generation of 
 Personalised Skeletal Models of the Lower Limb from Three-Dimensional 
-Bone Geometries." bioRxiv (2020).
+Bone Geometries." Journal of Biomechanics https://doi.org/10.1016/j.jbiomech.2020.110186.
