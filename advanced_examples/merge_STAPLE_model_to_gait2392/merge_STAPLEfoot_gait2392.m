@@ -24,6 +24,20 @@ generic_osimModel_file = 'gait2392_scaled_0.82.osim';
 MRI_osimModel_file = 'example_auto2020_ankle_R.osim';
 %-----------------------------------------------
 
+% let's copy the geometries (avoids duplicate geometries in the repository)
+geom_folder = '../../bone_datasets/JIA_ANKLE_MRI/tri';
+geom_set =  {'tibia_r', 'calcn_r', 'talus_r', 'toes_r'};
+ankle_geom_folder = 'example_auto2020_ankle_R_Geometry';
+if ~isfolder(ankle_geom_folder); mkdir(ankle_geom_folder);end
+for nt = 1:length(geom_set)
+    % load triangulation
+    load(fullfile(geom_folder, geom_set{nt}))
+    % write obj file
+    writeOBJfile(reduceTriObjGeometry(triang_geom, 0.3),...
+                 fullfile(ankle_geom_folder, [geom_set{nt},'.obj']));
+    clear triang_geom
+end
+
 % setup a log
 logConsolePrintout('on', 'merge_example.log');
 
@@ -95,3 +109,5 @@ generic_osimModel.print('output_STAPLEfoot+gait2392.osim');
 
 % log off
 logConsolePrintout('off')
+
+rmpath(genpath('../../STAPLE'))
