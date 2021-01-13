@@ -28,4 +28,8 @@ These are the main steps for merging the two models:
 
 # Final considerations
 This is an example for demonstrating the functionalities of the STAPLE toolbox. It is recommended to define the joint parameters using a registration technique, e.g. Iterative Closest Point, or another method appropriate for the available data and current research question. The aim is, as usual, reducing the operator interventions to the minimum.
+Points for further development or thought are:
+* replacing the CustomJoint with a weld joint
+* modifying the mass of the partial tibia to minimize its dynamic effects (can be zero if the models are merged using a WeldJoint).
+* making the mass parameters of right (personalized) and left (generic) distal lower extremity equal.
 
