@@ -61,7 +61,7 @@ if in_mm == 1; dim_fact = 0.001; else; dim_fact = 1; end
 boneMassProps= computeMassProperties_Mirtich1996(triGeom.Points, triGeom.ConnectivityList);
 bone_mass    = boneMassProps.mass * body_density; % vol [mm^3] * density [kg/mm^3] 
 bone_COP     = boneMassProps.COM  * dim_fact; 
-bone_inertia = boneMassProps.Ivec * body_density; % Ivec [mm^3 * mm^2] * density [kg/mm^3] 
+bone_inertia = boneMassProps.Ivec * body_density* dim_fact^2; % Ivec [mm^3 * mm^2] * density [kg/mm^3] 
 
 % create opensim body
 osim_body    =  Body( body_name,...
