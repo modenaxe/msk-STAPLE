@@ -91,6 +91,13 @@ if nargin<6; result_plots = 1; end
 if nargin<7; debug_plots = 0;  end
 if nargin<8; in_mm = 1; end
 
+% deal with empty inputs (can be used to specify algo_tibia but use default
+% pelvis, for example.
+if isempty(algo_pelvis); algo_pelvis = 'STAPLE';         end
+if isempty(algo_femur ); algo_femur  = 'GIBOC-cylinder'; end
+if isempty(algo_tibia ); algo_tibia  = 'Kai2014';  end
+
+
 % names of the segments
 femur_name   = ['femur_', side];
 tibia_name   = ['tibia_', side];
