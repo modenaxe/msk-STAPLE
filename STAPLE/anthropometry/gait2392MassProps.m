@@ -27,12 +27,15 @@ function MP = gait2392MassProps(segment_name)
 % properties, which is why I added the patella from that model.
 % torso differs because that model has arms.
 
-if ~(strcmp(segment_name, 'pelvis') || strcmp(segment_name, 'torso'))
+if ~(strcmp(segment_name, 'pelvis') || strcmp(segment_name, 'torso') || strcmp(segment_name, 'full_body'))
     % get rid of side
     segment_name = segment_name(1:end-2);
 end
     
 switch segment_name
+    case 'full_body'
+        % This is: pelvis + 2*(fem+tibia+talus+foot+toes+patella)+torso 
+        MP.mass = 11.777 + 2*(9.3014+3.7075+0.1+1.25+0.2166+0.0862)+34.2366;
     case 'pelvis'
         MP.mass=11.777;
         MP.mass_center=[ -0.0707 0 0];
