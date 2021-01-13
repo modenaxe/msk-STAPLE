@@ -141,7 +141,7 @@ EpiFemTri = GIBOC_isolate_epiphysis(DistFemTri, Z0, 'distal');
 
 % extract full femoral condyles
 disp('Extracting femoral condyles articular surfaces...')
-[fullCondyle_Med_Tri, fullCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS, CoeffMorpho, 'full_condyles');
+[fullCondyle_Med_Tri, fullCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS, CoeffMorpho, 'full_condyles', debug_plots);
 % plot condyles to ensure medial and lateral sides are correct and surfaces are ok
 if debug_plots
     figure(); subplot(1,2,1);
@@ -151,7 +151,7 @@ end
 
 % extract posterior part of condyles (points) by fitting an ellipse 
 % on long convexhull edges extremities
-[postCondyle_Med_Tri, postCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS,  CoeffMorpho, 'post_condyles');
+[postCondyle_Med_Tri, postCondyle_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, CS,  CoeffMorpho, 'post_condyles', debug_plots);
 
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest

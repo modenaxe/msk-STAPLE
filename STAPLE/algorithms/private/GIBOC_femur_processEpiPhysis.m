@@ -32,9 +32,9 @@ while length(Ikept) ~= sum(Edges>edge_threshold*Edges(1))
 end
 
 % check on number of saved edges
-N_edges = size(Edges, 1);
-N_saved_edges = size(Ikept,1);
 if debug_prints
+    N_edges = size(Edges, 1);
+    N_saved_edges = size(Ikept,1);
     disp(['Processing ', num2str(N_saved_edges/N_edges*100), '% of edges in convex hull.'])
 end
 
