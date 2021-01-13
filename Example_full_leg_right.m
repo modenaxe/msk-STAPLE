@@ -60,6 +60,10 @@ for n_d = 1:numel(datasets)
     model_name = ['auto_',datasets{n_d},'_',upper(side)];
     model_file_name = [model_name, '.osim'];
     
+    % log printout
+    log_file = fullfile(output_models_folder, [model_name, '.log']);
+    logConsolePrintout('on', log_file);
+    
     % create bone geometry folder for visualization
     geometry_folder_name = [model_name, '_Geometry'];
     geometry_folder_path = fullfile(output_models_folder,geometry_folder_name);
