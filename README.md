@@ -169,12 +169,13 @@ The examples scripts provide implementations of common workflows that can be ada
 | Example_create_kinetic_models.m | Full workflow | Creates ipsilateral kinetic models. Same models and datasets from the paper of [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727). |
 | Example_full_leg_left.m         | Ipsilateral workflow (left side) | Creates models of the lefs lower limb. Batch processing. |
 | Example_full_leg_right.m        | Ipsilateral workflow (right side) | Creates models of the right lower limb. Batch processing. |
-| Example_bilateral_model.m       | Bilateral workflow | Merges ipsilateral models. Batch processing |
+| Example_bilateral_model.m       | Bilateral workflow | Merges ipsilateral models. Batch processing. |
 | Example_hip_model.m             | Partial model workflow | Creates a hip joint model. |
 | Example_knee_model.m            | Partial model workflow | Creates a knee joint model. |
 | Example_ankle_model.m           | Partial model workflow | Partial model Creates an ankle joint model. |
 | Example_extract_tibiofem_artic_surf.m | Articular surface extraction workflow  | Extracts hip and tibiofemoral articular surfaces. | 
 | Example_extract_ankle_artic_surf.m    | Articular surface extraction workflow | Extracts talocrural and subtalar articular surfaces. | 
+| Example_use_Kai2014.m | Partial model (no foot) | Uses Kai2014 algorithms to process low-quality bone geometries. |
 
 
 ### Detailed steps to setup a STAPLE workflow
@@ -238,13 +239,14 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 
 | Dataset       | Gender | Age | Height |  Mass | Mesh Quality | Reference publication   | Notes |
 | ---           | ---    | --- | ---    |---    |---           |---                      |---
-| LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | [Viceconti et al. (2008)](https://doi.org/10.2170/physiolsci.RP009908) |  |
-| TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Released with the TLEM2 musculoskeletal model. Bones have local ISB reference systems. STAPLE cannot create a full lower limb (yet).|
-| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's MRI scans. Bilateral |
-| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's CT scans. Bilateral. |
 | ICL-MRI		|   M    |  38 | 1.80   | 87    |  Fair        | [Modenese et al. (2020)](https://doi.org/10.1101/2020.06.23.162727)  |  |
 | JIA-MRI   	|   M    |  14 | 1.74   | 76.5  |  Low         | [Montefiori et al. 2019a](https://link.springer.com/article/10.1007/s10439-019-02287-0) |  |
-| JIA-ANKLE-MRI |   M    | N/A |  N/A   | N/A   |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials |
+| JIA-ANKLE-MRI |   M    | N/A |  N/A   | N/A   |  Low         | [Montefiori et al. 2019b](https://doi.org/10.1016/j.jbiomech.2018.12.041) | Data from supplementary materials. |
+| LHDL-CT       |   F    |  78 |  1.71  | 64    |  Very Good   | [Viceconti et al. (2008)](https://doi.org/10.2170/physiolsci.RP009908) |  |
+| MCC22 		|   F    |  72 |  1.60  | 66.3  |  Very Low    | [Montefiori et al. (2021)](https://doi.org/10.1371/journal.pone.0242973) | Data from [this link](https://doi.org/10.15131/shef.data.9934055.v1). Bilateral. |
+| TLEM2         |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Released with the TLEM2 musculoskeletal model. Bones have local ISB reference systems. STAPLE cannot create a full lower limb (yet).|
+| TLEM2-MRI     |   M    |  85 |  N/A   | 45    |  Fair        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's MRI scans. Bilateral. |
+| TLEM2-CT      |   M    |  85 |  N/A   | 45    |  Good        | [Carbone et al. (2015)](https://doi.org/10.1016/j.jbiomech.2014.12.034)  | Geometries from the TLEM2 specimen's CT scans. Bilateral. |
 | VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE **cannot** create a full lower limb (yet). | 
 
 
@@ -278,7 +280,7 @@ The algorithms collected in the STAPLE toolbox were proposed in publications tha
 
 ## Current limitations 
 * The STAPLE toolbox is still in strong development, so some **key documentation might be missing**. Please refer to the examples included the main STAPLE repository for now.
-* **STAPLE cannot create models from bones reconstructed from images that have more than one reference system** (see provided VAKHUM_CT dataset as an example). This is due to the fact that each STAPLE morphological analysis is local to the bone where it is performed and therefore the only information about the relative position of the bones comes from the medical scans resting pose. It is possible to implement workarounds to this issue, e.g. using an _a priori_ model of the joints for which the resting pose is not avaible.
+* **STAPLE cannot create models from bones reconstructed from images that have more than one reference system** (see provided VAKHUM_CT dataset as an example). This is due to the fact that each STAPLE morphological analysis is local to the bone where it is performed and therefore the only information about the relative position of the bones comes from the medical scans resting pose. It is possible to implement workarounds to this issue, e.g. estimating the missing joint parameters using regression equations, generic models or other approaches.
 * The lower limb models currently include a patella rigidly attached to the tibia. An articulated **patellofemoral joint is under development**.
 
 ## How to contribute
