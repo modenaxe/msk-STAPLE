@@ -23,6 +23,7 @@ datasets_folder = 'bone_datasets';
 % If you add multiple datasets they will be batched processed but you will
 % have to adapt the folder and file namings below.
 dataset_set = {'LHDL_CT'};
+body_mass = 64; %kg
 
 % cell array with the name of the bone geometries to process.
 bones_list = {'pelvis_no_sacrum', 'femur_r'};
@@ -79,6 +80,10 @@ for n_d = 1:numel(dataset_set)
 
     % create joints
     createOpenSimModelJoints(osimModel, JCS, joint_defs);
+
+    % update mass properties to those estimated using a scale version of
+    % gait2392 with COM based on Winters's book.
+    osimModel = assignMassPropsToSegments(osimModel, JCS, body_mass);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

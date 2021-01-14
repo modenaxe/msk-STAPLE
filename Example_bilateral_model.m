@@ -18,6 +18,9 @@ output_models_folder = 'opensim_models_examples';
 datasets_folder = 'bone_datasets';
 % datasets that you would like to process
 datasets = {'TLEM2_MRI', 'JIA_MRI'};
+% masses for models
+subj_mass_set = [45,      76.5]; %kg
+
 % format of input geometries
 input_geom_format = 'tri';
 % visualization geometry format (options: 'stl' or 'obj')
@@ -42,6 +45,10 @@ for n_d = 1:numel(datasets)
     % folder from which triangulations will be read
     tri_folder = fullfile(datasets_folder, cur_dataset, input_geom_format);
     
+    % log printout
+    log_file = fullfile(output_models_folder, [cur_dataset,'_bilateral.log']);
+    logConsolePrintout('on', log_file);
+    
     for n_side = 1:2
         
         % get current body side
@@ -49,16 +56,12 @@ for n_d = 1:numel(datasets)
         
         % cell array with the bone geometries that you would like to process
         bones_list = {'pelvis_no_sacrum',  ['femur_', cur_side],...
-                     ['tibia_', cur_side],['talus_', cur_side],...
+                     ['tibia_', cur_side], ['talus_', cur_side],...
                      ['calcn_', cur_side]};
 
         % model and model file naming
         cur_model_name = ['auto_',datasets{n_d},'_',upper(cur_side)];
         model_file_name = [cur_model_name, '.osim'];
-        
-        % log printout
-        log_file = fullfile(output_models_folder, [cur_model_name, '.log']);
-        logConsolePrintout('on', log_file);
         
         % create geometry set structure for all 3D bone geometries in the dataset
         triGeom_set = createTriGeomSet(bones_list, tri_folder);
@@ -81,6 +84,10 @@ for n_d = 1:numel(datasets)
         
         % create joints
         createOpenSimModelJoints(osimModel, JCS, joint_defs);
+
+        % update mass properties to those estimated using a scale version of
+        % gait2392 with COM based on Winters's book.
+        osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass_set(n_d));
         
         % add markers to the bones
         addBoneLandmarksAsMarkers(osimModel, BL);
@@ -99,14 +106,16 @@ for n_d = 1:numel(datasets)
         disp(['Model geometries saved in folder: ', geometry_folder_path,'.'])
         disp('-------------------------')
         clear triGeom_set JCS BL CS
-        logConsolePrintout('off');
+        
         % store model file (with path) for merging
         osim_model_set(n_side) = {osim_model_file}; %#ok<SAGROW>
     end
     % merge the two sides
     merged_model_file = fullfile(output_models_folder,[cur_dataset,'_bilateral.osim']);
     mergeOpenSimModels(osim_model_set{1}, osim_model_set{2}, merged_model_file);
-
+    
+    % stop logger
+    logConsolePrintout('off');
 end
 % remove paths
 rmpath(genpath('STAPLE'));

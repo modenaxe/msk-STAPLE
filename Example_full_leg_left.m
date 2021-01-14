@@ -21,6 +21,9 @@ datasets_folder = 'bone_datasets';
 % datasets that you would like to process
 dataset_set = {'TLEM2_CT', 'TLEM2_MRI'};
 
+% estimated mass of specimen
+mass = 45; % [kg] 
+
 % cell array with the bone geometries that you would like to process
 bones_list = {'pelvis_no_sacrum','femur_l','tibia_l','talus_l', 'calcn_l'};
 
@@ -37,7 +40,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1%:numel(dataset_set)
+for n_d = 1:numel(dataset_set)
     
     % current dataset being processed
     cur_dataset = dataset_set{n_d};
@@ -77,6 +80,10 @@ for n_d = 1%:numel(dataset_set)
     
     % create joints
     createOpenSimModelJoints(osimModel, JCS, workflow);
+    
+    % update mass properties to those estimated using a scale version of
+    % gait2392 with COM based on Winters's book.
+    osimModel = assignMassPropsToSegments(osimModel, JCS, mass);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

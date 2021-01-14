@@ -17,6 +17,7 @@ datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
 dataset_set = {'ICL_MRI'};
+body_mass = 87; %kg
 
 % cell array with the name of the bone geometries to process
 bones_list = {'femur_r', 'tibia_r'};
@@ -77,8 +78,13 @@ for n_d = 1:numel(dataset_set)
     % add patella to tibia (this will be replaced by a proper joint and
     % dealt with the other joints in the future).
     side = inferBodySideFromAnatomicStruct(geom_set);
-%     improve!
+
+    % temporary approach to improve
     attachPatellaGeom(osimModel, side, tri_folder, geometry_folder_path, geometry_folder_name, vis_geom_format)
+    
+    % update mass properties to those estimated using a scale version of
+    % gait2392 with COM based on Winters's book.
+    osimModel = assignMassPropsToSegments(osimModel, JCS, body_mass);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);

@@ -102,7 +102,7 @@ end
 %---------------------------------------------
 
 % map gait2392 properties to the model segments as an initial value
-disp('Mapping segment masses and inertias from gait2392/Rajagopal model.')
+disp('Mapping segment masses and inertias from gait2392 model.')
 osimModel = mapGait2392MassPropToModel(osimModel);
 
 % opensim model total mass (consistent in gait2392 and Rajagopal)

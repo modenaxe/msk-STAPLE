@@ -13,13 +13,16 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
-output_models_folder = 'opensim_models_example';
+output_models_folder = 'opensim_models_examples';
 
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
 
 % datasets that you would like to process
 datasets = {'TLEM2_CT'};
+
+% estimated mass of specimen
+mass = 45; % [kg] 
 
 % body sides
 cur_side = 'r';
@@ -82,6 +85,10 @@ for n_d = 1:numel(datasets)
     
     % create joints
     createOpenSimModelJoints(osimModel, JCS, workflow);
+
+    % update mass properties to those estimated using a scale version of
+    % gait2392 with COM based on Winters's book.
+    osimModel = assignMassPropsToSegments(osimModel, JCS, mass);
     
     % add markers to the bones
     addBoneLandmarksAsMarkers(osimModel, BL);
