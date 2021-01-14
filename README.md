@@ -173,10 +173,9 @@ The examples scripts provide implementations of common workflows that can be ada
 | Example_hip_model.m             | Partial model workflow | Creates a hip joint model. |
 | Example_knee_model.m            | Partial model workflow | Creates a knee joint model. |
 | Example_ankle_model.m           | Partial model workflow | Partial model Creates an ankle joint model. |
-| Example_extract_tibiofem_artic_surf.m | Articular surface extraction workflow  | Extracts hip and tibiofemoral articular surfaces. | 
-| Example_extract_ankle_artic_surf.m    | Articular surface extraction workflow | Extracts talocrural and subtalar articular surfaces. | 
-| Example_use_Kai2014.m | Partial model (no foot) | Uses Kai2014 algorithms to process low-quality bone geometries. |
-
+| Example_extract_tibiofem_artic_surf.m | Articular surface extraction workflow  | Extracts hip and tibiofemoral articular surfaces. |
+| Example_extract_ankle_artic_surf.m    | Articular surface extraction workflow | Extracts talocrural and subtalar articular surfaces. |
+| Example_use_Kai2014.m                 | Partial model workflow (no foot)      | Uses Kai2014 algorithms to process low-quality bone geometries |
 
 ### Detailed steps to setup a STAPLE workflow
 
