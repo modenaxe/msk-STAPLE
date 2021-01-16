@@ -22,7 +22,7 @@ bone_geometries_folder = '../bone_datasets';
 bones_list = {'tibia_r','talus_r','calcn_r'};
 in_mm = 1;
 %--------------------------------------
-
+test_pass = 1;
 for n_d = 1:numel(dataset_set)
     
     % setup folders
@@ -93,9 +93,12 @@ for n = 1:numel(bones_list)
     if diff<tol
         disp('   same inertia!')
     else
+        test_pass = 0;
         disp(['WARNING: max difference in inertia component > ', num2str(tol)])
     end 
 end
-
+assert(test_pass==1, 'Mass properties are different');
+disp('------------')
+disp('Test passed.')
 % remove paths
 rmpath(genpath('../STAPLE'));
