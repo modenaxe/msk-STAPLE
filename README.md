@@ -17,6 +17,7 @@
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
+- [How is STAPLE different from statistical shape modelling packages?](#how-is-staple-different-from-statistical-shape-modelling-packages)
 - [Current limitations](#current-limitations)
 - [How to contribute](#how-to-contribute)
 - [Code of conduct](#code-of-conduct)
@@ -280,6 +281,20 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 ## Does STAPLE work only with OpenSim?
 
 The algorithms collected in the STAPLE toolbox were proposed in publications that did not have modelling focus, and can be applied in broader contexts, such as reference system definition for orthopaedics applications or modelling in other platforms. Similarly, the outputs of a STAPLE workflow, e.g. from `processTriGeomBoneSet.m`, include all the necessary information to create a kinematic or kinetic model in any biomechanical modelling workflow. All our modelling examples, however, rely on OpenSim.
+
+## How is STAPLE different from statistical shape modelling packages?
+
+Some of the functions of the STAPLE toolbox overlap with those of the statistical shape modelling package MAP client, part of the [Musculoskeletal Atlas Project (MAP)](https://simtk.org/projects/map). The following table outlines the differences between STAPLE and the publicly available version of the [MAP client](https://github.com/MusculoskeletalAtlasProject/mapclient) and [its plugins](https://github.com/mapclient-plugins).
+
+|  Functionality                                   | STAPLE toolbox           | MAP client | Notes  |
+| ---                                              | ---                      | ---        | ---    |
+| Platform used for development                    |  Matlab 2018b or higher. | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020. See details [here](https://www.python.org/doc/sunset-python-2). The API of the OpenSim 4.x distribution support MATLAB and Python 3.x.|
+| Can I generate bone geometries?                  |  No                      | Yes        | STAPLE can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP client. |
+| Can I generate OpenSim models?                   |  Yes                     | Yes        | STAPLE creates models for OpenSim v4.1, the MAP client for OpenSim v3.3. |
+| Can I generate full OpenSim models?              |  Yes                     | No         | The models generated with MAP client do not include the bones below the tibia and their joints. |
+| Can I generate partial models?                   |  Yes                     | Yes        |        |
+| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advance example](.advanced_examples/merge_STAPLE_model_to_gait2392) on this topic.       |
+| Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in the [ release paper](https://doi.org/10.1016/j.jbiomech.2020.110186). |
 
 ## Current limitations 
 * The STAPLE toolbox is still in strong development, so some **key documentation might be missing**. Please refer to the examples included the main STAPLE repository for now.
