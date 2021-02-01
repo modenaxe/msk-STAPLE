@@ -289,11 +289,11 @@ Some of the functions of the STAPLE toolbox overlap with those of the statistica
 |  Functionality                                   | STAPLE toolbox           | MAP client | Notes  |
 | ---                                              | ---                      | ---        | ---    |
 | Platform used for development                    |  Matlab 2018b or higher. | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020 (see details [here](https://www.python.org/doc/sunset-python-2)). Please be aware that the API of the OpenSim 4.x distribution support MATLAB and Python 3.x.|
-| Can I generate bone geometries?                  |  No                      | Yes        | STAPLE can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP client. |
+| Can I generate bone geometries?                  |  No                      | Yes        | STAPLE can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP client, but requires them as user-provided inputs for its workflows. |
 | Can I generate OpenSim models?                   |  Yes                     | Yes        | STAPLE creates models for OpenSim v4.1, the MAP client for OpenSim v3.3. |
 | Can I generate full OpenSim models?              |  Yes                     | No         | The models generated with MAP client do not include the bones below the tibia and their joints. |
 | Can I generate partial models?                   |  Yes                     | Yes        |        |
-| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advance example](.advanced_examples/merge_STAPLE_model_to_gait2392) on this topic.       |
+| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advance example](advanced_examples/merge_STAPLE_model_to_gait2392) on this topic.       |
 | Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in the [ release paper](https://doi.org/10.1016/j.jbiomech.2020.110186). |
 
 ## Current limitations 
