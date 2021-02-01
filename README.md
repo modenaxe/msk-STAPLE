@@ -288,7 +288,7 @@ Some of the functions of the STAPLE toolbox overlap with those of the statistica
 
 |  Functionality                                   | STAPLE toolbox           | MAP client | Notes  |
 | ---                                              | ---                      | ---        | ---    |
-| Platform used for development                    |  Matlab 2018b or higher. | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020 (see details [here](https://www.python.org/doc/sunset-python-2)). The API of the OpenSim 4.x distribution support MATLAB and Python 3.x.|
+| Platform used for development                    |  Matlab 2018b or higher. | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020 (see details [here](https://www.python.org/doc/sunset-python-2)). Please be aware that the API of the OpenSim 4.x distribution support MATLAB and Python 3.x.|
 | Can I generate bone geometries?                  |  No                      | Yes        | STAPLE can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP client. |
 | Can I generate OpenSim models?                   |  Yes                     | Yes        | STAPLE creates models for OpenSim v4.1, the MAP client for OpenSim v3.3. |
 | Can I generate full OpenSim models?              |  Yes                     | No         | The models generated with MAP client do not include the bones below the tibia and their joints. |
