@@ -17,7 +17,7 @@
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
-- [How is STAPLE different from statistical shape modelling packages?](#how-is-staple-different-from-statistical-shape-modelling-packages)
+- [What are the differences between the STAPLE toolbox and the MAP client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-and-the-map-client-for-generating-opensim-models)
 - [Current limitations](#current-limitations)
 - [How to contribute](#how-to-contribute)
 - [Code of conduct](#code-of-conduct)
@@ -282,9 +282,9 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 
 The algorithms collected in the STAPLE toolbox were proposed in publications that did not have modelling focus, and can be applied in broader contexts, such as reference system definition for orthopaedics applications or modelling in other platforms. Similarly, the outputs of a STAPLE workflow, e.g. from `processTriGeomBoneSet.m`, include all the necessary information to create a kinematic or kinetic model in any biomechanical modelling workflow. All our modelling examples, however, rely on OpenSim.
 
-## How is STAPLE different from statistical shape modelling packages?
+## What are the differences between the STAPLE toolbox and the MAP client for generating OpenSim models?
 
-Some of the functions of the STAPLE toolbox overlap with those of the statistical shape modelling package MAP client, part of the [Musculoskeletal Atlas Project (MAP)](https://simtk.org/projects/map). The following table outlines the differences between STAPLE and the publicly available version of the [MAP client](https://github.com/MusculoskeletalAtlasProject/mapclient) and [its plugins](https://github.com/mapclient-plugins).
+Some of the functions of the STAPLE toolbox overlap with those of the statistical shape modelling package `MAP client`, part of the [Musculoskeletal Atlas Project (MAP)](https://simtk.org/projects/map). The following table outlines the differences between STAPLE and the publicly available version of the [MAP client](https://github.com/MusculoskeletalAtlasProject/mapclient) and [its plugins](https://github.com/mapclient-plugins).
 
 |  Functionality                                   | STAPLE toolbox           | MAP client | Notes  |
 | ---                                              | ---                      | ---        | ---    |
@@ -297,6 +297,7 @@ Some of the functions of the STAPLE toolbox overlap with those of the statistica
 | Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in the [ release paper](https://doi.org/10.1016/j.jbiomech.2020.110186). |
 
 ## Current limitations 
+
 * The STAPLE toolbox is still in strong development, so some **key documentation might be missing**. Please refer to the examples included the main STAPLE repository for now.
 * **STAPLE cannot create models from bones reconstructed from images that have more than one reference system** (see provided VAKHUM_CT dataset as an example). This is due to the fact that each STAPLE morphological analysis is local to the bone where it is performed and therefore the only information about the relative position of the bones comes from the medical scans resting pose. It is possible to implement workarounds to this issue, e.g. estimating the missing joint parameters using regression equations, generic models or other approaches.
 * The lower limb models currently include a patella rigidly attached to the tibia. An articulated **patellofemoral joint is under development**.
