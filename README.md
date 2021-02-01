@@ -293,8 +293,8 @@ Some of the functions of the STAPLE toolbox overlap with those of the statistica
 | Can I generate OpenSim models?                   |  Yes                     | Yes        | STAPLE creates models for OpenSim v4.1, the MAP client for OpenSim v3.3. |
 | Can I generate full OpenSim models?              |  Yes                     | No         | The models generated with MAP client do not include the bones below the tibia and their joints. |
 | Can I generate partial models?                   |  Yes                     | Yes        |        |
-| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advance example](advanced_examples/merge_STAPLE_model_to_gait2392) on this topic.       |
-| Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in the [ release paper](https://doi.org/10.1016/j.jbiomech.2020.110186). |
+| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advanced example](advanced_examples/merge_STAPLE_model_to_gait2392) provided on this topic.       |
+| Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in our [published paper](https://doi.org/10.1016/j.jbiomech.2020.110186), but it has not yet been released. |
 
 ## Current limitations 
 
