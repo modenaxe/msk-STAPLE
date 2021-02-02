@@ -17,7 +17,7 @@
   - [Further notes on STAPLE](#further-notes-on-staple)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
-- [What are the differences between the STAPLE toolbox and the MAP Client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-and-the-map-client-for-generating-opensim-models)
+- [What are the differences between the STAPLE toolbox, NMSBuilder and the MAP Client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-nmsbuilder-and-the-map-client-for-generating-opensim-models)
 - [Current limitations](#current-limitations)
 - [How to contribute](#how-to-contribute)
 - [Code of conduct](#code-of-conduct)
@@ -282,19 +282,20 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 
 The algorithms collected in the STAPLE toolbox were proposed in publications that did not have modelling focus, and can be applied in broader contexts, such as reference system definition for orthopaedics applications or modelling in other platforms. Similarly, the outputs of a STAPLE workflow, e.g. from `processTriGeomBoneSet.m`, include all the necessary information to create a kinematic or kinetic model in any biomechanical modelling workflow. All our modelling examples, however, rely on OpenSim.
 
-## What are the differences between the STAPLE toolbox and the MAP Client for generating OpenSim models?
+## What are the differences between the STAPLE toolbox, NMSBuilder and the MAP Client for generating OpenSim models?
 
-Some of the functions of the STAPLE toolbox overlap with those of the statistical shape modelling package `MAP Client`, part of the [Musculoskeletal Atlas Project (MAP)](https://simtk.org/projects/map). The following table outlines the differences between STAPLE and the publicly available version of the [MAP Client](https://github.com/MusculoskeletalAtlasProject/mapclient) and [its plugins](https://github.com/mapclient-plugins). If you are a Map Client user and want this table to be more specific or spot any inaccuracy, we encourage you to [contribute](#how-to-contribute) to it. 
+Some of the functions of the STAPLE toolbox overlap with those of [NMSBuilder](http://www.nmsbuilder.org/) and of the statistical shape modelling package `MAP Client`, part of the [Musculoskeletal Atlas Project (MAP)](https://simtk.org/projects/map). The following table outlines the differences between the out-of-the-box functionalities of STAPLE, NMSBuilder and the publicly available version of the [MAP Client](https://github.com/MusculoskeletalAtlasProject/mapclient) and [its plugins](https://github.com/mapclient-plugins). If you are a Map Client user and want this table to be more specific or spot any inaccuracy, we encourage you to [contribute](#how-to-contribute) to it. 
 
-|  Functionality                                   | STAPLE toolbox           | MAP Client | Notes  |
-| ---                                              | ---                      | ---        | ---    |
-| Platform used for development                    |  Matlab 2018b or higher. | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020 (see details [here](https://www.python.org/doc/sunset-python-2)). Please be aware that the API of the OpenSim 4.x distribution support MATLAB and Python 3.x.|
-| Can I generate bone geometries?                  |  No                      | Yes        | STAPLE can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP Client, but requires them as user-provided inputs for its workflows. |
-| Can I generate OpenSim models?                   |  Yes                     | Yes        | STAPLE creates models for OpenSim v4.1, the MAP Client for OpenSim v3.3. |
-| Can I generate full OpenSim models?              |  Yes                     | No         | The models generated with the public version of the MAP Client do not include the bones below the tibia and their joints. |
-| Can I generate partial models?                   |  Yes                     | Yes        |        |
-| Can I merge a personalized and a generic model?  |  Yes                     | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advanced example](advanced_examples/merge_STAPLE_model_to_gait2392) provided on this topic.       |
-| Can I include muscles in the generated models?   |  No                      | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in our [published paper](https://doi.org/10.1016/j.jbiomech.2020.110186), but it has not yet been released. |
+|  Functionality                                   | STAPLE toolbox           | NMSBuilder     | MAP Client | Notes  |
+| ---                                              | ---                      | ---            | ---        | ---    |
+| Platform used for development                    |  Matlab 2018b or higher. | User Interface | Python 2.7 | Python 2.7 has been discontinued by developers since January 2020 (see details [here](https://www.python.org/doc/sunset-python-2)). sThe OpenSim 4.x distribution support MATLAB and Python 3.x, while OpenSim 3.x supports Python 2.7. |
+| Can I generate bone geometries?                  |  No                      | No             | Yes        | Both STAPLE and NMSBuilder can create models from bone geometries generated from any source, including segmentation of medical images and statistical shape modelling frameworks like the MAP Client, but require them as user-provided inputs. |
+| Can I generate OpenSim models?                   |  Yes                     | Yes            | Yes        |Both STAPLE and NMSBuilder can create models for OpenSim v4.1, the MAP Client for OpenSim v3.3. |
+| Can I generate full OpenSim models?              |  Yes                     | Yes            | No         | The models generated with the public version of the MAP Client do not include the bones below the tibia and their joints. |
+| Can I generate partial models?                   |  Yes                     | Yes            | Yes        |
+| Can I merge a personalized and a generic model?  |  Yes                     | No             | No         | _Ad hoc_ STAPLE functions are available for merging models. See the [advanced example](advanced_examples/merge_STAPLE_model_to_gait2392) provided on this topic.       |
+| Can I batch process OpenSim models?              | Yes                      | No             | Yes        | NMSBuilder is currently lacking a programming interface. |
+| Can I include muscles in the generated models?   |  No                      | Yes            | Yes        | STAPLE has a muscle generation pipeline in development, as previewed in our [published paper](https://doi.org/10.1016/j.jbiomech.2020.110186), but it has not yet been released. |
 
 ## Current limitations 
 
