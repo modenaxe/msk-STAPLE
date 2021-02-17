@@ -202,7 +202,7 @@ JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.(joint_name).V);
 % landmark bone according to CS (only Origin and CS.V are used)
 tibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_',side_low]);
 if just_tibia == 0
-    tibiaBL.RLM = MostDistalMedialPt;
+    tibiaBL.([upper(side_low),'LM']) = MostDistalMedialPt;
 end
 label_switch = 1;
 
