@@ -23,6 +23,7 @@ docs/*.m
 tests/models_from_tests/
 *.zip
 /*_safe/
+*ISSUE*/
 
 # openSim files
 *.log
