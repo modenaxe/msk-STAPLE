@@ -69,18 +69,14 @@ if debug_plots
     axis equal;
 end
 
-I_Axes_duplicate = find(Axes*Axes(round(length(Axes)/2),:)'<0);
+% Remove duplicate Axes that are not directed from Lateral to Medial (CSs.Y0)
+I_Axes_duplicate = find(Axes*CSs.Y0 < 0);
 
-% Delete duplicate but inverted Axes
 IdCdlPts(I_Axes_duplicate,:)=[];
 Axes(I_Axes_duplicate,:)=[];
-U_Axes = Axes./repmat(sqrt(sum(Axes.^2,2)),1,3);
 
-% Are CSs.Y0 and U_Axes pointing in the same direction?
-Orientation = round(mean(sign(U_Axes*CSs.Y0)));
-% Make all the axes point in the Laterat -> Medial direction
-U_Axes = Orientation*U_Axes;
-% Axes = Orientation*Axes;
+%Normalize Axes to get unitary vectors
+U_Axes = Axes./repmat(sqrt(sum(Axes.^2,2)),1,3);
 
 % delete if too far from inertial medio-Lat axis;
 % [LM] 0.75 -> acod(0.75) roughly 41 deg
@@ -92,12 +88,14 @@ U_Axes(ind_deviant_axes,:) = [];
 [ U_Axes_Good] = PCRegionGrowing(U_Axes, normalizeV( mean(U_Axes) )', 0.1);
 LIA = ismember(U_Axes,U_Axes_Good,'rows');
 U_Axes(~LIA,:) = [];
-% Axes(~LIA,:) = [];
 IdCdlPts(~LIA,:) = [];
 
-% Assign indices of points on Lateral or Medial Condyles Variable
+% Compute orientation just to check, should be = 1
+Orientation = round(mean(sign(U_Axes*CSs.Y0)));
 
+% Assign indices of points on Lateral or Medial Condyles Variable
 if Orientation < 0
+    warning('Orientation of Lateral->Medial U_Axes vectors of femoral distal epiphysis is not what expected. Please check manually.')
     med_lat_ind = [2 1];
 %     IdxPtsCondylesLat = IdCdlPts(:,1);
 %     IdxPtsCondylesMed = IdCdlPts(:,2);
