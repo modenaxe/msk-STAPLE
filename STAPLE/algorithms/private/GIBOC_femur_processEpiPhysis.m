@@ -44,15 +44,30 @@ IdCdlPts = IdxPointsPair(Ikept,:);
 % % [LM] debugging plot - see the kept points
 if debug_plots
     plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*'); hold on
-    plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*')
+    plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*');
 end
 
 % Axes vector of points pairs
 Axes = EpiFem.Points(IdCdlPts(:,1),:)-EpiFem.Points(IdCdlPts(:,2),:);
 
 % % [LM] debugging plot (see lines of axes)
-% P = [EpiFem.Points(IdCdlPts(:,1),:);EpiFem.Points(IdCdlPts(:,2),:)];
-% plot3(P(:,1), P(:,2), P(:,3),'-')
+if debug_plots
+    P = [EpiFem.Points(IdCdlPts(:,1),:);EpiFem.Points(IdCdlPts(:,2),:)];
+    plot3(P(:,1), P(:,2), P(:,3),'-')
+end
+
+% proper visualization on U_axes (from JB code to Issue #88)
+if debug_plots
+    figure;
+    trisurf(EpiFem,'facealpha',0.4,'facecolor','y',...
+        'edgecolor','k'); hold on
+    plot3(EpiFem.Points(IdCdlPts(:,1),1), EpiFem.Points(IdCdlPts(:,1),2), EpiFem.Points(IdCdlPts(:,1),3),'r*');
+    plot3(EpiFem.Points(IdCdlPts(:,2),1), EpiFem.Points(IdCdlPts(:,2),2), EpiFem.Points(IdCdlPts(:,2),3),'b*');
+    for i = 1:length(IdCdlPts(:,1))
+        plot3(EpiFem.Points(IdCdlPts(i,:),1), EpiFem.Points(IdCdlPts(i,:),2), EpiFem.Points(IdCdlPts(i,:),3),'k-','LineWidth',3);
+    end
+    axis equal;
+end
 
 I_Axes_duplicate = find(Axes*Axes(round(length(Axes)/2),:)'<0);
 
