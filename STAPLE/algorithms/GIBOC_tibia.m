@@ -7,7 +7,7 @@
 % fitEllipseOnTibialCondylesEdge (PLATEAU)
 % ProjectOnPlan
 
-function [CS, JCS, TibiaBL, ArtSurf] = GIBOC_tibia(tibiaTri,...
+function [BCS, JCS, TibiaBL, ArtSurf, AuxCSInfo] = GIBOC_tibia(tibiaTri,...
                                                    side_raw,...
                                                    fit_method,...
                                                    result_plots,...
@@ -65,10 +65,10 @@ Z0 = sign((mean(ProxTibTri.Points)-mean(DistTibTri.Points))*Z0)*Z0;
 % Z0: points upwards (inertial axis) 
 %-------------------------------------
 % store available geom info on CS
-CS = struct();
-CS.Z0 = Z0;
-CS.CenterVol = CenterVol;
-CS.V_all = V_all;
+AuxCSInfo = struct();
+AuxCSInfo.Z0 = Z0;
+AuxCSInfo.CenterVol = CenterVol;
+AuxCSInfo.V_all = V_all;
 % CS.InertiaMatrix = InertiaMatrix;
 
 % printout
@@ -77,7 +77,7 @@ disp('Computing centre of ankle joint...')
 %--------- COMPUTE ANKLE CENTRE (USED BY SURF CENTROIDS) -----------
 % compute centre of distal larger section to compute the mechanical Z axis
 % within CS_tibia_ArtSurfCentroids.m
-CS.CenterAnkleInside = GIBOC_tibia_DistMaxSectCentre(DistTibTri, Z0);
+AuxCSInfo.CenterAnkleInside = GIBOC_tibia_DistMaxSectCentre(DistTibTri, Z0);
 
 %--------- COMPUTE ANKLE CENTRE (USED BY OTHER ALGORITHMS) ---------
 % Method to get ankle center : 
@@ -99,7 +99,7 @@ Curves = TriPlanIntersect( DistTibTri, nAAS , (oLSP_AAS + plane_thick*nAAS') );
 
 % ankle centre (considers only tibia)
 Centre = PlanPolygonCentroid3D( TibiaDistSection.Pts );
-CS.AnkleCenter = Centre - plane_thick * nAAS';
+AuxCSInfo.AnkleCenter = Centre - plane_thick * nAAS';
 
 disp('Done.')
 
@@ -112,8 +112,8 @@ if debug_plots == 1
         plot3(Curves(nnn).Pts(:,1),Curves(nnn).Pts(:,2),Curves(nnn).Pts(:,3));
     end
     title('Check Ankle ArtSurf (green) and joint centres');
-    plotDot(CS.CenterAnkleInside, 'r', 2); text(CS.CenterAnkleInside(1),CS.CenterAnkleInside(2),CS.CenterAnkleInside(3),'    AnkleCenterInside','FontSize',8);
-    plotDot(CS.AnkleCenter, 'k', 2); text(CS.AnkleCenter(1),CS.AnkleCenter(2),CS.AnkleCenter(3),'    AnkleCenter','FontSize',8);
+    plotDot(AuxCSInfo.CenterAnkleInside, 'r', 2); text(AuxCSInfo.CenterAnkleInside(1),AuxCSInfo.CenterAnkleInside(2),AuxCSInfo.CenterAnkleInside(3),'    AnkleCenterInside','FontSize',8);
+    plotDot(AuxCSInfo.AnkleCenter, 'k', 2); text(AuxCSInfo.AnkleCenter(1),AuxCSInfo.AnkleCenter(2),AuxCSInfo.AnkleCenter(3),'    AnkleCenter','FontSize',8);
     plot3(TibiaDistSection.Pts(:,1), TibiaDistSection.Pts(:,2), TibiaDistSection.Pts(:,3),'b','LineWidth',2); 
     hold on; axis equal
 end
@@ -134,7 +134,7 @@ if debug_plots == 1
 end
 
 % Make the vector U_tmp orthogonal to Z0 and normalize it
-CS.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
+AuxCSInfo.Y0 = normalizeV(  U_tmp' - (U_tmp*Z0)*Z0  ); 
 
 %% Proximal Tibia
 
@@ -154,7 +154,7 @@ disp('Processing proximal tibia:')
 
 % first approximation of tibial surface
 disp('  Step #1: identify tibiofem artic surfaces')
-[EpiTibASTri, oLSP, Ztp] = GIBOC_tibia_FullProxArtSurf(EpiTibTri, CS, CoeffMorpho, angle_thresh, curv_quartile);
+[EpiTibASTri, oLSP, Ztp] = GIBOC_tibia_FullProxArtSurf(EpiTibTri, AuxCSInfo, CoeffMorpho, angle_thresh, curv_quartile);
 
 % debug plots
 if debug_plots == 1
@@ -164,7 +164,7 @@ end
 
 % STEP2: remove the ridge and the central part of the surface
 disp('  Step #2: remove intercondilar ridge')
-EpiTibASTri = GIBOC_tibia_ProxArtSurf_it1(ProxTibTri, EpiTibTri, EpiTibASTri, CS, Ztp , oLSP, CoeffMorpho);
+EpiTibASTri = GIBOC_tibia_ProxArtSurf_it1(ProxTibTri, EpiTibTri, EpiTibASTri, AuxCSInfo, Ztp , oLSP, CoeffMorpho);
 
 % debug plots
 if debug_plots == 1
@@ -178,8 +178,8 @@ EpiTibASTri = TriCloseMesh(EpiTibTri,EpiTibASTri, 30*CoeffMorpho);
 
 % STEP3: identify medial and lateral articular surfaces
 disp('  Step #3: split medial and lateral surfaces')
-CS.Y0_GIBOC  = CS.Y0*-1;
-[EpiTibASMedTri, EpiTibASLatTri, ~] = GIBOC_tibia_ProxArtSurf_it2(EpiTibTri, EpiTibASTri, CS, CoeffMorpho);
+AuxCSInfo.Y0_GIBOC  = AuxCSInfo.Y0*-1;
+[EpiTibASMedTri, EpiTibASLatTri, ~] = GIBOC_tibia_ProxArtSurf_it2(EpiTibTri, EpiTibASTri, AuxCSInfo, CoeffMorpho);
 
 % build the final triangulation of the articular surfaces of the prox tibia
 EpiTibArtSurfTri = TriUnite(EpiTibASMedTri, EpiTibASLatTri);
@@ -207,12 +207,12 @@ disp(['Fitting tibial proximal articular surfaces using ', fit_method, ' method.
 switch fit_method
     case 'ellipse'
         % fit an ellipse to the articular surface
-        [CS, JCS] = CS_tibia_Ellipse(EpiTibArtSurfTri, CS, side_raw);
+        [AuxCSInfo, JCS] = CS_tibia_Ellipse(EpiTibArtSurfTri, AuxCSInfo, side_raw);
     case 'centroids'
         % uses the centroid of the articular surfaces to define the Z axis
-        [CS, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMedTri, EpiTibASLatTri, CS, side_raw);
+        [AuxCSInfo, JCS] = CS_tibia_ArtSurfCentroids(EpiTibASMedTri, EpiTibASLatTri, AuxCSInfo, side_raw);
     case 'plateau'
-        [CS, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibArtSurfTri, CS, side_raw);
+        [AuxCSInfo, JCS] = CS_tibia_PlateauLayer(EpiTibTri, EpiTibArtSurfTri, AuxCSInfo, side_raw);
     otherwise
         error('GIBOC_tibia.m ''method'' input has value: ''ellipse'', ''centroids'' or ''plateau''.')
 end
@@ -222,12 +222,14 @@ joint_name_list = fields(JCS);
 knee_name  = joint_name_list{strncmp(joint_name_list, 'knee', 3)};
 side_low = knee_name(end);
 
-% define segment ref system
-CS.V = JCS.(knee_name).V;
-CS.Origin = CenterVol;
+% segment reference system
+BCS.CenterVol = CenterVol;
+BCS.Origin = JCS.(knee_name).Origin'; % Origin must be 3x1
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V = JCS.(knee_name).V;
 
 % landmark bone according to CS (only Origin and CS.V are used)
-TibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_', side_low]);
+TibiaBL   = landmarkBoneGeom(tibiaTri, BCS, ['tibia_', side_low]);
 if just_tibia == 0
     TibiaBL.([upper(side_low), 'LM']) = MostDistalPt;
 end
@@ -238,7 +240,7 @@ if result_plots == 1
     
     % plot entire tibia 
     subplot(2,2,[1,3])
-    plotTriangLight(tibiaTri, CS, 0);
+    plotTriangLight(tibiaTri, BCS, 0);
     quickPlotRefSystem(JCS.(knee_name))
     quickPlotTriang(EpiTibASMedTri,'r');
     quickPlotTriang(EpiTibASLatTri,'b');
@@ -249,19 +251,20 @@ if result_plots == 1
     % plot proximal tibia
     subplot(2,2,2)
     alpha_ArtSurf = 1;
-    plotTriangLight(ProxTibTri, CS, 0);
+    plotTriangLight(ProxTibTri, BCS, 0);
     switch fit_method
         case 'ellipse'
             quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
             quickPlotRefSystem(JCS.(knee_name))
+            plot3( AuxCSInfo.ElpsPts(:,1), AuxCSInfo.ElpsPts(:,2), AuxCSInfo.ElpsPts(:,3),'k-')
 %             title('GIBOC Tibia - Ellipse fitting')
         case 'centroids'
             quickPlotTriang(EpiTibASMedTri,'r', 0, alpha_ArtSurf );
             quickPlotTriang(EpiTibASLatTri,'b',0, alpha_ArtSurf);
-            plotDot(CS.Centroid_AS_lat, 'b', 4);
-            plotDot(CS.Centroid_AS_med, 'r', 4);
-            plotCylinder((CS.Centroid_AS_lat-CS.Centroid_AS_med)', 3, (CS.Centroid_AS_lat+CS.Centroid_AS_med)/2,...
-                1.7*norm(CS.Centroid_AS_lat-CS.Centroid_AS_med), 1, 'k');
+            plotDot(AuxCSInfo.Centroid_AS_lat, 'b', 4);
+            plotDot(AuxCSInfo.Centroid_AS_med, 'r', 4);
+            plotCylinder((AuxCSInfo.Centroid_AS_lat-AuxCSInfo.Centroid_AS_med)', 3, (AuxCSInfo.Centroid_AS_lat+AuxCSInfo.Centroid_AS_med)/2,...
+                1.7*norm(AuxCSInfo.Centroid_AS_lat-AuxCSInfo.Centroid_AS_med), 1, 'k');
 %             title('GIBOC Tibia - Centroids')
         case 'plateau'
             quickPlotTriang(EpiTibArtSurfTri,'g', 0, alpha_ArtSurf );
@@ -271,13 +274,13 @@ if result_plots == 1
 
     % plot distal tibia
     subplot(2,2,4)
-    plotTriangLight(DistTibTri, CS, 0);
+    plotTriangLight(DistTibTri, BCS, 0);
     quickPlotTriang(AnkleArtSurfTri, 'g');
     switch fit_method
         case 'plateau'
-            plotDot(CS.CenterAnkleInside, 'g', 4);
+            plotDot(AuxCSInfo.CenterAnkleInside, 'g', 4);
         otherwise
-            plotDot(CS.AnkleCenter, 'g', 4);
+            plotDot(AuxCSInfo.AnkleCenter, 'g', 4);
     end
     plotDot(MostDistalPt,plot_col,3);
     text(MostDistalPt(1),MostDistalPt(2),MostDistalPt(3),'    MostDistPoint','FontSize',8);

@@ -30,7 +30,7 @@
 %       option is more a placeholder for future adjustments.
 %
 % Outputs:
-%   CS - MATLAB structure containing body reference system and other 
+%   BCS - MATLAB structure containing body reference system and other 
 %       geometrical features identified by the algorithm.
 %
 %   JCS - MATLAB structure containing the joint reference systems connected
@@ -47,7 +47,7 @@
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [CS, JCS, tibiaBL] = Kai2014_tibia(tibiaTri,...
+function [BCS, JCS, tibiaBL, AuxCSInfo] = Kai2014_tibia(tibiaTri,...
                                             side_raw,...
                                             result_plots,...
                                             debug_plots,...
@@ -90,7 +90,7 @@ U_DistToProx = tibia_guess_CS(tibiaTri, debug_plots);
 [ProxTib, DistTib] = cutLongBoneMesh(tibiaTri, U_DistToProx);
 
 % center of the volume
-[ ~, CenterVol] = TriInertiaPpties( tibiaTri );
+[ ~, CenterVol, InertiaMatrix] = TriInertiaPpties( tibiaTri );
 
 % checks on vertical direction
 Y0 = V_all(:,1);
@@ -167,19 +167,21 @@ Z0_temp = normalizeV(U_tmp' - (U_tmp*Y0)*Y0);
 % here the assumption is that Y0 has correct m-l orientation               
 ZElpsMax = sign(Z0_temp'*ZElpsMax)*ZElpsMax;
 
-EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
+AuxCSInfo.EllipsePts = transpose(V_all*[ones(length(FittedEllipse.data),1)*PtsCurves(1) FittedEllipse.data']');
 
-% common axes: X is orthog to Y and Z, which are not mutually perpend
+% common axes: X is orthog to Y and Z, in this case ARE mutually perpend
 Y = normalizeV(Y0);
 Z = normalizeV(ZElpsMax);
 X = normalizeV(cross(Y, Z));
 
-% segment reference system
-CS.Origin        = CenterVol;
-% CS.ElpsMaxPtVect = YElpsMax;
-CS.ElpsPts       = EllipsePts;
+% z for body ref system
 Z_cs = normalizeV(cross(X, Y));
-CS.V = [X Y Z_cs];
+
+% segment reference system
+BCS.CenterVol     = CenterVol;
+BCS.Origin        = CenterEllipse'; % origin must be [3x1]
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V =  [X Y Z_cs];
 
 % define the knee reference system
 joint_name = ['knee_',side_low];
@@ -200,7 +202,7 @@ JCS.(joint_name).child_orientation = computeXYZAngleSeq(JCS.(joint_name).V);
 % CS.ankle_r.parent_orientation = computeZXYAngleSeq(CS.V_knee);
 
 % landmark bone according to CS (only Origin and CS.V are used)
-tibiaBL   = landmarkBoneGeom(tibiaTri, CS, ['tibia_',side_low]);
+tibiaBL   = landmarkBoneGeom(tibiaTri, BCS, ['tibia_',side_low]);
 if just_tibia == 0
     tibiaBL.([upper(side_low),'LM']) = MostDistalMedialPt;
 end
@@ -210,8 +212,8 @@ label_switch = 1;
 if result_plots == 1
     % plot tibia and reference systems
     figure('Name', ['Kai2014 | bone: tibia | side: ', side_low])
-    plotTriangLight(tibiaTri, CS, 0);
-    quickPlotRefSystem(CS);
+    plotTriangLight(tibiaTri, BCS, 0);
+    quickPlotRefSystem(BCS);
     quickPlotRefSystem(JCS.(joint_name));
     
     % plot markers and labels

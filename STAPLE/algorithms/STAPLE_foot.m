@@ -2,7 +2,7 @@
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [CS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side_raw, result_plots, debug_plots, in_mm)
+function [BCS, JCS, CalcnBL] = STAPLE_foot(calcnTri, side_raw, result_plots, debug_plots, in_mm)
 
 % depends on
 % TriangleClosestPointPair
@@ -34,7 +34,7 @@ disp('Initializing method...')
 
 % 1. Indentify initial CS of the foot
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
-[ V_all, CenterVol ] = TriInertiaPpties( calcnTri );
+[ V_all, CenterVol, InertiaMatrix ] = TriInertiaPpties( calcnTri );
 X0 = V_all(:,1);
 
 % Get least square plane normal vector of the foot
@@ -229,20 +229,18 @@ PtMetaLat = PtsMeta1and2_Final(ILat,:) ;
 PtMetaMed = PtsMeta1and2_Final(IMed,:) ;
 
 % 7. rebuild reference system so that X points at midpoint of Metas [LM]
-X3 = normalizeV(0.5* (PtMetaMed + PtMetaLat) - heelPt);
-Z3 = normalizeV(Z2);
-Y3 = normalizeV(cross(Z3, X3));
+X3 = normalizeV(0.5* (PtMetaMed + PtMetaLat) - heelPt); % from heel to tiptoe
+Z3 = normalizeV(Z2); % points cranially
+Y3 = normalizeV(cross(X3, Z3)); % cross product
 
-%   7. Final coordinate system and bony landmarks
-CS.X = X3; % Distal proximal
-CS.Y = Z3; % Lateral to medial
-CS.Z = -Y3; % Ventral to dorsal
-% THIS IS USED IN jointDefinitions_Modenese2018.m
-CS.V = [X3, Z3, -Y3];
-CS.Origin = CenterVol;
+% segment reference system (V and Origin used in jointDefinitions_Modenese2018.m)
+BCS.CenterVol = CenterVol;
+BCS.Origin = CenterVol;
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V = [X3, Z3, Y3];
 
 % landmarks bone according to CS (only Origin and CS.V are used)
-CalcnBL    = landmarkBoneGeom(calcnTri, CS, ['calcn_',side_low]);
+CalcnBL    = landmarkBoneGeom(calcnTri, BCS, ['calcn_',side_low]);
 side_up = upper(side_low);
 CalcnBL.([side_up,'1MGROUND' ]) = PtMetaMed;
 CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat;
@@ -298,7 +296,7 @@ end
 if result_plots == 1
     figure('Name', ['STAPLE | bone: foot | side: ', side_low])
     % plot the calcn triangulation
-    plotTriangLight(calcnTri, CS, 0)
+    plotTriangLight(calcnTri, BCS, 0)
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(JCS.(toes_name))
 

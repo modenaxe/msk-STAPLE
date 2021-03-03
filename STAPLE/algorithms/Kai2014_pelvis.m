@@ -15,7 +15,7 @@
 % further checks implemented in the pelvis_guess_CS.m function developed
 % for STAPLE_pelvis.
 %
-%   [CS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
+%   [BCS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
 %                                        side_raw,...
 %                                        result_plots, ...
 %                                        debug_plots, in_mm)
@@ -37,7 +37,7 @@
 %       option is more a placeholder for future adjustments.
 %
 % Outputs:
-%   CS - MATLAB structure containing body reference system and other 
+%   BCS - MATLAB structure containing body reference system and other 
 %       geometrical features identified by the algorithm.
 %
 %   JCS - MATLAB structure containing the joint reference systems connected
@@ -54,7 +54,7 @@
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [ CS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
+function [ BCS, JCS, pelvisBL] = Kai2014_pelvis(pelvisTri,...
                                                side_raw,...
                                                result_plots,...
                                                debug_plots,...
@@ -178,22 +178,22 @@ end
 
 % defining the ref system (global)
 PelvisOr = (RASIS+LASIS)'/2.0;
-CS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % segment reference system
-CS.CenterVol = CenterVol;
-CS.InertiaMatrix = InertiaMatrix;
-CS.Origin = CenterVol;
+BCS.CenterVol = CenterVol;
+BCS.Origin = PelvisOr;
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % storing joint details
-JCS.ground_pelvis.V                 = CS.V;
+JCS.ground_pelvis.V                 = BCS.V;
 JCS.ground_pelvis.Origin            = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
+JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V);
 
 % define hip parent
 hip_name = ['hip_', side_low];
-JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(CS.V);
+JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(BCS.V);
 
 % Export bone landmarks(pelvis ref system)
 pelvisBL.RASI     = RASIS;
@@ -207,7 +207,7 @@ pelvisBL.LPS      = LPS;
 label_switch = 1;
 if result_plots == 1
     figure('Name', ['Kai2014 | bone: pelvis | side: ', side_low])
-    plotTriangLight(pelvisTri, CS, 0); hold on
+    plotTriangLight(pelvisTri, BCS, 0); hold on
 %     quickPlotRefSystem(CS)
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...

@@ -7,7 +7,7 @@
 % feature through slicing the bone geometry with planes perpendicular to
 % the longitudinal axis and anterior-posterior axis respectively.
 %
-%   [CS, JCS, femurBL] = Kai2014_femur(femurTri,...
+%   [BCS, JCS, femurBL] = Kai2014_femur(femurTri,...
 %                                      side_raw,...
 %                                      result_plots, ...
 %                                      debug_plots, in_mm)
@@ -47,7 +47,7 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 
-function [CS, JCS, femurBL] = Kai2014_femur(femurTri,...
+function [BCS, JCS, femurBL, AuxCSInfo] = Kai2014_femur(femurTri,...
                                             side_raw,...
                                             result_plots,...
                                             debug_plots,...
@@ -94,7 +94,7 @@ V_all = pca(femurTri.Points);
 [ProxFem, DistFem] = cutLongBoneMesh(femurTri, U_DistToProx);
 
 % centre of volume
-[ ~, CenterVol] = TriInertiaPpties(femurTri);
+[ ~, CenterVol, InertiaMatrix] = TriInertiaPpties(femurTri);
 
 %-------------------------------------
 % Z0: points upwards (inertial axis) 
@@ -109,46 +109,45 @@ Z0 = V_all(:,1);
 Z0 = sign((mean(ProxFem.Points)-mean(DistFem.Points))*Z0)*Z0;
 
 % store approximate Z direction and centre of mass of triangulation
-CS.Z0 = Z0;
-CS.CenterVol = CenterVol;
+AuxCSInfo.Z0 = Z0;
+AuxCSInfo.CenterVol = CenterVol;
 
 % find femoral head
-[CS, ~] = Kai2014_femur_fitSphere2FemHead(ProxFem, CS, debug_plots);
+[AuxCSInfo, ~] = Kai2014_femur_fitSphere2FemHead(ProxFem, AuxCSInfo, debug_plots);
 
 % slicing the femoral condyles
 disp('Processing femoral condyles:')
-CS = Kai2014_femur_fitSpheres2Condyles(DistFem, CS, debug_plots);
+AuxCSInfo = Kai2014_femur_fitSpheres2Condyles(DistFem, AuxCSInfo, debug_plots);
 
 % common axes: X is orthog to Y and Z, which are not mutually perpend
 % adjust for body side, so that U_tmp is aligned as Z_ISB
-Z = normalizeV(CS.Center_Lat-CS.Center_Med)*side_sign;
-Y = normalizeV(CS.CenterFH_Kai- CS.KneeCenter);
+Z = normalizeV(AuxCSInfo.Center_Lat-AuxCSInfo.Center_Med)*side_sign;
+Y = normalizeV(AuxCSInfo.CenterFH_Kai- AuxCSInfo.KneeCenter);
 X = normalizeV(cross(Y,Z));
 
-% define the segment CS
-CS.Origin = CenterVol;
-CS.X = X;
-CS.Y = Y;
-CS.Z = normalizeV(cross(X, Y));
-CS.V = [X Y Z];
+% segment reference system
+BCS.CenterVol = CenterVol;
+BCS.Origin = AuxCSInfo.CenterFH_Kai'; % we want [3x1]
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V = [X Y normalizeV(cross(X, Y))]; % same as hip.V
 
 % define the hip reference system
 Zml_hip = normalizeV(cross(X, Y));
 JCS.(hip_name).V  = [X Y Zml_hip];
-JCS.(hip_name).child_location    = CS.CenterFH_Kai*dim_fact;
+JCS.(hip_name).child_location    = AuxCSInfo.CenterFH_Kai*dim_fact;
 JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
-JCS.(hip_name).Origin = CS.CenterFH_Kai;
+JCS.(hip_name).Origin = AuxCSInfo.CenterFH_Kai;
 
 % define the knee reference system
 Ydp_knee = normalizeV(cross(Z, X));
 JCS.(knee_name).V  = [X Ydp_knee Z];
-JCS.(knee_name).parent_location = CS.KneeCenter*dim_fact;
+JCS.(knee_name).parent_location = AuxCSInfo.KneeCenter*dim_fact;
 JCS.(knee_name).parent_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
-JCS.(knee_name).Origin = CS.KneeCenter;
+JCS.(knee_name).Origin = AuxCSInfo.KneeCenter;
 
 % landmark bone according to CS (only Origin and CS.V are used)
 disp('Landmarking...')
-femurBL   = landmarkBoneGeom(femurTri, CS, ['femur_', side_low]);
+femurBL   = landmarkBoneGeom(femurTri, BCS, ['femur_', side_low]);
 
 % result plot
 label_switch=1;
@@ -156,8 +155,8 @@ if result_plots == 1
     figure('Name', ['Kai2014 | bone: femur | side: ', side_low])
     alpha = 0.5;
     subplot(2,2,[1,3]);
-    plotTriangLight(femurTri, CS, 0)
-    quickPlotRefSystem(CS);
+    plotTriangLight(femurTri, BCS, 0)
+    quickPlotRefSystem(BCS);
     quickPlotRefSystem(JCS.(hip_name));
     quickPlotRefSystem(JCS.(knee_name));
     
@@ -165,15 +164,15 @@ if result_plots == 1
     plotBoneLandmarks(femurBL, label_switch)
     
     subplot(2,2,2); % femoral head
-    plotTriangLight(ProxFem, CS, 0); hold on
+    plotTriangLight(ProxFem, BCS, 0); hold on
     quickPlotRefSystem(JCS.(hip_name));
-    plotSphere(CS.CenterFH_Kai, CS.RadiusFH_Kai, 'g', alpha);
+    plotSphere(AuxCSInfo.CenterFH_Kai, AuxCSInfo.RadiusFH_Kai, 'g', alpha);
     
     subplot(2,2,4);
-    plotTriangLight(DistFem, CS, 0); hold on
+    plotTriangLight(DistFem, BCS, 0); hold on
     quickPlotRefSystem(JCS.(knee_name));
-    plotSphere(CS.Center_Med, CS.Radius_Med, 'r', alpha);
-    plotSphere(CS.Center_Lat, CS.Radius_Lat, 'b', alpha);
+    plotSphere(AuxCSInfo.Center_Med, AuxCSInfo.Radius_Med, 'r', alpha);
+    plotSphere(AuxCSInfo.Center_Lat, AuxCSInfo.Radius_Lat, 'b', alpha);
 end
 
 % final printout

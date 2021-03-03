@@ -2,7 +2,7 @@
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-function [ CS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, side_raw, result_plots, debug_plots, in_mm)
+function [ BCS, JCS, PelvisBL] = STAPLE_pelvis(Pelvis, side_raw, result_plots, debug_plots, in_mm)
 
 if nargin<2;    side_raw = 'r';    end
 if nargin<3;    result_plots=1;    end
@@ -93,25 +93,25 @@ if norm(RASIS-LASIS)<norm(RPSIS-LPSIS)
     warndlg('Inter-ASIS distance is shorter than inter-PSIS distance. Better check manually.')
 end
 
-% segment reference system
-CS.CenterVol = CenterVol;
-CS.Origin = CS.CenterVol;
-CS.InertiaMatrix = InertiaMatrix;
-
 % ISB reference system
 PelvisOr = (RASIS+LASIS)'/2.0;
+
+% segment reference system
+BCS.CenterVol = CenterVol;
+BCS.Origin = PelvisOr;
+BCS.InertiaMatrix = InertiaMatrix;
+BCS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 % CS.V = RotPseudoISB2Glob;
-CS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 
 % storing joint details
-JCS.ground_pelvis.V = CS.V;
+JCS.ground_pelvis.V = BCS.V;
 JCS.ground_pelvis.Origin = PelvisOr;
 JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(CS.V);
+JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V);
 
 % define hip parent
 hip_name = ['hip_', side_low];
-JCS.(hip_name).parent_orientation   = computeXYZAngleSeq(CS.V);
+JCS.(hip_name).parent_orientation   = computeXYZAngleSeq(BCS.V);
 
 % Export bone landmarks
 PelvisBL.RASI     = RASIS; 
@@ -124,8 +124,8 @@ PelvisBL.SYMP     = SYMP;
 label_switch = 1;
 if result_plots == 1
     figure('Name', ['STAPLE | bone: pelvis | side: ', side_low])
-    plotTriangLight(Pelvis, CS, 0); hold on
-    quickPlotRefSystem(CS);
+    plotTriangLight(Pelvis, BCS, 0); hold on
+    quickPlotRefSystem(BCS);
     quickPlotRefSystem(JCS.ground_pelvis);
     trisurf(LargestTriangle,'facealpha',0.4,'facecolor','y',...
         'edgecolor','k');
