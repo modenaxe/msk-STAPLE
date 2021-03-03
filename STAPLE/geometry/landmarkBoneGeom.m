@@ -39,18 +39,18 @@ if nargin<4; debug_plots = 0; end
 LandmarkStruct = getBoneLandmarkList(bone_name);
 
 % change reference system to bone/body reference system
-TriObj_in_CS = TriChangeCS(TriObj, CS.V, CS.Origin);
+TriObj_in_CS = TriChangeCS(TriObj, CS.V, CS.CenterVol);
 
 % visualise the bone in the bone/body ref system
 if debug_plots == 1
-    figure()
+%     figure()
     % create coordinate system centred in [0, 0 ,0] and with unitary axis
     % directly along the direction of the ground ref system
     LocalCS        = struct();
     LocalCS.Origin = [0 0 0]';
     LocalCS.V      = eye(3);
     % close all
-    PlotTriangLight(TriObj_in_CS, LocalCS, 1); hold on
+    plotTriangLight(TriObj_in_CS, LocalCS, 1); hold on
     quickPlotRefSystem(LocalCS);
 end
 
@@ -58,7 +58,7 @@ end
 TriPoints = TriObj_in_CS.Points;
 
 % TODO replace with CentreVol 
-COM = [0 0 0]';
+% COM = [0 0 0]';
 
 % define proximal or distal:
 % 1) considers Y the longitudinal direction
@@ -103,14 +103,13 @@ for nL = 1:NL
         plotDot(local_BL,'r',4);
     end
     
-    % TODO: this dimensionality check needs to be revised after
-    % consolidation of STAPLE
-    if size(CS.Origin,1)>size(CS.Origin,2) && size(CS.Origin,1)==3
-        CS.Origin = CS.Origin';
+    % dimensionality check
+    if ~isequal(size(CS.CenterVol),[3,1])
+        error('CenterVol dimensionality error, it should be [3x1]');
     end
     
     % save a landmark structure (transform back to global)
-    Landmarks.(cur_BL_name) = CS.Origin+local_BL*CS.V';
+    Landmarks.(cur_BL_name) = CS.CenterVol+CS.V*local_BL';
 end
 
 end
