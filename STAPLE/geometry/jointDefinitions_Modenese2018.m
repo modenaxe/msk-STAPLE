@@ -67,7 +67,7 @@ if isfield(JCS, talus_name)
             % take Z from knee joint (axis of rotation)
             Zparent  = FemurStruct.(knee_name).V(:,3);
             % take line joining talus and knee centres
-            TibiaStruct.(knee_name).Origin = makeRowVec(FemurStruct.(knee_name).Origin)';
+            TibiaStruct.(knee_name).Origin = FemurStruct.(knee_name).Origin;
             % vertical axis joining knee and ankle joint centres (same used for ankle
             % parent)
             Ytemp = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
@@ -88,7 +88,7 @@ if isfield(JCS, talus_name)
         % take Z from ankle joint (axis of rotation)
         Zparent  = normalizeV(TalusStruct.(ankle_name).V(:,3));
         % take line joining talus and knee centres
-        TibiaStruct.(knee_name).Origin = makeRowVec(TibiaStruct.(knee_name).Origin)';
+        TibiaStruct.(knee_name).Origin = TibiaStruct.(knee_name).Origin;
         Ytibia = (TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin)/...
             norm(TibiaStruct.(knee_name).Origin - TalusStruct.(ankle_name).Origin);
         % make Y and Z orthogonal
@@ -139,15 +139,4 @@ if isfield(JCS, talus_name)
     
 end
 
-
-end
-
-function row_v = makeRowVec(v)
-if isequal(size(v), [3,1])
-    row_v = v';
-elseif isequal(size(v), [1,3])
-    row_v = v;
-else
-    error('provided vector has not 3 components.')
-end
 end
