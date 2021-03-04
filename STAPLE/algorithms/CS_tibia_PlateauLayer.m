@@ -100,7 +100,7 @@ JCS.(knee_name).V = [X Y Zml_knee];
 
 % define knee child
 JCS.(knee_name).child_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
-JCS.(knee_name).Origin   = KneeCenter;
+JCS.(knee_name).Origin   = KneeCenter';  % [3x1] as Origin should be
 
 % the knee axis (parent) is defined by the femoral fitting
 % CS.(knee_name).child_location = KneeCenter*dim_fact;

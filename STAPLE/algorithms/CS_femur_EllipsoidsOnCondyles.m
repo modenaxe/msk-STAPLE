@@ -41,14 +41,14 @@ Zml_hip = normalizeV(cross(X, Y));
 JCS.(hip_name).V = [X Y Zml_hip];
 JCS.(hip_name).child_location = CS.CenterFH_Renault * dim_fact;
 JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
-JCS.(hip_name).Origin = CS.CenterFH_Renault;
+JCS.(hip_name).Origin = CS.CenterFH_Renault'; % [3x1] as Origin should be
 
 % define knee joint
 Y_knee = normalizeV(cross(Z, X));
 JCS.(knee_name).V = [X Y_knee Z];
 JCS.(knee_name).parent_location = KneeCenter * dim_fact;
 JCS.(knee_name).parent_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
-JCS.(knee_name).Origin = KneeCenter;
+JCS.(knee_name).Origin = KneeCenter'; % [3x1] as Origin should be
 
 % debug plots
 if debug_plots == 1

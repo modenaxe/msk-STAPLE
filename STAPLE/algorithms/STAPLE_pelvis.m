@@ -106,8 +106,8 @@ BCS.V = CS_pelvis_ISB(RASIS, LASIS, RPSIS, LPSIS);
 % storing joint details
 JCS.ground_pelvis.V = BCS.V;
 JCS.ground_pelvis.Origin = PelvisOr;
-JCS.ground_pelvis.child_location    = PelvisOr*dim_fact;
-JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V);
+JCS.ground_pelvis.child_location    = PelvisOr'*dim_fact; %[1x3] as in OpenSim
+JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V); %[1x3] as in OpenSim
 
 % define hip parent
 hip_name = ['hip_', side_low];

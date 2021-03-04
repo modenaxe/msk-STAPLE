@@ -136,14 +136,14 @@ Zml_hip = normalizeV(cross(X, Y));
 JCS.(hip_name).V  = [X Y Zml_hip];
 JCS.(hip_name).child_location    = AuxCSInfo.CenterFH_Kai*dim_fact;
 JCS.(hip_name).child_orientation = computeXYZAngleSeq(JCS.(hip_name).V);
-JCS.(hip_name).Origin = AuxCSInfo.CenterFH_Kai;
+JCS.(hip_name).Origin = AuxCSInfo.CenterFH_Kai'; % [3x1] as Origin should be
 
 % define the knee reference system
 Ydp_knee = normalizeV(cross(Z, X));
 JCS.(knee_name).V  = [X Ydp_knee Z];
 JCS.(knee_name).parent_location = AuxCSInfo.KneeCenter*dim_fact;
 JCS.(knee_name).parent_orientation = computeXYZAngleSeq(JCS.(knee_name).V);
-JCS.(knee_name).Origin = AuxCSInfo.KneeCenter;
+JCS.(knee_name).Origin = AuxCSInfo.KneeCenter'; % [3x1] as Origin should be
 
 % landmark bone according to CS (only Origin and CS.V are used)
 disp('Landmarking...')

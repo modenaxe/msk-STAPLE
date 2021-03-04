@@ -158,9 +158,9 @@ BCS.V = [AuxCSInfo.X0, AuxCSInfo.Z0, -AuxCSInfo.Y0];
 
 % define ankle joint
 JCS.(ankle_name).V = AuxCSInfo.V_ankle;
-JCS.(ankle_name).child_location = AuxCSInfo.ankle_cyl_centre * dim_fact;
+JCS.(ankle_name).child_location = AuxCSInfo.ankle_cyl_centre' * dim_fact;%[1x3] as in opensim
 JCS.(ankle_name).child_orientation = computeXYZAngleSeq(JCS.(ankle_name).V);
-JCS.(ankle_name).Origin = AuxCSInfo.ankle_cyl_centre;
+JCS.(ankle_name).Origin = AuxCSInfo.ankle_cyl_centre; % [3x1] as origin should be
 
 % define subtalar joint
 JCS.(subtalar_name).V = AuxCSInfo.V_subtalar;

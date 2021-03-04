@@ -235,7 +235,7 @@ Y3 = normalizeV(cross(X3, Z3)); % cross product
 
 % segment reference system (V and Origin used in jointDefinitions_Modenese2018.m)
 BCS.CenterVol = CenterVol;
-BCS.Origin = CenterVol;
+BCS.Origin = heelPt'; % [3x1] used to be centervol
 BCS.InertiaMatrix = InertiaMatrix;
 BCS.V = [X3, Z3, Y3];
 
@@ -275,7 +275,7 @@ Z = normalizeV(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'D1M']))*sign_side;
 X = normalizeV(X3-X3*(X3'*Z));
 Y = normalizeV(cross(Z,X));
 midpoint_DM = (CalcnBL.([side_up,'D5M'])+CalcnBL.([side_up,'D1M']))/2.0;
-JCS.(toes_name).Origin = midpoint_DM;
+JCS.(toes_name).Origin = midpoint_DM'; %[3x1] as Origin should be
 JCS.(toes_name).V = [X Y Z];
 JCS.(toes_name).parent_location = midpoint_DM * dim_fact;
 JCS.(toes_name).parent_orientation = computeXYZAngleSeq(JCS.(toes_name).V);

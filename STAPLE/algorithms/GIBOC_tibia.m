@@ -224,7 +224,7 @@ side_low = knee_name(end);
 
 % segment reference system
 BCS.CenterVol = CenterVol;
-BCS.Origin = JCS.(knee_name).Origin'; % Origin must be 3x1
+BCS.Origin = JCS.(knee_name).Origin; % Origin is [3x1] 
 BCS.InertiaMatrix = InertiaMatrix;
 BCS.V = JCS.(knee_name).V;
 

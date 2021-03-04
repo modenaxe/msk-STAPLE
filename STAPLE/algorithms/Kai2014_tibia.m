@@ -186,7 +186,7 @@ BCS.V =  [X Y Z_cs];
 % define the knee reference system
 joint_name = ['knee_',side_low];
 Ydp_knee  = normalizeV(cross(Z, X));
-JCS.(joint_name).Origin = CenterEllipse;
+JCS.(joint_name).Origin = CenterEllipse';  % [3x1] as Origin should be
 JCS.(joint_name).V = [X Ydp_knee Z]; 
 
 % NOTE THAT CS.V and JCS.knee_r.V are the same, so the distinction is here
