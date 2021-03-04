@@ -35,17 +35,22 @@ geom_names = fields(triGeomSet);
 body_names = fields(CS_set);
 
 % check that the structures of bones and coord syst are compatible
-if ~isequal(geom_names, body_names)
-    error('transformTriGeomSet.m  Error - geometry and coordinate systems names are not consistent.')
+if numel(geom_names)~=numel(body_names)
+    error('transformTriGeomSet.m  Error - geometry and coordinate systems elements are not consistent.')
 end
 
 % update the triangulation objects
 Nf = numel(geom_names);
 for nb = 1:Nf
     cur_triGeomName = geom_names{nb};
+    curr_body_name  = body_names{nb};
     cur_tri = triGeomSet.(cur_triGeomName);
-    cur_CS  = CS_set.(body_names{nb});
-    updTriGeomSet.(cur_triGeomName) = TriChangeCS(cur_tri, cur_CS.V, cur_CS.Origin);
+    cur_CS  = CS_set.(curr_body_name);
+    if strncmp(curr_body_name, cur_triGeomName, length(curr_body_name))
+        updTriGeomSet.(cur_triGeomName) = TriChangeCS(cur_tri, cur_CS.V, cur_CS.Origin);
+    else
+        warning(['Triangulation ',cur_triGeomName,' does not seem to correspond to body ', curr_body_name ]);
+    end
 end
 
 end
