@@ -16,7 +16,7 @@
 % 3) Body-fixed Cartesian coordinate system are defined but not employed in
 % the construction of the models.
 % 
-%   [JCS, BL, CS] = processTriGeomBoneSet(geom_set, method_pelvis,...
+%   [JCS, BL, BCS] = processTriGeomBoneSet(geom_set, method_pelvis,...
 %                                         method_femur, method_tibia, in_mm)
 %
 % Inputs:
@@ -50,7 +50,7 @@
 %   BL - structure collecting the bone landmarks identified on the
 %       three-dimensional bone surfaces.
 %
-%   CS - structure collecting the body coordinate systems of the processed
+%   BCS - structure collecting the body coordinate systems of the processed
 %       bones.
 % 
 % See also CREATETRIGEOMSET, ADDBODIESFROMTRIGEOMBONESET.
@@ -75,7 +75,7 @@
 % so that all params that has been processed here are immediately available
 %--------------------------------------------------------------------------
 
-function [JCS, BL, CS] = processTriGeomBoneSet(triGeomBoneSet, side_raw, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
+function [JCS, BL, BCS] = processTriGeomBoneSet(triGeomBoneSet, side_raw, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
 
 % setting defaults
 if nargin<2
@@ -126,19 +126,19 @@ if isfield(triGeomBoneSet,toes_name);  disp( ['  toes   : ', 'N/A']);    end
 if isfield(triGeomBoneSet,'pelvis')
     switch algo_pelvis
         case 'STAPLE'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+            [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 STAPLE_pelvis(triGeomBoneSet.pelvis, side, result_plots, debug_plots, in_mm);
         case 'Kai2014'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+            [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 Kai2014_pelvis(triGeomBoneSet.pelvis, side, result_plots, debug_plots, in_mm);
     end
 elseif isfield(triGeomBoneSet,'pelvis_no_sacrum')
     switch algo_pelvis
         case 'STAPLE'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+            [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 STAPLE_pelvis(triGeomBoneSet.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
         case 'Kai2014'
-            [CS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+            [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 Kai2014_pelvis(triGeomBoneSet.pelvis_no_sacrum, side, result_plots, debug_plots, in_mm);
     end
 end
@@ -149,19 +149,19 @@ if isfield(triGeomBoneSet, femur_name)
 %         case 'Miranda'
 %             [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = Miranda2010_buildfACS(geom_set.(femur_name));
         case 'Kai2014'
-            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+            [BCS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
                 Kai2014_femur(triGeomBoneSet.(femur_name), side);
         case 'GIBOC-spheres'
-            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+            [BCS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
                 GIBOC_femur(triGeomBoneSet.(femur_name), side, 'spheres', result_plots, debug_plots, in_mm);
         case 'GIBOC-ellipsoids'
-            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ....
+            [BCS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ....
                 GIBOC_femur(triGeomBoneSet.(femur_name), side, 'ellipsoids', result_plots, debug_plots, in_mm);
         case 'GIBOC-cylinder'
-            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+            [BCS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
                 GIBOC_femur(triGeomBoneSet.(femur_name), side, 'cylinder', result_plots, debug_plots, in_mm);
         otherwise
-            [CS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
+            [BCS.(femur_name), JCS.(femur_name), BL.(femur_name)] = ...
                 GIBOC_femur(triGeomBoneSet.(femur_name), side, 'cylinder', result_plots, debug_plots, in_mm);
     end
 end
@@ -172,19 +172,19 @@ if isfield(triGeomBoneSet, tibia_name)
 %         case 'Miranda' % same as Kai but using inertia
 %             [CS.tibia_r, JCS.tibia_r, BL.tibia_r] = Miranda2010_buildtACS(geom_set.tibia_r);
         case 'Kai2014'
-            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+            [BCS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
                 Kai2014_tibia(triGeomBoneSet.(tibia_name), side, result_plots, debug_plots, in_mm);
         case 'GIBOC-plateau'
-            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+            [BCS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
                 GIBOC_tibia(triGeomBoneSet.(tibia_name), side, 'plateau', result_plots, debug_plots, in_mm);
         case 'GIBOC-ellipse'
-            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+            [BCS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
                 GIBOC_tibia(triGeomBoneSet.(tibia_name), side, 'ellipse', result_plots, debug_plots, in_mm);
         case 'GIBOC-centroids'
-            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
+            [BCS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ...
                 GIBOC_tibia(triGeomBoneSet.(tibia_name), side, 'centroids', result_plots, debug_plots, in_mm);
         otherwise
-            [CS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ....
+            [BCS.(tibia_name), JCS.(tibia_name), BL.(tibia_name)] = ....
                 Kai2014_tibia(triGeomBoneSet.(tibia_name), side, result_plots, debug_plots, in_mm);
     end
 end
@@ -194,13 +194,13 @@ end
 if isfield(triGeomBoneSet, patella_name)
     switch method_patella
         case 'Rainbow'
-            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = Rainbow2013_buildpACS();
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = Rainbow2013_buildpACS();
         case 'GIBOC-vol-ridge'
-            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'volume-ridge');
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'volume-ridge');
         case 'GIBOC-ridge'
-            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'ridge-line');
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'ridge-line');
         case 'GIBOC-ACS'
-            [CS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'artic-surf');
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'artic-surf');
         otherwise
             % error('choose coorect patellar algorithm');
     end
@@ -209,19 +209,19 @@ end
     
 %---- TALUS/ANKLE -----
 if isfield(triGeomBoneSet,talus_name)
-    [CS.(talus_name), JCS.(talus_name)] = ...
+    [BCS.(talus_name), JCS.(talus_name)] = ...
         STAPLE_talus(triGeomBoneSet.(talus_name), side, result_plots,  debug_plots, in_mm);
 end
 
 %---- CALCANEUS/SUBTALAR -----
 if isfield(triGeomBoneSet,calcn_name)
-    [CS.(calcn_name), JCS.(calcn_name), BL.(calcn_name)] =...
+    [BCS.(calcn_name), JCS.(calcn_name), BL.(calcn_name)] =...
         STAPLE_foot(triGeomBoneSet.(calcn_name), side, result_plots,  debug_plots, in_mm);
 end
 
 %---- TOES -----
 if isfield(triGeomBoneSet,toes_name)
-    [CS.(toes_name), JCS.(toes_name), BL.(toes_name)] =...
+    [BCS.(toes_name), JCS.(toes_name), BL.(toes_name)] =...
         STAPLE_toes(triGeomBoneSet.(toes_name), side, result_plots,  debug_plots, in_mm);   
 end
 
