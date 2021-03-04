@@ -45,7 +45,7 @@ for n_d = 1:numel(dataset_set)
     osimModel.finalizeConnections();
     
     % print OpenSim model
-    osimModel.print('./models_from_tests/mass_calc.osim');
+    osimModel.print('./ref_models/mass/mass_calc.osim');
     
     % inform the user about time employed to create the model
     disp('-------------------------')
