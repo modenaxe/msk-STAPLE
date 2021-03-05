@@ -2,6 +2,7 @@
 %To obtain the direction of the ridge a Least Square Straight Line is
 %fitted on the lowest points on slices of normal U, and the normal U is
 %updated until convergence (of U or number of iterations > 100)
+% U is the vector ~aligned with the ridge
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
