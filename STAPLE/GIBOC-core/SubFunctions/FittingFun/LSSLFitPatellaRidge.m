@@ -18,7 +18,7 @@ function [U, Uridge, LowestPoints] = LSSLFitPatellaRidge(   patellaTri,...
 if nargin<3; nbSlice = 50;                                 end
 if nargin<4; startDist = 0.025*range(patellaTri.Points*U); end %Offset distance from first points
 if nargin<5; endDist = startDist;                          end%Offset distance from last points
-if nargin<6; debug_plots=1;                                 end
+if nargin<6; debug_plots=0;                                 end
 
 % initialize fitting
 U0 = U;
@@ -55,14 +55,14 @@ while test && k < 100 % Cut at 100 iterations (convergence generally occuring be
     
     % the vector will be in the XY plane where the patella is a "circle"
     % third component = 0
-    Uridge(3) = 0; 
-    U = normalizeV(Uridge);
+%     U = Uridge;
+%     U(3) = 0; 
+    U = normalizeV([Uridge(1:2); 0]);
     
     % how much the vector is changing in direction
     U_old(1:3,end+1) = U;
     test = U_old(1:3,end-1)'*U_old(1:3,end) > (1 - 100*eps);
 end
-
 
 % debug plots
 if debug_plots == 1
