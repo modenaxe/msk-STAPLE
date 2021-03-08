@@ -242,9 +242,9 @@ BCS.V = [X3, Z3, Y3];
 % landmarks bone according to CS (only Origin and CS.V are used)
 CalcnBL    = landmarkBoneGeom(calcnTri, BCS, ['calcn_',side_low]);
 side_up = upper(side_low);
-CalcnBL.([side_up,'1MGROUND' ]) = PtMetaMed;
-CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat;
-CalcnBL.([side_up,'HEEGROUND']) = heelPt;
+CalcnBL.([side_up,'1MGROUND' ]) = PtMetaMed';
+CalcnBL.([side_up,'5MGROUND' ]) = PtMetaLat';
+CalcnBL.([side_up,'HEEGROUND']) = heelPt';
 
 % sometimes the simple landmarking gets incorrect detection of D5M.
 % Attempting to correct.
@@ -275,9 +275,9 @@ Z = normalizeV(CalcnBL.([side_up,'D5M'])-CalcnBL.([side_up,'D1M']))*sign_side;
 X = normalizeV(X3-X3*(X3'*Z));
 Y = normalizeV(cross(Z,X));
 midpoint_DM = (CalcnBL.([side_up,'D5M'])+CalcnBL.([side_up,'D1M']))/2.0;
-JCS.(toes_name).Origin = midpoint_DM'; %[3x1] as Origin should be
+JCS.(toes_name).Origin = midpoint_DM; %[3x1] as Origin should be
 JCS.(toes_name).V = [X Y Z];
-JCS.(toes_name).parent_location = midpoint_DM * dim_fact;
+JCS.(toes_name).parent_location = midpoint_DM' * dim_fact; % [1x3] as in OpenSim
 JCS.(toes_name).parent_orientation = computeXYZAngleSeq(JCS.(toes_name).V);
 
 
@@ -300,18 +300,12 @@ if result_plots == 1
     % Plot the inertia Axis & Volumic center
     quickPlotRefSystem(JCS.(toes_name))
 
-    
     % plot markers and labels
     plotBoneLandmarks(CalcnBL, label_switch)   
     
     % Plot the sole plane
     [x, y, z] = deal(newTriangle(:,1), newTriangle(:,2), newTriangle(:,3));
     trisurf([1 2 3],x,y,z,'Facecolor','b','FaceAlpha',0.4,'edgecolor','k');
-        % plot the bone landmarks
-    %     plotDot(heelPt,'g',3)
-    %     plotDot(PtMetaLat,'b',3)
-    %     plotDot(PtMetaMed,'r',3)
-
 end
 
 disp('Done');
