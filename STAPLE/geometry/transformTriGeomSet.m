@@ -27,8 +27,6 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 
-% TODO: written in train, needs proper testing!
-
 function updTriGeomSet = transformTriGeomSet(triGeomSet, BCS_set)
 
 geom_names = fields(triGeomSet);

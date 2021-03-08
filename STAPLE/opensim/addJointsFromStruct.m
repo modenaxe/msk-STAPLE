@@ -20,7 +20,7 @@
 %  Author:   Luca Modenese
 %  Copyright 2021 Luca Modenese
 %-------------------------------------------------------------------------%
-function addJointsFromStruct(osimModel,jointStruct)
+function osimModel = addJointsFromStruct(osimModel,jointStruct)
 
 % check that all joints are completed
 verifyJointStructCompleteness(jointStruct)
