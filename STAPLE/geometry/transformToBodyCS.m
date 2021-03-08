@@ -1,3 +1,40 @@
+% TRANFORMTOBODYCS Transform bone geometries, joint parameters and landmark
+% coordinates to body reference systems. This is used when a 'standard'
+% model with all local reference systems is desired.
+%
+% [updTriBoneGeom, jointStruct, landmarkStruct] = transformToBodyCS(BCS,...
+%                                                       triGeomBoneSet,...
+%                                                       jointStruct,...
+%                                                       landmarkStruct)
+%
+% Inputs:
+%   triGeomBoneSet - MATLAB structures containing a triangulation object in
+%       each field. The name of the fields coincides with the name of bones
+%       in the standard use.
+%
+%   jointStruct - A structure collecting a set of coordinate systems. The
+%       structure is complete, meaning that finalizeJointStruct.m has been
+%       used to generate it.
+% 
+%   landmarkStruct - A structure including the bone landmarks for all the
+%       bones of interest.
+%
+% Outputs:
+%   updTriBoneGeom - same triangulation objects of triGeomSet transformed
+%       according to the BCS reference systems.
+% 
+%   jointStruct  - same joint CS given in input transformed according to 
+%       the BCS reference systems.
+%
+%   landmarkStruct  - same joint landmarks given in input transformed 
+%       according to the BCS reference systems.
+%
+% See also FINALIZEJOINTSTRUCT, TRANFORMTRIGEOMSET.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese 
+%  Copyright 2021 Luca Modenese
+%-------------------------------------------------------------------------%
 function [updTriBoneGeom, jointStruct, landmarkStruct] = transformToBodyCS(BCS, triGeomBoneSet, jointStruct, landmarkStruct)
 
 if nargin < 2; triGeomBoneSet = []; end
