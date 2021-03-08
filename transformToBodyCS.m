@@ -40,13 +40,14 @@ clear body_list cur_body_name
 % transform bony landmarks to BCS (still in mm)
 if ~isempty(landmarkStruct)
     body_list = fields(landmarkStruct);
-    for nb = 1:numel(landmarkStruct)
+    for nb = 1:numel(body_list)
         cur_body_name = body_list{nb};
         cur_body  = BCS.(cur_body_name);
-        BL_list = fields(landmarkStruct.(cur_body_name));
-        if ~isempty(BL_list)
+        if ~isempty(landmarkStruct.(cur_body_name))
+            BL_list = fields(landmarkStruct.(cur_body_name));
             for nl = 1:numel(BL_list)
                 cur_BL_coord = landmarkStruct.(cur_body_name).(BL_list{nl});
+                % NB: BL are [3x1] like Origin
                 landmarkStruct.(cur_body_name).(BL_list{nl}) = ...
                     (cur_body.V'*(cur_BL_coord-cur_body.Origin))';
             end
