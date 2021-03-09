@@ -14,7 +14,7 @@
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
   - [Algorithms for bone morphological analysis](#algorithms-for-bone-morphological-analysis)
   - [Datasets available for testing](#datasets-available-for-testing)
-  - [Further notes on STAPLE](#further-notes-on-staple)
+  - [STAPLE variables and conventions](#STAPLE-variables-and-conventions)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
 - [What are the differences between the STAPLE toolbox, NMSBuilder and the MAP Client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-nmsbuilder-and-the-map-client-for-generating-opensim-models)
