@@ -319,7 +319,7 @@ Bone landmarks are stored in MATLAB structures as [3x1] vectors. Each field name
 | ---                   | ---                     	| 
 | pelvis 				| <ul><li>RASI/LASI: anterior superior iliac spine</li><li>RPSI/LPSI: posterior superior iliac spine</li><li>SYMP: pubic symphysis</li></ul> 			| 
 | femur 				| <ul><li>RKNE/LKNE: lateral femoral epicondyle</li><li>RMFC/LMFC: medial femoral epicondyle</li><li>RTRO/LTRO: greater trochanter</li></ul> 			| 
-| tibia 				| <ul><li>RTTB/LTTB: tibial tuberosity</li><li>RHFB/LHFB: head of fibula</li><li>RANK/LANK: lateral malleolus</li><li>RMMA/LMMA</li><li>RLM/LLM</li></ul>|
+| tibia 				| <ul><li>RTTB/LTTB: tibial tuberosity</li><li>RHFB/LHFB: head of fibula</li><li>RANK/LANK: lateral malleolus</li><li>RMMA/LMMA: medial malleolus</li><li>RLM/LLM: most distal point of lateral malleolus</li></ul>|
 | patella 				| RLOW/LLOW: most distal point of patella |
 | talus 				| None |
 | foot 					| <ul><li>RHEE/LHEE: heel</li><li>RD5M/LD5M: distal point of 5th metatarsal bone</li><li>RD5MPROX/LD5MPROX: proximal point of 5th metatarsal bone</li><li>RD1M/LD1M: distal point of first metatarsal bone</li><li>R1MGROUND/L1MGROUND: distal point of first metatarsal bone on foot sole</li><li>R5MGROUND/L5MGROUND: distal point of 5th metatarsal bone on foot sole</li><li>RHEEGROUND/LHEEGROUND: calcaneus most distal point on foot sole</li></ul>|
