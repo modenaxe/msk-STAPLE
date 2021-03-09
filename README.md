@@ -286,7 +286,7 @@ The BCS is a MATLAB structure with the following fields:
 When running a morphological analysis, the joint coordinate system (JCS) associated with the analysed geometry is also returned, together with the BCS. 
 
 The JCS is a MATLAB structure with the following fields:
-1. **<joint name>**: 
+1. **joint name**: 
 2. **Origin** [3x1] vector: the origin of the joint in the bone being analysed
 3. **V** [3x3] matrix: the pose matrix of the joint
 4. **parent_location** [1x3] vector: the origin of the parent coordinate system in OpenSim
