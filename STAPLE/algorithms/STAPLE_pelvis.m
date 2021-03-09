@@ -113,12 +113,12 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V); %[1x3] as in Op
 hip_name = ['hip_', side_low];
 JCS.(hip_name).parent_orientation   = computeXYZAngleSeq(BCS.V);
 
-% Export bone landmarks
-PelvisBL.RASI     = RASIS; 
-PelvisBL.LASI     = LASIS; 
-PelvisBL.RPSI     = RPSIS; 
-PelvisBL.LPSI     = LPSIS; 
-PelvisBL.SYMP     = SYMP;
+% Export bone landmarks: [3x1] vectors
+PelvisBL.RASI     = RASIS'; 
+PelvisBL.LASI     = LASIS'; 
+PelvisBL.RPSI     = RPSIS'; 
+PelvisBL.LPSI     = LPSIS'; 
+PelvisBL.SYMP     = SYMP';
 
 % debug plot
 label_switch = 1;

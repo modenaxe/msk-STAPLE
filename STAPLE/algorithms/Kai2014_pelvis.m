@@ -195,7 +195,7 @@ JCS.ground_pelvis.child_orientation = computeXYZAngleSeq(BCS.V);%[1x3] as in Ope
 hip_name = ['hip_', side_low];
 JCS.(hip_name).parent_orientation        = computeXYZAngleSeq(BCS.V);
 
-% Export bone landmarks(pelvis ref system)
+% Export bone landmarks(pelvis ref system): 3x1 vectors
 pelvisBL.RASI     = RASIS;
 pelvisBL.LASI     = LASIS;
 pelvisBL.RPSI     = RPSIS;

@@ -54,19 +54,19 @@ for n_side = 1:2
         %---- FEMUR -----
         if isfield(geom_set, femur_name)
             %     [FemurCS0, JCS0] = Miranda2010_buildfACS(geom_set.(femur_name));
-            [FemurCS1, FemurJCS1] = Kai2014_femur(geom_set.(femur_name), side);
-            [FemurCS2, FemurJCS2] = GIBOC_femur(geom_set.(femur_name), side, 'spheres');
-            [FemurCS3, FemurJCS3] = GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids');
-            [FemurCS4, FemurJCS4] = GIBOC_femur(geom_set.(femur_name), side, 'cylinder');
+            [FemurCS1, FemurJCS1, FemurBL1] = Kai2014_femur(geom_set.(femur_name), side);
+            [FemurCS2, FemurJCS2, FemurBL2] = GIBOC_femur(geom_set.(femur_name), side, 'spheres');
+            [FemurCS3, FemurJCS3, FemurBL3] = GIBOC_femur(geom_set.(femur_name), side, 'ellipsoids');
+            [FemurCS4, FemurJCS4, FemurBL4] = GIBOC_femur(geom_set.(femur_name), side, 'cylinder');
         end
         
         %---- TIBIA -----
         if isfield(geom_set, tibia_name)
             %     [TibiaCS0, JCS0] = Miranda2010_buildtACS(geom_set.(tibia_name));
-            [TibiaCS1, TibiaJCS1] = Kai2014_tibia(geom_set.(tibia_name), side);
-            [TibiaCS2, TibiaJCS2] = GIBOC_tibia(geom_set.(tibia_name), side, 'plateau');
-            [TibiaCS3, TibiaJCS3] = GIBOC_tibia(geom_set.(tibia_name), side, 'ellipse');
-            [TibiaCS4, TibiaJCS4] = GIBOC_tibia(geom_set.(tibia_name), side, 'centroids');
+            [TibiaCS1, TibiaJCS1, TibiaBL1] = Kai2014_tibia(geom_set.(tibia_name), side);
+            [TibiaCS2, TibiaJCS2, TibiaBL2] = GIBOC_tibia(geom_set.(tibia_name), side, 'plateau');
+            [TibiaCS3, TibiaJCS3, TibiaBL3] = GIBOC_tibia(geom_set.(tibia_name), side, 'ellipse');
+            [TibiaCS4, TibiaJCS4, TibiaBL4] = GIBOC_tibia(geom_set.(tibia_name), side, 'centroids');
         end
         
         % %---- PATELLA -----
@@ -84,7 +84,7 @@ for n_side = 1:2
 %         
 %         %---- CALCANEUS/SUBTALAR -----
         if isfield(geom_set, calcn_name)
-            [FootCS, FootJCS] = STAPLE_foot(geom_set.(calcn_name), side);
+            [FootCS, FootJCS, FootBL] = STAPLE_foot(geom_set.(calcn_name), side);
         end
         
         %     close all

@@ -231,7 +231,8 @@ BCS.V = JCS.(knee_name).V;
 % landmark bone according to CS (only Origin and CS.V are used)
 TibiaBL   = landmarkBoneGeom(tibiaTri, BCS, ['tibia_', side_low]);
 if just_tibia == 0
-    TibiaBL.([upper(side_low), 'LM']) = MostDistalPt;
+    % add landmark as 3x1 vector
+    TibiaBL.([upper(side_low), 'LM']) = MostDistalPt';
 end
 
 label_switch = 1;

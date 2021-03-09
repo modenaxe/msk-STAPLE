@@ -1,6 +1,6 @@
 # STAPLE: Shared Tools for Automatic Personalised Lower Extremity modelling <!-- omit in toc -->
 
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4275285.svg)](https://doi.org/10.5281/zenodo.4275285)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4428103.svg)](https://doi.org/10.5281/zenodo.4428103)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
 
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
@@ -14,7 +14,7 @@
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
   - [Algorithms for bone morphological analysis](#algorithms-for-bone-morphological-analysis)
   - [Datasets available for testing](#datasets-available-for-testing)
-  - [Further notes on STAPLE](#further-notes-on-staple)
+  - [STAPLE variables and conventions](#STAPLE-variables-and-conventions)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
 - [What are the differences between the STAPLE toolbox, NMSBuilder and the MAP Client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-nmsbuilder-and-the-map-client-for-generating-opensim-models)
@@ -254,7 +254,7 @@ Datasets of bone geometries available in the "datasets_folder" directory for tes
 | VAKHUM-CT		|   M    | N/A | N/A    | N/A   |  Fair        | [Van Sint Jan (2006)](https://doi.org/10.1080/14639220412331529591) | Bones from two CT scans. STAPLE **cannot** create a full lower limb (yet). | 
 
 
-### Further notes on STAPLE
+### STAPLE variables and conventions
 
 These notes are provided to offer a minimal guidance to anyone that will investigate the STAPLE code in details:
 
@@ -268,6 +268,62 @@ These notes are provided to offer a minimal guidance to anyone that will investi
    * `blue`: lateral
    * `green`: not compartimentalised anatomical structures (basically the rest).
    
+
+#### Body Coordinate Systems (BCS)
+
+When running a morphological analysis, the body coordinate system (BCS) associated with a bone geometry is returned.
+
+The BCS is a MATLAB structure with the following fields:
+
+1. **CenterVol** [3x1] vector: the geometrical centroid of the geometry
+2. **InertiaMatrix** [3x3] matrix: the inertia matrix calculated from the bone geometry
+3. **Origin** [3x1] vector: the origin of the body coordinate system
+4. **V** [3x3] matrix: the pose matrix of the body coordinate system
+5. **AuxCSInfo** [MATLAB structure]: a variable including geometrical parameters obtained from the morphological analysis.
+
+#### Joint Coordinate Systems (JCS)
+
+When running a morphological analysis, the joint coordinate system (JCS) associated with the analysed geometry is also returned, together with the BCS. 
+
+The JCS is a MATLAB structure with the following fields:
+1. **joint name**: the name of the joint if more than one are stored in the variable. 
+2. **Origin** [3x1] vector: the origin of the joint in the bone being analysed
+3. **V** [3x3] matrix: the pose matrix of the joint
+4. **parent_location** [1x3] vector: the origin of the parent coordinate system in OpenSim
+5  **parent_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
+6. **child_location** [1x3] vector: the origin of the child coordinate system in OpenSim
+7. **child_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
+
+Note that the algorithms used on a single bone normally cannot define a joint completely, but require a joint definition file that "merges" the information from all the articular surfaces of the joint. The available parameters computed by the morphological analyses are shown in the following table. The missing parameters are obtained by the user-provided joint definition.
+
+|  Bone  geometry       | joint name              	| parent_location       | parent_orientation 	| child_location    | child_orientation |  
+| ---                   | ---                     	| ---                   | ---                	| ---               | ---               |
+| pelvis 				| ground_pelvis				| 						| 						| Yes				| Yes 				|
+|						| hip						| 						| Yes 					|					|					|
+| femur					| hip 						|						|						| Yes 				| Yes				|
+| 						| knee 						| Yes 					| Yes 					|					|					|
+|						| patellofemoral			| Yes 					| Yes					|					|					|
+| tibia					| knee 						| 						|						|					| Yes				|
+|						| ankle 					|						| Yes					|					|					|
+| patella 				| patellofemoral 			| 						|						| Yes				| Yes				|
+| talus 				| ankle 					|						|						| Yes 				| Yes 				|
+|						| subtalar 					|	Yes					|		Yes				| 	 				|					|
+| foot 					| mtp						| Yes 					|		Yes 			|					|					|
+
+
+#### Bone Landmarks
+
+Bone landmarks are stored in MATLAB structures as [3x1] vectors. Each field name of the structure corresponds to the name of a landmark.
+
+|  Bone  geometry       | Landmarks              	| 
+| ---                   | ---                     	| 
+| pelvis 				| <ul><li>RASI/LASI: anterior superior iliac spine</li><li>RPSI/LPSI: posterior superior iliac spine</li><li>SYMP: pubic symphysis</li></ul> 			| 
+| femur 				| <ul><li>RKNE/LKNE: lateral femoral epicondyle</li><li>RMFC/LMFC: medial femoral epicondyle</li><li>RTRO/LTRO: greater trochanter</li></ul> 			| 
+| tibia 				| <ul><li>RTTB/LTTB: tibial tuberosity</li><li>RHFB/LHFB: head of fibula</li><li>RANK/LANK: lateral malleolus</li><li>RMMA/LMMA: medial malleolus</li><li>RLM/LLM: most distal point of lateral malleolus</li></ul>|
+| patella 				| RLOW/LLOW: most distal point of patella |
+| talus 				| None |
+| foot 					| <ul><li>RHEE/LHEE: heel</li><li>RD5M/LD5M: distal point of 5th metatarsal bone</li><li>RD5MPROX/LD5MPROX: proximal point of 5th metatarsal bone</li><li>RD1M/LD1M: distal point of first metatarsal bone</li><li>R1MGROUND/L1MGROUND: distal point of first metatarsal bone on foot sole</li><li>R5MGROUND/L5MGROUND: distal point of 5th metatarsal bone on foot sole</li><li>RHEEGROUND/LHEEGROUND: calcaneus most distal point on foot sole</li></ul>|
+
 ## Troubleshooting your workflow
 
 It can happen that you have issues processing some of your datasets. It could be a bug, but it could also be an issue related to the input data.
