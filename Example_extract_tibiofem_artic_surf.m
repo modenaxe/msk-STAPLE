@@ -65,7 +65,7 @@ for n_d = 1:numel(dataset_set)
     % GIBOC_tibia.m the exported triangulations can be customized.
     
     % plot the articular surfaces and nearby bone
-    figure('Name', dataset_name, 'Position', [626 502 1175 459])
+    figure('Name', dataset_name, 'Position', get_figpos_artic_surf())
     
     % distal femur and articular surface of individual condyles
     subplot(1, 2, 1)
