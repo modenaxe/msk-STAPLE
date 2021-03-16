@@ -111,12 +111,12 @@ u_SubtalarAxis = normalizeV(Center_TlNvc-Center_TlCcn);
 
 
 %% 5. Save reference system details
-% these axes (IN GIBOK CONVENTIONS) are used by throcheaCylinder
+% these axes (IN GIBOC CONVENTIONS) are used by throcheaCylinder
 CS.X1 = u_SubtalarAxis; % approx anter-post
 CS.Z1 = normalizeV(cross(CS.X1,CS.Y0)) * sign_side; % attempt of adjusting for side based on debugplot
 CS.Y1 = normalizeV(cross(CS.Z1,CS.X1));
 
-% check axes in GIBOK conventions
+% check axes in GIBOC conventions
 debug_plots = 0;
 if debug_plots == 1
     figure

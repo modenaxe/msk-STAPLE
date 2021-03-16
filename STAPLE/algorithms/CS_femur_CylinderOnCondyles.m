@@ -3,8 +3,24 @@
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, side, debug_plots, in_mm, tolp, tolg)
-
-% NOTE: depend on CS_femur_SpheresOnCondyles
+    % Compute a coordinate System of the femur.
+    % A cylinder is fitted on previously identified articular surfaces of the condyles.
+    % The cylinder axis gives the final improvement of the femoral medio-lateral axis identification.
+    % With previously identified Distal to Proximal Axis, a definitive CS of the femur is computed.
+    % 
+    % :param Condyle_Lat: a triangulation of the lateral condyle of the femur
+    % :param Condyle_Med: a triangulation of the mdedial condyle of the femur
+    % :param CS: an previously computed approximation of the coordinate system of the femur
+    % :param side: a character, `r` or `l` to indicate the leg side
+    % :param debug_plots: a boolean to control the generation and display of debug plots
+    % :param in_mm: a boolean to control the generation and display of debug plots
+    % :param tolp: a tolerance parameters for non-linear least square fitting of the cylinder
+    % :param tolg: a tolerance parameters for non-linear least square fitting of the cylinder
+    % :returns: CS: the final coordinate system of the femur
+    % :returns JCS: the final joint coordinate system of the femur
+    % :returns: ``[CS, JCS]`` the finals coordinate and joint coordinate systems of the femur
+    %   
+    % NOTE: depend on CS_femur_SpheresOnCondyles
 
 % default behaviour: do not plot
 if nargin<5;    debug_plots = 0;         end

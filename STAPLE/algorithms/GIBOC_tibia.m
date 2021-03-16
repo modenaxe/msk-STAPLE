@@ -1,3 +1,18 @@
+% GIBOC_TIBIA [WRITE FUNCTION SHORT SUMMARY HERE]
+% inputs :
+%    tibiaTri        The triangulation of a long tibia
+%    side_raw         A unit vector defining the wanted distal to proximal 
+%                        orientation of the principal direction
+%    result_plots The ratio of the bone length kept to define the prox. 
+%                   and distal part of the long bone.
+%    debug_plots
+%
+% Outputs:
+%    CS          Triangulation of the proximal part of the long bone
+%    JCS         Triangulation of the distal part of the long bone
+%    TibiaBL
+%    ArtSurf     
+%
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
@@ -42,7 +57,7 @@ disp(['* Triang Units: ', 'mm']);
 disp('---------------------')
 disp('Initializing method...')
 
-% it is assumed that, even for partial geometries, the femoral bone is
+% it is assumed that, even for partial geometries, the tibia bone is
 % always provided as unique file. Previous versions of this function did
 % use separated proximal and distal triangulations. Check Git history if
 % you are interested in that.

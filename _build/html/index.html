@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to STAPLE’s documentation! &#8212; STAPLE  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-staple-s-documentation">
+<h1>Welcome to STAPLE’s documentation!<a class="headerlink" href="#welcome-to-staple-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="staple">
+<h1>STAPLE<a class="headerlink" href="#staple" title="Permalink to this headline">¶</a></h1>
+<p>This is the STAPLE module.</p>
+<span class="target" id="module-STAPLE"></span><span class="target" id="module-STAPLE"></span><div class="section" id="algorithms-functions">
+<h2>Algorithms functions<a class="headerlink" href="#algorithms-functions" title="Permalink to this headline">¶</a></h2>
+<p>This is the handle class definition.</p>
+<span class="target" id="module-STAPLE.algorithms"></span><dl class="mat function">
+<dt id="STAPLE.algorithms.CS_femur_CylinderOnCondyles">
+<code class="sig-prename descclassname"><span class="pre">STAPLE.algorithms.</span></code><code class="sig-name descname"><span class="pre">CS_femur_CylinderOnCondyles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Condyle_Lat</span></em>, <em class="sig-param"><span class="pre">Condyle_Med</span></em>, <em class="sig-param"><span class="pre">CS</span></em>, <em class="sig-param"><span class="pre">side</span></em>, <em class="sig-param"><span class="pre">debug_plots</span></em>, <em class="sig-param"><span class="pre">in_mm</span></em>, <em class="sig-param"><span class="pre">tolp</span></em>, <em class="sig-param"><span class="pre">tolg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#STAPLE.algorithms.CS_femur_CylinderOnCondyles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a coordinate System of the femur.
+A cylinder is fitted on previously identified articular surfaces of the condyles.
+The cylinder axis gives the final improvement of the femoral medio-lateral axis identification.
+With previously identified Distal to Proximal Axis, a definitive CS of the femur is computed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Condyle_Lat</strong> – a triangulation of the lateral condyle of the femur</p></li>
+<li><p><strong>Condyle_Med</strong> – a triangulation of the mdedial condyle of the femur</p></li>
+<li><p><strong>CS</strong> – an previously computed approximation of the coordinate system of the femur</p></li>
+<li><p><strong>side</strong> – a character, <cite>r</cite> or <cite>l</cite> to indicate the leg side</p></li>
+<li><p><strong>debug_plots</strong> – a boolean to control the generation and display of debug plots</p></li>
+<li><p><strong>in_mm</strong> – a boolean to control the generation and display of debug plots</p></li>
+<li><p><strong>tolp</strong> – a tolerance parameters for non-linear least square fitting of the cylinder</p></li>
+<li><p><strong>tolg</strong> – a tolerance parameters for non-linear least square fitting of the cylinder</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CS: the final coordinate system of the femur</p>
+</dd>
+<dt class="field-odd">Returns JCS</dt>
+<dd class="field-odd"><p>the final joint coordinate system of the femur</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[CS,</span> <span class="pre">JCS]</span></code> the finals coordinate and joint coordinate systems of the femur</p>
+</dd>
+</dl>
+<p>NOTE: depend on CS_femur_SpheresOnCondyles</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-STAPLE.GIBOC_core.SubFunctions.GeometricFun">
+<span id="giboc-core-functions"></span><h2>GIBOC-core functions<a class="headerlink" href="#module-STAPLE.GIBOC_core.SubFunctions.GeometricFun" title="Permalink to this headline">¶</a></h2>
+<dl class="mat function">
+<dt id="STAPLE.GIBOC_core.SubFunctions.GeometricFun.cutLongBoneMesh">
+<code class="sig-prename descclassname"><span class="pre">STAPLE.GIBOC_core.SubFunctions.GeometricFun.</span></code><code class="sig-name descname"><span class="pre">cutLongBoneMesh</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">TrLB</span></em>, <em class="sig-param"><span class="pre">U_0</span></em>, <em class="sig-param"><span class="pre">L_ratio</span></em><span class="sig-paren">)</span><a class="headerlink" href="#STAPLE.GIBOC_core.SubFunctions.GeometricFun.cutLongBoneMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separate the mesh (triangulation object) of long bone in two parts:
+a proximal and a distal one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TrLB</strong> – The triangulation of a long bone</p></li>
+<li><p><strong>U_0</strong> – A unit vector defining the wanted distal to proximal orientation of the principal direction</p></li>
+<li><p><strong>L_ratio</strong> – The ratio of the bone length kept to define the prox. and distal part of the long bone.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TrProx: Triangulation of the proximal part of the long bone</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>TrDist: Triangulation of the distal part of the long bone</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">STAPLE</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Luca MODENESE & Jean-Baptiste RENAULT.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
