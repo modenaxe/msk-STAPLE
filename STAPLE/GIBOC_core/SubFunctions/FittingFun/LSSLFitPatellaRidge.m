@@ -1,8 +1,22 @@
-function [ U, Uridge ,LowestPoints_End ] = LSSLFitPatellaRidge( TR,U,nbSlice,StartDist,EndDist, debug_plot)
-%Least Square Straight Line Fit on Patellar Ridge
-%To obtain the direction of the ridge a Least Square Straight Line is
-%fitted on the lowest points on slices of normal U, and the normal U is
-%updated until convergence (of U or number of iterations > 100)
+function [ U, Uridge ,LowestPoints_End ] = LSSLFitPatellaRidge( TR, U, nbSlice, StartDist, EndDist, debug_plot)
+% Least Square Straight Line Fit on Patellar Ridge
+% 
+% To obtain the direction of the ridge a Least Square Straight Line is
+% fitted on the lowest points on slices of normal U, and the normal U is
+% updated until convergence of U (or number of iterations > 100)
+%
+% Args:
+%   Tr (Triangulation):  The triangulation object of the Patella
+%   U ([3x1] vector): The initial vector of the patella ridge line direction
+%   StartDist (float, optional) : The . default to 2.5% of the 
+%   V_all ([3x3] matrix): The eigen vectors of the inertia matrix of Talus
+%   plotOn (boolean, optional): Boolean to plot or not the fit
+% Returns: 
+%       - Z0 :  A vector [3x1] of the inf to sup direction
+%       - Y0 :  A vector [3x1] of the medial to lateral (or the other way
+%               around) direction
+%
+%  
 
 
 %% inputs Tests
