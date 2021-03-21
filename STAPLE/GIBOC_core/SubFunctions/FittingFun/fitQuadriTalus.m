@@ -1,17 +1,18 @@
-function [Z0,Y0] = fitQuadriTalus(Tr, V_all, plotOn)
+function [Z0, Y0] = fitQuadriTalus(Tr, V_all, plotOn)
 %FITQUADRITALUS Approximate the shape of the talus by a quadrilateral
 %   From the mesh (triangulation of the talus), fit a quadrilateral to get
 %   an initial guess of the talus Z0 direction (Inferior to Superior).
-%   Inputs :
-%       - Tr :  The triangulation object of the Talus
-%       - V_all : The eigen vector of the inertia matrix of Talus
-%       - plotOn : Optionnal argument to plot the fit
-%   Outputs : 
+% 
+% Args:
+%   Tr (Triangulation):  The triangulation object of the Talus
+%   V_all ([3x3] matrix): The eigen vectors of the inertia matrix of Talus
+%   plotOn (boolean, optional): Boolean to plot or not the fit
+% Returns: 
 %       - Z0 :  A vector [3x1] of the inf to sup direction
 %       - Y0 :  A vector [3x1] of the medial to lateral (or the other way
 %               around) direction
-
-%% 
+%
+%  
 
 if nargin == 2
     plotOn = 0;

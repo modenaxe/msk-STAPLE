@@ -16,9 +16,9 @@ function [CS, JCS] = CS_femur_CylinderOnCondyles(Condyle_Lat, Condyle_Med, CS, s
     % :param in_mm: a boolean to control the generation and display of debug plots
     % :param tolp: a tolerance parameters for non-linear least square fitting of the cylinder
     % :param tolg: a tolerance parameters for non-linear least square fitting of the cylinder
-    % :returns: CS: the final coordinate system of the femur
-    % :returns JCS: the final joint coordinate system of the femur
-    % :returns: ``[CS, JCS]`` the finals coordinate and joint coordinate systems of the femur
+    % :return: CS: the final coordinate system of the femur
+    % :return:JCS: the final joint coordinate system of the femur
+    % :return: ``[CS, JCS]`` the finals coordinate and joint coordinate systems of the femur
     %   
     % NOTE: depend on CS_femur_SpheresOnCondyles
 

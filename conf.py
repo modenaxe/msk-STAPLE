@@ -30,8 +30,7 @@ release = ''
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.matlab']
-              #'sphinx.ext.napoleon']
+extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.matlab', 'sphinx.ext.napoleon']
 
 matlab_src_dir = os.path.dirname(os.path.abspath(__file__))
 primary_domain = 'mat'
@@ -57,4 +56,6 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+
+# sphinx-build -b html C:\Users\jbapt\Documents\Research\auto-msk-model C:\Users\jbapt\Documents\Research\auto-msk-model-shpinx
 

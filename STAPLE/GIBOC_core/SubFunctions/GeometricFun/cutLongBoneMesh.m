@@ -20,11 +20,34 @@ function [TrProx, TrDist] = cutLongBoneMesh(TrLB, U_0, L_ratio)
 % Separate the mesh (triangulation object) of long bone in two parts:
 % a proximal and a distal one.
 %
+%
+% Parameters
+% ----------
+% TrLB : triangulation
+%     The triangulation object of a long bone
+% U_0 : [3x1] vector, optional
+%     A unit vector defining the wanted distal to proximal orientation of the principal direction/
+%     (The default is [0; 0; 1], if used the following assumption is made :
+%     the bone distal to proximal axis is oriented +Z_CT or +Z_MRI vector of the imaging system.)
+% L_ratio : float, optional. 
+%     The ratio between of the bone length kept to define the prox. and distal part of the long bone.
+%     (The default is 0.33)
+% 
+% Returns
+% -------
+% TrProx : triangulation
+%     Triangulation of the proximal part of the long bone
+% TrDist : triangulation
+%     Triangulation of the distal part of the long bone 
+% 
+
+
+
 % :param TrLB: The triangulation of a long bone
 % :param U_0: A unit vector defining the wanted distal to proximal orientation of the principal direction
 % :param L_ratio: The ratio of the bone length kept to define the prox. and distal part of the long bone.
-% :returns: TrProx: Triangulation of the proximal part of the long bone
-% :returns: TrDist: Triangulation of the distal part of the long bone
+% :return: TrProx: Triangulation of the proximal part of the long bone
+% :return: TrDist: Triangulation of the distal part of the long bone
 %
 
 if nargin < 2

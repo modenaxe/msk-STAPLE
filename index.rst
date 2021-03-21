@@ -42,4 +42,5 @@ GIBOC-core functions
 --------------------
 
 .. automodule:: STAPLE.GIBOC_core.SubFunctions.GeometricFun
+   :members:
 .. autofunction:: cutLongBoneMesh
