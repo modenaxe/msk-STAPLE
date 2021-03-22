@@ -66,7 +66,7 @@ class MatlabFunctionsDocStrings():
     def __init__(self, pathToFile, style='numpy'):
         self.pathToFile = pathToFile
         self.style = style
-        self.functionREGEX = '(^function (?:(\[(.+?)(?:,\s*)*\])|[a-zA-Z0-9]+) *= *[a-zA-Z0-9]+\(([^\)]+)\))'
+        self.functionREGEX = '(^function (?:\[([^\)]+)\]|([a-zA-Z0-9]+)) *= *[a-zA-Z0-9]+\(([^\)]+)\))'
         self.inputs, self.outputs = self.getInputsAndOutputs()
         self.infosDict = self.createInfosDict()
         self.knownTypes = self.defineKnownTypeDict()
@@ -74,10 +74,10 @@ class MatlabFunctionsDocStrings():
     def createInfosDict(self):
 
         infosDict = dict()
-        infosDict['summary_line'] = '#NOTDONEYET'
-        infosDict['extd_descr'] = '#NOTDONEYET'
-        infosDict['inputs'] = {k: ['#TYPE', '#DESCRIPTION'] for k in self.inputs}
-        infosDict['outputs'] = {k: ['#TYPE', '#DESCRIPTION'] for k in self.outputs}
+        infosDict['summary_line'] = '__NOTDONEYET__summaryline'
+        infosDict['extd_descr'] = '__NOTDONEYET__extended_description'
+        infosDict['inputs'] = {k: ['__TYPE__', '__DESCRIPTION__'] for k in self.inputs}
+        infosDict['outputs'] = {k: ['__TYPE__', '__DESCRIPTION__'] for k in self.outputs}
 
         return infosDict
 
@@ -88,19 +88,19 @@ class MatlabFunctionsDocStrings():
         Use of the minimal architecture of the docstrings
         """
 
-        docstrings = '''%{summary_line}
-        %
-        % {extd_descr}
-        %
-        % Parameters
-        % ----------
-        {formated_inputs}
-        %
-        % Returns
-        % -------
-        {formated_outputs}
-        %
-        '''.format(**format)
+        docstrings = ('\t% {summary_line}\n'
+                      '\t%\n'
+                      '\t% {extd_descr}\n'
+                      '\t%\n'
+                      '\t% Parameters\n'
+                      '\t% ----------\n'
+                      '{formated_inputs}'
+                      '\t%\n'
+                      '\t% Returns\n'
+                      '\t% -------\n'
+                      '{formated_outputs}'
+                      '\t%\n')
+        docstrings = docstrings.format(**formatDict)
 
         return docstrings
 
@@ -109,12 +109,12 @@ class MatlabFunctionsDocStrings():
         """
         knownTypes = self.defineKnownTypeDict()
         for param, (type_, descr_) in self.infosDict['inputs'].items():
-            for knownParamKW, knownType in knownTypes.items:
+            for knownParamKW, knownType in knownTypes.items():
                 if param.startswith(knownParamKW):
                     self.infosDict['inputs'][param][0] = knownType
         
         for param, (type_, descr_) in self.infosDict['outputs'].items():
-            for knowneKW, knownType in knownTypes.items():
+            for knownParamKW, knownType in knownTypes.items():
                 if param.startswith(knownParamKW):
                     self.infosDict['outputs'][param][0] = knownType
 
@@ -137,18 +137,17 @@ class MatlabFunctionsDocStrings():
     def createFormatedInputsOutputs(self):
         """format the inputs and outputs to write them in docstrings
         """
-        infosDict['formated_inputs'] = '% '
-        for param, (type_, descr_) in infosDict['inputs'].items():
-            infosDict['formated_inputs'] += f'{param} : {type_}\n'
-            descr_ = descr_.replace('\n', '\n\t')
-            infosDict['formated_inputs'] += f'%\t{descr_}\n'
+        self.infosDict['formated_inputs'] = ''
+        for param, (type_, descr_) in self.infosDict['inputs'].items():
+            self.infosDict['formated_inputs'] += f'\t% {param} : {type_}\n'
+            descr_ = descr_.replace('\n', '\n\t% \t')
+            self.infosDict['formated_inputs'] += f'\t% \t{descr_}\n'
 
-        infosDict['formated_outputs'] = '% '
-        for param, (type_, descr_) in infosDict['outputs'].items():
-            infosDict['formated_outputs'] += f'{param} : {type_}\n'
-            descr_ = descr_.replace('\n', '\n\t')
-            infosDict['formated_outputs'] += f'%\t{descr_}\n'
-
+        self.infosDict['formated_outputs'] = ''
+        for param, (type_, descr_) in self.infosDict['outputs'].items():
+            self.infosDict['formated_outputs'] += f'\t% {param} : {type_}\n'
+            descr_ = descr_.replace('\n', '\n\t% \t')
+            self.infosDict['formated_outputs'] += f'\t% \t{descr_}\n'
 
 
     def addDocstringsToFile(self, updateDict=None):
@@ -163,12 +162,16 @@ class MatlabFunctionsDocStrings():
 
         modified_txt += beforeFuncDef + '\n'
         modified_txt += self.functionDefinitionLines + '\n'
-        modified_txt += self.makeDocstrings(self.formattedInfosDict) + '\n'
-        modified_txt += afterFuncDef
+        modified_txt += self.makeDocstrings(self.infosDict) + '\n'
+        modified_txt += afterFuncDef[:-1].replace('\n', '\n\t')
+        modified_txt += afterFuncDef[-1]
 
         # with open(self.pathToFile, mode='w') as f:
         with open('docstrings_test.m', mode='w') as f:
             f.write(modified_txt)
+
+
+        # mfun.makeDocstrings(mfun.infosDict)
 
 
     def getFunctionDefinitionLinesMatches(self):
@@ -212,11 +215,13 @@ class MatlabFunctionsDocStrings():
             cleanedMatches (list): list of cleaned inputs or outputs
         """
 
-        matches = matches.replace('...', '')
-        matches = matches.replace('\n', '')
-        matches = matches.replace(' ', '')
-
-        cleaned = matches.split(',')
+        cleanedMatches = (matches
+                          .replace('...', '')
+                          .replace('\n', '')
+                          .replace('\t','')
+                          .replace(' ', '')
+                          .split(',')
+                          )
 
         return cleanedMatches
 
@@ -234,12 +239,16 @@ class MatlabFunctionsDocStrings():
             'debug_plots': 'boolean',
             'Pts': '[nx3] float matrix',
             'CoeffMorpho': 'float',
-            'Z0': '[3x1] float vector'
+            'Z0': '[3x1] float vector',
+            'U_': '[3x1] float vector',
+            'Minertia': '[3x3] float matrix',
+            'n': '[3x1] float vector',
+            'Op': '[1x3] float vector',
             }
         
         return knownTypes
 
-        def defineKnownDescrDict(self):
+    def defineKnownDescrDict(self):
         """define a dictionnary of known type for certain keywords
         Returns:
             dict: dict of type for certain widely used keywords
@@ -248,6 +257,9 @@ class MatlabFunctionsDocStrings():
         knownDescr = {
             'debug_plots': 'enable plots used in debugging. Value: 1 or 0 (default).',
             'result_plots': 'enable plots of final fittings and reference systems.\nValue: 1 (default) or 0.',
+            'Minertia': 'An inertia matrix __DESCRIPTION__',
+            'n': 'An unit normal vector',
+            'Op': 'A point located on the plan',
             }
         
         return knownDescr

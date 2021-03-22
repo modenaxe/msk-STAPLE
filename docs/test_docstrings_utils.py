@@ -5,7 +5,7 @@ pth = os.path.join(os.getcwd(), 'STAPLE', 'GIBOC_core', 'SubFunctions', 'Geometr
 
 mffid = MatlabFunctionFileIdentificator(pth)
 mffid.identifyFunctionFiles()
-pthToFile = mffid.functionFiles[2]
+pthToFile = mffid.functionFiles[8]
 print(pthToFile)
 
 mfun = MatlabFunctionsDocStrings(pthToFile)
