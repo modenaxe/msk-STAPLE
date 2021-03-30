@@ -13,7 +13,7 @@
 %                                                       debug_plots,...
 %                                                       debug_prints)
 % 
-% Inputs:
+% Inputs:   
 %   ProxFem - MATLAB triangulation object of the proximal femoral geometry.
 %
 %   CS - MATLAB structure containing preliminary information about the bone
@@ -42,7 +42,7 @@
 % See also KAI2014_FEMUR, TRIPLANINTERSECT, SPHEREFIT.
 %
 %-------------------------------------------------------------------------%
-%  Author:   Luca Modenese (loosely based on GIBOK prototype). 
+%  Author:   Luca Modenese (loosely based on GIBOC prototype). 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [CS, MostProxPoint] = Kai2014_femur_fitSphere2FemHead(ProxFem,...
