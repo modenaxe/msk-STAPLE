@@ -1,6 +1,18 @@
-function [ Vnormalized ] = normalizeV( V )
 % NORMALIZEV Normalize the vector or list of vectors V
-% First transpose v if necessary to get a  
+%
+% [ Vnormalized ] = normalizeV( V )
+%
+% Inputs:
+%   V - A vector or matrix of vectors
+%
+% Outputs:
+%   Vnormalized - A normalized vector or list of normalized vectors 
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ Vnormalized ] = normalizeV( V )
 
 if min(size(V)) == 1
     if size(V,1) ~= length(V)

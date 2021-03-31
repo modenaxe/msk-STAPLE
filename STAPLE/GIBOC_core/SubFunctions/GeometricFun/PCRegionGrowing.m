@@ -1,11 +1,28 @@
-function [ Pts_Out] = PCRegionGrowing(Pts,S,r)
-%PCRegionGrowing PointCloud Region growing
-%   Pts : Point Cloud
-%   r : radius threshold 
-% From seeds S found all the points that are inside the spheres of radius r
-% Then use the found points as new seed
-% loop until no new points are found to be in the spheres
+% PCRegionGrowing Point cloud Region growing
+%
+% From a given set of seed points [S], find recursively the points in the 
+% point cloud [Pts] that are "connected" to the iteratively grown seed points.
+% The connected property is defined by a distance threshold given by a
+% radius [r].
+%
+%   [ Pts_Out] = PCRegionGrowing(Pts,S,r)
+%
+% Inputs:
+%   Pts - A point cloud
+%   S - The seeds (a matrix of points coordinates) from which to grow
+%   r - The radius of the sphere to consider two points as neighours
+%   
+%
+% Outputs:
+%   Pts_Out - The subset of points in point clouds that are connected
+%             to the seeds.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2018 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 
+function [ Pts_Out] = PCRegionGrowing(Pts,S,r)
 
 Seeds = S;
 

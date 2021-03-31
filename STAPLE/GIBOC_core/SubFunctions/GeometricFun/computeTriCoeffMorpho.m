@@ -1,3 +1,21 @@
+% COMPUTETRICOEFFMORPHO Compute coeffecient that adapt
+% other tri morphological operation to triangulation object
+% that are not made of triangles with edge lengths different
+% than 0.5 mm.
+% 
+% [ CoeffMorpho ] = computeTriCoeffMorpho(TR)
+%
+% Inputs:
+%   TR - A triangulation object 
+%
+% Outputs:
+%   CoeffMorpho - A ratio between expected edge length 0.5 and
+%                 actual edge length of TR
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function CoeffMorpho = computeTriCoeffMorpho(TriObj)
 
 % Get the mean edge length of the triangles composing the femur

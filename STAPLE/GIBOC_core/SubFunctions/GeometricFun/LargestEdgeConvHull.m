@@ -1,26 +1,27 @@
 % LARGESTEDGECONVHULL Compute the convex hull of the points cloud Pts and 
 % sort the edges by their length.
 %
-% INPUTS:
-%       - Pts :         A Point Cloud in 2D [nx2] or 3D [nx3]
+% Inputs:
+%   Pts - A Point Cloud in 2D [nx2] or 3D [nx3].
 %
-%       - Minertia :    A matrice of inertia to transform the points
-%                       beforehand
+%   Minertia - A matrice of inertia to transform the points beforehand.
 %
-% OUTPUTS:
-%       - IdxPointsPair :   [mx2] or [mx3] matrix of the index of pair of
-%                           points forming the edges
+% Outputs:
+%   IdxPointsPair - [mx2] or [mx3] matrix of the index of pair of
+%                   points forming the edges.
 %
-%       - EdgesLength :     a [mx1] matrix of the edges length which rows 
-%                           are in correspondance with IdxPointsPair matrix
+%   EdgesLength - a [mx1] matrix of the edges length which rows 
+%                 are in correspondance with IdxPointsPair matrix.
 %
-%       - K :               The convex hull of the point cloud
+%   K - The convex hull of the point cloud.
 %
-%       - Edges_Length_and_VerticesIDs_merged_sorted : 
-%                           A [mx3] matrix with first column corresponding 
-%                           to the edges length and the last two columns 
-%                           corresponding to the Index of the points
-%                           forming the the edge.
+%   Edges_Length_and_VerticesIDs_merged_sorted -  A [mx3] matrix with first 
+%                                                 column corresponding 
+%                                                 to the edges length and 
+%                                                 the last two columns 
+%                                                 corresponding to the 
+%                                                 Index of the points
+%                                                 forming the the edge.
 %
 % ------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
@@ -29,7 +30,8 @@
 function [ IdxPointsPair , EdgesLength , K, ...
     Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
 
-%
+
+
 % TODO: this function can benefit from squeeze
 if min(size(Pts)) == 2
     K = convhull(Pts,'simplify', false);

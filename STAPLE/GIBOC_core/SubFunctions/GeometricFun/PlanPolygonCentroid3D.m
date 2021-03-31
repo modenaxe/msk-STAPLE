@@ -1,7 +1,22 @@
-function [ Centroid, Area ] = PlanPolygonCentroid3D( Pts )
-%PlanPolygonCentroid3D Find the centroid of a 2D Polygon, decribed by its
-%boundary ( a close curve) in a 3D space.
+% PLANPOLYGONCENTROID3D Find the centroid of a 2D Polygon, decribed by its
+% boundary ( a close curve) in a 3D space.
 % Works with arbitrary shapes (convex or not)
+%
+% [ Centroid, Area ] = PlanPolygonCentroid3D( Pts )
+%
+% Inputs:
+%   Pts - A close curve in 3D space [nx3] matrix.
+%
+% Outputs:
+%   Centroid - a 2x3 or 2x2 matrix of the pair of closest point.
+%   Area - Area of the curves.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ Centroid, Area ] = PlanPolygonCentroid3D( Pts )
+
 
 if isequal(size(Pts), [0, 0])
     warning('PlanPolygonCentroid3D.m Empty Pts variable.')

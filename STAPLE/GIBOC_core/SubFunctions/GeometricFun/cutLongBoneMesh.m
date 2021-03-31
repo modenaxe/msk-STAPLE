@@ -1,15 +1,18 @@
 % CUTLONGBONEMESH Separate the Mesh of long bone in two parts:
 %   a proximal and a distal one.
-% inputs :
-%       TrLB        The triangulation of a long bone
-%       U_0         A unit vector defining the wanted distal to proximal 
-%                   orientation of the principal direction
-%       L_ratio     The ratio of the bone length kept to define the prox. 
-%                   and distal part of the long bone.
+%
+%   [TrProx, TrDist] = cutLongBoneMesh(TrLB, U_0, L_ratio)
+%
+% Inputs :
+%   TrLB - The triangulation of a long bone
+%   U_0 - A unit vector defining the wanted distal to proximal 
+%         orientation of the principal direction
+%   L_ratio - The ratio of the bone length kept to define the prox. 
+%             and distal part of the long bone.
 %
 % Outputs:
-%       TrProx      Triangulation of the proximal part of the long bone
-%       TrDist      Triangulation of the distal part of the long bone
+%   TrProx - Triangulation of the proximal part of the long bone.
+%   TrDist - Triangulation of the distal part of the long bone.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault 

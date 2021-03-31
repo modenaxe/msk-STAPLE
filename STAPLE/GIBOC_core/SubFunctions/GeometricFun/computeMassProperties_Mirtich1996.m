@@ -1,6 +1,4 @@
-% ----------------------------------------------------------------------- %
-%    Author:   Luca Modenese, November 2015                               %
-% ----------------------------------------------------------------------- %
+
 % Script that given the vertices v and facets of a triangular mesh
 % calculates the inertial properties (Volume, Mass, COM and Inertia matrix
 % based on: Mirtich, B., 1996. Fast and accurate computation of polyhedral 
@@ -14,14 +12,22 @@
 % VERIFICATION: this code yealds the same values as NMSBuilder for a femur
 % and a sphere. (Exactly the same values, but it's faster!)
 %
-% INPUT: v, matrix [n x 3] vertices including the coordinates of n points
-%        f, matrix of [f x 3], collecting the indices of the vertices of
-%        each facet of the mesh
+%   MassProps = computeMassProperties_Mirtich1996(v, f)
 %
-% OUTPUT:   MassInfo.mass       = mass;
-%           MassInfo.COM        = COM;
-%           MassInfo.Imat       = I; inertia matrix calculated at COM
-
+% INPUT: 
+%   v - matrix [n x 3] vertices including the coordinates of n points
+%   f - matrix of [f x 3], collecting the indices of the vertices of
+%       each facet of the mesh
+%
+% OUTPUT:   
+% MassProps - Matlab Structure with Mass infos :
+%              * MassInfo.mass = mass;
+%              * MassInfo.COM = COM;
+%              * MassInfo.Imat = I; inertia matrix calculated at COM
+%
+%-------------------------------------------------------------------------%
+%  Author:   Luca Modenese, November 2015   
+%-------------------------------------------------------------------------%
 function MassProps = computeMassProperties_Mirtich1996(v, f)
 
 % feedback to the user
