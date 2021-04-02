@@ -53,8 +53,6 @@ class MatlabFunctionFileIdentificator(FileIdentificator):
             with open(f_path, mode='r') as f:
                 txt = f.read()
                 matches = re.findall(self.functionREGEX, txt, re.MULTILINE)
-
-                print(f_path, matches)
                 self.functionFiles.append(f_path)
 
 
@@ -68,7 +66,7 @@ class MatlabFunctionsDocStrings():
     def __init__(self, pathToFile, style='numpy'):
         self.pathToFile = pathToFile
         self.style = style
-        self.functionREGEX = '(^function (?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *= *[a-zA-Z0-9_]+\(([^\)]+)\))'
+        self.functionREGEX = '(^function (?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *=.*\n{0,1}.*[a-zA-Z0-9_]+\(([^\)]+)\))'
         self.inputs, self.outputs = self.getInputsAndOutputs()
         self.infosDict = self.createInfosDict()
         self.initKnownDescrDict()
@@ -105,7 +103,7 @@ class MatlabFunctionsDocStrings():
 
         regex_inputs_header = '^% {0,1}[Ii]nputs{0,1} {0,2}: *\t*$'
         regex_outputs_header = '^% {0,1}[Oo]utputs{0,1} {0,2}: *\t*$'
-        regex_func_def = '(^% *(?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *= *[a-zA-Z0-9_]+\(([^\)]+)\))'
+        regex_func_def = '(^% *(?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *=.*\n{0,1}.*[a-zA-Z0-9_]+\(([^\)]+)\))'
 
         # inputs_regex = '(^% (?:i|I)nputs *: *\n(% *([a-zA-Z0-9_]+) - ([a-zA-Z0-9_ \n\.%\(\):\*]+)%\n%))'
         inoutputs_regex = '^% *([a-zA-Z0-9_]+) - ([a-zA-Z0-9_ \.\(\):\*\"]+)'
@@ -275,7 +273,7 @@ class MatlabFunctionsDocStrings():
         modified_txt += afterFuncDef[-1]
 
         # with open(self.pathToFile, mode='w') as f:
-        with open(self.path, mode='w') as f:
+        with open(self.pathToFile, mode='w') as f:
             f.write(modified_txt)
     
 

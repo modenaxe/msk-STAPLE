@@ -30,7 +30,41 @@
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
+
 function [ PtsCondyle_end, PtsKeptID ] = PtsOnCondylesFemur( PtsCondyle_0 , Pts_Epiphysis, CutAngle, InSetRatio, ellip_dilat_fact )
+	% PTSONCONDYLESFEMUR Find condyle points by fitting an ellipse on points 
+	% previously identified as certain condyle points. From this ellispe all
+	% points within a certain relative distance from the ellipse
+	%
+	% Points must be expressed in Coordinate system where Y has been identified
+	% as a good initial candidates for ML axis
+	%
+	% Parameters
+	% ----------
+	% PtsCondyle_0 : [nx3] float matrix
+	% 	Initial set of m certain condyle points formated as [mx3]
+	% 	 matrix
+	% Pts_Epiphysis : [nx3] float matrix
+	% 	Set of n points that are candidate to be condyle points,
+	% 	 formated as [nx3] matrix n>m
+	% CutAngle : __TYPE__
+	% 	Angle in degree above which posterior points are considered as
+	% 	 not part of the condyles
+	% InSetRatio : __TYPE__
+	% 	__DESCRIPTION__
+	% ellip_dilat_fact : __TYPE__
+	% 	__DESCRIPTION__
+	%
+	% Returns
+	% -------
+	% PtsCondyle_end : [nx3] float matrix
+	% 	all identified condyles points as a [lx3] matrix, l<n
+	% PtsKeptID : [nx3] float matrix
+	% 	Index of the identified condyle points relative to the matrix
+	% 	 of Pts_Epiphysis
+	%
+	%
+
 
     
 

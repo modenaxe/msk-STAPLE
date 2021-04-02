@@ -27,7 +27,44 @@
 %  Author:   Yury Petrov, Oculus VR
 %  Copyright 2015 Yury Petrov, Oculus VR
 %-------------------------------------------------------------------------%
+
 function [ center, radii, evecs, v, chi2 ] = ellipsoid_fit( X, equals )
+	% ELLIPSOID_FIT
+	% Fit an ellispoid/sphere/paraboloid/hyperboloid to a set of xyz data points
+	%
+	% 
+	%
+	% Parameters
+	% ----------
+	% X : __TYPE__
+	% 	Cartesian data, n x 3 matrix or three n x 1 vectors
+	% equals : __TYPE__
+	% 	A flag determing fit constraints :
+	% 	 * '' or empty fits an arbitrary ellipsoid (default),
+	% 	 * 'xy' fits a spheroid with x- and y- radii equal
+	% 	 * 'xz' fits a spheroid with x- and z- radii equal
+	% 	 * 'xyz' fits a sphere
+	% 	 * '0' fits an ellipsoid with its axes aligned along [x y z] axes
+	% 	 * '0xy' the same with x- and y- radii equal
+	% 	 * '0xz' the same with x- and z- radii equa
+	%
+	% Returns
+	% -------
+	% center : __TYPE__
+	% 	ellispoid or other conic center coordinates [xc; yc; zc]
+	% radii : __TYPE__
+	% 	ellipsoid or other conic radii [a; b; c]
+	% evecs : __TYPE__
+	% 	the radii directions as columns of the 3x3 matrix
+	% v : __TYPE__
+	% 	the 10 parameters describing the ellipsoid / conic algebraically: 
+	% 	 Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx + 2Hy + 2Iz + J = 0
+	% chi2 : __TYPE__
+	% 	residual sum of squared errors (chi^2), this chi2 is in the
+	% 	 coordinate frame in which the ellipsoid is a unit sphere
+	%
+	%
+
 
 
 narginchk( 1, 3 ) ;  % check input arguments

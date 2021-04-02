@@ -18,7 +18,36 @@
 %    Author:   Luca Modenese                                              %
 %    email:    l.modenese@imperial.ac.uk                                  % 
 % ----------------------------------------------------------------------- %
+
 function [Curve, N_curves, Areas] = getLargerPlanarSect(Curves)
+	% % GETLARGERPLANARSECT Get the largest planar cross section,
+	% in term of area, in set of bone cross section.
+	%
+	% 
+	%
+	% Parameters
+	% ----------
+	% Curves : __TYPE__
+	% 	A Matlab structure containing a set of cross section
+	% 	 curves.
+	%
+	% Returns
+	% -------
+	% Curve : __TYPE__
+	% 	The cross section curve with the largest area among the set.
+	% N_curves : __TYPE__
+	% 	The number of cross sections in the input structure.
+	% Areas : __TYPE__
+	% 	A vector [1xN_curves] containing each section area.
+	% 	
+	% 	-------------------------------------------------------------------------
+	% 	 Copyright (c) 2020 Modenese L. 
+	% 	 Author: Luca Modenese 
+	% 	 email: l.modenese@imperial.ac.uk  
+	% 	 -----------------------------------------------------------------------
+	%
+	%
+
 
     N_curves = length(Curves);
 

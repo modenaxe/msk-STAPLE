@@ -35,8 +35,15 @@ This is the handle class definition.
 .. automodule:: STAPLE.geometry
 
 
-GIBOC-core functions
---------------------
+GIBOC_core geometric functions
+------------------------------
 
 .. automodule:: STAPLE.GIBOC_core.SubFunctions.GeometricFun
+   :members:
+
+
+GIBOC_core fitting functions 
+----------------------------
+
+.. automodule:: STAPLE.GIBOC_core.SubFunctions.FittingFun
    :members:

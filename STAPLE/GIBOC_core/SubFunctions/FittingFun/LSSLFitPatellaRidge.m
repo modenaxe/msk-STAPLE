@@ -44,12 +44,68 @@
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
+
 function [U, Uridge, LowestPoints] = LSSLFitPatellaRidge(   patellaTri,...
                                                             U,...
                                                             nbSlice,...
                                                             startDist,...
                                                             endDist,...
                                                             debug_plots)
+	% LSSLFITPATELLARIDGELEAST Square Straight Line Fit on Patellar Ridge
+	% To obtain the direction of the ridge a Least Square Straight Line is
+	% fitted on the lowest points on slices of normal U, and the normal U is
+	% updated until convergence (of U or number of iterations > 100)
+	% U is the vector ~aligned with the ridg
+	%
+	% Least Square Straight Line Fit on Patellar Ridge
+	% 
+	% To obtain the direction of the ridge a Least Square Straight Line is
+	% fitted on the lowest points on slices of normal U, and the normal U is
+	% updated until convergence of U (or number of iterations > 100)
+
+	%
+	% Parameters
+	% ----------
+	% patellaTri : __TYPE__
+	% 	__DESCRIPTION__
+	% U : __TYPE__
+	% 	([3x1] vector) The initial vector of the patella ridge line direction
+	% 	 
+	% nbSlice : [3x1] float vector
+	% 	(int) The number of slice to make along the patella inferior to 
+	% 	 superior axis. On those slices the most posterior points will be 
+	% 	 identified as points belonging to the patella articular surface
+	% 	 ridge.
+	% startDist : __TYPE__
+	% 	(float
+	% 	 Tr - (Triangulation) The triangulation object of the Patella
+	% 	 
+	% 	 U - ([3x1] vector) The initial vector of the patella ridge line direction
+	% 	 
+	% 	 nbSlice - (int) The number of slice to make along the patella inferior to 
+	% 	 superior axis. On those slices the most posterior points will be 
+	% 	 identified as points belonging to the patella articular surface
+	% 	 ridge.
+	% 	 
+	% endDist : __TYPE__
+	% 	(float, optional) The relative distance from the superior limit 
+	% 	 of the patella from which to end the slicing. Default to 2.5 of 
+	% 	 the inferior to superior patella length.
+	% 	 
+	% debug_plots : boolean
+	% 	(boolean, optional)n to plot or not the fit
+	%
+	% Returns
+	% -------
+	% U : __TYPE__
+	% 	The updated vector of the patella ridge line directio
+	% Uridge : __TYPE__
+	% 	The updated vector of the patella ridge line directio
+	% LowestPoints : __TYPE__
+	% 	The set of points identified to be on the ridge line
+	%
+	%
+
 
 % initialization
 if nargin<3; nbSlice = 50;                                 end

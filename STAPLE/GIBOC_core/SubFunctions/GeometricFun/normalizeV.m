@@ -12,7 +12,24 @@
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
+
 function [ Vnormalized ] = normalizeV( V )
+	% NORMALIZEV Normalize the vector or list of vectors 
+	%
+	% 
+	%
+	% Parameters
+	% ----------
+	% V : [3x3] float matrix
+	% 	A vector or matrix of vector
+	%
+	% Returns
+	% -------
+	% Vnormalized : [3x3] float matrix
+	% 	A normalized vector or list of normalized vectors
+	%
+	%
+
 
 if min(size(V)) == 1
     if size(V,1) ~= length(V)

@@ -1,6 +1,9 @@
 % LARGESTEDGECONVHULL Compute the convex hull of the points cloud Pts and 
 % sort the edges by their length.
 %
+% [ IdxPointsPair , EdgesLength , K, ...
+%    Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
+%
 % Inputs:
 %   Pts - A Point Cloud in 2D [nx2] or 3D [nx3].
 %
@@ -27,8 +30,35 @@
 %  Author:   Jean-Baptiste Renault, modified by Luca Modenese (2020)
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
+
 function [ IdxPointsPair , EdgesLength , K, ...
     Edges_Length_and_VerticesIDs_sorted] = LargestEdgeConvHull(Pts, Minertia)
+	% LARGESTEDGECONVHULL Compute the convex hull of the points cloud Pts and 
+	% sort the edges by their length
+	%
+	% 
+	%
+	% Parameters
+	% ----------
+	% Pts : [nx3] float matrix
+	% 	A Point Cloud in 2D [nx2] or 3D [nx3]
+	% Minertia : [3x3] float matrix
+	% 	A matrice of inertia to transform the points beforehand
+	%
+	% Returns
+	% -------
+	% IdxPointsPair : __TYPE__
+	% 	__DESCRIPTION__
+	% EdgesLength : __TYPE__
+	% 	a [mx1] matrix of the edges length which rows 
+	% 	 are in correspondance with IdxPointsPair matrix
+	% K : __TYPE__
+	% 	The convex hull of the point cloud
+	% Edges_Length_and_VerticesIDs_sorted : __TYPE__
+	% 	__DESCRIPTION__
+	%
+	%
+
 
 
 
