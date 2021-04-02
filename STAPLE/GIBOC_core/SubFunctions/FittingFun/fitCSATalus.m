@@ -1,19 +1,39 @@
-function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = fitCSATalus(Alt, Area, debug_plots)
-%  Create a fit.
+% FITCSATALUS Create a fit of the evolution of the cross section area :
+%   1st step is to fit a double gaussian on the Area = f(Alt) curve 
+%   2nd step is to identify the anterior and the posterior parts. This
+%   provide us with the orientation of the talus. It is a prerequisite to
+%   the automatic identification of talus articular surfaces.
 %
-%  Data for 'untitled fit 1' fit:
-%      Alt
-%      Area
-%  Output:
-%   alt_TlNvc_start, gives the altitude along X0 at wich the CSA is maximal
-%   and where the TaloNavicular (TlNvc) articular surface could start.
+%   [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] =  ...
+%                                        fitCSATalus(Alt, Area, debug_plots)
+%
+% Inputs:
+%   Alt - The distance to origin of each cross section center when projected 
+%         onto the talus long axis (distal to proximal, ie. anterior to posterior).
+%   Area - The cross section areas of the talus along the long axis.
+%
+%   debug_plots - Display debug plot.
+%
+% Outputs:
+%   or - The orientation of the talus. (__TO_BE_PRECISED__)
+%
+%   alt_TlNvc_start - gives the altitude along X0 at wich the CSA is maximal
+%                     and where the TaloNavicular (TlNvc) articular surface
+%                     could start.
 %   
-%   alt_TlNeck_start, gives the altitude along x0 at the approximate start
-%   of talus neck
+%   alt_TlNeck_start - gives the altitude along x0 at the approximate start
+%                      of talus neck
 %
-%   alt_TlTib_start, gives the altitude along X0 at wich articular surface
-%   with the tibia can start
+%   alt_TlTib_start - gives the altitude along X0 at wich articular surface
+%                     with the tibia can start
 %
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = fitCSATalus(Alt, Area, debug_plots)
+
+
 if nargin<3
     debug_plots = 0 ;
 end

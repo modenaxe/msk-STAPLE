@@ -343,6 +343,7 @@ class MatlabFunctionsDocStrings():
         self.knownTypes = {
                             'Epi': 'triangulation',
                             'Tr': 'triangulation',
+                            'TR': 'triangulation',
                             'CS': 'Matlab structure',
                             'debug_plots': 'boolean',
                             'debug_prints': 'boolean',
@@ -353,6 +354,7 @@ class MatlabFunctionsDocStrings():
                             'Minertia': '[3x3] float matrix',
                             'n': '[3x1] float vector',
                             'Op': '[1x3] float vector',
+                            'V': '[3x3] float matrix',
                             }
         
 
@@ -369,6 +371,7 @@ class MatlabFunctionsDocStrings():
             'Minertia': 'An inertia matrix __DESCRIPTION__',
             'n': 'An unit normal vector',
             'Op': 'A point located on the plan',
+            'V_all': 'The 3 eigen vectors of the pseudo inertia-matrix of the current bone'
             }
 
         self.knownDescrOutputs = copy.deepcopy(self.knownDescrInputs)

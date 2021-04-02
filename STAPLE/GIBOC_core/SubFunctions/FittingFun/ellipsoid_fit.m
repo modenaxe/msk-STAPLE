@@ -1,40 +1,34 @@
-function [ center, radii, evecs, v, chi2 ] = ellipsoid_fit_new( X, equals )
-%
+% ELLIPSOID_FIT
 % Fit an ellispoid/sphere/paraboloid/hyperboloid to a set of xyz data points:
 %
-%   [center, radii, evecs, pars ] = ellipsoid_fit( X )
-%   [center, radii, evecs, pars ] = ellipsoid_fit( [x y z] );
-%   [center, radii, evecs, pars ] = ellipsoid_fit( X, 1 );
-%   [center, radii, evecs, pars ] = ellipsoid_fit( X, 2, 'xz' );
-%   [center, radii, evecs, pars ] = ellipsoid_fit( X, 3 );
+%   [center, radii, evecs, pars ] = ellipsoid_fit( X, equals )
 %
-% Parameters:
-% * X, [x y z]   - Cartesian data, n x 3 matrix or three n x 1 vectors
-% * flag         - '' or empty fits an arbitrary ellipsoid (default),
-%                - 'xy' fits a spheroid with x- and y- radii equal
-%                - 'xz' fits a spheroid with x- and z- radii equal
-%                - 'xyz' fits a sphere
-%                - '0' fits an ellipsoid with its axes aligned along [x y z] axes
-%                - '0xy' the same with x- and y- radii equal
-%                - '0xz' the same with x- and z- radii equal
+% Inputs:
+%   X - Cartesian data, n x 3 matrix or three n x 1 vectors
+%   equals - A flag determing fit constraints :
+%               * '' or empty fits an arbitrary ellipsoid (default),
+%               * 'xy' fits a spheroid with x- and y- radii equal
+%               * 'xz' fits a spheroid with x- and z- radii equal
+%               * 'xyz' fits a sphere
+%               * '0' fits an ellipsoid with its axes aligned along [x y z] axes
+%               * '0xy' the same with x- and y- radii equal
+%               * '0xz' the same with x- and z- radii equal
 %
-% Output:
-% * center    -  ellispoid or other conic center coordinates [xc; yc; zc]
-% * radii     -  ellipsoid or other conic radii [a; b; c]
-% * evecs     -  the radii directions as columns of the 3x3 matrix
-% * v         -  the 10 parameters describing the ellipsoid / conic algebraically: 
+% Outputs:
+%   center - ellispoid or other conic center coordinates [xc; yc; zc]
+%   radii - ellipsoid or other conic radii [a; b; c]
+%   evecs - the radii directions as columns of the 3x3 matrix
+%   v - the 10 parameters describing the ellipsoid / conic algebraically: 
 %                Ax^2 + By^2 + Cz^2 + 2Dxy + 2Exz + 2Fyz + 2Gx + 2Hy + 2Iz + J = 0
-% * chi2      -  residual sum of squared errors (chi^2), this chi2 is in the 
-%                coordinate frame in which the ellipsoid is a unit sphere.
+%   chi2 - residual sum of squared errors (chi^2), this chi2 is in the
+%          coordinate frame in which the ellipsoid is a unit sphere.
 %
-% Author:
-% Yury Petrov, Oculus VR
-% Date:
-% September, 2015
-%
+%-------------------------------------------------------------------------%
+%  Author:   Yury Petrov, Oculus VR
+%  Copyright 2015 Yury Petrov, Oculus VR
+%-------------------------------------------------------------------------%
+function [ center, radii, evecs, v, chi2 ] = ellipsoid_fit( X, equals )
 
-% meanX = mean(X)
-% X = bsxfun(@minus,X,meanX);
 
 narginchk( 1, 3 ) ;  % check input arguments
 if nargin == 1
@@ -207,6 +201,7 @@ else
     v = -sign( v(end) ) * v;
 end
 
+end
 
 
 

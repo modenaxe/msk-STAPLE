@@ -1,20 +1,29 @@
-function [Z0,Y0] = fitQuadriTalus(Tr, V_all, plotOn)
-%FITQUADRITALUS Approximate the shape of the talus by a quadrilateral
-%   From the mesh (triangulation of the talus), fit a quadrilateral to get
-%   an initial guess of the talus Z0 direction (Inferior to Superior).
-%   Inputs :
-%       - Tr :  The triangulation object of the Talus
-%       - V_all : The eigen vector of the inertia matrix of Talus
-%       - plotOn : Optionnal argument to plot the fit
-%   Outputs : 
-%       - Z0 :  A vector [3x1] of the inf to sup direction
-%       - Y0 :  A vector [3x1] of the medial to lateral (or the other way
-%               around) direction
+% FITQUADRITALUS Approximate the shape of the talus by a quadrilateral.
+% From the mesh (triangulation of the talus), fit a quadrilateral to get
+% an initial guess of the talus Z0 direction (Inferior to Superior).
+%
+%   [Z0,Y0] = fitQuadriTalus(Tr, V_all, debug_plots)
+%
+% Inputs:
+%   Tr - The triangulation object of the Talus
+%   V_all - The eigen vector of the inertia matrix of Talus
+%   debug_plots - Optionnal argument to plot the fit.
+%
+% Outputs: 
+%   Z0 - A vector [3x1] of the inf to sup direction
+%   Y0 - A vector [3x1] of the medial to lateral (or the other way
+%        around) direction
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [Z0, Y0] = fitQuadriTalus(Tr, V_all, debug_plots)
 
-%% 
+
 
 if nargin == 2
-    plotOn = 0;
+    debug_plots = 0;
 end
 
 
@@ -102,7 +111,7 @@ Z0_proj = normalizeV(sign(U0_IS*Z0_proj)*Z0_proj);
 Z0 = V_all*[0;Z0_proj];
 Y0 = cross(Z0,V_all(:,1));
 
-if plotOn
+if debug_plots
     figure()
     plot(Pts_proj_2D(:,1),Pts_proj_2D(:,2),'b.')
     hold on

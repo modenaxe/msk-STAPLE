@@ -1,12 +1,33 @@
-function [Zdiaph,Zepi,or] = fitCSA(Z, Area)
-%FitCSA(Z,AREA)
-%  Create a fit of the evolution of the cross section area :
-%       1st step is to fit a double gaussian on the curve 
-%       2nd step is to use the result of the first fit to initialize a 2nd
-%       fit of a gaussian plus an affine function : a1*exp(-((x-b1)/c1)^2)+d*x+e
-%  Separate the diaphysis based on the hypothseis that its cross section area
-%  evolve pseudo linearly along its axis while the variation are
-%  exponential for the epiphysis
+% FITCSA Create a fit of the evolution of the cross section area :
+%    1st step is to fit a double gaussian on the curve 
+%    2nd step is to use the result of the first fit to initialize a 2nd
+%    fit of a gaussian plus an affine function : a1*exp(-((x-b1)/c1)^2)+d*x+e
+% Separate the diaphysis based on the hypothseis that its long axis cross section
+% area evolve pseudo linearly along its diaphysis while the variation are
+% more bell-shaped for the epiphysis region.
+%
+% It is assumed that the cross-sections are calculated on a cutted long bone
+% that have a part of the diaphysis and a single full epiphysis. 
+%
+%   [Zdiaph, Zepi, or] = fitCSA(Z, Area)
+%
+% Inputs:
+%   Z - The distance to origin of each cross section center when projected 
+%       onto the bone long axis.
+%   Area - The cross section areas of the bone along the bone long axis.
+%
+% Outputs:
+%   Zdiaph - The value of Z for at which the diaphysis is estimated to ends.
+%   Zepi - The value of Z for at which the epiphysis is estimated to starts.
+%   or - The orientation of the bone. -1 if the ephysis is the distal one.
+%        +1 if the epiphysis is the proximal one 
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2019 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [Zdiaph, Zepi, or] = fitCSA(Z, Area)
+
 
 Z0 = mean(Z);
 Z = Z - Z0;
@@ -15,11 +36,11 @@ Area = Area/mean(Area);
 
 [AreaMax,Imax] = max(Area);
 
-% Orientation of bone along the y axis
-if Z(Imax)<mean(Z)
-    or = -1;
+% Orientation of bone along the z axis
+if Z(Imax)<mean(Z) 
+    or = -1; % The epiphysis is distal
 else
-    or = 1;
+    or = 1; % The epihysis is proximal
 end
 
 

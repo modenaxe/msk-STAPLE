@@ -1,23 +1,30 @@
-function [Center,Radius,ErrorDist] = sphereFit(X)
-% this fits a sphere to a collection of data using a closed form for the
+% SPHEREFIT fits a sphere to a collection of data using a closed form for the
 % solution (opposed to using an array the size of the data set). 
 % Minimizes Sum((x-xc)^2+(y-yc)^2+(z-zc)^2-r^2)^2
 % x,y,z are the data, xc,yc,zc are the sphere's center, and r is the radius
-
+%
 % Assumes that points are not in a singular configuration, real numbers, ...
 % if you have coplanar data, use a circle fit with svd for determining the
 % plane, recommended Circle Fit (Pratt method), by Nikolai Chernov
 % http://www.mathworks.com/matlabcentral/fileexchange/22643
-
-% Input:
-% X: n x 3 matrix of cartesian data
+%
+% [Center,Radius,ErrorDist] = sphereFit(X)
+%
+% Inputs:
+%   X - n x 3 matrix of cartesian data
+%
 % Outputs:
-% Center: Center of sphere 
-% Radius: Radius of sphere
-% Author:
-% Alan Jennings, University of Dayton
-
+%   Center - Center of sphere 
+%   Radius - Radius of sphere
+%   ErrorDist - Error dist for each points in X
+%
 % Modified to add distance to sphere -> ErrorDist
+%-------------------------------------------------------------------------%
+%  Author:   Alan Jennings, University of Dayton
+%  Copyright 2020 Alan Jennings, University of Dayton
+%-------------------------------------------------------------------------%
+function [Center,Radius,ErrorDist] = sphereFit(X)
+
 
 A=[mean(X(:,1).*(X(:,1)-mean(X(:,1)))), ...
     2*mean(X(:,1).*(X(:,2)-mean(X(:,2)))), ...

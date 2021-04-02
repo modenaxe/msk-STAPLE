@@ -1,41 +1,41 @@
-function [ Xel, Yel, ellipsePts, ellipse_t, EdgePtsTop ,K  ] = ...
+% ELLIPSEONTIBIALCONDYLESEDGE Identify the edges of the proximal tibia
+% articular surfaces
+%
+% [ Xel, Yel, ellipsePts, ellipse_t, EdgePtsTop , K ] = ...
+%                       fitEllipseOnTibialCondylesEdge( Tr, n , x0 )
+%
+% Inputs: 
+%   Tr - Triangulation object of the articular surface.
+% 
+%   n - Array [v1; v2; v3] the normal vector to the
+%       tibial plateau articular surfaces least square plane. 
+%
+%   x0 - Array  [x y z] a point on the least square plane or the
+%        the value d such as d = -(v1.x + v2.y + v3.z)
+%        Dimension: 3 x 1 or 1 x 1.
+%
+% Outputs: 
+%   Xel - The X axis of the fitted ellipse in the original 3D space.
+% 
+%   Yel - The Y axis of the fitted ellipse in the original 3D space.
+% 
+%   ellipsePts - The ellipse points in the original 3D space (useful for 
+%                plotting putposes).
+% 
+%   ellipse_t - Output structure of fit_ellipse
+% 
+%   EdgePtsTop - Articular surface edge points that are not too distal.
+% 
+%   K - The index of of the points from EdgePtsTop that form the convexhull.
+%
+% SEE ALSO ProjectOnPlan, fit_ellipse
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2019 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function [ Xel, Yel, ellipsePts, ellipse_t, EdgePtsTop , K ] = ...
     fitEllipseOnTibialCondylesEdge( Tr, n , x0 )
-%ELLIPSEONTIBIALCONDYLESEDGE 
-%   Identify the edges of proximal tibial articular surfaces
-%
-% Modified          J B Renault 12 Jan 2018
-% Created           J B Renault 16 Oct 2017
-% ---------------------------------------------------------------------
-% Input 
-% Tr        Triangulation object of the articular surface.
-%
-% n         Array  [v1; v2; v3] the normal vector to the
-%           tibial plateau articular surfaces least square plane.
-%           Dimension: 3 x 1.
-%
-% x0        Array  [x y z] a point on the least square plane or the
-%           the value d such as d = -(v1.x + v2.y + v3.z)
-%           Dimension: 3 x 1 or 1 x 1.
-%
-% Output   
-% x0        Centroid of the data = point on the best-fit plane.
-%           Dimension: 3 x 1. 
-% 
-% a         Direction cosines of the normal to the best-fit 
-%           plane. 
-%           Dimension: 3 x 1.
-% 
-% <Optional... 
-% d         Residuals. 
-%           Dimension: m x 1. 
-% 
-% normd     Norm of residual errors. 
-%           Dimension: 1 x 1. 
-% ...>
-%
-% [x0, a <, d, normd >] = lsplane(X)
-% ---------------------------------------------------------------------
-% depends on ProjectOnPlan
+
 if length(x0) > 1
     d = - (n(1)*x0(1) + n(2)*x0(2) + n(3)*x0(3));
 else

@@ -1,8 +1,45 @@
-%Least Square Straight Line Fit on Patellar Ridge
-%To obtain the direction of the ridge a Least Square Straight Line is
-%fitted on the lowest points on slices of normal U, and the normal U is
-%updated until convergence (of U or number of iterations > 100)
+% LSSLFITPATELLARIDGELEAST Square Straight Line Fit on Patellar Ridge
+% To obtain the direction of the ridge a Least Square Straight Line is
+% fitted on the lowest points on slices of normal U, and the normal U is
+% updated until convergence (of U or number of iterations > 100)
 % U is the vector ~aligned with the ridge
+%
+% Least Square Straight Line Fit on Patellar Ridge
+% 
+% To obtain the direction of the ridge a Least Square Straight Line is
+% fitted on the lowest points on slices of normal U, and the normal U is
+% updated until convergence of U (or number of iterations > 100)
+%
+%
+%  [U, Uridge, LowestPoints] = LSSLFitPatellaRidge(patellaTri, U,...
+%                                  nbSlice, startDist, endDist, debug_plots)
+% Inputs :
+%   Tr - (Triangulation) The triangulation object of the Patella
+% 
+%   U - ([3x1] vector) The initial vector of the patella ridge line direction
+% 
+%   nbSlice - (int) The number of slice to make along the patella inferior to 
+%             superior axis. On those slices the most posterior points will be 
+%             identified as points belonging to the patella articular surface
+%             ridge.
+% 
+%   startDist - (float, optional) The relative distance from the inferior limit 
+%               of the patella from which to start slicing. Default to 2.5% of 
+%               the inferior to superior patella length.
+% 
+%   endDist - (float, optional) The relative distance from the superior limit 
+%               of the patella from which to end the slicing. Default to 2.5% of 
+%               the inferior to superior patella length.
+% 
+%   debug_plots - (boolean, optional)n to plot or not the fit.
+%
+% Outputs : 
+%   U - The updated vector of the patella ridge line direction
+%
+%   Uridge - The direction of the least square line fitted onto the points
+%            identified on the ridge line.
+%   LowestPoints - The set of points identified to be on the ridge line.
+%
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese & Jean-Baptiste Renault. 
 %  Copyright 2020 Luca Modenese & Jean-Baptiste Renault
@@ -17,7 +54,7 @@ function [U, Uridge, LowestPoints] = LSSLFitPatellaRidge(   patellaTri,...
 % initialization
 if nargin<3; nbSlice = 50;                                 end
 if nargin<4; startDist = 0.025*range(patellaTri.Points*U); end %Offset distance from first points
-if nargin<5; endDist = startDist;                          end%Offset distance from last points
+if nargin<5; endDist = startDist;                          end %Offset distance from last points
 if nargin<6; debug_plots=0;                                 end
 
 % initialize fitting
