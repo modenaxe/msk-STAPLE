@@ -1,6 +1,5 @@
 % TRICURVATURE Calculate the principal curvature directions and values
 % of a triangulated mesh. 
-%
 % The function first rotates the data so the normal of the current
 % vertex becomes [-1 0 0], so we can describe the data by XY instead of
 % XYZ.
@@ -9,78 +8,31 @@
 % Then the eigenvectors and eigenvalues of the hessian are used to
 % calculate the principal, mean and gaussian curvature.
 %
-% [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=patchcurvature(FV,usethird)
+% function [ Cmean, Cgaussian, Dir1, Dir2, Lambda1, Lambda2 ] = TriCurvature( TR, usethird, Rot0 )
+% 
+% Inputs:
+%   TR - A triangulation object.
+%   usethird - Use third order neighbour vertices for the curvature
+%              fit, making it smoother but less local. true/ false (default) 
+%   Rot0 - A 3x3 rotation matrix that can be applied to transform TR for 
+%          numerical stability (conditioning)
+% 
+% Outputs:
+%   Cmean - Mean Curvature
+%   Cgaussian - Gaussian Curvature
+%   Dir1 - XYZ Direction of first Principal component
+%   Dir2 - XYZ Direction of second Principal component
+%   Lambda1 - value of first Principal component
+%   Lambda2 - value of second Principal component
 %
-% inputs,
-%   TR : A triangulation mesh object (see Patch)
-%   usethird : Use third order neighbour vertices for the curvature
-%              fit, making it smoother but less local. true/ false (default)
-%
-% outputs,
-%   Cmean : Mean Curvature
-%   Cgaussian : Gaussian Curvature
-%   Dir1 : XYZ Direction of first Principal component
-%   Dir2 : XYZ Direction of second Principal component
-%   Lambda1 : value of first Principal component
-%   Lambda2 : value of second Principal component
-%
-% Example, Jaw
-%   load('testdata.mat');
-%
-%   [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=patchcurvature(FV,true);
-%
-%   figure, title('Principal A');
-%     p1=FV.vertices-2*Dir1; p2=FV.vertices+2*Dir1;       
-%     plot3([p1(:,1) p2(:,1)]',[p1(:,2) p2(:,2)]',[p1(:,3) p2(:,3)]','g-');
-%     axis equal; view(3) 
-%   figure, title('Principal B');
-%     p1=FV.vertices-2*Dir2; p2=FV.vertices+2*Dir2;       
-%     plot3([p1(:,1) p2(:,1)]',[p1(:,2) p2(:,2)]',[p1(:,3) p2(:,3)]','r-');
-%     axis equal; view(3)
-%
-%
-% Example, Cylinder
-%   load('testdata2.mat');
-%
-%   [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=patchcurvature(FV);
-%
-%   figure,
-%   subplot(2,2,1), title('Mean Curvature');
-%     C=Cmean;
-%     patch(FV,'FaceColor','interp','FaceVertexCData',C,'edgecolor','none');
-%     axis equal; view(3)
-%   subplot(2,2,2), title('Gaussian Curvature');
-%     C=Cgaussian;
-%     patch(FV,'FaceColor','interp','FaceVertexCData',C,'edgecolor','none');
-%     axis equal; view(3)
-%   subplot(2,2,3), title('Principal A');
-%     p1=FV.vertices-2*Dir1; p2=FV.vertices+2*Dir1;       
-%     plot3([p1(:,1) p2(:,1)]',[p1(:,2) p2(:,2)]',[p1(:,3) p2(:,3)]','g-');
-%     axis equal; view(3) 
-%   subplot(2,2,4), title('Principal B');
-%     p1=FV.vertices-2*Dir2; p2=FV.vertices+2*Dir2;       
-%     plot3([p1(:,1) p2(:,1)]',[p1(:,2) p2(:,2)]',[p1(:,3) p2(:,3)]','r-');
-%     axis equal; view(3)
-%     
-%  Example Torus;
-%   load('testdata3.mat');
-%
-%   [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=patchcurvature(FV);
-%
-%   figure, 
-%   hold on
-%   V=FV.vertices;
-%   plot3(V(Cgaussian<0,1),V(Cgaussian<0,2),V(Cgaussian<0,3),'r.');
-%   plot3(V(Cgaussian>0,1),V(Cgaussian>0,2),V(Cgaussian>0,3),'b.');
-%   axis equal; view(3)
-% ------------------------------------------------------------------------%
+%-------------------------------------------------------------------------%
 % Function is written by D.Kroon University of Twente (August 2011)  
 % Last Update, 15-1-2014 D.Kroon at Focal.
-% ------------------------------------------------------------------------%
-% Slightly modified for triangulation inputs
+%-------------------------------------------------------------------------%
+% Slightly modified for triangulation inputs and initial transformation
 % Last modification, 15-11-2017; JB Renault at AMU.
-% ------------------------------------------------------------------------%
-function [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=TriCurvature(TR,usethird, Rot0)
+%-------------------------------------------------------------------------%
+function [Cmean,Cgaussian,Dir1,Dir2,Lambda1,Lambda2]=TriCurvature(TR, usethird, Rot0)
 
 % Check inputs
 if(nargin<2), usethird=false; end

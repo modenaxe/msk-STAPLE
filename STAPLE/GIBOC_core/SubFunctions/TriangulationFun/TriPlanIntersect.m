@@ -1,17 +1,27 @@
-%TriPlanIntersect:  Intersection between a 3D Triangulation object (Tr)
-%                   and a 3D plan defined by normal vector n , d
-% Output :
+%TRIPLANINTERSECT Get and intersection(s) curve(s) between a 3D Triangulation 
+% object (Tr) and a 3D plan defined by normal vector n and altitude d
+%
+% ONLY TESTED on closed triangulation resulting in close intersection
+% curve(s)
+%
+% [ Curves , TotArea , InterfaceTri ] = TriPlanIntersect( Tr, n , d, debug_plots )
+%
+% Inputs:
+%   TR - A triangulation object.
+%   n - A [3x1] or [1x3] normal vector.
+%   d - A scalar such that if a point P of the plan, OP.n = -d. Or a [3x1] or [1x3] 
+%       coordinate of a point on the plan.
+%   debug_plots - A boolean, if set to 1 a plot of the intersection will be made.
+%   
+% Outputs :
 %   Curves:         a structure containing the diffirent intersection profile
 %                   if there is only one Curves(1).Pts gives the intersection
-%                   curve ordered points vectors (forming a polygon)
-%   TotArea:        Total area of the cross section accounting for holes
+%                   curve ordered points vectors (forming a polygon).
+%   TotArea:        Total area of the cross section accounting for holes.
 %   InterfaceTri:   sparse Matrix with n1 x n2 dimension where n1 and n2 are
-%                   number of faces in surfaces
-% 
-% -------------------------------------------------------------------------
-% ONLY TESTED : on closed triangulation resulting in close intersection
-% curve
-% -------------------------------------------------------------------------
+%                   number of faces in surfaces.
+%
+%--------------------------------------------------------------------------
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%

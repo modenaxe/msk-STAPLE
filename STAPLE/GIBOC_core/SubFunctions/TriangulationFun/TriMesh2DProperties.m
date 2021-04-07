@@ -1,5 +1,23 @@
-% TRIMESH2DPROPERTIES Compute some 2D properties of a triangulation object.
-% ------------------------------------------------------------------------%
+% TRIMESH2DPROPERTIES Compute geometrical 2D properties of a triangulation object.
+%
+%   [ Properties ] = TriMesh2DProperties( TRin )
+%
+% Inputs:
+%   Tr - A triangulation object.
+%
+% Outputs:
+%   Properties - A structure with :
+%       * Properties.Name ~ Name of the input variable.
+%       * Properties.Area ~ Area of each element of input triangulation.
+%       * Properties.Center ~ Centroid of the triangulation. Based on a weigthed
+%                             by area mean of the triangles incenter.
+%       * Properties.meanNormal ~ Mean normal vector of the triangulation. Based
+%                               on a weigthed by area mean of the normal
+%                               vector of each triangles.
+%       * Properties.onMeshCenter ~ Closest point to Properties.Center in 
+%                                   the triangulation.
+%
+%-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%

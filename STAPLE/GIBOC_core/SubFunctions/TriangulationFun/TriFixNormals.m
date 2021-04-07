@@ -1,10 +1,22 @@
-% TRIFIXNORMALS 
-% Check if the triangulation is correctly oriented; normals should be
-%pointing outwards. Randomly selct 2500 Points on the surface and move them
-%by 5 mm in the normal direction. Fit a convexhull on the points before
-%and after the move and compare volume. Volume should be higher after if
-%normal are outwardly orientated.
-% ------------------------------------------------------------------------%
+% TRIFIXNORMALS check if the triangulation is correctly oriented; 
+% normals should be pointing outwards. This is based on the following
+% heuristic.
+% Randomly select n=500 Points on the surface and translate them
+% by 5 mm in the normal direction. Fit a convexhull on the points 
+% before and after the translation and compare the 2 volumes. If  
+% normals are outwardly orientated, the Volume should be greater
+% after the translation.
+% Limit: Assume that all normals are good or all normals are bad.
+%
+% [ TrOut ] = TriFixNormals( TrIn )
+%
+% Inputs:
+%   TRin - A triangulation object.
+%   
+% Outputs:
+%   TRout - TRin with vertex order of each triangle kept or change to ensure
+%           that eavh triangle normal is pointing outwards.
+%-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%

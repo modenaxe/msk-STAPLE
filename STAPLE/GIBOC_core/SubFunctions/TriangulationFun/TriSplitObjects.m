@@ -1,27 +1,22 @@
 % TRISPLITOBJECTS splits triangulation composed of multiple unconnected
 % parts.
 %
-% Input:
-%   TrIn        A triangulation object containing multiple unconnected
-%               parts
-% Output:
+% [TrSplitted] = TriSplitObjects( TrIn )
 %
-%   TrSplitted: A structure containing the splitted parts of Tr
-%               TrSplitted(i).Tr each separated Triangulation object
-%               TrSplitted(i).Vol the volume of the Triangulation object
+% Inputs:
+%   TrIn - A triangulation object containing multiple unconnected
+%          parts
+% Outputs:
+%   TrSplitted - A structure containing the splitted parts of Tr
+%                * TrSplitted(i).Tr each separated Triangulation object
+%                * TrSplitted(i).Vol the volume of the Triangulation object
 %
-% -------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %--------------------------------------------------------------------------
-
 function [TrSplitted] = TriSplitObjects(TrIn)
 
-%% Part for developmment
-% clear all
-% close all
-% load('C:\Users\jbapt\Documents\Research\auto-msk-model\test_geometries\LHDL_CT\tri\calcn_r.mat');
-% TrIn = triang_geom;
 
 %%
 TrSplitted = struct();

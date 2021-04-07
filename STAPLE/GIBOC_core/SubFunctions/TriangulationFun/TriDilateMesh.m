@@ -1,19 +1,26 @@
-% TRIDILATEMESH
+% TRIDILATEMESH Dilate a mesh on a support mesh
 % This function is analog to a dilate function performed on binary images 
 % (https://en.wikipedia.org/wiki/Mathematical_morphology)
-% In :
-%   - TRsup :   a support triangulation object (analog to the whole image)
-%   - TRin :    a triangulation object to be dilated (analog to the white pixels of the binary image)
-%               TRin must me a subset (a region) of the TRsup triangulation, meaning that all vertices and elements of TRin
-%               are included in TRsup even if they don't share the same numberings of vertices and elements.
-%   - nbElemts : The number of neigbour elements/facets that will be dilated (analog to the number of pixel of the dilation)
-% Out :
-%   - TRout : the dilated triangulation
-% ------------------------------------------------------------------------%
+%
+% Inputs:
+%   TRsup - A support triangulation object. Analogous to the image grid.
+%   TRin - a triangulation object to be dilated (analog to the white pixels
+%          of the binary image). TRin must me a subset (a region) of the 
+%          TRsup triangulation, meaning that all vertices and elements of TRin
+%          are included in TRsup even if they don't share the same numberings
+%          of vertices and elements.
+%   nbElmts - The number of neigbour elements/facets that will be dilated 
+%             (analog to the number of pixel of the dilation). If the number
+%             is not an integer it will be rounded up to the next integer
+%   
+% Outputs:
+%   TRout - The dilated triangulation
+%
+% See also TRICLOSEMESH, TRIOPENMESH, TRIERODEMESH
+%-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
-
 function [ TRout ] = TriDilateMesh( TRsup, TRin, nbElmts )
 
 % Round the number of elements to upper integer;

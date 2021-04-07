@@ -1,6 +1,34 @@
-% ------------------------------------------------------------------------%
-%  Author:   Jean-Baptiste Renault
-%  Copyright 2020 Jean-Baptiste Renault
+% TRIINERTIAPPTIES Get inertia matrix and principal inertia axis
+% of a triangulation object (polyhedra made of triangular faces only)
+%
+% All computation and values assume an homogeneous density of 1 over the triangulation.
+% Meaning Mass output also gives the volume of the triangulation.
+% 
+%   [eigVctrs, CenterMass, InertiaMatrix, D, Mass ] = TriInertiaPpties( Tr )
+%
+% Inputs:
+%   Tr - A closed (watertight) triangulation object.
+%
+% Outputs:
+%   eigVctrs - Eigen vectors of the inertia matrix of the triangulation.
+%   CenterMass - Centroid (center of mass) of the triangulation.
+%   InertiaMatrix - Inertia matrix of the triangulation.
+%   D - Eigen values of the inertia matrix of the triangulation.
+%   Mass - Mass of the triangulation.
+%
+%
+% See also SUBEXPRESSIONS
+%-------------------------------------------------------------------------%
+%  Pseudo Code by : David Eberly, Geometric Tools, Redmond WA 98052
+%  See the link below for more information
+%  https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf
+%  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy
+%  of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons,
+%  PO Box 1866, Mountain View, CA 94042, USA.
+%  Created: December 31, 2002
+%  Last Modified by David Eberly: November 3, 2009
+%
+%  Adapted for triangulation object input:   Jean-Baptiste Renault
 %-------------------------------------------------------------------------%
 function [eigVctrs, CenterVol, InertiaMatrix, D, mass ] = TriInertiaPpties( Tr )
 %Get inertia of polyhedra of triangular faces

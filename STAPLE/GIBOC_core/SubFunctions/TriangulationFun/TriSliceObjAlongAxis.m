@@ -1,6 +1,27 @@
-% TRISLICEOBJALONGAXIS Slice a MATLAB triangulation object TriObj along a
+% TRISLICEOBJALONGAXIS Slice a MATLAB triangulation object TR along a
 % specified axis. Notation and inputs are consistent with the other
 % GIBOC-Knee functions used to manipulate triangulations.
+%
+% [Areas, Alt, maxArea, maxAreaInd, maxAlt] 
+%       = TriSliceObjAlongAxis(TR, Axis, step, cut_offset, debug_plot)
+%
+% Inputs:
+%   TR - A triangulation object.
+%   Axis - A [3x1] vector giving the normal of the slice cut plan.
+%   step - A scalar, the distance between two consecutive slices.
+%   cut_offset - A distance to start and stop from relative to the ends
+%                of TR along the cut axis.
+%   debug_plots - A boolean, if set to true the intersection will be plotted
+%                 Or kx3 list of nodes coordinates.
+%
+% Outputs:
+%   Areas - A [kx1] vector of cross section areas of the cuts along the axis
+%   Alt - A [kx1] vector of the altitude along the cut axis of the slices.
+%   maxArea - Maximal cross section areas along cut axis
+%   maxAreaInd - Index of the maximal area (maxAreaInd<k)
+%   maxAlt - Atlitude along the cut axis at the maximal cross section area
+%
+% See also TRIPLANINTERSECT
 %-------------------------------------------------------------------------%
 %  Author:   Luca Modenese, 2020
 %  Copyright 2020 Luca Modenese

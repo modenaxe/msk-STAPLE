@@ -1,4 +1,21 @@
-% ------------------------------------------------------------------------%
+% TRICOVMATRIX Compute the weighted Cov matrix of a triangulation by 
+% taking the triangle incenters and weighting them by the area of their 
+% corresponding triangle.
+% The eigen vectors of the output covariance matrix are the principal inertia 
+% of the triangulation under the assumption that it is hollow and the
+% surfacic mass is homogenous.
+% 
+% [ CovM ] = TriCovMatrix( TR )
+%
+% Inputs:
+%   TR - A triangulation object.
+%   
+% Outputs:
+%   CovM - A weighted by area 3x3 covariance matrix object of the TR.
+%
+%
+% See also TRIMESH2DPROPERTIES
+%-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
 %  Copyright 2020 Jean-Baptiste Renault
 %-------------------------------------------------------------------------%

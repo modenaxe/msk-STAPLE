@@ -22,10 +22,10 @@
 %                     could start.
 %   
 %   alt_TlNeck_start - gives the altitude along x0 at the approximate start
-%                      of talus neck
+%                      of talus neck.
 %
 %   alt_TlTib_start - gives the altitude along X0 at wich articular surface
-%                     with the tibia can start
+%                     with the tibia can start.
 %
 %-------------------------------------------------------------------------%
 %  Author:   Jean-Baptiste Renault
