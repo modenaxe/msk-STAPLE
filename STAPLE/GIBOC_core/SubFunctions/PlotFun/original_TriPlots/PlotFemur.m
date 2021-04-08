@@ -1,6 +1,36 @@
+% PLOTFEMUR Plot a femur after indentifying articular surface 
+% and coordinate system.
+% The femur is displayed on a new figure with identified articular
+% surfaces and associated coordinate system.
+%
+% PlotFemur( CS, TrObjects )
+% 
+% Inputs:
+%   CS - A coordinate system structure.
+%         * CS.Origin ~ the origin of the coordiante system.
+%         * CS.X ~ the X direction of the coordiante system.
+%         * CS.Y ~ the Y direction of the coordiante system.
+%         * CS.Z ~ the Z direction of the coordiante system.
+% 
+%   TrObjects - A structure containing.
+%               * TrObjects.Femur ~ The whole femur triangulation.
+%               * TrObjects.DistFem ~ The femur distal part triangulation.
+%               * TrObjects.EpiFemASLat ~ The triangulation of the femur 
+%                                         distal lateral articular surface.
+%               * TrObjects.EpiFemASMed ~ The triangulation of the femur 
+%                                         distal medial articular surface.
+% 
+% Outputs:
+%   None - Plot a femur with indentified articular surfaces 
+%          and coordinate system.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function PlotFemur( CS, TrObjects, new_plot)
-%PLOTTIBIA Display figures of the femur
-%   Detailed explanation goes here
+
+
 if new_plot == 1
     figure()
 end

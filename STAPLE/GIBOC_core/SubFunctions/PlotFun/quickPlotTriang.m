@@ -1,3 +1,17 @@
+% QUICKPLOTTRIANG Plot a triangulation object.
+% Plot a triangObj object with proper lighting.
+% 
+% quickPlotTriang(triangObj, face_color, new_figure, alpha)
+%
+% Inputs:
+%   triangObj - A triangulation object to plot.
+%   face_color - Plotted triangulaiton face color.
+%   new_figure - Boolean to indicate to use current figure or create a new one.
+%   alpha - Matlab transparency factor for plotted plan.
+% 
+% Outputs:
+%   None - Plot the triangulation object on the current axis or a new one.
+%
 %-------------------------------------------------------------------------%
 %    Copyright (c) 2021 Modenese L.                                       %
 %    Author:   Luca Modenese                                              %
@@ -23,6 +37,7 @@ end
 
 trisurf(triangObj,'Facecolor', face_color,'FaceAlpha',alpha, 'edgecolor','none');
 light; lighting phong; % light
-hold on, axis equal
+hold on
+axis equal
 
 end

@@ -1,6 +1,25 @@
+% PLOTDOT Plot a 3D dot on the current axis.
+% This plot a volumetric 3D dot.
+%
+% plotDot( centers, color, r )
+%
+% Inputs:
+%   centers - Center points of the dots to plot.
+%   color - Color of the dot.
+%   radius - The radius of the dot(s) to control their size. (optional)
+% 
+% Outputs:
+%   None - Plot the 3D dot(s) on the current axis
+%
+% See also PLOTBONELANDMARKS, PLOTSPHERE.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function plotDot( centers, color, r )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+
+
 if nargin <2
     color='k';
     r=1.75;

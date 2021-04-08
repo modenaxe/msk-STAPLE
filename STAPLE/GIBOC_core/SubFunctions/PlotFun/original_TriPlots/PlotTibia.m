@@ -1,6 +1,35 @@
+% PLOTTIBIA Plot a tibia after indentifying articular surface 
+% and coordinate system.
+% The tibia is displayed on a new figure with identified articular
+% surfaces and associated coordinate system.
+%
+% PlotTibia( CS, TrObjects )
+% 
+% Inputs:
+%   CS - A coordinate system structure.
+%         * CS.Origin ~ the origin of the coordiante system.
+%         * CS.X ~ the X direction of the coordiante system.
+%         * CS.Y ~ the Y direction of the coordiante system.
+%         * CS.Z ~ the Z direction of the coordiante system.
+% 
+%   TrObjects - A structure containing.
+%               * TrObjects.Tibia ~ The whole tibia triangulation.
+%               * TrObjects.ProxTib ~ The tibia distal part triangulation.
+%               * TrObjects.EpiTibASLat ~ The triangulation of the tibia 
+%                                         proximal lateral articular surface.
+%               * TrObjects.EpiTibASMed ~ The triangulation of the tibia 
+%                                         proximal medial articular surface.
+% 
+% Outputs:
+%   None - Plot a tibia with indentified articular surfaces 
+%          and coordinate system.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function PlotTibia( CS, TrObjects )
-%PLOTTIBIA Display figures of the tibia
-%   Detailed explanation goes here
+
 
 figure()
 % Plot the whole tibia, here ProxTib is a Matlab triangulation object

@@ -1,20 +1,39 @@
-function plotPlan(n,d,Points,alphaV,colorV)
-%Plot a rectangular plan
-% n : normal of the plan
-% d : constant d as in a.x + b.y + c.z + d = 0, if d is a vector then it's
-% a point belonging to the plan
-% Points list of points to get the length and width of the plan
-% alphaV,colorV : Graphical parameters
+% PLOTPLAN Plot a plan (filled rectangle) on the current axis.
+%
+% plotPlan(n, Op, Points, alpha, color)
+%
+% Inputs:
+%   n - An unit normal vector of the plan.
+%   Op - A point located on the plan.
+%   Points - A set of points to provide the dimension of the plotted plan.
+%            All those points when projected onto the plan will be within
+%            the plotted plan.
+%   alpha - Matlab transparency factor for plotted plan.
+%   color - Color of the plan.
+% 
+% Outputs:
+%   None - Plot a plan (filled rectangle) on the current axis.
+%
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
+function plotPlan(n, Op, Points, alpha, color)
 
-if length(d)>2
-    d = -dot(n,d);
+
+if length(Op)>2
+    d = -dot(n,Op);
+else
+    d = Op
 end
 
 if nargin < 4
-    alphaV = 0.15;
-    colorV = [1,0.65,0];
+    alpha = 0.15;
+    color = [1,0.65,0];
 end
 
+Points = ProjectOnPlan( Points , n , Op )
 mX=min(Points(:,1))-10; MX=max(Points(:,1))+10;
 mY=min(Points(:,2))-10; MY=max(Points(:,2))+10;
 mZ=min(Points(:,3))-10; MZ=max(Points(:,3))+10;
@@ -38,7 +57,7 @@ elseif I==3
     Z=(-n(2).*Y-n(1).*X-d)/n(3);
 
 end
-fill3(X,Y,Z,colorV,'FaceAlpha',alphaV)
+fill3(X, Y, Z, color, 'FaceAlpha',alpha)
 
 
 end

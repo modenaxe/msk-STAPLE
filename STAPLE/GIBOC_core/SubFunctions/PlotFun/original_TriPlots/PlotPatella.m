@@ -1,6 +1,32 @@
+% PLOTPATELLA Plot a patella after indentifying articular surface 
+% and coordinate system.
+% The patella is displayed on a new figure with identified articular
+% surface and associated coordinate system.
+%
+% PlotPatella( CS, TrObjects )
+% 
+% Inputs:
+%   CS - A coordinate system structure.
+%         * CS.Origin ~ the origin of the coordiante system.
+%         * CS.X ~ the X direction of the coordiante system.
+%         * CS.Y ~ the Y direction of the coordiante system.
+%         * CS.Z ~ the Z direction of the coordiante system.
+% 
+%   TrObjects - A structure containing.
+%               * TrObjects.Patella ~ The whole patella triangulation.
+%               * TrObjects.PatArtSurf ~ The triangulation of the patella 
+%                                        articular surface.
+% 
+% Outputs:
+%   None - Plot a patella after indentifying articular surface 
+%          and coordinate system.
+%
+%-------------------------------------------------------------------------%
+%  Author:   Jean-Baptiste Renault
+%  Copyright 2020 Jean-Baptiste Renault
+%-------------------------------------------------------------------------%
 function PlotPatella( CS, TrObjects )
-%PLOTPATELLA Display figures of the patella
-%   Detailed explanation goes here
+
 
 figure()
 % Plot the whole tibia, here ProxTib is a Matlab triangulation object

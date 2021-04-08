@@ -5,14 +5,14 @@
 %
 % Inputs:
 %   BLStruct - a MATLAB structure with fields having as fields the name of 
-%       the bone landmarks and as values their coordinates (in global
-%       reference system).
+%              the bone landmarks and as values their coordinates (in global
+%              reference system).
 %
 %   label_switch - a binary switch that indicates if the bone landmark
-%       names will be added or not (as text) to the plot.
+%                  names will be added or not (as text) to the plot.
 %
 % Outputs:
-%   none - the points are plotted on the current axes.
+%   none - the bone landmarks are plotted on the current axes.
 %
 % See also PLOTDOT.
 %
@@ -21,6 +21,8 @@
 %  Copyright 2020 Luca Modenese
 %-------------------------------------------------------------------------%
 function plotBoneLandmarks(BLStruct, label_switch)
+    
+    
     BLfields = fields(BLStruct);
     for nL = 1:numel(BLfields)
         cur_name = BLfields{nL};
@@ -34,4 +36,5 @@ function plotBoneLandmarks(BLStruct, label_switch)
                 'FontSize',8);
         end
     end
+    
 end
