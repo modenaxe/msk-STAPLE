@@ -66,7 +66,8 @@ class MatlabFunctionsDocStrings():
     def __init__(self, pathToFile, style='numpy'):
         self.pathToFile = pathToFile
         self.style = style
-        self.functionREGEX = '(^function (?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *=.*\n{0,1}.*[a-zA-Z0-9_]+\(([^\)]+)\))'
+        self.functionREGEX = '(^function (?:\[([^\)]+)\] *\n{0,1} *=|(\w+) *\n{0,1} *=|( *)) *\n{0,1} *\w+\(([^\)]+)\)$)'
+        # '(^function (?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *=.*\n{0,1}.*[a-zA-Z0-9_]+\(([^\)]+)\))'
         self.inputs, self.outputs = self.getInputsAndOutputs()
         self.infosDict = self.createInfosDict()
         self.initKnownDescrDict()
@@ -103,10 +104,10 @@ class MatlabFunctionsDocStrings():
 
         regex_inputs_header = '^% {0,1}[Ii]nputs{0,1} {0,2}: *\t*$'
         regex_outputs_header = '^% {0,1}[Oo]utputs{0,1} {0,2}: *\t*$'
-        regex_func_def = '(^% *(?:\[([^\)]+)\]|([a-zA-Z0-9_]+)) *=.*\n{0,1}.*[a-zA-Z0-9_]+\(([^\)]+)\))'
+        regex_func_def = '(^% +(?:\[[^\)]+\]|\w+) *(?:\n% ){0,1} *=* *(?:\n% ){0,1} *\w+\([^\)]+\)$)'
 
         # inputs_regex = '(^% (?:i|I)nputs *: *\n(% *([a-zA-Z0-9_]+) - ([a-zA-Z0-9_ \n\.%\(\):\*]+)%\n%))'
-        inoutputs_regex = '^% *([a-zA-Z0-9_]+) - ([a-zA-Z0-9_ \.\(\):\*\"]+)'
+        inoutputs_regex = '^% *(\w+) - ([a-zA-Z0-9_ \.\(\):\*\"]+)'
         copyright_regex = '^(%[-]{6,}(?:.|\n)+[Cc]opyright(?:.|\n)+[-]{6,}%)'
         see_also_regex = '^% See also (((\w*)(?:, *|.))+)'
 
@@ -320,6 +321,9 @@ class MatlabFunctionsDocStrings():
             cleanedMatches (list): list of cleaned inputs or outputs
         """
 
+        if not matches:
+            return ['None', ]
+
         cleanedMatches = (matches
                           .replace('...', '')
                           .replace('\n', '')
@@ -353,6 +357,15 @@ class MatlabFunctionsDocStrings():
                             'n': '[3x1] float vector',
                             'Op': '[1x3] float vector',
                             'V': '[3x3] float matrix',
+                            'u': '[3x1] float vector',
+                            'radius': 'float',
+                            'Length': 'float',
+                            'Center': '[1x3] float vector',
+                            'centers': '[nx3] float vectors',
+                            'center': '[1x3] float vector',
+                            'origin': '[1x3] float vector',
+                            'None': 'none',
+                            'color': 'Matlab color string',
                             }
         
 
@@ -369,7 +382,8 @@ class MatlabFunctionsDocStrings():
             'Minertia': 'An inertia matrix __DESCRIPTION__',
             'n': 'An unit normal vector',
             'Op': 'A point located on the plan',
-            'V_all': 'The 3 eigen vectors of the pseudo inertia-matrix of the current bone'
+            'V_all': 'The 3 eigen vectors of the pseudo inertia-matrix of the current bone',
+            'None': "This function doesn't return any outptut",
             }
 
         self.knownDescrOutputs = copy.deepcopy(self.knownDescrInputs)

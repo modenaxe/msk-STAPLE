@@ -3,7 +3,7 @@ import os
 os.chdir('..')
 from docs.docstrings_utils import MatlabFunctionFileIdentificator, MatlabFunctionsDocStrings
 
-
+# TODO : adjust for function without return (eg. plot functions)
 
 for subfldr in ['GeometricFun', 'FittingFun'] :
     pth = os.path.join(os.getcwd(), 'STAPLE', 'GIBOC_core', 'SubFunctions', subfldr) 
