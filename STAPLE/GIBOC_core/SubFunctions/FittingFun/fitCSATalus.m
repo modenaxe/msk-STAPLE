@@ -44,28 +44,28 @@ function [or, alt_TlNvc_start, alt_TlNeck_start, alt_TlTib_start] = fitCSATalus(
 	% Parameters
 	% ----------
 	% Alt : __TYPE__
-	% 	The distance to origin of each cross section center when projected 
-	% 	 onto the talus long axis (distal to proximal, ie. anterior to posterior).
+	%   The distance to origin of each cross section center when projected 
+	%   onto the talus long axis (distal to proximal, ie. anterior to posterior).
 	% Area : __TYPE__
-	% 	The cross section areas of the talus along the long axis
+	%   The cross section areas of the talus along the long axis
 	% debug_plots : boolean
-	% 	Display debug plot
+	%   Display debug plot
 	%
 	% Returns
 	% -------
 	% or : __TYPE__
 	% 	The orientation of the talus. (__TO_BE_PRECISED__
 	% alt_TlNvc_start : __TYPE__
-	% 	gives the altitude along X0 at wich the CSA is maximal
-	% 	 and where the TaloNavicular (TlNvc) articular surface
-	% 	 could start.
+	%   gives the altitude along X0 at wich the CSA is maximal
+	%   and where the TaloNavicular (TlNvc) articular surface
+	%   could start.
 	% 	 
 	% alt_TlNeck_start : __TYPE__
-	% 	gives the altitude along x0 at the approximate start
-	% 	 of talus nec
+	%   gives the altitude along x0 at the approximate start
+	%   of talus nec
 	% alt_TlTib_start : __TYPE__
-	% 	gives the altitude along X0 at wich articular surface
-	% 	 with the tibia can star
+	%   gives the altitude along X0 at wich articular surface
+	%   with the tibia can star
 	%
 	%
 

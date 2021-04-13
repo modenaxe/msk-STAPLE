@@ -8,6 +8,8 @@
 % plane, recommended Circle Fit (Pratt method), by Nikolai Chernov
 % http://www.mathworks.com/matlabcentral/fileexchange/22643
 %
+% Modified to add distance to sphere -> ErrorDist
+% 
 % [Center,Radius,ErrorDist] = sphereFit(X)
 %
 % Inputs:
@@ -18,7 +20,6 @@
 %   Radius - Radius of sphere
 %   ErrorDist - Error dist for each points in X
 %
-% Modified to add distance to sphere -> ErrorDist
 %-------------------------------------------------------------------------%
 %  Author:   Alan Jennings, University of Dayton
 %  Copyright 2020 Alan Jennings, University of Dayton
@@ -28,7 +29,7 @@ function [Center,Radius,ErrorDist] = sphereFit(X)
 	% SPHEREFIT fits a sphere to a collection of data using a closed form for the
 	% solution (opposed to using an array the size of the data set). 
 	% Minimizes Sum((x-xc)^2+(y-yc)^2+(z-zc)^2-r^2)^2
-	% x,y,z are the data, xc,yc,zc are the sphere's center, and r is the radiu
+	% x,y,z are the data, xc,yc,zc are the sphere's center, and r is the radius
 	%
 	% Assumes that points are not in a singular configuration, real numbers, ...
 	% if you have coplanar data, use a circle fit with svd for determining the
@@ -49,7 +50,6 @@ function [Center,Radius,ErrorDist] = sphereFit(X)
 	% ErrorDist : __TYPE__
 	% 	Error dist for each points in X
 	% 	
-	% 	 Modified to add distance to sphere -> ErrorDis
 	%
 	%
 

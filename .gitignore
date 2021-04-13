@@ -24,6 +24,7 @@ tests/models_from_tests/
 *.zip
 /*_safe/
 *ISSUE*/
+# docs/_build*
 
 # openSim files
 *.log
