@@ -61,7 +61,7 @@ python test_docstrings_utils.py
 
 ## Set the part of code to include in documentation
 
-Modify *index.rst* file in the root folder.
+Modify *index.rst* file in the _/docs_ folder.
 
 For example you can add 
 
