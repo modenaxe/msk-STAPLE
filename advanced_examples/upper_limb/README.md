@@ -12,3 +12,5 @@ The outputs of `GIBOC_femur.m` have been modified in order to:
 Please note that:
 1. the `GIBOC_humerus.m` file has still the same console printout of `GIBOC_femur.m`.
 2. this example is a proof-of-concept and it has not been tested on an extensive dataset, so we cannot ensure the robustness of `GIBOC_humerus.m`.
+
+![processed-humerus](../../images/adv_example_humerus.png)
