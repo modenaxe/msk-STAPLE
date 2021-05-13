@@ -290,7 +290,7 @@ The JCS is a MATLAB structure with the following fields:
 2. **Origin** [3x1] vector: the origin of the joint in the bone being analysed
 3. **V** [3x3] matrix: the pose matrix of the joint
 4. **parent_location** [1x3] vector: the origin of the parent coordinate system in OpenSim
-5  **parent_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
+5. **parent_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
 6. **child_location** [1x3] vector: the origin of the child coordinate system in OpenSim
 7. **child_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
 
