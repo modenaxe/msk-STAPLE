@@ -62,6 +62,10 @@ For example, models of hip, knee and ankle joints can be created as individual m
 
 ![articular_surfaces](./images/artic_surfaces.png)
 
+* **Transformations to local reference systems**: STAPLE performs morphological analyses using the medical images reference system where the bone geometries are segmented, but then it can transform both the bone geometries and model objects to standard segment-based biomechanical reference systems. This is an important feature if you are using STAPLE in OpenSim, as joint reactions are expressed in body reference systems. See the provided [example of this functionality](./Example_BCS_leg_right.m).
+
+![reference_systems](./images/reference_systems.png)
+
 * **Basic identification of bony landmarks**: certain bony landmarks can be easily identified following the morphological analysis of the bone surfaces. These landmarks are intended as first guess for registration with gait analysis data.
 
 * **Merging subject-specific and generic models**: STAPLE includes some basic utilities to merge partial subject-specific skeletal models (obtainable from localized MRI scans) with generic musculoskeletal models. See the provided [advanced examples](./advanced_examples).
