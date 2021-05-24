@@ -46,7 +46,7 @@ NJ = jointSet.getSize();
 % loop through the joints
 for nj = 0:NJ-1
     cur_joint = jointSet.get(nj);
-    joint_class_name = char(cur_joint.getConcreteClassName());
+%     joint_class_name = char(cur_joint.getConcreteClassName());
 %     eval(['cur_joint = ',joint_class_name,'.safeDownCast(cur_joint)']);
     % loop through the frames
     for nframe = 0:1
