@@ -2,6 +2,8 @@
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4428103.svg)](https://doi.org/10.5281/zenodo.4428103)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
 
+### STAPLE is released under a [non-commercial license][(#license) and it is free to use for academic purposes only. For any other use please contact the authors. 
+
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
