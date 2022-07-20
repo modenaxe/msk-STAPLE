@@ -7,16 +7,13 @@
 % extremities using the anatomical VSDFullBodyBoneModels datasets.
 % ----------------------------------------------------------------------- %
 clear; clc; close all
-addpath(genpath('STAPLE'));
 
-%----------%
-% SETTINGS %
-%----------%
-%% Additional libraries
-addpath(genpath('C:\dev\matGeom'))
-%% VSDFullBodyBoneModels
-vsdFolder = 'D:\Biomechanics\MSM\Database\VSDFullBodyBoneModels';
-%% STAPLE
+% STAPLE library
+addpath(genpath('STAPLE'));
+% Additional libraries
+addpath(genpath('C:\dev\matGeom')) % https://github.com/mattools/matGeom
+
+%% SETTINGS ------------------------------------------------------------- %
 output_models_folder = 'opensim_models_examples';
 % folder where the various datasets (and their geometries) are located.
 datasets_folder = 'bone_datasets';
@@ -29,17 +26,32 @@ vis_geom_format = 'obj';
 sides = {'r', 'l'};
 % choose the definition of the joint coordinate systems (see documentation)
 joint_defs = 'Modenese2018';
-%--------------------------------------
+% ----------------------------------------------------------------------- %
+
+%% VSDFullBodyBoneModels
+% Clone example data
+if ~exist('VSD', 'dir')
+    try
+    !git clone https://github.com/MCM-Fischer/VSDFullBodyBoneModels VSD
+    rmdir('VSD/.git', 's')
+    catch
+        warning([newline 'Clone (or copy) the example data from: ' ...
+            'https://github.com/MCM-Fischer/VSDFullBodyBoneModels' newline 'to: ' ...
+            fileparts([mfilename('fullpath'), '.m']) '\VSD' ...
+            ' and try again!' newline])
+        return
+    end
+end
 
 %% Convert VSD to STAPLE format
-vsdSubjectXLSX = fullfile(vsdFolder, 'MATLAB\res\VSD_Subjects.xlsx');
+vsdSubjectXLSX = fullfile('VSD', 'MATLAB\res\VSD_Subjects.xlsx');
 [~, ~, rawXLSXsdta] = xlsread(vsdSubjectXLSX);
 vsdSubjects = cell2table(rawXLSXsdta(2:end,:),'VariableNames',rawXLSXsdta(1,:));
 % Remove subjects with incomplete skeletal anatomy
 vsdSubjects = vsdSubjects(cellfun(@(x) isempty(strfind(x,'cut off')), vsdSubjects.Comment),:); %#ok<STREMP>
 
 for n_sub = 4%:size(vsdSubjects,1)
-    load(fullfile(vsdFolder, 'Bones', [vsdSubjects.Number{n_sub} '.mat']),'B','M')
+    load(fullfile('VSD', 'Bones', [vsdSubjects.Number{n_sub} '.mat']),'B','M')
     subFolder = fullfile(datasets_folder, ['VSD_' vsdSubjects.Number{n_sub}] , input_geom_format);
     if ~isfolder(subFolder)
         mkdir(subFolder)

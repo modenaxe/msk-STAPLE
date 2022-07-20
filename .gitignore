@@ -34,3 +34,4 @@ tests/models_from_tests/
 #vim files
 *.*~
 
+/VSD
