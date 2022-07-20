@@ -1,4 +1,4 @@
-F%-------------------------------------------------------------------------%
+%-------------------------------------------------------------------------%
 % Copyright (c) 2022 MCM Fischer.                                         %
 %    Author:   MCM Fischer,  2022                                         %
 % ----------------------------------------------------------------------- %
@@ -12,6 +12,8 @@ addpath(genpath('STAPLE'));
 %----------%
 % SETTINGS %
 %----------%
+%% Additional libraries
+addpath(genpath('C:\dev\matGeom'))
 %% VSDFullBodyBoneModels
 vsdFolder = 'D:\Biomechanics\MSM\Database\VSDFullBodyBoneModels';
 %% STAPLE
@@ -33,12 +35,15 @@ joint_defs = 'Modenese2018';
 vsdSubjectXLSX = fullfile(vsdFolder, 'MATLAB\res\VSD_Subjects.xlsx');
 [~, ~, rawXLSXsdta] = xlsread(vsdSubjectXLSX);
 vsdSubjects = cell2table(rawXLSXsdta(2:end,:),'VariableNames',rawXLSXsdta(1,:));
+% Remove subjects with incomplete skeletal anatomy
+vsdSubjects = vsdSubjects(cellfun(@(x) isempty(strfind(x,'cut off')), vsdSubjects.Comment),:); %#ok<STREMP>
 
-for n_sub = 1%:size(vsdSubjects,1)
+for n_sub = 4%:size(vsdSubjects,1)
     load(fullfile(vsdFolder, 'Bones', [vsdSubjects.Number{n_sub} '.mat']),'B','M')
     subFolder = fullfile(datasets_folder, ['VSD_' vsdSubjects.Number{n_sub}] , input_geom_format);
     if ~isfolder(subFolder)
         mkdir(subFolder)
+        disp(['Created: ' datasets_folder '\' subFolder])
     end
     % Create 'pelvis_no_sacrum.mat'
     trPath = fullfile(subFolder, 'pelvis_no_sacrum.mat');
@@ -103,7 +108,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 1%:numel(datasets)
+for n_d = 4%:numel(datasets)
     
     % current dataset being processed
     cur_dataset = datasets{n_d};
