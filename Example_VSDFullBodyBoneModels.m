@@ -51,8 +51,8 @@ vsdSubjects = cell2table(rawXLSXsdta(2:end,:),'VariableNames',rawXLSXsdta(1,:));
 vsdSubjects = vsdSubjects(cellfun(@(x) isempty(strfind(x,'cut off')), vsdSubjects.Comment),:); %#ok<STREMP>
 
 for n_sub = 4%:size(vsdSubjects,1)
-    load(fullfile('VSD', 'Bones', [vsdSubjects.Number{n_sub} '.mat']),'B','M')
-    subFolder = fullfile(datasets_folder, ['VSD_' vsdSubjects.Number{n_sub}] , input_geom_format);
+    load(fullfile('VSD', 'Bones', [vsdSubjects.ID{n_sub} '.mat']),'B','M')
+    subFolder = fullfile(datasets_folder, ['VSD_' vsdSubjects.ID{n_sub}] , input_geom_format);
     if ~isfolder(subFolder)
         mkdir(subFolder)
         disp(['Created: ' datasets_folder '\' subFolder])
@@ -111,7 +111,7 @@ end
 
 %% STAPLE
 % datasets that are processed
-datasets = strcat('VSD_',vsdSubjects.Number');
+datasets = strcat('VSD_',vsdSubjects.ID');
 % masses for models
 subj_mass_set = vsdSubjects.Weight'; %kg
 
@@ -163,7 +163,7 @@ for n_d = 4%:numel(datasets)
         osimModel = addBodiesFromTriGeomBoneSet(osimModel, triGeom_set, geometry_folder_name, vis_geom_format);
         
         % process bone geometries (compute joint parameters and identify markers)
-        [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, cur_side);
+        [JCS, BL, CS] = processTriGeomBoneSet(triGeom_set, cur_side, [],'Kai2014');
         
         % create joints
         createOpenSimModelJoints(osimModel, JCS, joint_defs);
