@@ -154,7 +154,7 @@ end
 [postCondyle_Med_Tri, postCondyle_Lat_Tri, AuxCSInfo] = GIBOC_femur_ArticSurf(EpiFemTri, AuxCSInfo,  CoeffMorpho, 'post_condyles', debug_plots);
 
 % extract patellar grooves
-[patGroove_Med_Tri, patGroove_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, AuxCSInfo, CoeffMorpho, 'pat_groove');
+[patGroove_Med_Tri, patGroove_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, AuxCSInfo, CoeffMorpho, 'pat_groove', debug_plots);
 
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
@@ -263,7 +263,7 @@ end
 disp('Done.');
 
 % plot patellar fitting as well
-if debug_plots
+% if debug_plots
     CS = AuxCSInfo.(patellofemoral_name);
     plotTriangLight(DistFemTri, BCS, 1); hold on
     quickPlotTriang(patGroove_Lat_Tri, 'b')
@@ -273,6 +273,6 @@ if debug_plots
     plotCylinder((CS.patgroove_center_lat-CS.patgroove_center_med)', 3, (CS.patgroove_center_lat+CS.patgroove_center_med)/2,...
         3.4*norm(CS.patgroove_center_lat-CS.patgroove_center_med), 1, 'k');
     title('Patellar Groove Fitting');
-end
+% end
 end
 
