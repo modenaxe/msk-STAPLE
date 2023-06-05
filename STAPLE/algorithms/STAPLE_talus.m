@@ -67,24 +67,21 @@ disp('Initializing method...')
 
 %% 1. Indentify the inertia axis of the Talus
 % Get eigen vectors V_all of the Talus 3D geometry and volumetric center
-[V_all, AuxCSInfo.CenterVol, InertiaMatrix, AuxCSInfo.D] = TriInertiaPpties(talusTri);
+[ V_all, AuxCSInfo.CenterVol, InertiaMatrix, AuxCSInfo.D ] = TriInertiaPpties( talusTri );
 
-% X0 can be seen as a initial anteroposterior or posteroanterior axis. The 
-% orientation of Y0 and Z0 can be inconsistent across subjects because the 
-% values of their moments of inertia are quite close (~15% difference). So 
+% X0 can be seen as a initial antero-posterior or postero-anterior axis,
+% the orientation of Y0 and Z0 can be inconsistent across subjects because
+% the value of their Moment of inertia are quite close (~15% difference. So
 % another function is used to initiliaze Z0 and Y0. It fits a quadrilateral
-% on the talus projected onto a plan perpendicular to X0. The edge
-% corresponding to the superior face is identified and provides the
-% inferosuperior direction intial guess (Z0). Y0 is made perpendicular to 
-% X0 and Z0.
+% on the Talus projected onto a plan perpendicular to X0, the edge
+% corresponding to the superior face is identified and provide the
+% inferior-superior direction intial guess (Z0). Y0 is made perpendicular
+% to X0 and Z0.
 AuxCSInfo.X0 = V_all(:,1); 
 [AuxCSInfo.Z0,AuxCSInfo.Y0] = fitQuadriTalus(talusTri, V_all, debug_plots);
-if debug_plots
-    figure('color','w','numbertitle','off',...
-        'name', ['Debug Figure: ' mfilename '.m: Initial talar bone CS from fitQuadriTalus.m'])
-    quickPlotTriang(talusTri)
-    AuxCSInfo.Origin = AuxCSInfo.CenterVol;
-    quickPlotRefSystem(AuxCSInfo)
+if debug_plots == 1
+    figure;     quickPlotTriang(talusTri)
+    AuxCSInfo.Origin = AuxCSInfo.CenterVol;     quickPlotRefSystem(AuxCSInfo)
     AuxCSInfo.Origin = []; % reset
 end
 

@@ -1,8 +1,8 @@
-function CSs = GIBOC_Miranda2010_femur(Femur)
+function CSs = Miranda2010_femur(Femur)
 
 
 L_ratio = 0.40;
-[ U_DistToProx ] = femur_guess_CS( Femur );
+[ U_DistToProx ] = femur_get_correct_first_CS( Femur );
 [ProxFem, DistFem] = cutLongBoneMesh(Femur, U_DistToProx, L_ratio);
 [ ~, CS.CenterVol] = TriInertiaPpties(Femur);
 if nargin<2

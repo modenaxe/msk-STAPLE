@@ -2,8 +2,6 @@
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4428103.svg)](https://doi.org/10.5281/zenodo.4428103)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
 
-### ⚠️ STAPLE is released under a [non-commercial license](#license) and it is free to use for academic purposes only. For any other use please contact the authors. 
-
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
 - [What can I do with STAPLE?](#what-can-i-do-with-staple)
@@ -337,10 +335,8 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 - [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
 - [ ] if you are using one of the workflows from the examples, ensure that you are using the correct names for the bone geometries, e.g. `pelvis_no_sacrum`, `femur_r`, `tibia_r`, etc.
 - [ ] ensure that the quality of your bone surface geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes. You can have an idea of what we mean by "good mesh" consulting the table that describes the datasets provided with STAPLE. If necessary, use the filters and tools available on software like [MeshLab](https://www.meshlab.net/) to improve your dataset.
-- [ ] processing the meshes so that they are triangular and contain a reasonable number of vertices (decimation can be applied) also helps with the OpenSim visualization. See [this related tweet](https://twitter.com/JohnRHutchinson/status/1455490276298997766).
 - [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable in the first place or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
 - [ ] verify that processing of your dataset is not failing because of the [current limitations](#current-limitations) of the STAPLE toolbox.
-
 
 ## Does STAPLE work only with OpenSim?
 
