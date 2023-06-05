@@ -33,8 +33,6 @@
 % 
 %   algo_tibia - the algorithm selected to process the tibial geometry.
 %
-%   algo_patella - the algorithm selected to process the patellar geometry.
-%
 %   result_plots - enable plots of final fittings and reference systems. 
 %       Value: 1 (default) or 0.
 %
@@ -77,7 +75,7 @@
 % so that all params that has been processed here are immediately available
 %--------------------------------------------------------------------------
 
-function [JCS, BL, BCS] = processTriGeomBoneSet(triGeomBoneSet, side_raw, algo_pelvis, algo_femur, algo_tibia, algo_patella, result_plots, debug_plots, in_mm)
+function [JCS, BL, BCS] = processTriGeomBoneSet(triGeomBoneSet, side_raw, algo_pelvis, algo_femur, algo_tibia, result_plots, debug_plots, in_mm)
 
 % setting defaults
 if nargin<2
@@ -86,20 +84,18 @@ else
     % get sign correspondent to body side
     [~, side] = bodySide2Sign(side_raw);
 end
-if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; algo_patella  = 'GIBOC-ACS'; in_mm = 1; end
-if nargin<4;                         algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; algo_patella  = 'GIBOC-ACS'; in_mm = 1; end
-if nargin<5;                                                        algo_tibia = 'Kai2014'; algo_patella  = 'GIBOC-ACS'; in_mm = 1; end
-if nargin<6;                                                                                algo_patella  = 'GIBOC-ACS'; in_mm = 1; end
-if nargin<7; result_plots = 1; end
-if nargin<8; debug_plots = 0;  end
-if nargin<9; in_mm = 1; end
+if nargin<3; algo_pelvis = 'STAPLE'; algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; in_mm = 1; end
+if nargin<4;                         algo_femur = 'GIBOC-cylinder'; algo_tibia = 'Kai2014'; in_mm = 1; end
+if nargin<5;                                                        algo_tibia = 'Kai2014'; in_mm = 1; end
+if nargin<6; result_plots = 1; end
+if nargin<7; debug_plots = 0;  end
+if nargin<8; in_mm = 1; end
 
 % deal with empty inputs (can be used to specify algo_tibia but use default
 % pelvis, for example.
-if isempty(algo_pelvis ); algo_pelvis   = 'STAPLE';         end
-if isempty(algo_femur  ); algo_femur    = 'GIBOC-cylinder'; end
-if isempty(algo_patella); algo_patella  = 'GIBOC-ACS'; end
-if isempty(algo_tibia  ); algo_tibia    = 'Kai2014';  end
+if isempty(algo_pelvis); algo_pelvis = 'STAPLE';         end
+if isempty(algo_femur ); algo_femur  = 'GIBOC-cylinder'; end
+if isempty(algo_tibia ); algo_tibia  = 'Kai2014';  end
 
 
 % names of the segments
@@ -196,15 +192,15 @@ end
 
 %---- PATELLA -----
 if isfield(triGeomBoneSet, patella_name)
-    switch algo_patella
+    switch method_patella
         case 'Rainbow'
             [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = Rainbow2013_buildpACS();
-        case 'GIBOC-ridge-volume'
-            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), side, 'volume-ridge');
-        case 'GIBOC-ridge-line'
-            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), side, 'ridge-line');
+        case 'GIBOC-vol-ridge'
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'volume-ridge');
+        case 'GIBOC-ridge'
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'ridge-line');
         case 'GIBOC-ACS'
-            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), side, 'artic-surf');
+            [BCS.(patella_name), JCS.(patella_name), BL.(patella_name)] = GIBOC_patella(triGeomBoneSet.(patella_name), 'artic-surf');
         otherwise
             % error('choose coorect patellar algorithm');
     end

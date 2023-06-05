@@ -153,9 +153,6 @@ end
 % on long convexhull edges extremities
 [postCondyle_Med_Tri, postCondyle_Lat_Tri, AuxCSInfo] = GIBOC_femur_ArticSurf(EpiFemTri, AuxCSInfo,  CoeffMorpho, 'post_condyles', debug_plots);
 
-% extract patellar grooves
-[patGroove_Med_Tri, patGroove_Lat_Tri, CS] = GIBOC_femur_ArticSurf(EpiFemTri, AuxCSInfo, CoeffMorpho, 'pat_groove', debug_plots);
-
 % exporting articular surfaces (more triangulations can be easily added
 % commenting out the parts of interest
 if nargout>3
@@ -165,8 +162,12 @@ if nargout>3
     ArtSurf.(['lat_cond_', side_raw])  = fullCondyle_Lat_Tri;
     ArtSurf.(['dist_femur_', side_raw])= DistFemTri;
     ArtSurf.(['condyles_', side_raw])  = TriUnite(fullCondyle_Med_Tri, fullCondyle_Lat_Tri);
-    ArtSurf.(['pat_groove', side_raw]) = TriUnite(patGroove_Med_Tri, patGroove_Lat_Tri);
 end
+
+% extract patellar grooves
+% [Groove_Med, Groove_Lat, CS] = GIBOC_femur_ArticSurf(EpiFem, CS, CoeffMorpho, 'pat_groove');
+% Fit two spheres to patellar groove
+% CS = CS_femur_SpheresOnPatellarGroove(Groove_Lat, Groove_Med, CS);
 
 % how to compute the joint axes
 disp(['Fitting femoral distal articular surfaces using ', fit_method, ' method...'])
@@ -193,14 +194,6 @@ joint_name_list = fields(JCS);
 hip_name  = joint_name_list{strncmp(joint_name_list, 'hip', 3)};
 knee_name = joint_name_list{~strncmp(joint_name_list, 'hip', 3)};
 side_low = hip_name(end);
-
-% Fit two spheres to patellar groove !DO NOT MOVE ABOVE knee_name!
-patellofemoral_name = ['patellofemoral_', side_low];
-% !DO NOT MOVE ABOVE knee_name!
-[AuxCSInfo.(patellofemoral_name), JCS_ptf] = CS_femur_SpheresOnPatellarGroove(patGroove_Lat_Tri, patGroove_Med_Tri, CS, side_raw);
-
-% add patellofemoral JCF field
-JCS.(patellofemoral_name) = JCS_ptf.(patellofemoral_name);
 
 % define segment ref system
 BCS.CenterVol = CenterVol;
@@ -262,17 +255,12 @@ end
 % final printout
 disp('Done.');
 
-% plot patellar fitting as well
-% if debug_plots
-    CS = AuxCSInfo.(patellofemoral_name);
-    plotTriangLight(DistFemTri, BCS, 1); hold on
-    quickPlotTriang(patGroove_Lat_Tri, 'b')
-    quickPlotTriang(patGroove_Med_Tri, 'r')
-    plotSphere(CS.patgroove_center_med,CS.patgroove_radius_med, 'r', alpha);
-    plotSphere(CS.patgroove_center_lat,CS.patgroove_radius_lat, 'b', alpha);
-    plotCylinder((CS.patgroove_center_lat-CS.patgroove_center_med)', 3, (CS.patgroove_center_lat+CS.patgroove_center_med)/2,...
-        3.4*norm(CS.patgroove_center_lat-CS.patgroove_center_med), 1, 'k');
-    title('Patellar Groove Fitting');
-% end
+% % plot patellar fitting as well
+% PlotTriangLight(DistFem, CS, 1); hold on
+% quickPlotTriang(Groove_Lat, 'b')
+% quickPlotTriang(Groove_Med, 'r')
+% plotSphere(CS.patgroove_center_med,CS.patgroove_radius_med, 'r', alpha);
+% plotSphere(CS.patgroove_center_lat,CS.patgroove_radius_lat, 'b', alpha);
+    
 end
 
