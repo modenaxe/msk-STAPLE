@@ -100,17 +100,19 @@ end
               
 % Get the length of the edges of the quadrilateral
 edgesLength = zeros(4,1);
-for i=1:4 
-    diff1 = Pts_proj_2D(quadriV(i+1),1)-Pts_proj_2D(quadriV(i),1);
-    diff2 = Pts_proj_2D(quadriV(i+1),2)-Pts_proj_2D(quadriV(i),2);
-    edgesLength(i) = sqrt(diff1^2+diff2^2);
+for i=1:4
+    dy = Pts_proj_2D(quadriV(i+1),1)-Pts_proj_2D(quadriV(i),1);
+    dz = Pts_proj_2D(quadriV(i+1),2)-Pts_proj_2D(quadriV(i),2);
+    edgesLength(i) = sqrt(dy^2+dz^2);
 end
 [~,Imax] = max(edgesLength);
 
-% Index of the start vertex of the quadrilateral
-I_V_sup = mod(Imax+2,4);
-% Edge corresponding to the superior part of the bone is assumed to be the
-% one opposing the largest one
+% The edge corresponding to the superior part of the bone is assumed to be 
+% the one opposing the largest one
+I_V_sup = mod(Imax+2,4); % Index of the start vertex of the superior edge
+if I_V_sup == 0
+    I_V_sup = 4;
+end
 Edge_sup = quadriV(I_V_sup:I_V_sup+1);
 
 % Get the direction of the edge
@@ -139,4 +141,3 @@ if plotOn
 end
 
 end
-
