@@ -44,13 +44,14 @@ if ~exist('VSD', 'dir')
 end
 
 %% Convert VSD to STAPLE format
-vsdSubjectXLSX = fullfile('VSD', 'MATLAB\res\VSD_Subjects.xlsx');
-[~, ~, rawXLSXsdta] = xlsread(vsdSubjectXLSX);
-vsdSubjects = cell2table(rawXLSXsdta(2:end,:),'VariableNames',rawXLSXsdta(1,:));
+vsdSubjects = readtable(fullfile('VSD\MATLAB\res\', 'VSD_Subjects.xlsx'));
 % Remove subjects with incomplete skeletal anatomy
 vsdSubjects = vsdSubjects(cellfun(@(x) isempty(strfind(x,'cut off')), vsdSubjects.Comment),:); %#ok<STREMP>
 
-for n_sub = 4%:size(vsdSubjects,1)
+% Select subjects to be processed
+subs = 1;%1:size(vsdSubjects,1);
+
+for n_sub = subs
     load(fullfile('VSD', 'Bones', [vsdSubjects.ID{n_sub} '.mat']),'B','M')
     subFolder = fullfile(datasets_folder, ['VSD_' vsdSubjects.ID{n_sub}] , input_geom_format);
     if ~isfolder(subFolder)
@@ -120,7 +121,7 @@ tic
 % create model folder if required
 if ~isfolder(output_models_folder); mkdir(output_models_folder); end
 
-for n_d = 4%:numel(datasets)
+for n_d = subs
     
     % current dataset being processed
     cur_dataset = datasets{n_d};
@@ -138,9 +139,12 @@ for n_d = 4%:numel(datasets)
         [sign_side , cur_side] = bodySide2Sign(sides{n_side});
         
         % cell array with the bone geometries that you would like to process
-        bones_list = {'pelvis_no_sacrum',  ['femur_', cur_side],...
-                     ['tibia_', cur_side], ['talus_', cur_side],...
-                     ['calcn_', cur_side]};
+        bones_list = {...
+            'pelvis_no_sacrum',  ...
+            ['femur_', cur_side],...
+            ['tibia_', cur_side], ...
+            ['talus_', cur_side],...
+            ['calcn_', cur_side]};
 
         % model and model file naming
         cur_model_name = ['auto_',datasets{n_d},'_',upper(cur_side)];
