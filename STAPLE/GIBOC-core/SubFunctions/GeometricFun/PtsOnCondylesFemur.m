@@ -75,21 +75,24 @@ horz_line       = [ Elps.X0+Elps.a*[-1 1]; [Elps.Y0 Elps.Y0] ];
 new_ver_line    = R*ver_line;
 new_horz_line   = R*horz_line;
 
-% figure()
-% plot(Pts_Epiphysis(:,3),Pts_Epiphysis(:,1),'g.')
-% hold on
-% axis equal
-% % plot(Pts_Epiphysis(OUT_Elps,3),Pts_Epiphysis(OUT_Elps,1),'c*')
-% plot( rotated_ellipse(:,1),rotated_ellipse(:,2),'r' );
-% plot(Pts_Epiphysis(I_kept,3),Pts_Epiphysis(I_kept,1),'rs')
-% plot( new_ver_line(1,:),new_ver_line(2,:),'r' );
-% plot( new_horz_line(1,:),new_horz_line(2,:),'r' );
-% quiver(Elps.X0_in,Elps.Y0_in,50*cos(-Elps.phi),50*sin(-Elps.phi));
-% quiver(Elps.X0_in,Elps.Y0_in,50*sin(Elps.phi),50*cos(Elps.phi));
-% plot(mean(Pts_Epiphysis(:,3)),mean(Pts_Epiphysis(:,1)),'ks')
-% plot(Pts_Epiphysis(I,3),Pts_Epiphysis(I,1),'ks')
-% plot(PtsCondyle_0(K,3),PtsCondyle_0(K,1),'k-')
-% plot(PtsCondyle_0(:,3),PtsCondyle_0(:,1),'kd')
-% plot(PtsCondyle_0(:,3),PtsCondyle_0(:,1),'k*')
+debug_plots = 0;
+if debug_plots
+    figure()
+    plot(Pts_Epiphysis(:,3),Pts_Epiphysis(:,1),'g.')
+    hold on
+    axis equal
+    % plot(Pts_Epiphysis(OUT_Elps,3),Pts_Epiphysis(OUT_Elps,1),'c*')
+    plot( rotated_ellipse(:,1),rotated_ellipse(:,2),'r' );
+    plot(Pts_Epiphysis(I_kept,3),Pts_Epiphysis(I_kept,1),'rs')
+    plot( new_ver_line(1,:),new_ver_line(2,:),'r' );
+    plot( new_horz_line(1,:),new_horz_line(2,:),'r' );
+    quiver(Elps.X0_in,Elps.Y0_in,50*cos(-Elps.phi),50*sin(-Elps.phi));
+    quiver(Elps.X0_in,Elps.Y0_in,50*sin(Elps.phi),50*cos(Elps.phi));
+    plot(mean(Pts_Epiphysis(:,3)),mean(Pts_Epiphysis(:,1)),'ks')
+    plot(Pts_Epiphysis(I,3),Pts_Epiphysis(I,1),'ks')
+    plot(PtsCondyle_0(K,3),PtsCondyle_0(K,1),'k-')
+    plot(PtsCondyle_0(:,3),PtsCondyle_0(:,1),'kd')
+    plot(PtsCondyle_0(:,3),PtsCondyle_0(:,1),'k*')
+end
 end
 

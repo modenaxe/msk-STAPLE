@@ -17,12 +17,12 @@ if nargin == 2
     plotOn = 0;
 end
 
-%% First project the mesh on the plane perpendicular to X0 (1st inertia axis)
+% First project the mesh on the plane perpendicular to X0 (1st inertia axis)
 Pts_inertia = (V_all'*Tr.Points')';
 
 if plotOn
-    figure('name', 'Debug Figure: fitQuadriTalus.m: Projection on X0 (1st inertia axis)', ...
-        'color','w','numbertitle','off');
+    figure('color','w','numbertitle','off', ...
+        'name', ['Debug Figure: ' mfilename '.m: Projection on X0 (1st inertia axis)']);
     axis equal tight; hold on
     plot3(Pts_inertia(:,1),Pts_inertia(:,2),Pts_inertia(:,3),'g.')
     xlabel('X'); ylabel('Y'); zlabel('Z')
@@ -37,28 +37,13 @@ assert(sum(sum(Pts_inertia(:,2:3)-Pts_proj_2D)) < 1e-8)
 K = convhull(Pts_proj_2D,'simplify', false);
 
 if plotOn
-    projFig = figure('name', 'Debug Figure: fitQuadriTalus.m: Convex hull of the projection on X0', ...
-        'color','w','numbertitle','off');
+    projFig = figure('color','w','numbertitle','off', ...
+        'name', ['Debug Figure: ' mfilename '.m: Convex hull of the projection on X0']);
     projAxes = axes();
     axis equal tight; hold on
     plot(Pts_proj_2D(:,1),Pts_proj_2D(:,2),'b.')
     plot(Pts_proj_2D(K,1),Pts_proj_2D(K,2),'k-')
     xlabel('Y'); ylabel('Z')
-end
-
-% Find the max edge
-maxDist = -1;
-for i=1:length(K)
-    for j=1:length(K)
-        diff1 = Pts_proj_2D(K(j),1)-Pts_proj_2D(K(i),1);
-        diff2 = Pts_proj_2D(K(j),2)-Pts_proj_2D(K(i),2);
-        dist = sqrt(diff1^2+diff2^2);
-        if dist>maxDist
-            maxDist=dist;
-            pointPair1=[K(i),K(j)];
-            U1=[diff1;diff2];
-        end
-    end
 end
 
 % Find the two points of the convex hull with max. distance to each other
@@ -81,8 +66,8 @@ Ru = [U1(1),-U1(2);U1(2),U1(1)];
 Pts_proj_2D_shr = (Ru*[0.5,0;0,1]*Ru'*Pts_proj_2D')';
 
 if plotOn
-    figure('name', 'Debug Figure: fitQuadriTalus.m: Projection on X0 shrinked along 1st diagonal', ...
-        'color','w','numbertitle','off');
+    figure('color','w','numbertitle','off', ...
+        'name', ['Debug Figure: ' mfilename '.m: Projection on X0 shrinked along 1st diagonal']);
     axis equal tight; hold on
     plot(Pts_proj_2D_shr(:,1),Pts_proj_2D_shr(:,2),'g.')
     line(Pts_proj_2D_shr(K,1),Pts_proj_2D_shr(K,2))
@@ -115,17 +100,19 @@ end
               
 % Get the length of the edges of the quadrilateral
 edgesLength = zeros(4,1);
-for i=1:4 
-    diff1 = Pts_proj_2D(quadriV(i+1),1)-Pts_proj_2D(quadriV(i),1);
-    diff2 = Pts_proj_2D(quadriV(i+1),2)-Pts_proj_2D(quadriV(i),2);
-    edgesLength(i) = sqrt(diff1^2+diff2^2);
+for i=1:4
+    dy = Pts_proj_2D(quadriV(i+1),1)-Pts_proj_2D(quadriV(i),1);
+    dz = Pts_proj_2D(quadriV(i+1),2)-Pts_proj_2D(quadriV(i),2);
+    edgesLength(i) = sqrt(dy^2+dz^2);
 end
 [~,Imax] = max(edgesLength);
 
-% Index of the start vertex of the quadrilateral
-I_V_sup = mod(Imax+2,4);
-% Edge corresponding to the superior part of the bone is assumed to be the
-% one opposing the largest one
+% The edge corresponding to the superior part of the bone is assumed to be 
+% the one opposing the largest one
+I_V_sup = mod(Imax+2,4); % Index of the start vertex of the superior edge
+if I_V_sup == 0
+    I_V_sup = 4;
+end
 Edge_sup = quadriV(I_V_sup:I_V_sup+1);
 
 % Get the direction of the edge
@@ -154,4 +141,3 @@ if plotOn
 end
 
 end
-

@@ -8,7 +8,7 @@
 % 1. the original implementation includes the sacrum, here excluded because
 % difficult to segment from MRI scans.
 % 2. the original publication defines the pelvis reference system
-% differently from the reccomendations of the International Society of
+% differently from the recommendations of the International Society of
 % Biomechanics.
 % 3. The robustness of the Kai2014 algorithm with respect to different
 % global reference systems is ensured, in our experience, only through the
