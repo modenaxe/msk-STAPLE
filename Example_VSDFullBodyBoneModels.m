@@ -219,4 +219,5 @@ for n_d = subs
     logConsolePrintout('off');
 end
 % remove paths
+rmpath(genpath('matGeom'));
 rmpath(genpath('STAPLE'));
