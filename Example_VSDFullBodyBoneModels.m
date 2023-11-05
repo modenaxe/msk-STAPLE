@@ -10,8 +10,6 @@ clear; clc; close all
 
 % STAPLE library
 addpath(genpath('STAPLE'));
-% Additional libraries
-addpath(genpath('C:\dev\matGeom')) % https://github.com/mattools/matGeom
 
 %% SETTINGS ------------------------------------------------------------- %
 output_models_folder = 'opensim_models_examples';
@@ -28,12 +26,12 @@ sides = {'r', 'l'};
 joint_defs = 'Modenese2018';
 % ----------------------------------------------------------------------- %
 
-%% VSDFullBodyBoneModels
+%% Download VSDFullBodyBoneModels
 % Clone example data
 if ~exist('VSD', 'dir')
     try
-    !git clone https://github.com/MCM-Fischer/VSDFullBodyBoneModels VSD
-    rmdir('VSD/.git', 's')
+        !git clone https://github.com/MCM-Fischer/VSDFullBodyBoneModels VSD
+        rmdir('VSD/.git', 's')
     catch
         warning([newline 'Clone (or copy) the example data from: ' ...
             'https://github.com/MCM-Fischer/VSDFullBodyBoneModels' newline 'to: ' ...
@@ -43,13 +41,28 @@ if ~exist('VSD', 'dir')
     end
 end
 
+% Download matGeom
+if ~exist('matGeom', 'dir')
+    try
+        !git clone https://github.com/mattools/matGeom matGeom
+        rmdir('matGeom/.git', 's')
+    catch
+        warning([newline 'Clone (or copy) the example data from: ' ...
+            'https://github.com/mattools/matGeom' newline 'to: ' ...
+            fileparts([mfilename('fullpath'), '.m']) '\matGeom' ...
+            ' and try again!' newline])
+        return
+    end
+end
+addpath(genpath('matGeom'))
+
 %% Convert VSD to STAPLE format
 vsdSubjects = readtable(fullfile('VSD\MATLAB\res\', 'VSD_Subjects.xlsx'));
 % Remove subjects with incomplete skeletal anatomy
 vsdSubjects = vsdSubjects(cellfun(@(x) isempty(strfind(x,'cut off')), vsdSubjects.Comment),:); %#ok<STREMP>
 
 % Select subjects to be processed
-subs = 1;%1:size(vsdSubjects,1);
+subs = 1; %1:size(vsdSubjects,1);
 
 for n_sub = subs
     load(fullfile('VSD', 'Bones', [vsdSubjects.ID{n_sub} '.mat']),'B','M')
