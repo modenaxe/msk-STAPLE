@@ -24,6 +24,9 @@ tests/models_from_tests/
 *.zip
 /*_safe/
 *ISSUE*/
+# Cloned repositories from Example_VSDFullBodyBoneModels
+/VSD
+/matGeom
 
 # openSim files
 *.log
@@ -31,6 +34,7 @@ tests/models_from_tests/
 # used for checking intermediate steps of modelling
 *.xml
 
-#vim files
+# vim files
 *.*~
+
 
