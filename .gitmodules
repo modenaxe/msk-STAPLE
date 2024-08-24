@@ -1,0 +1,3 @@
+[submodule "STAPLE/external/PelvicLandmarkIdentification"]
+	path = STAPLE/external/PelvicLandmarkIdentification
+	url = https://github.com/RWTHmediTEC/PelvicLandmarkIdentification

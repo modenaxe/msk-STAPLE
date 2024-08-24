@@ -37,7 +37,7 @@ switch bone_name
     case 'femur_r'
         LandmarkInfo{1} = {'RKNE', 'z', 'max', 'distal'};
         LandmarkInfo{2} = {'RMFC', 'z', 'min', 'distal'};
-        LandmarkInfo{3} = {'RTRO', 'z', 'max', 'proximal'};
+        LandmarkInfo{3} = {'RTRO', 'z', 'max', 'proximal'}; 
     case 'femur_l'
         LandmarkInfo{1} = {'LKNE', 'z', 'min', 'distal'};
         LandmarkInfo{2} = {'LMFC', 'z', 'max', 'distal'};
@@ -64,6 +64,10 @@ switch bone_name
         LandmarkInfo{1} = {'LHEE', 'x', 'min'};
         LandmarkInfo{2} = {'LD5M', 'z', 'min'};
         LandmarkInfo{3} = {'LD1M', 'z', 'max'};
+    % included for advanced example on humerus
+    case 'humerus_r'
+        LandmarkInfo{1} = {'RLE', 'z', 'max', 'distal'};
+        LandmarkInfo{2} = {'RME', 'z', 'min', 'distal'};  
     otherwise
         error('getBoneLandmarkList.m specified bone name is not supported yet.')
         

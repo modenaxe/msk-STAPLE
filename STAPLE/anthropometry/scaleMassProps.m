@@ -29,7 +29,7 @@ import org.opensim.modeling.*
 % get bodyset
 subjspec_bodyset = osimModel.getBodySet;
 
-for n_b = 1:subjspec_bodyset.getSize()-1
+for n_b = 0:subjspec_bodyset.getSize()-1
     
     curr_body = subjspec_bodyset.get(n_b);
     

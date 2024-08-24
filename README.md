@@ -1,6 +1,8 @@
 # STAPLE: Shared Tools for Automatic Personalised Lower Extremity modelling <!-- omit in toc -->
 
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4275285.svg)](https://doi.org/10.5281/zenodo.4275285)   ![visitors](https://visitor-badge.glitch.me/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4428103.svg)](https://doi.org/10.5281/zenodo.4428103)   ![visitors](https://visitor-badge.laobi.icu/badge?page_id=modenaxe.msk-STAPLE)<!-- omit in toc -->
+
+### ⚠️ STAPLE is released under a [non-commercial license](#license) and it is free to use for academic purposes only. For any other use please contact the authors. 
 
 # Table of contents <!-- omit in toc -->
 - [What is STAPLE?](#what-is-staple)
@@ -14,7 +16,7 @@
   - [Detailed steps to setup a STAPLE workflow](#detailed-steps-to-setup-a-staple-workflow)
   - [Algorithms for bone morphological analysis](#algorithms-for-bone-morphological-analysis)
   - [Datasets available for testing](#datasets-available-for-testing)
-  - [Further notes on STAPLE](#further-notes-on-staple)
+  - [STAPLE variables and conventions](#STAPLE-variables-and-conventions)
 - [Troubleshooting your workflow](#troubleshooting-your-workflow)
 - [Does STAPLE work only with OpenSim?](#does-staple-work-only-with-opensim)
 - [What are the differences between the STAPLE toolbox, NMSBuilder and the MAP Client for generating OpenSim models?](#what-are-the-differences-between-the-staple-toolbox-nmsbuilder-and-the-map-client-for-generating-opensim-models)
@@ -61,6 +63,10 @@ For example, models of hip, knee and ankle joints can be created as individual m
 * **Extracting the articular surfaces of the lower limb joints**: some of the algorithms included in STAPLE can identify the articular surfaces of the lower limb joints and export them for you. These surfaces can be used to define models of articular mechanics including contact.
 
 ![articular_surfaces](./images/artic_surfaces.png)
+
+* **Transformations to local reference systems**: STAPLE performs morphological analyses using the medical images reference system where the bone geometries are segmented, but then it can transform both the bone geometries and model objects to standard segment-based biomechanical reference systems. This is an important feature if you are using STAPLE in OpenSim, as joint reactions are expressed in body reference systems. See the provided [example of this functionality](./Example_BCS_leg_right.m).
+
+![reference_systems](./images/reference_systems.png)
 
 * **Basic identification of bony landmarks**: certain bony landmarks can be easily identified following the morphological analysis of the bone surfaces. These landmarks are intended as first guess for registration with gait analysis data.
 
@@ -286,11 +292,11 @@ The BCS is a MATLAB structure with the following fields:
 When running a morphological analysis, the joint coordinate system (JCS) associated with the analysed geometry is also returned, together with the BCS. 
 
 The JCS is a MATLAB structure with the following fields:
-1. **<joint name>**: 
+1. **joint name**: the name of the joint if more than one are stored in the variable. 
 2. **Origin** [3x1] vector: the origin of the joint in the bone being analysed
 3. **V** [3x3] matrix: the pose matrix of the joint
 4. **parent_location** [1x3] vector: the origin of the parent coordinate system in OpenSim
-5  **parent_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
+5. **parent_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
 6. **child_location** [1x3] vector: the origin of the child coordinate system in OpenSim
 7. **child_orientation** [1x3] vector: three angles describing the pose of the parent reference system in OpenSim, obtained by matrix decomposition with XYZ rotation order.
 
@@ -315,6 +321,14 @@ Note that the algorithms used on a single bone normally cannot define a joint co
 
 Bone landmarks are stored in MATLAB structures as [3x1] vectors. Each field name of the structure corresponds to the name of a landmark.
 
+|  Bone  geometry       | Landmarks              	| 
+| ---                   | ---                     	| 
+| pelvis 				| <ul><li>RASI/LASI: anterior superior iliac spine</li><li>RPSI/LPSI: posterior superior iliac spine</li><li>SYMP: pubic symphysis</li></ul> 			| 
+| femur 				| <ul><li>RKNE/LKNE: lateral femoral epicondyle</li><li>RMFC/LMFC: medial femoral epicondyle</li><li>RTRO/LTRO: greater trochanter</li></ul> 			| 
+| tibia 				| <ul><li>RTTB/LTTB: tibial tuberosity</li><li>RHFB/LHFB: head of fibula</li><li>RANK/LANK: lateral malleolus</li><li>RMMA/LMMA: medial malleolus</li><li>RLM/LLM: most distal point of lateral malleolus</li></ul>|
+| patella 				| RLOW/LLOW: most distal point of patella |
+| talus 				| None |
+| foot 					| <ul><li>RHEE/LHEE: heel</li><li>RD5M/LD5M: distal point of 5th metatarsal bone</li><li>RD5MPROX/LD5MPROX: proximal point of 5th metatarsal bone</li><li>RD1M/LD1M: distal point of first metatarsal bone</li><li>R1MGROUND/L1MGROUND: distal point of first metatarsal bone on foot sole</li><li>R5MGROUND/L5MGROUND: distal point of 5th metatarsal bone on foot sole</li><li>RHEEGROUND/LHEEGROUND: calcaneus most distal point on foot sole</li></ul>|
 
 ## Troubleshooting your workflow
 
@@ -323,8 +337,10 @@ Before informing us as suggested in [the contributing guidelines](/CONTRIBUTING.
 - [ ] ensure that the entire `STAPLE` folder is on your MATLAB path
 - [ ] if you are using one of the workflows from the examples, ensure that you are using the correct names for the bone geometries, e.g. `pelvis_no_sacrum`, `femur_r`, `tibia_r`, etc.
 - [ ] ensure that the quality of your bone surface geometries is sufficient for running your selected algorithm. The GIBOC algorithms, in particular, require relatively good quality surface meshes. You can have an idea of what we mean by "good mesh" consulting the table that describes the datasets provided with STAPLE. If necessary, use the filters and tools available on software like [MeshLab](https://www.meshlab.net/) to improve your dataset.
+- [ ] processing the meshes so that they are triangular and contain a reasonable number of vertices (decimation can be applied) also helps with the OpenSim visualization. See [this related tweet](https://twitter.com/JohnRHutchinson/status/1455490276298997766).
 - [ ] if possible, try running alternative algorithms in order to establish if your bone mesh is processable in the first place or if you have encounter a proper bug in the algorithm. You can specify the processing algorithms for each bone as input to the `processTriGeomBoneSet.m` function. For bad quality meshes, we recommend using the `STAPLE` algorithm at the pelvis and `Kai2014` algorithms for femur and tibia. Keep an eye on issue #78 as we will develop an example on how to do this.
 - [ ] verify that processing of your dataset is not failing because of the [current limitations](#current-limitations) of the STAPLE toolbox.
+
 
 ## Does STAPLE work only with OpenSim?
 

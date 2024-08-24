@@ -17,7 +17,7 @@ addpath(genpath('./STAPLE'))
 % dataset_folder = './bone_datasets/TLEM2';
 % dataset_folder = './bone_datasets/ICL_MRI';
 % dataset_folder = './bone_datasets/JIA_MRI';
-dataset_folder = './bone_datasets/JIA_ANKLE_MRI2';
+dataset_folder = './bone_datasets/__upper';
 
 % folder where to store the resulting triangulations
 triang_folder = [dataset_folder, filesep, 'tri'];

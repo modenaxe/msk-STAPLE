@@ -37,7 +37,7 @@ function osimModel = assignMassPropsToSegments(osimModel, JCS, subj_mass, side_r
 % opensim libraries
 import org.opensim.modeling.*
 
-av_bodies = fields(JCS);
+% av_bodies = fields(JCS);
 
 % TODO: rewrite in a more clever way
 % setting defaults

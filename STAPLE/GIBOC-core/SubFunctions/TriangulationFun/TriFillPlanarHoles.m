@@ -27,7 +27,7 @@ while ~isempty(Segments)
     Curves(i).NodesID(j+1)=Segments(1,2);
     Curves(i).FB(end+1,:) = Segments(1,:);
     
-    % Remove the semgents added to Curves(i) from the segments matrix
+    % Remove the segments added to Curves(i) from the segments matrix
     Segments(1,:)=[];
     j=j+1;
     
@@ -64,9 +64,16 @@ while ~isempty(Segments)
     i=i+1;
 end
 
-for i = 1 : length(Curves)
-    Curves(i).NodesID(Curves(i).NodesID==0) = [];
-    Curves(i).Pts = Pts(Curves(i).NodesID,:);
+if isempty(fields(Curves))
+    % warning
+    disp('No holes on triangulation.');
+    TRout = TRin;
+    return
+else 
+    for i = 1 : length(Curves)
+        Curves(i).NodesID(Curves(i).NodesID==0) = [];
+        Curves(i).Pts = Pts(Curves(i).NodesID,:);
+    end
 end
 
 

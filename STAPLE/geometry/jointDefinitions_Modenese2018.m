@@ -125,6 +125,8 @@ if isfield(JCS, talus_name)
     % X from cross product
     %---------------------
     if isfield(JCS, femur_name)
+        % needs to be initialized? 
+        FemurStruct = JCS.(femur_name);
         % take Z from subtalar joint (axis of rotation)
         Zparent  = TalusStruct.(subtalar_name).V(:,3);
         % take Y pointing to the knee joint centre

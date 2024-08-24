@@ -131,6 +131,9 @@ if isfield(triGeomBoneSet,'pelvis')
         case 'Kai2014'
             [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
                 Kai2014_pelvis(triGeomBoneSet.pelvis, side, result_plots, debug_plots, in_mm);
+        case 'Fischer2019'
+            [BCS.pelvis, JCS.pelvis, BL.pelvis]  = ...
+                Fischer2019_pelvis(triGeomBoneSet.pelvis, side, result_plots, debug_plots, in_mm);
     end
 elseif isfield(triGeomBoneSet,'pelvis_no_sacrum')
     switch algo_pelvis
